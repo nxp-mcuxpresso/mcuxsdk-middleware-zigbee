@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP.
+ * Copyright 2020, 2023 NXP
  *
  * NXP Confidential. 
  * 
@@ -348,7 +348,7 @@ PUBLIC  void vCLD_WWAHHandleSurveyBeacons(uint8 u8SourceEndPointId)
             au8BeaconSurvey[j++] = (uint8)(psDiscNtEntry->u16NwkAddr);
             au8BeaconSurvey[j++] = (uint8)(psDiscNtEntry->u16NwkAddr >> 8);
             au8BeaconSurvey[j++] = psDiscNtEntry->u8LinkQuality;
-            au8BeaconSurvey[j++] = psDiscNtEntry->uAncAttrs.bfBitfields.u2PriorityParent;
+            au8BeaconSurvey[j++] = psDiscNtEntry->u8RankingParents;
             sResponse.u8NumberOfBeacons++;
         }
     }

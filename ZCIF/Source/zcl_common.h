@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP.
+ * Copyright 2020, 2023, 2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -52,6 +52,7 @@ extern "C" {
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
+#define ZCL_INITIAL_TRANSACTION_SEQ_NUM 0
 
 /****************************************************************************/
 /***        Type Definitions                                              ***/
@@ -88,6 +89,7 @@ typedef struct
 {
     uint8                       u8NumberOfEndpoints;
     uint8                       u8TransactionSequenceNumber;
+    uint8                       u8ApsSequenceNumberLastVerified;
     uint8                       u8ApsSequenceNumberOfLastTransmit;
     uint8                       u8NumberOfTimers;
     uint8                       u8NumberOfReports;

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP.
+ * Copyright 2020 NXP
  *
  * NXP Confidential. 
  * 
@@ -36,7 +36,7 @@
 #include "zcl_customcommand.h"
 #include "DRLC.h"
 #include "DRLC_internal.h"
-#include "rnd_pub.h"
+#include "zb_platform.h"
 
 
 /****************************************************************************/
@@ -107,13 +107,13 @@ PUBLIC  void vSetRandomizationValues(
     if(psLoadControlEventRecord->sLoadControlEvent.u8EventControl & SE_DRLC_CONTROL_RANDOMISATION_START_TIME_MASK)
     {
         eZCL_GetLocalAttributeValue(E_CLD_DRLC_START_RANDOMIZATION_MINUTES, FALSE, TRUE,psEndPointDefinition, psClusterInstance, &u8RandomizeStartTimeInMinutes);
-        psLoadControlEventRecord->u8StartRandomizationMinutes = (uint8)RND_u32GetRand(0, u8RandomizeStartTimeInMinutes);
+        psLoadControlEventRecord->u8StartRandomizationMinutes = (uint8)zbPlatCryptoRandomGet(0, u8RandomizeStartTimeInMinutes);
     }
 
     if(psLoadControlEventRecord->sLoadControlEvent.u8EventControl & SE_DRLC_CONTROL_RANDOMISATION_STOP_TIME_MASK)
     {
         eZCL_GetLocalAttributeValue(E_CLD_DRLC_DURATION_RANDOMIZATION_MINUTES, FALSE,TRUE, psEndPointDefinition, psClusterInstance, &u8RandomizeStopTimeInMinutes);
-        psLoadControlEventRecord->u8DurationRandomizationMinutes = (uint8)RND_u32GetRand(0, u8RandomizeStopTimeInMinutes);
+        psLoadControlEventRecord->u8DurationRandomizationMinutes = (uint8)zbPlatCryptoRandomGet(0, u8RandomizeStopTimeInMinutes);
     }
 
 }

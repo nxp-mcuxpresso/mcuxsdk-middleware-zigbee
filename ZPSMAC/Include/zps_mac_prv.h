@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP.
+ * Copyright 2020 NXP
  *
  * NXP Confidential. 
  * 
@@ -164,6 +164,7 @@ MODULE	uint8		SOC_ZPS_u8MacPibGetEBsn(void);
 MODULE	bool_t		SOC_ZPS_bMacPibGetEBFilteringEnable(void);
 MODULE	uint8		SOC_ZPS_u8MacPibGetEBR_PayloadLength(void);
 MODULE	uint8		SOC_ZPS_u8MacPibGetEBR_Payload(uint8 *pu8EBRPayload);
+MODULE	bool_t		SOC_ZPS_bMacPibGetAutoRequest(void);
 
 /* ZPS MAC PIB Set Functions */
 MODULE	void		SOC_ZPS_vMacPibSetCoordShortAddress(uint16 u16CoordShortAddr);
@@ -189,6 +190,7 @@ MODULE	void		SOC_ZPS_vMacPibSetBeaconRequestLqiThreshold(uint8 u8LqiThreshold);
 MODULE	void		SOC_ZPS_vMacPibSetMaxMaxConcurrentAssocResponses(uint8 u8Max);
 MODULE	void 		SOC_ZPS_vMacPibSetExtAddr(tsExtAddr *psExtAddr);
 MODULE  void 		SOC_ZPS_vMacPibSetRxInCca(bool_t bEnable);
+MODULE	void		SOC_ZPS_bMacPibSetAutoRequest(bool_t bAutoRequest);
 
 /* TX POWER API */
 MODULE  uint8 		SOC_ZPS_u8MacGetTXPower(uint64 u64IEEEAddress, MAC_TxPower_s *psMacTxPower);
@@ -207,6 +209,9 @@ MODULE uint8		SOC_ZPS_u8MacMibIeeeGetTable(uint8 u8Index, uint8 u8Count, uint64 
 /* PHY PLME */
 MODULE PHY_Enum_e 	SOC_ZPS_eMacPlmeGet(PHY_PibAttr_e ePhyPibAttribute, uint32 *pu32PhyPibValue);
 MODULE PHY_Enum_e 	SOC_ZPS_eMacPlmeSet(PHY_PibAttr_e ePhyPibAttribute, uint32 u32PhyPibValue);
+
+MODULE PHY_Enum_e 	SOC_ZPS_eAddPhyFilteringAddr(uint16 u16Addr, uint64 u64ExtAddr);
+MODULE PHY_Enum_e 	SOC_ZPS_eClearPhyFilter();
 
 
 /****************************************************************************/

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020, 2023 NXP.
+ * Copyright 2020, 2023 NXP
  *
  * NXP Confidential. 
  * 
@@ -27,20 +27,10 @@
 /****************************************************************************/
 /***        Include files                                                 ***/
 /****************************************************************************/
-#ifndef NCP_HOST
 #include "MicroSpecific.h"
-#endif
 #include "ZQueue.h"
 #include "dbg.h"
-#ifndef NCP_HOST
 #include "pwrm.h"
-#endif
-
-#ifdef NCP_HOST
-#include "portmacro.h"
-#endif
-
-
 
 #if ZIGBEE_USE_FRAMEWORK
 	#if defined(K32W1480_SERIES) || defined(K32W1)

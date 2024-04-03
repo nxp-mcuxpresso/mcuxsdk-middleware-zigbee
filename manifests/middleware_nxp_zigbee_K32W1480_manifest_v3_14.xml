@@ -1,0 +1,2401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ksdk:manifest xmlns:ksdk="http://nxp.com/ksdk/2.0/ksdk_manifest_v3.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="SDK_2.x_middleware_nxp_zigbee_K32W1480_manifest_v3_14" name="Wireless zigbee stack" brief="Zigbee" format_version="3.14" api_version="2.0.0" xsi:schemaLocation="http://nxp.com/ksdk/2.0/ksdk_manifest_v3.0.xsd http://nxp.com/mcuxpresso/sdk/sdk_manifest_v3.14.xsd">
+
+  <externalDefinitions>
+    <definition extID="K32W1480xxxA"/>
+    <definition extID="armgcc"/>
+  </externalDefinitions>
+  <ksdk id="MCUXpressoSDK215000_middleware_nxp_zigbee_K32W1480_manifest_v3_14" name="MCUXpressoSDK215000_middleware_nxp_zigbee_K32W1480_manifest_v3_14" version="2.15.000" revision="2.15.000"/>
+  <components>
+    <component id="middleware.wireless.zigbee_core_all_libs.K32W1480" name="Middleware wireless zigbee for core all lib files" brief="middleware wireless zigbee all libs" version="1.0.0" full_name="wireless zigbee all lib files" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././" project_base_path="libs">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libATJParser.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSAPL.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSAPL_LEGACY.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSAPL_LEGACY_ZCP-GU.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSAPL_R23.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSAPL_WWAH.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSAPL_WWAH_ZCP-GU.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSAPL_ZCP-GU.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSGP.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSGP_ZED.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSIPAN.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSIPAN_ZED.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSMAC_Mini_SOC.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSNWK.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSNWK_R23.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSNWK_WWAH.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSNWK_WWAH_ZCP-GU.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSNWK_WWAH_ZED.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSNWK_ZCP-GU.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSNWK_ZED.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSNWK_ZED_R23.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="platform/K32W1/libs" type="lib">
+        <files mask="libZPSTSV.a"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_core_all_libs.cmake" hidden="true"/>
+      </source>
+    </component>
+    <component id="middleware.wireless.zigbee_core_libs.K32W1480" name="wireless zigbee core lib files" brief="Middleware wireless zigbee for core lib files" version="1.0.0" full_name="wireless zigbee core lib files" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././" project_base_path="libs">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSGP.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSIPAN.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSAPL.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSMAC_Mini_SOC.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSNWK.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSTSV.a"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_core_libs.cmake" hidden="true"/>
+      </source>
+    </component>
+    <component id="middleware.wireless.zigbee_core_libs_R23.K32W1480" name="wireless zigbee core lib files R23" brief="Middleware wireless zigbee for core lib files R23" version="1.0.0" full_name="wireless zigbee core lib files R23" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././" project_base_path="libs">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSGP.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSIPAN.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSAPL_R23.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSMAC_Mini_SOC.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSNWK_R23.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSTSV.a"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_core_libs_r23.cmake" hidden="true"/>
+      </source>
+    </component>
+    <component id="middleware.wireless.zigbee_core_ZED_libs.K32W1480" name="wireless zigbee core ZED lib files" brief="Middleware wireless zigbee for core ZED lib files" version="1.0.0" full_name="wireless zigbee core ZED lib files" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././" project_base_path="libs">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSGP_ZED.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSIPAN_ZED.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSAPL.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSMAC_Mini_SOC.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSNWK_ZED.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSTSV.a"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_core_ZED_libs.cmake" hidden="true"/>
+      </source>
+    </component>
+    <component id="middleware.wireless.zigbee_core_ZED_libs_R23.K32W1480" name="wireless zigbee core ZED lib files" brief="Middleware wireless zigbee for core ZED lib files" version="1.0.0" full_name="wireless zigbee core ZED lib files" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././" project_base_path="libs">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSGP_ZED.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSIPAN_ZED.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSAPL_R23.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSMAC_Mini_SOC.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSNWK_ZED_R23.a"/>
+      </source>
+      <source relative_path="./platform/K32W1/libs" project_relative_path="zigbee" type="lib">
+        <files mask="libZPSTSV.a"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_core_ZED_libs_r23.cmake" hidden="true"/>
+      </source>
+    </component>
+    <component id="middleware.wireless.zigbee.K32W1480" name="Wireless zigbee" brief="Middleware wireless zigbee" version="1.0.0" full_name="Wireless zigbee" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././" project_base_path="zigbee">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="./BDB/Build" project_relative_path="BDB/Build" type="script">
+        <files mask="config.mk" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Build" project_relative_path="BDB/Build" type="c_include">
+        <files mask="reference_bdb_options.h" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Include" project_relative_path="BDB/Include" type="c_include">
+        <files mask="bdb_api.h" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Source/Common" project_relative_path="BDB/Source/Common" type="src">
+        <files mask="bdb_fr.c" hidden="true"/>
+        <files mask="bdb_start.c" hidden="true"/>
+        <files mask="bdb_state_machine.c" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Source/Common" project_relative_path="BDB/Source/Common" type="c_include">
+        <files mask="bdb_fr.h" hidden="true"/>
+        <files mask="bdb_start.h" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Source/FindAndBind" project_relative_path="BDB/Source/FindAndBind" type="c_include">
+        <files mask="bdb_fb_api.h" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Source/FindAndBind" project_relative_path="BDB/Source/FindAndBind" type="src">
+        <files mask="bdb_fb_common.c" hidden="true"/>
+        <files mask="bdb_fb_initiator.c" hidden="true"/>
+        <files mask="bdb_fb_target.c" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Source/NwkFormation" project_relative_path="BDB/Source/NwkFormation" type="src">
+        <files mask="bdb_nf.c" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Source/NwkFormation" project_relative_path="BDB/Source/NwkFormation" type="c_include">
+        <files mask="bdb_nf.h" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Source/NwkSteering" project_relative_path="BDB/Source/NwkSteering" type="src">
+        <files mask="bdb_ns.c" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Source/NwkSteering" project_relative_path="BDB/Source/NwkSteering" type="c_include">
+        <files mask="bdb_ns.h" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Source/OutOfBand" project_relative_path="BDB/Source/OutOfBand" type="src">
+        <files mask="bdb_DeviceCommissioning.c" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Source/OutOfBand" project_relative_path="BDB/Source/OutOfBand" type="c_include">
+        <files mask="bdb_DeviceCommissioning.h" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Source/TouchLink" project_relative_path="BDB/Source/TouchLink" type="c_include">
+        <files mask="bdb_tl.h" hidden="true"/>
+      </source>
+      <source relative_path="./BDB/Source/TouchLink" project_relative_path="BDB/Source/TouchLink" type="src">
+        <files mask="bdb_tl_common.c" hidden="true"/>
+        <files mask="bdb_tl_end_device_initiator_target.c" hidden="true"/>
+        <files mask="bdb_tl_router_initiator_target.c" hidden="true"/>
+        <files mask="bdb_tl_router_target.c" hidden="true"/>
+        <files mask="ecb_decrypt.c" hidden="true"/>
+      </source>
+      <source relative_path="./BuildConfig/ZBPro/Build" project_relative_path="BuildConfig/ZBPro/Build" type="script">
+        <files mask="config_OSA.mk" hidden="true"/>
+        <files mask="config_ZBPro.mk" hidden="true"/>
+      </source>
+      <source relative_path="./BuildConfig/ZCL/Build" project_relative_path="BuildConfig/ZCL/Build" type="script">
+        <files mask="config_ZCL.mk" hidden="true"/>
+      </source>
+      <source relative_path="./platform/K32W1/build" project_relative_path="platform/K32W1/build" type="script">
+        <files mask="device.mk" hidden="true"/>
+        <files mask="platform.mk" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor/model" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor/model" type="other">
+        <files mask="XMI.xsd" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor/src/oscfg" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor/src/oscfg" type="other">
+        <files mask="AutostartedType.java" hidden="true"/>
+        <files mask="BaseTask.java" hidden="true"/>
+        <files mask="CallbackFunction.java" hidden="true"/>
+        <files mask="Configuration.java" hidden="true"/>
+        <files mask="CooperativeGroup.java" hidden="true"/>
+        <files mask="DocumentRoot.java" hidden="true"/>
+        <files mask="HWCounter.java" hidden="true"/>
+        <files mask="ISR.java" hidden="true"/>
+        <files mask="InterruptSource.java" hidden="true"/>
+        <files mask="Message.java" hidden="true"/>
+        <files mask="Module.java" hidden="true"/>
+        <files mask="Mutex.java" hidden="true"/>
+        <files mask="NamedObject.java" hidden="true"/>
+        <files mask="OS.java" hidden="true"/>
+        <files mask="OscfgFactory.java" hidden="true"/>
+        <files mask="OscfgPackage.java" hidden="true"/>
+        <files mask="Poster.java" hidden="true"/>
+        <files mask="SWTimer.java" hidden="true"/>
+        <files mask="TargetTypes.java" hidden="true"/>
+        <files mask="Task.java" hidden="true"/>
+        <files mask="TypeType.java" hidden="true"/>
+        <files mask="VectorType.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor/src/oscfg/impl" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor/src/oscfg/impl" type="other">
+        <files mask="CallbackFunctionImpl.java" hidden="true"/>
+        <files mask="ConfigurationImpl.java" hidden="true"/>
+        <files mask="CooperativeGroupImpl.java" hidden="true"/>
+        <files mask="DocumentRootImpl.java" hidden="true"/>
+        <files mask="HWCounterImpl.java" hidden="true"/>
+        <files mask="ISRImpl.java" hidden="true"/>
+        <files mask="InterruptSourceImpl.java" hidden="true"/>
+        <files mask="NamedObjectImpl.java" hidden="true"/>
+        <files mask="OSImpl.java" hidden="true"/>
+        <files mask="OscfgFactoryImpl.java" hidden="true"/>
+        <files mask="OscfgPackageImpl.java" hidden="true"/>
+        <files mask="TaskImpl.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor/src/oscfg/util" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor/src/oscfg/util" type="other">
+        <files mask="OscfgAdapterFactory.java" hidden="true"/>
+        <files mask="OscfgSwitch.java" hidden="true"/>
+        <files mask="OscfgValidator.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/icons" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/icons" type="image">
+        <files mask="incomingLinksNavigatorGroup.gif" hidden="true"/>
+        <files mask="linkSourceNavigatorGroup.gif" hidden="true"/>
+        <files mask="linkTargetNavigatorGroup.gif" hidden="true"/>
+        <files mask="linksNavigatorGroup.gif" hidden="true"/>
+        <files mask="outgoingLinksNavigatorGroup.gif" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/icons/obj16" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/icons/obj16" type="image">
+        <files mask="OscfgDiagramFile.gif" hidden="true"/>
+        <files mask="OscfgDiagramFile.png" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/icons/obj16" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/icons/obj16" type="other">
+        <files mask="Thumbs.db" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/icons/wizban" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/icons/wizban" type="image">
+        <files mask="NewOscfgWizard.gif" hidden="true"/>
+        <files mask="NewOscfgWizard.png" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/icons/wizban" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/icons/wizban" type="other">
+        <files mask="Thumbs.db" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram" type="configuration">
+        <files mask="plugin_customization.ini" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/edit/commands" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/edit/commands" type="other">
+        <files mask="BaseTaskCollectMessageCreateCommand.java" hidden="true"/>
+        <files mask="BaseTaskCollectMessageReorientCommand.java" hidden="true"/>
+        <files mask="BaseTaskEnterExitMutexCreateCommand.java" hidden="true"/>
+        <files mask="BaseTaskEnterExitMutexReorientCommand.java" hidden="true"/>
+        <files mask="CallbackFunctionCreateCommand.java" hidden="true"/>
+        <files mask="CooperativeGroupCreateCommand.java" hidden="true"/>
+        <files mask="HWCounterCreateCommand.java" hidden="true"/>
+        <files mask="HWCounterDisable_callbackCreateCommand.java" hidden="true"/>
+        <files mask="HWCounterDisable_callbackReorientCommand.java" hidden="true"/>
+        <files mask="HWCounterEnable_callbackCreateCommand.java" hidden="true"/>
+        <files mask="HWCounterEnable_callbackReorientCommand.java" hidden="true"/>
+        <files mask="HWCounterGet_callbackCreateCommand.java" hidden="true"/>
+        <files mask="HWCounterGet_callbackReorientCommand.java" hidden="true"/>
+        <files mask="HWCounterSet_callbackCreateCommand.java" hidden="true"/>
+        <files mask="HWCounterSet_callbackReorientCommand.java" hidden="true"/>
+        <files mask="ISRCreateCommand.java" hidden="true"/>
+        <files mask="InterruptSourceCreateCommand.java" hidden="true"/>
+        <files mask="InterruptSourceSourceISRCreateCommand.java" hidden="true"/>
+        <files mask="InterruptSourceSourceISRReorientCommand.java" hidden="true"/>
+        <files mask="MessageCreateCommand.java" hidden="true"/>
+        <files mask="MessageNotifiesCreateCommand.java" hidden="true"/>
+        <files mask="MessageNotifiesReorientCommand.java" hidden="true"/>
+        <files mask="ModuleCreateCommand.java" hidden="true"/>
+        <files mask="MutexCreateCommand.java" hidden="true"/>
+        <files mask="OSCreateCommand.java" hidden="true"/>
+        <files mask="OscfgReorientConnectionViewCommand.java" hidden="true"/>
+        <files mask="PosterPostMessageCreateCommand.java" hidden="true"/>
+        <files mask="PosterPostMessageReorientCommand.java" hidden="true"/>
+        <files mask="SWTimerActivatesCreateCommand.java" hidden="true"/>
+        <files mask="SWTimerActivatesReorientCommand.java" hidden="true"/>
+        <files mask="SWTimerCreateCommand.java" hidden="true"/>
+        <files mask="SWTimerTimer_callbackCreateCommand.java" hidden="true"/>
+        <files mask="SWTimerTimer_callbackReorientCommand.java" hidden="true"/>
+        <files mask="Task2CreateCommand.java" hidden="true"/>
+        <files mask="TaskCreateCommand.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/edit/helpers" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/edit/helpers" type="other">
+        <files mask="CallbackFunctionEditHelper.java" hidden="true"/>
+        <files mask="ConfigurationEditHelper.java" hidden="true"/>
+        <files mask="CooperativeGroupEditHelper.java" hidden="true"/>
+        <files mask="HWCounterEditHelper.java" hidden="true"/>
+        <files mask="ISREditHelper.java" hidden="true"/>
+        <files mask="InterruptSourceEditHelper.java" hidden="true"/>
+        <files mask="MessageEditHelper.java" hidden="true"/>
+        <files mask="ModuleEditHelper.java" hidden="true"/>
+        <files mask="MutexEditHelper.java" hidden="true"/>
+        <files mask="OSEditHelper.java" hidden="true"/>
+        <files mask="OscfgBaseEditHelper.java" hidden="true"/>
+        <files mask="SWTimerEditHelper.java" hidden="true"/>
+        <files mask="TaskEditHelper.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/edit/parts" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/edit/parts" type="other">
+        <files mask="BaseTaskCollectMessageEditPart.java" hidden="true"/>
+        <files mask="BaseTaskEnterExitMutexEditPart.java" hidden="true"/>
+        <files mask="CallbackFunctionEditPart.java" hidden="true"/>
+        <files mask="CallbackFunctionNameEditPart.java" hidden="true"/>
+        <files mask="ConfigurationEditPart.java" hidden="true"/>
+        <files mask="CooperativeGroupCooperativeTasksEditPart.java" hidden="true"/>
+        <files mask="CooperativeGroupEditPart.java" hidden="true"/>
+        <files mask="CooperativeGroupNameEditPart.java" hidden="true"/>
+        <files mask="HWCounterDisable_callbackEditPart.java" hidden="true"/>
+        <files mask="HWCounterEditPart.java" hidden="true"/>
+        <files mask="HWCounterEnable_callbackEditPart.java" hidden="true"/>
+        <files mask="HWCounterGet_callbackEditPart.java" hidden="true"/>
+        <files mask="HWCounterNameEditPart.java" hidden="true"/>
+        <files mask="HWCounterSet_callbackEditPart.java" hidden="true"/>
+        <files mask="HWCounterSoftwareTimersEditPart.java" hidden="true"/>
+        <files mask="ISREditPart.java" hidden="true"/>
+        <files mask="ISRIPLEditPart.java" hidden="true"/>
+        <files mask="ISRNameEditPart.java" hidden="true"/>
+        <files mask="ISRTypeEditPart.java" hidden="true"/>
+        <files mask="InterruptSourceEditPart.java" hidden="true"/>
+        <files mask="InterruptSourceSourceEditPart.java" hidden="true"/>
+        <files mask="InterruptSourceSourceISREditPart.java" hidden="true"/>
+        <files mask="MessageCtypeEditPart.java" hidden="true"/>
+        <files mask="MessageEditPart.java" hidden="true"/>
+        <files mask="MessageNameEditPart.java" hidden="true"/>
+        <files mask="MessageNotifiesEditPart.java" hidden="true"/>
+        <files mask="MessageQueueEditPart.java" hidden="true"/>
+        <files mask="ModuleEditPart.java" hidden="true"/>
+        <files mask="ModuleModuleObjectsEditPart.java" hidden="true"/>
+        <files mask="ModuleNameEditPart.java" hidden="true"/>
+        <files mask="MutexEditPart.java" hidden="true"/>
+        <files mask="MutexNameEditPart.java" hidden="true"/>
+        <files mask="OSEditPart.java" hidden="true"/>
+        <files mask="OSOSModulesEditPart.java" hidden="true"/>
+        <files mask="OSTargetEditPart.java" hidden="true"/>
+        <files mask="OscfgEditPartFactory.java" hidden="true"/>
+        <files mask="PosterPostMessageEditPart.java" hidden="true"/>
+        <files mask="SWTimerActivatesEditPart.java" hidden="true"/>
+        <files mask="SWTimerEditPart.java" hidden="true"/>
+        <files mask="SWTimerNameEditPart.java" hidden="true"/>
+        <files mask="SWTimerTimer_callbackEditPart.java" hidden="true"/>
+        <files mask="Task2EditPart.java" hidden="true"/>
+        <files mask="TaskAutostarted2EditPart.java" hidden="true"/>
+        <files mask="TaskAutostartedEditPart.java" hidden="true"/>
+        <files mask="TaskEditPart.java" hidden="true"/>
+        <files mask="TaskName2EditPart.java" hidden="true"/>
+        <files mask="TaskNameEditPart.java" hidden="true"/>
+        <files mask="TaskPriority2EditPart.java" hidden="true"/>
+        <files mask="TaskPriorityEditPart.java" hidden="true"/>
+        <files mask="WrappingLabel10EditPart.java" hidden="true"/>
+        <files mask="WrappingLabel11EditPart.java" hidden="true"/>
+        <files mask="WrappingLabel2EditPart.java" hidden="true"/>
+        <files mask="WrappingLabel3EditPart.java" hidden="true"/>
+        <files mask="WrappingLabel4EditPart.java" hidden="true"/>
+        <files mask="WrappingLabel5EditPart.java" hidden="true"/>
+        <files mask="WrappingLabel6EditPart.java" hidden="true"/>
+        <files mask="WrappingLabel7EditPart.java" hidden="true"/>
+        <files mask="WrappingLabel8EditPart.java" hidden="true"/>
+        <files mask="WrappingLabel9EditPart.java" hidden="true"/>
+        <files mask="WrappingLabelEditPart.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/edit/policies" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/edit/policies" type="other">
+        <files mask="BaseTaskCollectMessageItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="BaseTaskEnterExitMutexItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="BaseTaskPostMessageItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="CallbackFunctionItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="ConfigurationCanonicalEditPolicy.java" hidden="true"/>
+        <files mask="ConfigurationItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="CooperativeGroupCooperativeTasksCanonicalEditPolicy.java" hidden="true"/>
+        <files mask="CooperativeGroupCooperativeTasksItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="CooperativeGroupItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="HWCounterDisable_callbackItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="HWCounterEnable_callbackItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="HWCounterGet_callbackItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="HWCounterItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="HWCounterSet_callbackItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="HWCounterSoftwareTimersCanonicalEditPolicy.java" hidden="true"/>
+        <files mask="HWCounterSoftwareTimersItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="ISRItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="InterruptSourceItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="InterruptSourceSourceISRItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="MessageItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="MessageNotifiesItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="ModuleItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="ModuleModuleObjectsCanonicalEditPolicy.java" hidden="true"/>
+        <files mask="ModuleModuleObjectsItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="MutexItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="OSItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="OSOSModulesCanonicalEditPolicy.java" hidden="true"/>
+        <files mask="OSOSModulesItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="OscfgBaseItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="OscfgTextNonResizableEditPolicy.java" hidden="true"/>
+        <files mask="OscfgTextSelectionEditPolicy.java" hidden="true"/>
+        <files mask="PosterPostMessageItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="SWTimerActivatesItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="SWTimerItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="SWTimerTimer_callbackItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="Task2ItemSemanticEditPolicy.java" hidden="true"/>
+        <files mask="TaskItemSemanticEditPolicy.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/expressions" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/expressions" type="other">
+        <files mask="OscfgAbstractExpression.java" hidden="true"/>
+        <files mask="OscfgOCLFactory.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/layoutmanager" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/layoutmanager" type="other">
+        <files mask="CompartmentLayout.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/navigator" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/navigator" type="other">
+        <files mask="OscfgAbstractNavigatorItem.java" hidden="true"/>
+        <files mask="OscfgDomainNavigatorContentProvider.java" hidden="true"/>
+        <files mask="OscfgDomainNavigatorItem.java" hidden="true"/>
+        <files mask="OscfgDomainNavigatorLabelProvider.java" hidden="true"/>
+        <files mask="OscfgNavigatorActionProvider.java" hidden="true"/>
+        <files mask="OscfgNavigatorContentProvider.java" hidden="true"/>
+        <files mask="OscfgNavigatorGroup.java" hidden="true"/>
+        <files mask="OscfgNavigatorItem.java" hidden="true"/>
+        <files mask="OscfgNavigatorLabelProvider.java" hidden="true"/>
+        <files mask="OscfgNavigatorLinkHelper.java" hidden="true"/>
+        <files mask="OscfgNavigatorSorter.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/parsers" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/parsers" type="other">
+        <files mask="AbstractParser.java" hidden="true"/>
+        <files mask="CompositeParser.java" hidden="true"/>
+        <files mask="MessageFormatParser.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/part" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/part" type="other">
+        <files mask="DeleteElementAction.java" hidden="true"/>
+        <files mask="DiagramEditorContextMenuProvider.java" hidden="true"/>
+        <files mask="LoadResourceAction.java" hidden="true"/>
+        <files mask="Messages.java" hidden="true"/>
+        <files mask="ModelElementSelectionPage.java" hidden="true"/>
+        <files mask="OscfgCreationWizard.java" hidden="true"/>
+        <files mask="OscfgCreationWizardPage.java" hidden="true"/>
+        <files mask="OscfgDiagramActionBarContributor.java" hidden="true"/>
+        <files mask="OscfgDiagramEditor.java" hidden="true"/>
+        <files mask="OscfgDiagramEditorPlugin.java" hidden="true"/>
+        <files mask="OscfgDiagramEditorUtil.java" hidden="true"/>
+        <files mask="OscfgDiagramUpdateCommand.java" hidden="true"/>
+        <files mask="OscfgDiagramUpdater.java" hidden="true"/>
+        <files mask="OscfgDocumentProvider.java" hidden="true"/>
+        <files mask="OscfgDomainModelElementTester.java" hidden="true"/>
+        <files mask="OscfgInitDiagramFileAction.java" hidden="true"/>
+        <files mask="OscfgLinkDescriptor.java" hidden="true"/>
+        <files mask="OscfgLoadResourceAction.java" hidden="true"/>
+        <files mask="OscfgMatchingStrategy.java" hidden="true"/>
+        <files mask="OscfgNewDiagramFileWizard.java" hidden="true"/>
+        <files mask="OscfgNodeDescriptor.java" hidden="true"/>
+        <files mask="OscfgPaletteFactory.java" hidden="true"/>
+        <files mask="OscfgUriEditorInputTester.java" hidden="true"/>
+        <files mask="OscfgVisualIDRegistry.java" hidden="true"/>
+        <files mask="ValidateAction.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/preferences" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/preferences" type="other">
+        <files mask="DiagramAppearancePreferencePage.java" hidden="true"/>
+        <files mask="DiagramConnectionsPreferencePage.java" hidden="true"/>
+        <files mask="DiagramGeneralPreferencePage.java" hidden="true"/>
+        <files mask="DiagramPreferenceInitializer.java" hidden="true"/>
+        <files mask="DiagramPrintingPreferencePage.java" hidden="true"/>
+        <files mask="DiagramRulersAndGridPreferencePage.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/providers" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/providers" type="other">
+        <files mask="ElementInitializers.java" hidden="true"/>
+        <files mask="OscfgContributionItemProvider.java" hidden="true"/>
+        <files mask="OscfgEditPartProvider.java" hidden="true"/>
+        <files mask="OscfgElementTypes.java" hidden="true"/>
+        <files mask="OscfgIconProvider.java" hidden="true"/>
+        <files mask="OscfgMarkerNavigationProvider.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProvider.java" hidden="true"/>
+        <files mask="OscfgParserProvider.java" hidden="true"/>
+        <files mask="OscfgValidationDecoratorProvider.java" hidden="true"/>
+        <files mask="OscfgValidationProvider.java" hidden="true"/>
+        <files mask="OscfgViewProvider.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/providers/assistants" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/providers/assistants" type="other">
+        <files mask="OscfgModelingAssistantProviderOfCallbackFunctionEditPart.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProviderOfConfigurationEditPart.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProviderOfCooperativeGroupEditPart.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProviderOfHWCounterEditPart.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProviderOfISREditPart.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProviderOfInterruptSourceEditPart.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProviderOfMessageEditPart.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProviderOfModuleEditPart.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProviderOfMutexEditPart.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProviderOfOSEditPart.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProviderOfSWTimerEditPart.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProviderOfTask2EditPart.java" hidden="true"/>
+        <files mask="OscfgModelingAssistantProviderOfTaskEditPart.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/sheet" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/sheet" type="other">
+        <files mask="OscfgPropertySection.java" hidden="true"/>
+        <files mask="OscfgSheetLabelProvider.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/view/factories" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.diagram/src/oscfg/diagram/view/factories" type="other">
+        <files mask="BaseTaskCollectMessageViewFactory.java" hidden="true"/>
+        <files mask="BaseTaskEnterExitMutexViewFactory.java" hidden="true"/>
+        <files mask="CallbackFunctionNameViewFactory.java" hidden="true"/>
+        <files mask="CallbackFunctionViewFactory.java" hidden="true"/>
+        <files mask="ConfigurationViewFactory.java" hidden="true"/>
+        <files mask="CooperativeGroupCooperativeTasksViewFactory.java" hidden="true"/>
+        <files mask="CooperativeGroupNameViewFactory.java" hidden="true"/>
+        <files mask="CooperativeGroupViewFactory.java" hidden="true"/>
+        <files mask="HWCounterDisable_callbackViewFactory.java" hidden="true"/>
+        <files mask="HWCounterEnable_callbackViewFactory.java" hidden="true"/>
+        <files mask="HWCounterGet_callbackViewFactory.java" hidden="true"/>
+        <files mask="HWCounterNameViewFactory.java" hidden="true"/>
+        <files mask="HWCounterSet_callbackViewFactory.java" hidden="true"/>
+        <files mask="HWCounterSoftwareTimersViewFactory.java" hidden="true"/>
+        <files mask="HWCounterViewFactory.java" hidden="true"/>
+        <files mask="ISRIPLViewFactory.java" hidden="true"/>
+        <files mask="ISRNameViewFactory.java" hidden="true"/>
+        <files mask="ISRTypeViewFactory.java" hidden="true"/>
+        <files mask="ISRViewFactory.java" hidden="true"/>
+        <files mask="InterruptSourceSourceISRViewFactory.java" hidden="true"/>
+        <files mask="InterruptSourceSourceViewFactory.java" hidden="true"/>
+        <files mask="InterruptSourceViewFactory.java" hidden="true"/>
+        <files mask="MessageCtypeViewFactory.java" hidden="true"/>
+        <files mask="MessageNameViewFactory.java" hidden="true"/>
+        <files mask="MessageNotifiesViewFactory.java" hidden="true"/>
+        <files mask="MessageQueueViewFactory.java" hidden="true"/>
+        <files mask="MessageViewFactory.java" hidden="true"/>
+        <files mask="ModuleModuleObjectsViewFactory.java" hidden="true"/>
+        <files mask="ModuleNameViewFactory.java" hidden="true"/>
+        <files mask="ModuleViewFactory.java" hidden="true"/>
+        <files mask="MutexNameViewFactory.java" hidden="true"/>
+        <files mask="MutexViewFactory.java" hidden="true"/>
+        <files mask="OSOSModulesViewFactory.java" hidden="true"/>
+        <files mask="OSTargetViewFactory.java" hidden="true"/>
+        <files mask="OSViewFactory.java" hidden="true"/>
+        <files mask="PosterPostMessageViewFactory.java" hidden="true"/>
+        <files mask="SWTimerActivatesViewFactory.java" hidden="true"/>
+        <files mask="SWTimerNameViewFactory.java" hidden="true"/>
+        <files mask="SWTimerTimer_callbackViewFactory.java" hidden="true"/>
+        <files mask="SWTimerViewFactory.java" hidden="true"/>
+        <files mask="Task2ViewFactory.java" hidden="true"/>
+        <files mask="TaskAutostarted2ViewFactory.java" hidden="true"/>
+        <files mask="TaskAutostartedViewFactory.java" hidden="true"/>
+        <files mask="TaskName2ViewFactory.java" hidden="true"/>
+        <files mask="TaskNameViewFactory.java" hidden="true"/>
+        <files mask="TaskPriority2ViewFactory.java" hidden="true"/>
+        <files mask="TaskPriorityViewFactory.java" hidden="true"/>
+        <files mask="TaskViewFactory.java" hidden="true"/>
+        <files mask="WrappingLabel10ViewFactory.java" hidden="true"/>
+        <files mask="WrappingLabel11ViewFactory.java" hidden="true"/>
+        <files mask="WrappingLabel2ViewFactory.java" hidden="true"/>
+        <files mask="WrappingLabel3ViewFactory.java" hidden="true"/>
+        <files mask="WrappingLabel4ViewFactory.java" hidden="true"/>
+        <files mask="WrappingLabel5ViewFactory.java" hidden="true"/>
+        <files mask="WrappingLabel6ViewFactory.java" hidden="true"/>
+        <files mask="WrappingLabel7ViewFactory.java" hidden="true"/>
+        <files mask="WrappingLabel8ViewFactory.java" hidden="true"/>
+        <files mask="WrappingLabel9ViewFactory.java" hidden="true"/>
+        <files mask="WrappingLabelViewFactory.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/icons/full/ctool16" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/icons/full/ctool16" type="image">
+        <files mask="CreateAPDUPool_APDU_APDU.gif" hidden="true"/>
+        <files mask="CreateConfiguration_OS_OS.gif" hidden="true"/>
+        <files mask="CreateConfiguration_PDUM_PDUM.gif" hidden="true"/>
+        <files mask="CreateCooperativeGroup_CooperativeTasks_Task.gif" hidden="true"/>
+        <files mask="CreateDocumentRoot_Configuration_Configuration.gif" hidden="true"/>
+        <files mask="CreateHWCounter_SWTimers_SWTimer.gif" hidden="true"/>
+        <files mask="CreateModule_Callbacks_CallbackFunction.gif" hidden="true"/>
+        <files mask="CreateModule_CooperativeTaskGroups_CooperativeGroup.gif" hidden="true"/>
+        <files mask="CreateModule_HWCounters_HWCounter.gif" hidden="true"/>
+        <files mask="CreateModule_ISRs_ISR.gif" hidden="true"/>
+        <files mask="CreateModule_InterruptSources_InterruptSource.gif" hidden="true"/>
+        <files mask="CreateModule_Messages_Message.gif" hidden="true"/>
+        <files mask="CreateModule_Mutexs_Mutex.gif" hidden="true"/>
+        <files mask="CreateModule_Tasks_Task.gif" hidden="true"/>
+        <files mask="CreateOS_Modules_Module.gif" hidden="true"/>
+        <files mask="CreatePDUM_APDUPool_APDUPool.gif" hidden="true"/>
+        <files mask="CreatePDUM_NPDUPool_NPDUPool.gif" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/icons/full/ctool16" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/icons/full/ctool16" type="other">
+        <files mask="Thumbs.db" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/icons/full/obj16" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/icons/full/obj16" type="image">
+        <files mask="CallbackFunction.gif" hidden="true"/>
+        <files mask="Configuration.gif" hidden="true"/>
+        <files mask="CooperativeGroup.gif" hidden="true"/>
+        <files mask="DocumentRoot.gif" hidden="true"/>
+        <files mask="HWCounter.gif" hidden="true"/>
+        <files mask="ISR.gif" hidden="true"/>
+        <files mask="InterruptSource.gif" hidden="true"/>
+        <files mask="Message.gif" hidden="true"/>
+        <files mask="Module.gif" hidden="true"/>
+        <files mask="Mutex.gif" hidden="true"/>
+        <files mask="OS.gif" hidden="true"/>
+        <files mask="SWTimer.gif" hidden="true"/>
+        <files mask="Task.gif" hidden="true"/>
+        <files mask="callback.png" hidden="true"/>
+        <files mask="collectmessage.png" hidden="true"/>
+        <files mask="coop-task.png" hidden="true"/>
+        <files mask="hcounter.png" hidden="true"/>
+        <files mask="hwcount-callback.png" hidden="true"/>
+        <files mask="isource-isr.png" hidden="true"/>
+        <files mask="isource.png" hidden="true"/>
+        <files mask="isr.png" hidden="true"/>
+        <files mask="message-isr.png" hidden="true"/>
+        <files mask="message-task.png" hidden="true"/>
+        <files mask="message.png" hidden="true"/>
+        <files mask="module.png" hidden="true"/>
+        <files mask="mutex.png" hidden="true"/>
+        <files mask="os.png" hidden="true"/>
+        <files mask="postmessage.png" hidden="true"/>
+        <files mask="stimer.png" hidden="true"/>
+        <files mask="swtime-callback.png" hidden="true"/>
+        <files mask="swtime-task.png" hidden="true"/>
+        <files mask="task-mutex.png" hidden="true"/>
+        <files mask="task.png" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/icons/full/obj16" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/icons/full/obj16" type="other">
+        <files mask="Thumbs.db" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/icons/full/obj32" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/icons/full/obj32" type="other">
+        <files mask="Thumbs.db" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/icons/full/obj32" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/icons/full/obj32" type="image">
+        <files mask="callback.png" hidden="true"/>
+        <files mask="collectmessage.png" hidden="true"/>
+        <files mask="coop-task.png" hidden="true"/>
+        <files mask="hcounter.png" hidden="true"/>
+        <files mask="hwcount-callback.png" hidden="true"/>
+        <files mask="isource-isr.png" hidden="true"/>
+        <files mask="isource.png" hidden="true"/>
+        <files mask="isr.png" hidden="true"/>
+        <files mask="message-isr.png" hidden="true"/>
+        <files mask="message-task.png" hidden="true"/>
+        <files mask="message.png" hidden="true"/>
+        <files mask="module.png" hidden="true"/>
+        <files mask="mutex.png" hidden="true"/>
+        <files mask="os.png" hidden="true"/>
+        <files mask="postmessage.png" hidden="true"/>
+        <files mask="stimer.png" hidden="true"/>
+        <files mask="swtime-callback.png" hidden="true"/>
+        <files mask="swtime-task.png" hidden="true"/>
+        <files mask="task-message.png" hidden="true"/>
+        <files mask="task-mutex.png" hidden="true"/>
+        <files mask="task.png" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/src/oscfg/provider" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.edit/src/oscfg/provider" type="other">
+        <files mask="BaseTaskItemProvider.java" hidden="true"/>
+        <files mask="CallbackFunctionItemProvider.java" hidden="true"/>
+        <files mask="ConfigurationItemProvider.java" hidden="true"/>
+        <files mask="CooperativeGroupItemProvider.java" hidden="true"/>
+        <files mask="DocumentRootItemProvider.java" hidden="true"/>
+        <files mask="HWCounterItemProvider.java" hidden="true"/>
+        <files mask="ISRItemProvider.java" hidden="true"/>
+        <files mask="InterruptSourceItemProvider.java" hidden="true"/>
+        <files mask="MessageItemProvider.java" hidden="true"/>
+        <files mask="ModuleItemProvider.java" hidden="true"/>
+        <files mask="MutexItemProvider.java" hidden="true"/>
+        <files mask="NamedObjectItemProvider.java" hidden="true"/>
+        <files mask="OSItemProvider.java" hidden="true"/>
+        <files mask="OscfgEditPlugin.java" hidden="true"/>
+        <files mask="OscfgItemProviderAdapterFactory.java" hidden="true"/>
+        <files mask="PosterItemProvider.java" hidden="true"/>
+        <files mask="SWTimerItemProvider.java" hidden="true"/>
+        <files mask="TaskItemProvider.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.editor/icons/full/obj16" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.editor/icons/full/obj16" type="image">
+        <files mask="OscfgModelFile.gif" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.editor/icons/full/wizban" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.editor/icons/full/wizban" type="image">
+        <files mask="NewOscfg.gif" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.editor/src/oscfg/presentation" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.OSConfigDiagramEditor.editor/src/oscfg/presentation" type="other">
+        <files mask="OscfgActionBarContributor.java" hidden="true"/>
+        <files mask="OscfgEditor.java" hidden="true"/>
+        <files mask="OscfgEditorPlugin.java" hidden="true"/>
+        <files mask="OscfgModelWizard.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor/META-INF" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor/META-INF" type="other">
+        <files mask="MANIFEST.MF" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor" type="other">
+        <files mask="build.properties" hidden="true"/>
+        <files mask="plugin.properties" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor/model" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor/model" type="other">
+        <files mask="ZPSConfig.ecore" hidden="true"/>
+        <files mask="ZPSConfig.ecorediag" hidden="true"/>
+        <files mask="ZPSConfig.genmodel" hidden="true"/>
+        <files mask="ZPSConfigurationXML.xsd" hidden="true"/>
+        <files mask="ZPSConfigurationXML.xsd2ecore" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor" type="xml">
+        <files mask="plugin.xml" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor/src/com/jennic/ZPSConfiguration" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor/src/com/jennic/ZPSConfiguration" type="other">
+        <files mask="APDU.java" hidden="true"/>
+        <files mask="ActiveEpServer.java" hidden="true"/>
+        <files mask="AlwaysOnNode.java" hidden="true"/>
+        <files mask="Attribute.java" hidden="true"/>
+        <files mask="BackupBindingCache.java" hidden="true"/>
+        <files mask="BackupDiscoveryCache.java" hidden="true"/>
+        <files mask="BackupGroupCache.java" hidden="true"/>
+        <files mask="BindRequestServer.java" hidden="true"/>
+        <files mask="BindUnbindServer.java" hidden="true"/>
+        <files mask="BindingCache.java" hidden="true"/>
+        <files mask="BindingTable.java" hidden="true"/>
+        <files mask="ChannelMask.java" hidden="true"/>
+        <files mask="ChannelPageList.java" hidden="true"/>
+        <files mask="ChildNodes.java" hidden="true"/>
+        <files mask="Cluster.java" hidden="true"/>
+        <files mask="Command.java" hidden="true"/>
+        <files mask="ComplexDescriptor.java" hidden="true"/>
+        <files mask="Coordinator.java" hidden="true"/>
+        <files mask="DefaultNwkKey.java" hidden="true"/>
+        <files mask="DefaultServer.java" hidden="true"/>
+        <files mask="DeviceAnnceServer.java" hidden="true"/>
+        <files mask="DiscoveryCache.java" hidden="true"/>
+        <files mask="DiscoveryTable.java" hidden="true"/>
+        <files mask="EndDevice.java" hidden="true"/>
+        <files mask="EndDeviceBindServer.java" hidden="true"/>
+        <files mask="EndPoint.java" hidden="true"/>
+        <files mask="ExtendedActiveEpServer.java" hidden="true"/>
+        <files mask="ExtendedSimpleDescServer.java" hidden="true"/>
+        <files mask="FrequencyBands.java" hidden="true"/>
+        <files mask="GreenPowerSecurityTable.java" hidden="true"/>
+        <files mask="GreenPowerTxQueue.java" hidden="true"/>
+        <files mask="GroupTable.java" hidden="true"/>
+        <files mask="IeeeAddrServer.java" hidden="true"/>
+        <files mask="InitialKey.java" hidden="true"/>
+        <files mask="InputCluster.java" hidden="true"/>
+        <files mask="KeyDescriptorTable.java" hidden="true"/>
+        <files mask="MacInterface.java" hidden="true"/>
+        <files mask="MacInterfaceList.java" hidden="true"/>
+        <files mask="MatchDescServer.java" hidden="true"/>
+        <files mask="MgmtBindServer.java" hidden="true"/>
+        <files mask="MgmtLeaveServer.java" hidden="true"/>
+        <files mask="MgmtLqiServer.java" hidden="true"/>
+        <files mask="MgmtMibIeeeServer.java" hidden="true"/>
+        <files mask="MgmtNWKEnhanceUpdateServer.java" hidden="true"/>
+        <files mask="MgmtNWKUpdateServer.java" hidden="true"/>
+        <files mask="MgmtRtgServer.java" hidden="true"/>
+        <files mask="NamedObject.java" hidden="true"/>
+        <files mask="NetworkSelectionTypes.java" hidden="true"/>
+        <files mask="Node.java" hidden="true"/>
+        <files mask="NodeDescServer.java" hidden="true"/>
+        <files mask="NodeDescriptor.java" hidden="true"/>
+        <files mask="NodeLogicalType.java" hidden="true"/>
+        <files mask="NodePowerDescriptor.java" hidden="true"/>
+        <files mask="NotImplemented.java" hidden="true"/>
+        <files mask="NwkAddrServer.java" hidden="true"/>
+        <files mask="NwkKey.java" hidden="true"/>
+        <files mask="OutputCluster.java" hidden="true"/>
+        <files mask="PDUManager.java" hidden="true"/>
+        <files mask="ParentAnnceServer.java" hidden="true"/>
+        <files mask="PermitJoiningServer.java" hidden="true"/>
+        <files mask="PowerDescServer.java" hidden="true"/>
+        <files mask="PowerModes.java" hidden="true"/>
+        <files mask="PowerSources.java" hidden="true"/>
+        <files mask="PreConfiguredNwkKey.java" hidden="true"/>
+        <files mask="PreconfiguredKey.java" hidden="true"/>
+        <files mask="PreconfiguredTCLinkKey.java" hidden="true"/>
+        <files mask="PrimaryBindingCache.java" hidden="true"/>
+        <files mask="PrimaryDiscoveryCache.java" hidden="true"/>
+        <files mask="PrimaryGroupCache.java" hidden="true"/>
+        <files mask="Profile.java" hidden="true"/>
+        <files mask="RadioType.java" hidden="true"/>
+        <files mask="Router.java" hidden="true"/>
+        <files mask="SimpleDescServer.java" hidden="true"/>
+        <files mask="SystemServerDiscoveryServer.java" hidden="true"/>
+        <files mask="TCKey.java" hidden="true"/>
+        <files mask="TrustCenter.java" hidden="true"/>
+        <files mask="UserDescriptor.java" hidden="true"/>
+        <files mask="ZDOClientServer.java" hidden="true"/>
+        <files mask="ZDOCommonServers.java" hidden="true"/>
+        <files mask="ZDOCoordRouterOnlyServers.java" hidden="true"/>
+        <files mask="ZDOServer.java" hidden="true"/>
+        <files mask="ZDOServersCoordinator.java" hidden="true"/>
+        <files mask="ZDOServersEndDevice.java" hidden="true"/>
+        <files mask="ZDOServersRouter.java" hidden="true"/>
+        <files mask="ZPSConfigurationFactory.java" hidden="true"/>
+        <files mask="ZPSConfigurationPackage.java" hidden="true"/>
+        <files mask="ZdoClient.java" hidden="true"/>
+        <files mask="ZigbeeWirelessNetwork.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor/src/com/jennic/ZPSConfiguration/impl" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor/src/com/jennic/ZPSConfiguration/impl" type="other">
+        <files mask="APDUImpl.java" hidden="true"/>
+        <files mask="ActiveEpServerImpl.java" hidden="true"/>
+        <files mask="AlwaysOnNodeImpl.java" hidden="true"/>
+        <files mask="BackupBindingCacheImpl.java" hidden="true"/>
+        <files mask="BackupDiscoveryCacheImpl.java" hidden="true"/>
+        <files mask="BackupGroupCacheImpl.java" hidden="true"/>
+        <files mask="BindRequestServerImpl.java" hidden="true"/>
+        <files mask="BindUnbindServerImpl.java" hidden="true"/>
+        <files mask="BindingCacheImpl.java" hidden="true"/>
+        <files mask="BindingTableImpl.java" hidden="true"/>
+        <files mask="ChannelMaskImpl.java" hidden="true"/>
+        <files mask="ChildNodesImpl.java" hidden="true"/>
+        <files mask="ClusterImpl.java" hidden="true"/>
+        <files mask="ComplexDescriptorImpl.java" hidden="true"/>
+        <files mask="CoordinatorImpl.java" hidden="true"/>
+        <files mask="DefaultNwkKeyImpl.java" hidden="true"/>
+        <files mask="DefaultServerImpl.java" hidden="true"/>
+        <files mask="DeviceAnnceServerImpl.java" hidden="true"/>
+        <files mask="DiscoveryCacheImpl.java" hidden="true"/>
+        <files mask="DiscoveryTableImpl.java" hidden="true"/>
+        <files mask="EndDeviceBindServerImpl.java" hidden="true"/>
+        <files mask="EndDeviceImpl.java" hidden="true"/>
+        <files mask="EndPointImpl.java" hidden="true"/>
+        <files mask="ExtendedActiveEpServerImpl.java" hidden="true"/>
+        <files mask="ExtendedSimpleDescServerImpl.java" hidden="true"/>
+        <files mask="GreenPowerSecurityTableImpl.java" hidden="true"/>
+        <files mask="GreenPowerTxQueueImpl.java" hidden="true"/>
+        <files mask="GroupTableImpl.java" hidden="true"/>
+        <files mask="IeeeAddrServerImpl.java" hidden="true"/>
+        <files mask="InputClusterImpl.java" hidden="true"/>
+        <files mask="KeyDescriptorTableImpl.java" hidden="true"/>
+        <files mask="MacInterfaceImpl.java" hidden="true"/>
+        <files mask="MacInterfaceListImpl.java" hidden="true"/>
+        <files mask="MatchDescServerImpl.java" hidden="true"/>
+        <files mask="MgmtBindServerImpl.java" hidden="true"/>
+        <files mask="MgmtLeaveServerImpl.java" hidden="true"/>
+        <files mask="MgmtLqiServerImpl.java" hidden="true"/>
+        <files mask="MgmtMibIeeeServerImpl.java" hidden="true"/>
+        <files mask="MgmtNWKEnhanceUpdateServerImpl.java" hidden="true"/>
+        <files mask="MgmtNWKUpdateServerImpl.java" hidden="true"/>
+        <files mask="MgmtRtgServerImpl.java" hidden="true"/>
+        <files mask="NamedObjectImpl.java" hidden="true"/>
+        <files mask="NodeDescServerImpl.java" hidden="true"/>
+        <files mask="NodeDescriptorImpl.java" hidden="true"/>
+        <files mask="NodeImpl.java" hidden="true"/>
+        <files mask="NodePowerDescriptorImpl.java" hidden="true"/>
+        <files mask="NotImplementedImpl.java" hidden="true"/>
+        <files mask="NwkAddrServerImpl.java" hidden="true"/>
+        <files mask="NwkKeyImpl.java" hidden="true"/>
+        <files mask="OutputClusterImpl.java" hidden="true"/>
+        <files mask="PDUManagerImpl.java" hidden="true"/>
+        <files mask="ParentAnnceServerImpl.java" hidden="true"/>
+        <files mask="PermitJoiningServerImpl.java" hidden="true"/>
+        <files mask="PowerDescServerImpl.java" hidden="true"/>
+        <files mask="PreConfiguredNwkKeyImpl.java" hidden="true"/>
+        <files mask="PreconfiguredKeyImpl.java" hidden="true"/>
+        <files mask="PreconfiguredTCLinkKeyImpl.java" hidden="true"/>
+        <files mask="PrimaryBindingCacheImpl.java" hidden="true"/>
+        <files mask="PrimaryDiscoveryCacheImpl.java" hidden="true"/>
+        <files mask="PrimaryGroupCacheImpl.java" hidden="true"/>
+        <files mask="ProfileImpl.java" hidden="true"/>
+        <files mask="RouterImpl.java" hidden="true"/>
+        <files mask="SimpleDescServerImpl.java" hidden="true"/>
+        <files mask="SystemServerDiscoveryServerImpl.java" hidden="true"/>
+        <files mask="TCKeyImpl.java" hidden="true"/>
+        <files mask="TrustCenterImpl.java" hidden="true"/>
+        <files mask="UserDescriptorImpl.java" hidden="true"/>
+        <files mask="ZDOClientServerImpl.java" hidden="true"/>
+        <files mask="ZDOCommonServersImpl.java" hidden="true"/>
+        <files mask="ZDOCoordRouterOnlyServersImpl.java" hidden="true"/>
+        <files mask="ZDOServersCoordinatorImpl.java" hidden="true"/>
+        <files mask="ZDOServersEndDeviceImpl.java" hidden="true"/>
+        <files mask="ZDOServersRouterImpl.java" hidden="true"/>
+        <files mask="ZPSConfigurationFactoryImpl.java" hidden="true"/>
+        <files mask="ZPSConfigurationPackageImpl.java" hidden="true"/>
+        <files mask="ZdoClientImpl.java" hidden="true"/>
+        <files mask="ZigbeeWirelessNetworkImpl.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor/src/com/jennic/ZPSConfiguration/util" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor/src/com/jennic/ZPSConfiguration/util" type="other">
+        <files mask="ZPSConfigurationAdapterFactory.java" hidden="true"/>
+        <files mask="ZPSConfigurationResourceFactoryImpl.java" hidden="true"/>
+        <files mask="ZPSConfigurationResourceImpl.java" hidden="true"/>
+        <files mask="ZPSConfigurationSwitch.java" hidden="true"/>
+        <files mask="ZPSConfigurationXMLProcessor.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor/src/com/jennic/ZPSConfiguration/validation" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor/src/com/jennic/ZPSConfiguration/validation" type="other">
+        <files mask="APDUValidator.java" hidden="true"/>
+        <files mask="ActiveEpServerValidator.java" hidden="true"/>
+        <files mask="AlwaysOnNodeValidator.java" hidden="true"/>
+        <files mask="AttributeValidator.java" hidden="true"/>
+        <files mask="BackupBindingCacheValidator.java" hidden="true"/>
+        <files mask="BackupDiscoveryCacheValidator.java" hidden="true"/>
+        <files mask="BackupGroupCacheValidator.java" hidden="true"/>
+        <files mask="BindRequestServerValidator.java" hidden="true"/>
+        <files mask="BindUnbindServerValidator.java" hidden="true"/>
+        <files mask="BindingCacheValidator.java" hidden="true"/>
+        <files mask="BindingTableValidator.java" hidden="true"/>
+        <files mask="ChannelMaskValidator.java" hidden="true"/>
+        <files mask="ChildNodesValidator.java" hidden="true"/>
+        <files mask="ClusterValidator.java" hidden="true"/>
+        <files mask="CommandValidator.java" hidden="true"/>
+        <files mask="ComplexDescriptorValidator.java" hidden="true"/>
+        <files mask="CoordinatorValidator.java" hidden="true"/>
+        <files mask="DefaultServerValidator.java" hidden="true"/>
+        <files mask="DeviceAnnceServerValidator.java" hidden="true"/>
+        <files mask="DiscoveryCacheValidator.java" hidden="true"/>
+        <files mask="DiscoveryTableValidator.java" hidden="true"/>
+        <files mask="EndDeviceBindServerValidator.java" hidden="true"/>
+        <files mask="EndDeviceValidator.java" hidden="true"/>
+        <files mask="EndPointValidator.java" hidden="true"/>
+        <files mask="ExtendedActiveEpServerValidator.java" hidden="true"/>
+        <files mask="ExtendedSimpleDescServerValidator.java" hidden="true"/>
+        <files mask="GroupTableValidator.java" hidden="true"/>
+        <files mask="IeeeAddrServerValidator.java" hidden="true"/>
+        <files mask="InputClusterValidator.java" hidden="true"/>
+        <files mask="MatchDescServerValidator.java" hidden="true"/>
+        <files mask="MgmtLeaveServerValidator.java" hidden="true"/>
+        <files mask="MgmtLqiServerValidator.java" hidden="true"/>
+        <files mask="MgmtNWKUpdateServerValidator.java" hidden="true"/>
+        <files mask="MgmtRtgServerValidator.java" hidden="true"/>
+        <files mask="NamedObjectValidator.java" hidden="true"/>
+        <files mask="NodeDescServerValidator.java" hidden="true"/>
+        <files mask="NodeDescriptorValidator.java" hidden="true"/>
+        <files mask="NodePowerDescriptorValidator.java" hidden="true"/>
+        <files mask="NodeValidator.java" hidden="true"/>
+        <files mask="NotImplementedValidator.java" hidden="true"/>
+        <files mask="NwkAddrServerValidator.java" hidden="true"/>
+        <files mask="OutputClusterValidator.java" hidden="true"/>
+        <files mask="PDUManagerValidator.java" hidden="true"/>
+        <files mask="PermitJoiningServerValidator.java" hidden="true"/>
+        <files mask="PowerDescServerValidator.java" hidden="true"/>
+        <files mask="PrimaryBindingCacheValidator.java" hidden="true"/>
+        <files mask="PrimaryDiscoveryCacheValidator.java" hidden="true"/>
+        <files mask="PrimaryGroupCacheValidator.java" hidden="true"/>
+        <files mask="ProfileValidator.java" hidden="true"/>
+        <files mask="RouterValidator.java" hidden="true"/>
+        <files mask="SimpleDescServerValidator.java" hidden="true"/>
+        <files mask="SystemServerDiscoveryServerValidator.java" hidden="true"/>
+        <files mask="TrustCenterValidator.java" hidden="true"/>
+        <files mask="UserDescriptorValidator.java" hidden="true"/>
+        <files mask="ZDOClientServerValidator.java" hidden="true"/>
+        <files mask="ZDOCommonServersValidator.java" hidden="true"/>
+        <files mask="ZDOServersCoordinatorValidator.java" hidden="true"/>
+        <files mask="ZDOServersEndDeviceValidator.java" hidden="true"/>
+        <files mask="ZDOServersRouterValidator.java" hidden="true"/>
+        <files mask="ZdoClientValidator.java" hidden="true"/>
+        <files mask="ZigbeeWirelessNetworkValidator.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit/META-INF" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit/META-INF" type="other">
+        <files mask="MANIFEST.MF" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit" type="other">
+        <files mask="build.properties" hidden="true"/>
+        <files mask="plugin.properties" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit/icons/full/ctool16" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit/icons/full/ctool16" type="image">
+        <files mask="CreateAlwaysOnNode_TrustCenter_TrustCenter.gif" hidden="true"/>
+        <files mask="CreateCoordinator_ZDOServers_ZDOServersCoordinator.gif" hidden="true"/>
+        <files mask="CreateEndDevice_ZDOServers_ZDOServersEndDevice.gif" hidden="true"/>
+        <files mask="CreateEndPoint_InputClusters_InputCluster.gif" hidden="true"/>
+        <files mask="CreateEndPoint_OutputClusters_OutputCluster.gif" hidden="true"/>
+        <files mask="CreateKeyDescriptorTable_PreconfiguredKey_PreconfiguredKey.gif" hidden="true"/>
+        <files mask="CreateMacInterfaceList_MacInterface_MacInterface.gif" hidden="true"/>
+        <files mask="CreateNode_BindingTable_BindingTable.gif" hidden="true"/>
+        <files mask="CreateNode_ChannelMask_ChannelMask.gif" hidden="true"/>
+        <files mask="CreateNode_Endpoints_EndPoint.gif" hidden="true"/>
+        <files mask="CreateNode_GreenPowerSecurityTable_GreenPowerSecurityTable.gif" hidden="true"/>
+        <files mask="CreateNode_GreenPowerTxQueue_GreenPowerTxQueue.gif" hidden="true"/>
+        <files mask="CreateNode_GroupTable_GroupTable.gif" hidden="true"/>
+        <files mask="CreateNode_KeyDescriptorTable_KeyDescriptorTable.gif" hidden="true"/>
+        <files mask="CreateNode_MacInterfaceList_MacInterfaceList.gif" hidden="true"/>
+        <files mask="CreateNode_NodeDescriptor_NodeDescriptor.gif" hidden="true"/>
+        <files mask="CreateNode_NodePowerDescriptor_NodePowerDescriptor.gif" hidden="true"/>
+        <files mask="CreateNode_PDUConfiguration_PDUManager.gif" hidden="true"/>
+        <files mask="CreateNode_UserDescriptor_UserDescriptor.gif" hidden="true"/>
+        <files mask="CreateNotImplemented_BindingCache_BackupBindingCache.gif" hidden="true"/>
+        <files mask="CreateNotImplemented_BindingCache_PrimaryBindingCache.gif" hidden="true"/>
+        <files mask="CreateNotImplemented_ComplexDescriptor_ComplexDescriptor.gif" hidden="true"/>
+        <files mask="CreateNotImplemented_DiscoveryCache_BackupDiscoveryCache.gif" hidden="true"/>
+        <files mask="CreateNotImplemented_DiscoveryCache_DiscoveryCache.gif" hidden="true"/>
+        <files mask="CreateNotImplemented_DiscoveryCache_PrimaryDiscoveryCache.gif" hidden="true"/>
+        <files mask="CreateNotImplemented_DiscoveryTable_DiscoveryTable.gif" hidden="true"/>
+        <files mask="CreatePDUManager_APDUs_APDU.gif" hidden="true"/>
+        <files mask="CreateProfile_Clusters_Cluster.gif" hidden="true"/>
+        <files mask="CreateRouter_ZDOServers_ZDOServersRouter.gif" hidden="true"/>
+        <files mask="CreateTrustCenter_Keys_DefaultNwkKey.gif" hidden="true"/>
+        <files mask="CreateTrustCenter_Keys_PreConfiguredNwkKey.gif" hidden="true"/>
+        <files mask="CreateTrustCenter_Keys_PreconfiguredTCLinkKey.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_ActiveEpServer_ActiveEpServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_BindRequestServer_BindRequestServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_BindUnbindServer_BindUnbindServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_DefaultServer_DefaultServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_DeviceAnnceServer_DeviceAnnceServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_ExtendedActiveEpServer_ExtendedActiveEpServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_ExtendedSimpleDescServer_ExtendedSimpleDescServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_IeeeAddrServer_IeeeAddrServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_MatchDescServer_MatchDescServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_MgmtBindServer_MgmtBindServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_MgmtLeaveServer_MgmtLeaveServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_MgmtLqiServer_MgmtLqiServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_MgmtMibIeeeServer_MgmtMibIeeeServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_MgmtNWKEnhanceUpdateServer_MgmtNWKEnhanceUpdateServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_MgmtNWKUpdateServer_MgmtNWKUpdateServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_NodeDescServer_NodeDescServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_NwkAddrServer_NwkAddrServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_PowerDescServer_PowerDescServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_SimpleDescServer_SimpleDescServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_SystemServerDiscoveryServer_SystemServerDiscoveryServer.gif" hidden="true"/>
+        <files mask="CreateZDOCommonServers_ZdoClient_ZdoClient.gif" hidden="true"/>
+        <files mask="CreateZDOCoordRouterOnlyServers_MgmtMibIeeeServer_MgmtMibIeeeServer.gif" hidden="true"/>
+        <files mask="CreateZDOCoordRouterOnlyServers_MgmtRtgServer_MgmtRtgServer.gif" hidden="true"/>
+        <files mask="CreateZDOCoordRouterOnlyServers_ParentAnnceServer_ParentAnnceServer.gif" hidden="true"/>
+        <files mask="CreateZDOCoordRouterOnlyServers_PermitJoiningServer_PermitJoiningServer.gif" hidden="true"/>
+        <files mask="CreateZDOServersCoordinator_EndDeviceBindServer_EndDeviceBindServer.gif" hidden="true"/>
+        <files mask="CreateZigbeeWirelessNetwork_ChildNodes_EndDevice.gif" hidden="true"/>
+        <files mask="CreateZigbeeWirelessNetwork_ChildNodes_Router.gif" hidden="true"/>
+        <files mask="CreateZigbeeWirelessNetwork_Coordinator_Coordinator.gif" hidden="true"/>
+        <files mask="CreateZigbeeWirelessNetwork_Profiles_Profile.gif" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit/icons/full/obj16" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit/icons/full/obj16" type="image">
+        <files mask="APDU.gif" hidden="true"/>
+        <files mask="APDU.png" hidden="true"/>
+        <files mask="ActiveEpServer.gif" hidden="true"/>
+        <files mask="BackupBindingCache.gif" hidden="true"/>
+        <files mask="BackupDiscoveryCache.gif" hidden="true"/>
+        <files mask="BackupGroupCache.gif" hidden="true"/>
+        <files mask="BackupTrustCentre.gif" hidden="true"/>
+        <files mask="BindRequestServer.gif" hidden="true"/>
+        <files mask="BindUnbindServer.gif" hidden="true"/>
+        <files mask="BindingTable.gif" hidden="true"/>
+        <files mask="BindingTable.png" hidden="true"/>
+        <files mask="ChannelMask.gif" hidden="true"/>
+        <files mask="ChannelMask.png" hidden="true"/>
+        <files mask="ChannelPageList.gif" hidden="true"/>
+        <files mask="ChildNodes.gif" hidden="true"/>
+        <files mask="Cluster.gif" hidden="true"/>
+        <files mask="Cluster.png" hidden="true"/>
+        <files mask="Command.gif" hidden="true"/>
+        <files mask="ComplexDescriptor.gif" hidden="true"/>
+        <files mask="Coordinator.gif" hidden="true"/>
+        <files mask="Coordinator.png" hidden="true"/>
+        <files mask="DefaultNwkKey.gif" hidden="true"/>
+        <files mask="DefaultNwkKey.png" hidden="true"/>
+        <files mask="DefaultServer.gif" hidden="true"/>
+        <files mask="DeviceAnnceServer.gif" hidden="true"/>
+        <files mask="DiscoveryCache.gif" hidden="true"/>
+        <files mask="DiscoveryTable.gif" hidden="true"/>
+        <files mask="EndDevice.gif" hidden="true"/>
+        <files mask="EndDevice.png" hidden="true"/>
+        <files mask="EndDeviceBind.gif" hidden="true"/>
+        <files mask="EndDeviceBindServer.gif" hidden="true"/>
+        <files mask="EndDeviceSleeping.png" hidden="true"/>
+        <files mask="EndPoint.gif" hidden="true"/>
+        <files mask="EndPoint.png" hidden="true"/>
+        <files mask="ExtendedActiveEpServer.gif" hidden="true"/>
+        <files mask="ExtendedSimpleDescServer.gif" hidden="true"/>
+        <files mask="Frame.gif" hidden="true"/>
+        <files mask="GreenPowerSecurityTable.gif" hidden="true"/>
+        <files mask="GreenPowerTxQueue.gif" hidden="true"/>
+        <files mask="GroupTable.gif" hidden="true"/>
+        <files mask="GroupTable.png" hidden="true"/>
+        <files mask="IeeeAddrServer.gif" hidden="true"/>
+        <files mask="InputCluster.gif" hidden="true"/>
+        <files mask="InputCluster.png" hidden="true"/>
+        <files mask="KeyDescriptorTable.gif" hidden="true"/>
+        <files mask="KeyDescriptorTable.png" hidden="true"/>
+        <files mask="MacInterface.gif" hidden="true"/>
+        <files mask="MacInterfaceList.gif" hidden="true"/>
+        <files mask="MatchDescServer.gif" hidden="true"/>
+        <files mask="MgmtBindServer.gif" hidden="true"/>
+        <files mask="MgmtLeaveServer.gif" hidden="true"/>
+        <files mask="MgmtLqiServer.gif" hidden="true"/>
+        <files mask="MgmtMibIeeeServer.gif" hidden="true"/>
+        <files mask="MgmtNWKEnhanceUpdateServer.gif" hidden="true"/>
+        <files mask="MgmtNWKUpdateServer.gif" hidden="true"/>
+        <files mask="MgmtRtgServer.gif" hidden="true"/>
+        <files mask="NetworkLayer.gif" hidden="true"/>
+        <files mask="NodeDescServer.gif" hidden="true"/>
+        <files mask="NodeDescriptor.gif" hidden="true"/>
+        <files mask="NodeDescriptor.png" hidden="true"/>
+        <files mask="NodePowerDescriptor.gif" hidden="true"/>
+        <files mask="NodePowerDescriptor.png" hidden="true"/>
+        <files mask="NotImplemented.gif" hidden="true"/>
+        <files mask="NwkAddrServer.gif" hidden="true"/>
+        <files mask="OutputCluster.gif" hidden="true"/>
+        <files mask="OutputCluster.png" hidden="true"/>
+        <files mask="PDUManager.gif" hidden="true"/>
+        <files mask="PDUManager.png" hidden="true"/>
+        <files mask="ParentAnnceServer.gif" hidden="true"/>
+        <files mask="PermitJoiningServer.gif" hidden="true"/>
+        <files mask="PowerDescServer.gif" hidden="true"/>
+        <files mask="PreConfiguredNwkKey.gif" hidden="true"/>
+        <files mask="PreConfiguredNwkKey.png" hidden="true"/>
+        <files mask="PreconfiguredKey.gif" hidden="true"/>
+        <files mask="PreconfiguredKey.png" hidden="true"/>
+        <files mask="PreconfiguredTCLinkKey.gif" hidden="true"/>
+        <files mask="PreconfiguredTCLinkKey.png" hidden="true"/>
+        <files mask="PrimaryBindingCache.gif" hidden="true"/>
+        <files mask="PrimaryDiscoveryCache.gif" hidden="true"/>
+        <files mask="PrimaryGroupCache.gif" hidden="true"/>
+        <files mask="PrimaryTrustCentre.gif" hidden="true"/>
+        <files mask="Profile.gif" hidden="true"/>
+        <files mask="Profile.png" hidden="true"/>
+        <files mask="Router.gif" hidden="true"/>
+        <files mask="Router.png" hidden="true"/>
+        <files mask="SimpleDescServer.gif" hidden="true"/>
+        <files mask="SleepingEndDevice.png" hidden="true"/>
+        <files mask="SystemServerDiscoveryServer.gif" hidden="true"/>
+        <files mask="TrustCenter.gif" hidden="true"/>
+        <files mask="TrustCenter.png" hidden="true"/>
+        <files mask="UserDescriptor.gif" hidden="true"/>
+        <files mask="UserDescriptor.png" hidden="true"/>
+        <files mask="ZDOServer.png" hidden="true"/>
+        <files mask="ZDOServers.png" hidden="true"/>
+        <files mask="ZDOServersCoordinator.gif" hidden="true"/>
+        <files mask="ZDOServersEndDevice.gif" hidden="true"/>
+        <files mask="ZDOServersRouter.gif" hidden="true"/>
+        <files mask="ZdoClient.gif" hidden="true"/>
+        <files mask="ZigbeeWirelessNetwork.gif" hidden="true"/>
+        <files mask="ZigbeeWirelessNetwork.png" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit/icons/full/obj16" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit/icons/full/obj16" type="other">
+        <files mask="Thumbs.db" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit" type="xml">
+        <files mask="plugin.xml" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit/src/com/jennic/ZPSConfiguration/provider" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit/src/com/jennic/ZPSConfiguration/provider" type="other">
+        <files mask="APDUItemProvider.java" hidden="true"/>
+        <files mask="ActiveEpServerItemProvider.java" hidden="true"/>
+        <files mask="AlwaysOnNodeItemProvider.java" hidden="true"/>
+        <files mask="AttributeItemProvider.java" hidden="true"/>
+        <files mask="BackupBindingCacheItemProvider.java" hidden="true"/>
+        <files mask="BackupDiscoveryCacheItemProvider.java" hidden="true"/>
+        <files mask="BackupGroupCacheItemProvider.java" hidden="true"/>
+        <files mask="BindRequestServerItemProvider.java" hidden="true"/>
+        <files mask="BindUnbindServerItemProvider.java" hidden="true"/>
+        <files mask="BindingCacheItemProvider.java" hidden="true"/>
+        <files mask="BindingTableItemProvider.java" hidden="true"/>
+        <files mask="ChannelMaskItemProvider.java" hidden="true"/>
+        <files mask="ChildNodesItemProvider.java" hidden="true"/>
+        <files mask="ClusterItemProvider.java" hidden="true"/>
+        <files mask="CommandItemProvider.java" hidden="true"/>
+        <files mask="ComplexDescriptorItemProvider.java" hidden="true"/>
+        <files mask="CoordinatorItemProvider.java" hidden="true"/>
+        <files mask="DefaultNwkKeyItemProvider.java" hidden="true"/>
+        <files mask="DefaultServerItemProvider.java" hidden="true"/>
+        <files mask="DeviceAnnceServerItemProvider.java" hidden="true"/>
+        <files mask="DiscoveryCacheItemProvider.java" hidden="true"/>
+        <files mask="DiscoveryTableItemProvider.java" hidden="true"/>
+        <files mask="EndDeviceBindItemProvider.java" hidden="true"/>
+        <files mask="EndDeviceBindServerItemProvider.java" hidden="true"/>
+        <files mask="EndDeviceItemProvider.java" hidden="true"/>
+        <files mask="EndPointItemProvider.java" hidden="true"/>
+        <files mask="ExtendedActiveEpServerItemProvider.java" hidden="true"/>
+        <files mask="ExtendedSimpleDescServerItemProvider.java" hidden="true"/>
+        <files mask="GreenPowerSecurityTableItemProvider.java" hidden="true"/>
+        <files mask="GreenPowerTxQueueItemProvider.java" hidden="true"/>
+        <files mask="GroupCacheItemProvider.java" hidden="true"/>
+        <files mask="GroupTableItemProvider.java" hidden="true"/>
+        <files mask="IeeeAddrServerItemProvider.java" hidden="true"/>
+        <files mask="InitialKeyItemProvider.java" hidden="true"/>
+        <files mask="InputClusterItemProvider.java" hidden="true"/>
+        <files mask="KeyDescriptorTableItemProvider.java" hidden="true"/>
+        <files mask="MacInterfaceItemProvider.java" hidden="true"/>
+        <files mask="MacInterfaceListItemProvider.java" hidden="true"/>
+        <files mask="MatchDescServerItemProvider.java" hidden="true"/>
+        <files mask="MgmtBindServerItemProvider.java" hidden="true"/>
+        <files mask="MgmtLeaveServerItemProvider.java" hidden="true"/>
+        <files mask="MgmtLqiServerItemProvider.java" hidden="true"/>
+        <files mask="MgmtMibIeeeServerItemProvider.java" hidden="true"/>
+        <files mask="MgmtNWKEnhanceUpdateServerItemProvider.java" hidden="true"/>
+        <files mask="MgmtNWKUpdateServerItemProvider.java" hidden="true"/>
+        <files mask="MgmtRtgServerItemProvider.java" hidden="true"/>
+        <files mask="NamedObjectItemProvider.java" hidden="true"/>
+        <files mask="NodeDescServerItemProvider.java" hidden="true"/>
+        <files mask="NodeDescriptorItemProvider.java" hidden="true"/>
+        <files mask="NodeItemProvider.java" hidden="true"/>
+        <files mask="NodePowerDescriptorItemProvider.java" hidden="true"/>
+        <files mask="NotImplementedItemProvider.java" hidden="true"/>
+        <files mask="NwkAddrServerItemProvider.java" hidden="true"/>
+        <files mask="NwkKeyItemProvider.java" hidden="true"/>
+        <files mask="OutputClusterItemProvider.java" hidden="true"/>
+        <files mask="PDUManagerItemProvider.java" hidden="true"/>
+        <files mask="ParentAnnceServerItemProvider.java" hidden="true"/>
+        <files mask="PermitJoiningServerItemProvider.java" hidden="true"/>
+        <files mask="PowerDescServerItemProvider.java" hidden="true"/>
+        <files mask="PreConfiguredNwkKeyItemProvider.java" hidden="true"/>
+        <files mask="PreconfiguredKeyItemProvider.java" hidden="true"/>
+        <files mask="PreconfiguredTCLinkKeyItemProvider.java" hidden="true"/>
+        <files mask="PrimaryBindingCacheItemProvider.java" hidden="true"/>
+        <files mask="PrimaryDiscoveryCacheItemProvider.java" hidden="true"/>
+        <files mask="PrimaryGroupCacheItemProvider.java" hidden="true"/>
+        <files mask="ProfileItemProvider.java" hidden="true"/>
+        <files mask="RouterItemProvider.java" hidden="true"/>
+        <files mask="SimpleDescServerItemProvider.java" hidden="true"/>
+        <files mask="SystemServerDiscoveryServerItemProvider.java" hidden="true"/>
+        <files mask="TCKeyItemProvider.java" hidden="true"/>
+        <files mask="TrustCenterItemProvider.java" hidden="true"/>
+        <files mask="UserDescriptorItemProvider.java" hidden="true"/>
+        <files mask="ZDOAlwaysOnServersItemProvider.java" hidden="true"/>
+        <files mask="ZDOClientServerItemProvider.java" hidden="true"/>
+        <files mask="ZDOCommonServersItemProvider.java" hidden="true"/>
+        <files mask="ZDOCoordRouterOnlyServersItemProvider.java" hidden="true"/>
+        <files mask="ZDOServersCoordinatorItemProvider.java" hidden="true"/>
+        <files mask="ZDOServersEndDeviceItemProvider.java" hidden="true"/>
+        <files mask="ZDOServersRouterItemProvider.java" hidden="true"/>
+        <files mask="ZPSConfigEditPlugin.java" hidden="true"/>
+        <files mask="ZPSConfigurationItemProviderAdapterFactory.java" hidden="true"/>
+        <files mask="ZdoClientItemProvider.java" hidden="true"/>
+        <files mask="ZigbeeWirelessNetworkItemProvider.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit/src/com/jennic/ZPSConfiguration/provider/util" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.edit/src/com/jennic/ZPSConfiguration/provider/util" type="other">
+        <files mask="ZigbeeWirelessNetworkChildEnricher.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/META-INF" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/META-INF" type="other">
+        <files mask="MANIFEST.MF" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor" type="other">
+        <files mask="build.properties" hidden="true"/>
+        <files mask="plugin.properties" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/icons/full/obj16" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/icons/full/obj16" type="other">
+        <files mask="Thumbs.db" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/icons/full/obj16" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/icons/full/obj16" type="image">
+        <files mask="ZPSConfigurationModelFile.gif" hidden="true"/>
+        <files mask="ZPSConfigurationModelFile.png" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/icons/full/wizban" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/icons/full/wizban" type="image">
+        <files mask="NewZPSConfiguration.gif" hidden="true"/>
+        <files mask="NewZPSConfiguration.png" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor" type="xml">
+        <files mask="plugin.xml" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/src/com/jennic/ZPSConfiguration/presentation" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/src/com/jennic/ZPSConfiguration/presentation" type="other">
+        <files mask="ZPSConfigEditorPlugin.java" hidden="true"/>
+        <files mask="ZPSConfigurationActionBarContributor.java" hidden="true"/>
+        <files mask="ZPSConfigurationEditor.java" hidden="true"/>
+        <files mask="ZPSConfigurationModelWizard.java" hidden="true"/>
+        <files mask="ZPSPropertySource.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/src/com/jennic/zps/jface/action" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/src/com/jennic/zps/jface/action" type="other">
+        <files mask="JennicFilterAction.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/src/com/jennic/zps/jface/action" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/src/com/jennic/zps/jface/action" type="image">
+        <files mask="jennic16.png" hidden="true"/>
+        <files mask="jennic24.png" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/src/com/jennic/zps/swt/hexdec" project_relative_path="tools/Eclipse_plugins/Source/com.jennic.zps.configeditor.editor/src/com/jennic/zps/swt/hexdec" type="other">
+        <files mask="HexDec.java" hidden="true"/>
+        <files mask="HexDecCellEditor.java" hidden="true"/>
+        <files mask="HexDecComponent.java" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/com.nxp.sdk.update_site" project_relative_path="tools/Eclipse_plugins/com.nxp.sdk.update_site" type="other">
+        <files mask="artifacts.jar" hidden="true"/>
+        <files mask="content.jar" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/com.nxp.sdk.update_site/features" project_relative_path="tools/Eclipse_plugins/com.nxp.sdk.update_site/features" type="other">
+        <files mask="com.jennic.sdk.zbpro.external.feature_2.1.3.jar" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/com.nxp.sdk.update_site" project_relative_path="tools/Eclipse_plugins/com.nxp.sdk.update_site" type="doc">
+        <files mask="index.html" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/com.nxp.sdk.update_site/plugins" project_relative_path="tools/Eclipse_plugins/com.nxp.sdk.update_site/plugins" type="other">
+        <files mask="com.jennic.zps.configeditor.edit_2.0.3.jar" hidden="true"/>
+        <files mask="com.jennic.zps.configeditor.editor_2.0.4.jar" hidden="true"/>
+        <files mask="com.jennic.zps.configeditor_2.0.3.jar" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/com.nxp.sdk.update_site" project_relative_path="tools/Eclipse_plugins/com.nxp.sdk.update_site" type="xml">
+        <files mask="site.xml" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/com.nxp.sdk.update_site/web" project_relative_path="tools/Eclipse_plugins/com.nxp.sdk.update_site/web" type="doc">
+        <files mask="site.css" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Eclipse_plugins/com.nxp.sdk.update_site/web" project_relative_path="tools/Eclipse_plugins/com.nxp.sdk.update_site/web" type="other">
+        <files mask="site.xsl" hidden="true"/>
+      </source>
+      <source relative_path="./tools/JET/win" project_relative_path="tools/JET/win" type="other">
+        <files mask="JET.exe" hidden="true"/>
+        <files mask="MSVCR71.dll" hidden="true"/>
+        <files mask="w9xpopen.exe" hidden="true"/>
+      </source>
+      <source relative_path="./tools/PDUMConfig/Source" project_relative_path="tools/PDUMConfig/Source" type="other">
+        <files mask="PDUMConfig" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Zigbee3ConfigEditor" project_relative_path="tools/Zigbee3ConfigEditor" type="other">
+        <files mask="Zigbee3ConfigEditor.exe" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Zigbee3ConfigEditor/configuration" project_relative_path="tools/Zigbee3ConfigEditor/configuration" type="configuration">
+        <files mask="config.ini" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Zigbee3ConfigEditor/configuration/org.eclipse.equinox.launcher/com.zpsconfig.zigbee3.rcp.zpscfgeditor_1.0.0" project_relative_path="tools/Zigbee3ConfigEditor/configuration/org.eclipse.equinox.launcher/com.zpsconfig.zigbee3.rcp.zpscfgeditor_1.0.0" type="image">
+        <files mask="splash.bmp" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Zigbee3ConfigEditor/configuration/org.eclipse.osgi/bundles/52/data" project_relative_path="tools/Zigbee3ConfigEditor/configuration/org.eclipse.osgi/bundles/52/data" type="other">
+        <files mask="SCR" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Zigbee3ConfigEditor/configuration/org.eclipse.osgi/manifests" project_relative_path="tools/Zigbee3ConfigEditor/configuration/org.eclipse.osgi/manifests" type="other">
+        <files mask="com.zpsconfig.zigbee3.rcp.zpscfgeditor_1.0.0.MF" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Zigbee3ConfigEditor/plugins" project_relative_path="tools/Zigbee3ConfigEditor/plugins" type="other">
+        <files mask="com.ibm.icu_50.1.1.v201304230130.jar" hidden="true"/>
+        <files mask="com.jennic.zps.configeditor.edit_1.4.1.jar" hidden="true"/>
+        <files mask="com.jennic.zps.configeditor.editor_1.4.1.jar" hidden="true"/>
+        <files mask="com.jennic.zps.configeditor_1.4.1.jar" hidden="true"/>
+        <files mask="com.zpsconfig.zigbee3.rcp.zpscfgeditor_1.0.0.jar" hidden="true"/>
+        <files mask="javax.annotation_1.1.0.v201209060031.jar" hidden="true"/>
+        <files mask="javax.inject_1.0.0.v20091030.jar" hidden="true"/>
+        <files mask="javax.xml_1.3.4.v201005080400.jar" hidden="true"/>
+        <files mask="org.apache.batik.css_1.6.0.v201011041432.jar" hidden="true"/>
+        <files mask="org.apache.batik.util.gui_1.6.0.v201011041432.jar" hidden="true"/>
+        <files mask="org.apache.batik.util_1.6.0.v201011041432.jar" hidden="true"/>
+        <files mask="org.eclipse.compare.core_3.5.300.v20130514-1224.jar" hidden="true"/>
+        <files mask="org.eclipse.core.commands_3.6.100.v20130515-1857.jar" hidden="true"/>
+        <files mask="org.eclipse.core.contenttype_3.4.200.v20130326-1255.jar" hidden="true"/>
+        <files mask="org.eclipse.core.databinding.observable_1.4.1.v20130515-1857.jar" hidden="true"/>
+        <files mask="org.eclipse.core.databinding.property_1.4.200.v20130515-1857.jar" hidden="true"/>
+        <files mask="org.eclipse.core.databinding_1.4.1.v20130515-1857.jar" hidden="true"/>
+        <files mask="org.eclipse.core.expressions_3.4.501.v20131118-1915.jar" hidden="true"/>
+        <files mask="org.eclipse.core.filebuffers_3.5.300.v20130225-1821.jar" hidden="true"/>
+        <files mask="org.eclipse.core.filesystem.win32.x86_1.4.0.v20121112-0948.jar" hidden="true"/>
+        <files mask="org.eclipse.core.filesystem_1.4.0.v20130514-1240.jar" hidden="true"/>
+        <files mask="org.eclipse.core.jobs_3.5.300.v20130429-1813.jar" hidden="true"/>
+        <files mask="org.eclipse.core.resources.win32.x86_3.5.100.v20100505-1741.jar" hidden="true"/>
+        <files mask="org.eclipse.core.resources_3.8.101.v20130717-0806.jar" hidden="true"/>
+        <files mask="org.eclipse.core.runtime_3.9.100.v20131218-1515.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.core.commands_0.10.2.v20130515-1857.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.core.contexts_1.3.1.v20130905-0905.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.core.di.extensions_0.11.100.v20130514-1256.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.core.di_1.3.0.v20130514-1256.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.core.services_1.1.0.v20130515-1343.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.bindings_0.10.102.v20140117-1939.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.css.core_0.10.100.v20130515-1857.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.css.swt.theme_0.9.100.v20130515-1857.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.css.swt_0.11.0.v20130515-1857.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.di_1.0.0.v20130515-1857.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.model.workbench_1.0.1.v20131118-1956.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.services_1.0.1.v20131118-1940.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.widgets_1.0.0.v20130515-1857.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.workbench.addons.swt_1.0.2.v20131129-1621.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.workbench.renderers.swt_0.11.2.v20140205-1834.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.workbench.swt_0.12.2.v20140117-1939.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.workbench3_0.12.0.v20130515-1857.jar" hidden="true"/>
+        <files mask="org.eclipse.e4.ui.workbench_1.0.2.v20131202-1739.jar" hidden="true"/>
+        <files mask="org.eclipse.emf.cdo.ecore.retrofit_4.2.1.v20140218-1830.jar" hidden="true"/>
+        <files mask="org.eclipse.emf.common.ui_2.9.0.v20150123-0452.jar" hidden="true"/>
+        <files mask="org.eclipse.emf.common_2.10.1.v20150123-0348.jar" hidden="true"/>
+        <files mask="org.eclipse.emf.ecore.change_2.10.0.v20150123-0348.jar" hidden="true"/>
+        <files mask="org.eclipse.emf.ecore.xmi_2.10.2.v20150123-0348.jar" hidden="true"/>
+        <files mask="org.eclipse.emf.ecore_2.10.2.v20150123-0348.jar" hidden="true"/>
+        <files mask="org.eclipse.emf.edit.ui_2.10.2.v20150123-0452.jar" hidden="true"/>
+        <files mask="org.eclipse.emf.edit_2.10.1.v20150123-0452.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.app_1.3.100.v20130327-1442.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.bidi_0.10.0.v20130327-1442.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.common_3.6.200.v20130402-1505.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.ds_1.4.101.v20130813-1853.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.event_1.3.0.v20130327-1442.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.launcher_1.3.0.v20130327-1440.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.p2.core_2.3.0.v20130327-2119.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.p2.engine_2.3.0.v20130526-2122.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.p2.metadata.repository_1.2.100.v20130327-2119.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.p2.metadata_2.2.0.v20130523-1557.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.p2.repository_2.3.0.v20130412-2032.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.preferences_3.5.100.v20130422-1538.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.registry_3.5.301.v20130717-1549.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.security.win32.x86_1.0.300.v20130327-1442.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.security_1.2.0.v20130424-1801.jar" hidden="true"/>
+        <files mask="org.eclipse.equinox.util_1.0.500.v20130404-1337.jar" hidden="true"/>
+        <files mask="org.eclipse.help_3.6.0.v20130326-1254.jar" hidden="true"/>
+        <files mask="org.eclipse.jface.databinding_1.6.200.v20130515-1857.jar" hidden="true"/>
+        <files mask="org.eclipse.jface.text_3.8.101.v20130802-1147.jar" hidden="true"/>
+        <files mask="org.eclipse.jface_3.9.1.v20130725-1141.jar" hidden="true"/>
+        <files mask="org.eclipse.osgi.services_3.3.100.v20130513-1956.jar" hidden="true"/>
+        <files mask="org.eclipse.osgi_3.9.1.v20140110-1610.jar" hidden="true"/>
+        <files mask="org.eclipse.swt.win32.win32.x86_3.102.1.v20140206-1358.jar" hidden="true"/>
+        <files mask="org.eclipse.swt_3.102.1.v20140206-1334.jar" hidden="true"/>
+        <files mask="org.eclipse.text_3.5.300.v20130515-1451.jar" hidden="true"/>
+        <files mask="org.eclipse.ui.editors_3.8.100.v20130513-1637.jar" hidden="true"/>
+        <files mask="org.eclipse.ui.forms_3.6.1.v20130822-1117.jar" hidden="true"/>
+        <files mask="org.eclipse.ui.ide_3.9.2.v20131004-0923.jar" hidden="true"/>
+        <files mask="org.eclipse.ui.intro_3.4.200.v20130326-1254.jar" hidden="true"/>
+        <files mask="org.eclipse.ui.views_3.6.100.v20130326-1250.jar" hidden="true"/>
+        <files mask="org.eclipse.ui.win32_3.2.400.v20130516-1056.jar" hidden="true"/>
+        <files mask="org.eclipse.ui.workbench.texteditor_3.8.101.v20130729-1318.jar" hidden="true"/>
+        <files mask="org.eclipse.ui.workbench_3.105.2.v20140211-1711.jar" hidden="true"/>
+        <files mask="org.eclipse.ui_3.105.0.v20130522-1122.jar" hidden="true"/>
+        <files mask="org.w3c.css.sac_1.3.1.v200903091627.jar" hidden="true"/>
+        <files mask="org.w3c.dom.events_3.0.0.draft20060413_v201105210656.jar" hidden="true"/>
+        <files mask="org.w3c.dom.smil_1.0.0.v200806040011.jar" hidden="true"/>
+        <files mask="org.w3c.dom.svg_1.1.0.v201011041433.jar" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Zigbee3ConfigEditor/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.200.v20130514-1256/META-INF" project_relative_path="tools/Zigbee3ConfigEditor/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.200.v20130514-1256/META-INF" type="other">
+        <files mask="ECLIPSE_.RSA" hidden="true"/>
+        <files mask="ECLIPSE_.SF" hidden="true"/>
+        <files mask="MANIFEST.MF" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Zigbee3ConfigEditor/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.200.v20130514-1256" project_relative_path="tools/Zigbee3ConfigEditor/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.200.v20130514-1256" type="doc">
+        <files mask="about.html" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Zigbee3ConfigEditor/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.200.v20130514-1256" project_relative_path="tools/Zigbee3ConfigEditor/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.200.v20130514-1256" type="other">
+        <files mask="fragment.properties" hidden="true"/>
+        <files mask="runtime_registry_compatibility.jar" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Zigbee3ConfigEditor/plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.1.200.v20140116-2212/META-INF" project_relative_path="tools/Zigbee3ConfigEditor/plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.1.200.v20140116-2212/META-INF" type="other">
+        <files mask="ECLIPSE_.RSA" hidden="true"/>
+        <files mask="ECLIPSE_.SF" hidden="true"/>
+        <files mask="MANIFEST.MF" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Zigbee3ConfigEditor/plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.1.200.v20140116-2212" project_relative_path="tools/Zigbee3ConfigEditor/plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.1.200.v20140116-2212" type="doc">
+        <files mask="about.html" hidden="true"/>
+      </source>
+      <source relative_path="./tools/Zigbee3ConfigEditor/plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.1.200.v20140116-2212" project_relative_path="tools/Zigbee3ConfigEditor/plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.1.200.v20140116-2212" type="other">
+        <files mask="eclipse_1503.dll" hidden="true"/>
+        <files mask="launcher.win32.win32.x86.properties" hidden="true"/>
+      </source>
+      <source relative_path="./tools/ZPSConfig/Source" project_relative_path="tools/ZPSConfig/Source" type="other">
+        <files mask="ZPSConfig" hidden="true"/>
+      </source>
+      <source relative_path="./tools/OTA/SB3" project_relative_path="tools/OTA/SB3" type="other">
+        <files mask="sb3_json_example_without_nbu.json" hidden="true"/>
+        <files mask="sign_mcu_file_json_example.json" hidden="true"/>
+      </source>
+      <source relative_path="./tools/OTA/build" project_relative_path="tools/OTA/build" type="other">
+        <files mask="nxpzbota.exe" hidden="true"/>
+        <files mask="nxpzbota.spec" hidden="true"/>
+      </source>
+      <source relative_path="./tools/OTA/build" project_relative_path="tools/OTA/build" type="script">
+        <files mask="release.py" hidden="true"/>
+      </source>
+      <source relative_path="./tools/OTA/keys_and_certs" project_relative_path="tools/OTA/keys_and_certs" type="other">
+        <files mask="ec_pk_secp384r1_cert0.pem" hidden="true"/>
+        <files mask="ec_pk_secp384r1_sign_cert.pem" hidden="true"/>
+        <files mask="ec_secp384r1_cert0.pem" hidden="true"/>
+        <files mask="ec_secp384r1_cert1.pem" hidden="true"/>
+        <files mask="ec_secp384r1_cert2.pem" hidden="true"/>
+        <files mask="ec_secp384r1_cert3.pem" hidden="true"/>
+        <files mask="ec_secp384r1_sign_cert.pem" hidden="true"/>
+        <files mask="sb3kdk.key" hidden="true"/>
+      </source>
+      <source relative_path="./tools/OTA" project_relative_path="tools/OTA" type="script">
+        <files mask="nxpzbota.py" hidden="true"/>
+      </source>
+      <source relative_path="./tools/OTA" project_relative_path="tools/OTA" type="other">
+        <files mask="pyrightconfig.json" hidden="true"/>
+      </source>
+      <source relative_path="./tools/OTA" project_relative_path="tools/OTA" type="doc">
+        <files mask="version.txt" hidden="true"/>
+      </source>
+      <source relative_path="./ZCIF/Source" project_relative_path="ZCIF/Source" type="src">
+        <files mask="dlist.c" hidden="true"/>
+        <files mask="zcl.c" hidden="true"/>
+        <files mask="zcl_CustomCommandReceive.c" hidden="true"/>
+        <files mask="zcl_CustomCommandSend.c" hidden="true"/>
+        <files mask="zcl_PDUbufferReadWrite.c" hidden="true"/>
+        <files mask="zcl_PDUbufferReadWriteString.c" hidden="true"/>
+        <files mask="zcl_WriteAttributesRequestHandle.c" hidden="true"/>
+        <files mask="zcl_WriteAttributesRequestSend.c" hidden="true"/>
+        <files mask="zcl_WriteAttributesResponseHandle.c" hidden="true"/>
+        <files mask="zcl_attribute.c" hidden="true"/>
+        <files mask="zcl_buffer.c" hidden="true"/>
+        <files mask="zcl_clusterCommand.c" hidden="true"/>
+        <files mask="zcl_command.c" hidden="true"/>
+        <files mask="zcl_common.c" hidden="true"/>
+        <files mask="zcl_configureReportingCommandHandle.c" hidden="true"/>
+        <files mask="zcl_configureReportingCommandSend.c" hidden="true"/>
+        <files mask="zcl_configureReportingResponseHandle.c" hidden="true"/>
+        <files mask="zcl_defaultResponse.c" hidden="true"/>
+        <files mask="zcl_discoverAttributesExtendedRequestHandle.c" hidden="true"/>
+        <files mask="zcl_discoverAttributesExtendedRequestSend.c" hidden="true"/>
+        <files mask="zcl_discoverAttributesExtendedResponseHandle.c" hidden="true"/>
+        <files mask="zcl_discoverAttributesRequestHandle.c" hidden="true"/>
+        <files mask="zcl_discoverAttributesRequestSend.c" hidden="true"/>
+        <files mask="zcl_discoverAttributesResponseHandle.c" hidden="true"/>
+        <files mask="zcl_discoverCommandsRequestHandle.c" hidden="true"/>
+        <files mask="zcl_discoverCommandsRequestSend.c" hidden="true"/>
+        <files mask="zcl_discoverCommandsResponseHandle.c" hidden="true"/>
+        <files mask="zcl_event.c" hidden="true"/>
+        <files mask="zcl_heap.c" hidden="true"/>
+        <files mask="zcl_library_options.c" hidden="true"/>
+        <files mask="zcl_readAttributesRequestHandle.c" hidden="true"/>
+        <files mask="zcl_readAttributesRequestSend.c" hidden="true"/>
+        <files mask="zcl_readAttributesResponseHandle.c" hidden="true"/>
+        <files mask="zcl_readReportingConfigurationCommandHandle.c" hidden="true"/>
+        <files mask="zcl_readReportingConfigurationCommandSend.c" hidden="true"/>
+        <files mask="zcl_readReportingConfigurationResponseHandle.c" hidden="true"/>
+        <files mask="zcl_reportManager.c" hidden="true"/>
+        <files mask="zcl_reportMaths.c" hidden="true"/>
+        <files mask="zcl_reportScheduler.c" hidden="true"/>
+        <files mask="zcl_reportStringHandling.c" hidden="true"/>
+        <files mask="zcl_reportStructure.c" hidden="true"/>
+        <files mask="zcl_search.c" hidden="true"/>
+        <files mask="zcl_timer.c" hidden="true"/>
+        <files mask="zcl_transmit.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCIF/Source" project_relative_path="ZCIF/Source" type="c_include">
+        <files mask="zcl_common.h" hidden="true"/>
+        <files mask="zcl_internal.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCIF/Include" project_relative_path="ZCIF/Include" type="c_include">
+        <files mask="dlist.h" hidden="true"/>
+        <files mask="zcl.h" hidden="true"/>
+        <files mask="zcl_customcommand.h" hidden="true"/>
+        <files mask="zcl_heap.h" hidden="true"/>
+        <files mask="zcl_internal_library_options.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/ApplianceManagement/Include" project_relative_path="ZCL/Clusters/ApplianceManagement/Include" type="c_include">
+        <files mask="ApplianceControl.h" hidden="true"/>
+        <files mask="ApplianceEventsAndAlerts.h" hidden="true"/>
+        <files mask="ApplianceIdentification.h" hidden="true"/>
+        <files mask="ApplianceStatistics.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/ApplianceManagement/Source" project_relative_path="ZCL/Clusters/ApplianceManagement/Source" type="src">
+        <files mask="ApplianceControl.c" hidden="true"/>
+        <files mask="ApplianceControlClientCommands.c" hidden="true"/>
+        <files mask="ApplianceControlCommandHandler.c" hidden="true"/>
+        <files mask="ApplianceControlServerCommands.c" hidden="true"/>
+        <files mask="ApplianceEventsAndAlerts.c" hidden="true"/>
+        <files mask="ApplianceEventsAndAlertsClientCommands.c" hidden="true"/>
+        <files mask="ApplianceEventsAndAlertsCommandHandler.c" hidden="true"/>
+        <files mask="ApplianceEventsAndAlertsServerCommands.c" hidden="true"/>
+        <files mask="ApplianceIdentification.c" hidden="true"/>
+        <files mask="ApplianceStatistics.c" hidden="true"/>
+        <files mask="ApplianceStatisticsClientCommands.c" hidden="true"/>
+        <files mask="ApplianceStatisticsCommandHandler.c" hidden="true"/>
+        <files mask="ApplianceStatisticsServerCommands.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/ApplianceManagement/Source" project_relative_path="ZCL/Clusters/ApplianceManagement/Source" type="c_include">
+        <files mask="ApplianceControl_internal.h" hidden="true"/>
+        <files mask="ApplianceEventsAndAlerts_internal.h" hidden="true"/>
+        <files mask="ApplianceStatistics_internal.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/Closures/Include" project_relative_path="ZCL/Clusters/Closures/Include" type="c_include">
+        <files mask="DoorLock.h" hidden="true"/>
+        <files mask="WindowCovering.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/Closures/Source" project_relative_path="ZCL/Clusters/Closures/Source" type="src">
+        <files mask="DoorLock.c" hidden="true"/>
+        <files mask="DoorLockCommandHandler.c" hidden="true"/>
+        <files mask="DoorLockCommands.c" hidden="true"/>
+        <files mask="WindowCovering.c" hidden="true"/>
+        <files mask="WindowCoveringCommandHandler.c" hidden="true"/>
+        <files mask="WindowCoveringCommands.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/Closures/Source" project_relative_path="ZCL/Clusters/Closures/Source" type="c_include">
+        <files mask="DoorLock_internal.h" hidden="true"/>
+        <files mask="WindowCovering_internal.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/Commissioning/Include" project_relative_path="ZCL/Clusters/Commissioning/Include" type="c_include">
+        <files mask="Commissioning.h" hidden="true"/>
+        <files mask="zll_commission.h" hidden="true"/>
+        <files mask="zll_utility.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/Commissioning/Source" project_relative_path="ZCL/Clusters/Commissioning/Source" type="src">
+        <files mask="Commissioning.c" hidden="true"/>
+        <files mask="CommissioningClientCommands.c" hidden="true"/>
+        <files mask="CommissioningCmdHandler.c" hidden="true"/>
+        <files mask="CommissioningServerCommands.c" hidden="true"/>
+        <files mask="zll_CommissionCmdHandler.c" hidden="true"/>
+        <files mask="zll_UtilityCmdHandler.c" hidden="true"/>
+        <files mask="zll_commission.c" hidden="true"/>
+        <files mask="zll_utility.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/Commissioning/Source" project_relative_path="ZCL/Clusters/Commissioning/Source" type="c_include">
+        <files mask="Commissioning_internal.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/General/Include" project_relative_path="ZCL/Clusters/General/Include" type="c_include">
+        <files mask="Alarms.h" hidden="true"/>
+        <files mask="AnalogInputBasic.h" hidden="true"/>
+        <files mask="AnalogOutputBasic.h" hidden="true"/>
+        <files mask="Basic.h" hidden="true"/>
+        <files mask="BinaryInputBasic.h" hidden="true"/>
+        <files mask="BinaryOutputBasic.h" hidden="true"/>
+        <files mask="DeviceTemperatureConfiguration.h" hidden="true"/>
+        <files mask="Diagnostics.h" hidden="true"/>
+        <files mask="Groups.h" hidden="true"/>
+        <files mask="Identify.h" hidden="true"/>
+        <files mask="LevelControl.h" hidden="true"/>
+        <files mask="MultistateInputBasic.h" hidden="true"/>
+        <files mask="MultistateOutputBasic.h" hidden="true"/>
+        <files mask="OOSC.h" hidden="true"/>
+        <files mask="OnOff.h" hidden="true"/>
+        <files mask="PollControl.h" hidden="true"/>
+        <files mask="PowerConfiguration.h" hidden="true"/>
+        <files mask="PowerProfile.h" hidden="true"/>
+        <files mask="Scenes.h" hidden="true"/>
+        <files mask="TC.h" hidden="true"/>
+        <files mask="WWAH.h" hidden="true"/>
+        <files mask="ZclTime.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/General/Source" project_relative_path="ZCL/Clusters/General/Source" type="src">
+        <files mask="Alarms.c" hidden="true"/>
+        <files mask="AlarmsClientCommands.c" hidden="true"/>
+        <files mask="AlarmsCommandHandler.c" hidden="true"/>
+        <files mask="AlarmsServerCommands.c" hidden="true"/>
+        <files mask="AlarmsTableManager.c" hidden="true"/>
+        <files mask="AnalogInputBasic.c" hidden="true"/>
+        <files mask="AnalogOutputBasic.c" hidden="true"/>
+        <files mask="Basic.c" hidden="true"/>
+        <files mask="BasicClientCommands.c" hidden="true"/>
+        <files mask="BasicCommandHandler.c" hidden="true"/>
+        <files mask="BinaryInputBasic.c" hidden="true"/>
+        <files mask="BinaryOutputBasic.c" hidden="true"/>
+        <files mask="DeviceTemperatureConfiguration.c" hidden="true"/>
+        <files mask="Diagnostics.c" hidden="true"/>
+        <files mask="Groups.c" hidden="true"/>
+        <files mask="GroupsClientCommands.c" hidden="true"/>
+        <files mask="GroupsCommandHandler.c" hidden="true"/>
+        <files mask="GroupsServerCommands.c" hidden="true"/>
+        <files mask="GroupsTableManager.c" hidden="true"/>
+        <files mask="Identify.c" hidden="true"/>
+        <files mask="IdentifyClientCommands.c" hidden="true"/>
+        <files mask="IdentifyCommandHandler.c" hidden="true"/>
+        <files mask="IdentifyServerCommands.c" hidden="true"/>
+        <files mask="LevelControl.c" hidden="true"/>
+        <files mask="LevelControlClientCommands.c" hidden="true"/>
+        <files mask="LevelControlCommandHandler.c" hidden="true"/>
+        <files mask="MultistateInputBasic.c" hidden="true"/>
+        <files mask="MultistateOutputBasic.c" hidden="true"/>
+        <files mask="OOSC.c" hidden="true"/>
+        <files mask="OnOff.c" hidden="true"/>
+        <files mask="OnOffCommandHandler.c" hidden="true"/>
+        <files mask="OnOffCommands.c" hidden="true"/>
+        <files mask="PollControl.c" hidden="true"/>
+        <files mask="PollControlClientCommands.c" hidden="true"/>
+        <files mask="PollControlCommandHandler.c" hidden="true"/>
+        <files mask="PollControlServerCommands.c" hidden="true"/>
+        <files mask="PowerConfiguration.c" hidden="true"/>
+        <files mask="PowerProfile.c" hidden="true"/>
+        <files mask="PowerProfileClientCommands.c" hidden="true"/>
+        <files mask="PowerProfileCommandHandler.c" hidden="true"/>
+        <files mask="PowerProfileServerCommands.c" hidden="true"/>
+        <files mask="Scenes.c" hidden="true"/>
+        <files mask="ScenesClientCommands.c" hidden="true"/>
+        <files mask="ScenesClusterManagement.c" hidden="true"/>
+        <files mask="ScenesCommandHandler.c" hidden="true"/>
+        <files mask="ScenesServerCommands.c" hidden="true"/>
+        <files mask="ScenesTableManager.c" hidden="true"/>
+        <files mask="TC.c" hidden="true"/>
+        <files mask="Time.c" hidden="true"/>
+        <files mask="WWAH.c" hidden="true"/>
+        <files mask="WWAHClientCommands.c" hidden="true"/>
+        <files mask="WWAHCommandHandler.c" hidden="true"/>
+        <files mask="WWAHServerCommands.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/General/Source" project_relative_path="ZCL/Clusters/General/Source" type="c_include">
+        <files mask="Alarms_internal.h" hidden="true"/>
+        <files mask="AnalogInputBasic_internal.h" hidden="true"/>
+        <files mask="AnalogOutputBasic_internal.h" hidden="true"/>
+        <files mask="Basic_internal.h" hidden="true"/>
+        <files mask="BinaryInputBasic_internal.h" hidden="true"/>
+        <files mask="BinaryOutputBasic_internal.h" hidden="true"/>
+        <files mask="Groups_internal.h" hidden="true"/>
+        <files mask="Identify_internal.h" hidden="true"/>
+        <files mask="LevelControl_internal.h" hidden="true"/>
+        <files mask="MultistateInputBasic_internal.h" hidden="true"/>
+        <files mask="MultistateOutputBasic_internal.h" hidden="true"/>
+        <files mask="OnOff_internal.h" hidden="true"/>
+        <files mask="PollControl_internal.h" hidden="true"/>
+        <files mask="PowerProfile_internal.h" hidden="true"/>
+        <files mask="Scenes_internal.h" hidden="true"/>
+        <files mask="WWAH_internal.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/GreenPower/Include" project_relative_path="ZCL/Clusters/GreenPower/Include" type="c_include">
+        <files mask="GreenPower.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/GreenPower/Source" project_relative_path="ZCL/Clusters/GreenPower/Source" type="src">
+        <files mask="GreenPower.c" hidden="true"/>
+        <files mask="GreenPowerCommissioningNotification.c" hidden="true"/>
+        <files mask="GreenPowerCommon.c" hidden="true"/>
+        <files mask="GreenPowerCustomCommandHandler.c" hidden="true"/>
+        <files mask="GreenPowerCustomCommandResponses.c" hidden="true"/>
+        <files mask="GreenPowerDataIndication.c" hidden="true"/>
+        <files mask="GreenPowerDirectCommandHandler.c" hidden="true"/>
+        <files mask="GreenPowerNotification.c" hidden="true"/>
+        <files mask="GreenPowerPairing.c" hidden="true"/>
+        <files mask="GreenPowerPairingConfiguration.c" hidden="true"/>
+        <files mask="GreenPowerPairingSearch.c" hidden="true"/>
+        <files mask="GreenPowerProxyCommissioningMode.c" hidden="true"/>
+        <files mask="GreenPowerProxyGPDHandler.c" hidden="true"/>
+        <files mask="GreenPowerProxyTableRequest.c" hidden="true"/>
+        <files mask="GreenPowerProxyTableResponse.c" hidden="true"/>
+        <files mask="GreenPowerResponse.c" hidden="true"/>
+        <files mask="GreenPowerScheduler.c" hidden="true"/>
+        <files mask="GreenPowerSinkTableRequest.c" hidden="true"/>
+        <files mask="GreenPowerSinkTableResponse.c" hidden="true"/>
+        <files mask="GreenPowerTranslationTableRequest.c" hidden="true"/>
+        <files mask="GreenPowerTranslationTableResponse.c" hidden="true"/>
+        <files mask="GreenPowerTranslationTableUpdate.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/GreenPower/Source" project_relative_path="ZCL/Clusters/GreenPower/Source" type="c_include">
+        <files mask="GreenPower_internal.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/HVAC/Include" project_relative_path="ZCL/Clusters/HVAC/Include" type="c_include">
+        <files mask="FanControl.h" hidden="true"/>
+        <files mask="Thermostat.h" hidden="true"/>
+        <files mask="ThermostatUIConfig.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/HVAC/Source" project_relative_path="ZCL/Clusters/HVAC/Source" type="src">
+        <files mask="FanControl.c" hidden="true"/>
+        <files mask="Thermostat.c" hidden="true"/>
+        <files mask="ThermostatCommandHandler.c" hidden="true"/>
+        <files mask="ThermostatCommands.c" hidden="true"/>
+        <files mask="ThermostatUIConfig.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/HVAC/Source" project_relative_path="ZCL/Clusters/HVAC/Source" type="c_include">
+        <files mask="Thermostat_internal.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/Lighting/Include" project_relative_path="ZCL/Clusters/Lighting/Include" type="c_include">
+        <files mask="BallastConfiguration.h" hidden="true"/>
+        <files mask="ColourControl.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/Lighting/Source" project_relative_path="ZCL/Clusters/Lighting/Source" type="src">
+        <files mask="BallastConfiguration.c" hidden="true"/>
+        <files mask="ColourControl.c" hidden="true"/>
+        <files mask="ColourControlClientCommands.c" hidden="true"/>
+        <files mask="ColourControlCommandHandler.c" hidden="true"/>
+        <files mask="ColourControlConversions.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/Lighting/Source" project_relative_path="ZCL/Clusters/Lighting/Source" type="c_include">
+        <files mask="ColourControl_internal.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/MeasurementAndSensing/Include" project_relative_path="ZCL/Clusters/MeasurementAndSensing/Include" type="c_include">
+        <files mask="ConcentrationMeasurement.h" hidden="true"/>
+        <files mask="ElectricalMeasurement.h" hidden="true"/>
+        <files mask="FlowMeasurement.h" hidden="true"/>
+        <files mask="IlluminanceLevelSensing.h" hidden="true"/>
+        <files mask="IlluminanceMeasurement.h" hidden="true"/>
+        <files mask="OccupancySensing.h" hidden="true"/>
+        <files mask="PressureMeasurement.h" hidden="true"/>
+        <files mask="RelativeHumidityMeasurement.h" hidden="true"/>
+        <files mask="TemperatureMeasurement.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/MeasurementAndSensing/Source" project_relative_path="ZCL/Clusters/MeasurementAndSensing/Source" type="src">
+        <files mask="ConcentrationMeasurement.c" hidden="true"/>
+        <files mask="ElectricalMeasurement.c" hidden="true"/>
+        <files mask="FlowMeasurement.c" hidden="true"/>
+        <files mask="IlluminanceLevelSensing.c" hidden="true"/>
+        <files mask="IlluminanceMeasurement.c" hidden="true"/>
+        <files mask="OccupancySensing.c" hidden="true"/>
+        <files mask="PressureMeasurement.c" hidden="true"/>
+        <files mask="RelativeHumidityMeasurement.c" hidden="true"/>
+        <files mask="TemperatureMeasurement.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/OTA/Include" project_relative_path="ZCL/Clusters/OTA/Include" type="c_include">
+        <files mask="OTA.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/OTA/Source" project_relative_path="ZCL/Clusters/OTA/Source" type="src">
+        <files mask="OTA.c" hidden="true"/>
+        <files mask="OTA_ClientUpgradeManager.c" hidden="true"/>
+        <files mask="OTA_CustomCommandHandler.c" hidden="true"/>
+        <files mask="OTA_CustomReceiveCommands.c" hidden="true"/>
+        <files mask="OTA_ServerUpgradeManager.c" hidden="true"/>
+        <files mask="OTA_client.c" hidden="true"/>
+        <files mask="OTA_common.c" hidden="true"/>
+        <files mask="OTA_server.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/OTA/Source" project_relative_path="ZCL/Clusters/OTA/Source" type="c_include">
+        <files mask="OTA_private.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/SecurityAndSafety/Include" project_relative_path="ZCL/Clusters/SecurityAndSafety/Include" type="c_include">
+        <files mask="IASACE.h" hidden="true"/>
+        <files mask="IASWD.h" hidden="true"/>
+        <files mask="IASZone.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/SecurityAndSafety/Source" project_relative_path="ZCL/Clusters/SecurityAndSafety/Source" type="src">
+        <files mask="IASACE.c" hidden="true"/>
+        <files mask="IASACEClientCommands.c" hidden="true"/>
+        <files mask="IASACECommandHandler.c" hidden="true"/>
+        <files mask="IASACEServerCommands.c" hidden="true"/>
+        <files mask="IASWD.c" hidden="true"/>
+        <files mask="IASWDCommandHandler.c" hidden="true"/>
+        <files mask="IASWDCommands.c" hidden="true"/>
+        <files mask="IASZone.c" hidden="true"/>
+        <files mask="IASZoneCommandHandler.c" hidden="true"/>
+        <files mask="IASZoneCommands.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/SecurityAndSafety/Source" project_relative_path="ZCL/Clusters/SecurityAndSafety/Source" type="c_include">
+        <files mask="IASACE_internal.h" hidden="true"/>
+        <files mask="IASWD_internal.h" hidden="true"/>
+        <files mask="IASZone_internal.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/SmartEnergy/Include" project_relative_path="ZCL/Clusters/SmartEnergy/Include" type="c_include">
+        <files mask="DRLC.h" hidden="true"/>
+        <files mask="Price.h" hidden="true"/>
+        <files mask="SimpleMetering.h" hidden="true"/>
+        <files mask="SimpleMeteringAttributeCount.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/SmartEnergy/Source" project_relative_path="ZCL/Clusters/SmartEnergy/Source" type="src">
+        <files mask="DRLC.c" hidden="true"/>
+        <files mask="DRLCCommandCanceAlllLoadControlEvents.c" hidden="true"/>
+        <files mask="DRLCCommandCancelLoadControlEvent.c" hidden="true"/>
+        <files mask="DRLCCommandGetScheduledEvents.c" hidden="true"/>
+        <files mask="DRLCCommandHandler.c" hidden="true"/>
+        <files mask="DRLCCommandLoadControlEvent.c" hidden="true"/>
+        <files mask="DRLCCommandReportEventStatus.c" hidden="true"/>
+        <files mask="DRLCCustomCommandResponsesClient.c" hidden="true"/>
+        <files mask="DRLCCustomCommandResponsesServer.c" hidden="true"/>
+        <files mask="DRLCEffectiveTime.c" hidden="true"/>
+        <files mask="DRLCScheduler.c" hidden="true"/>
+        <files mask="DRLCTableManagerNoMutex.c" hidden="true"/>
+        <files mask="DRLCTableManagerServer.c" hidden="true"/>
+        <files mask="DRLCUserEventOptInOut.c" hidden="true"/>
+        <files mask="Price.c" hidden="true"/>
+        <files mask="PriceBlockPeriodTableManager.c" hidden="true"/>
+        <files mask="PriceCalorificValueTableManager.c" hidden="true"/>
+        <files mask="PriceCommandGetBlockPeriod.c" hidden="true"/>
+        <files mask="PriceCommandGetCalorificValue.c" hidden="true"/>
+        <files mask="PriceCommandGetConversionFactor.c" hidden="true"/>
+        <files mask="PriceCommandGetCurrentPrice.c" hidden="true"/>
+        <files mask="PriceCommandGetScheduledPrices.c" hidden="true"/>
+        <files mask="PriceCommandPriceAck.c" hidden="true"/>
+        <files mask="PriceCommandPublishBlockPeriod.c" hidden="true"/>
+        <files mask="PriceCommandPublishBlockPeriodReceive.c" hidden="true"/>
+        <files mask="PriceCommandPublishCalorificValue.c" hidden="true"/>
+        <files mask="PriceCommandPublishCalorificValueReceive.c" hidden="true"/>
+        <files mask="PriceCommandPublishConversionFactor.c" hidden="true"/>
+        <files mask="PriceCommandPublishConversionFactorReceive.c" hidden="true"/>
+        <files mask="PriceCommandPublishPrice.c" hidden="true"/>
+        <files mask="PriceCommandPublishPriceReceive.c" hidden="true"/>
+        <files mask="PriceConversionFactorTableManager.c" hidden="true"/>
+        <files mask="PriceCustomCommandHandler.c" hidden="true"/>
+        <files mask="PriceCustomCommandResponses.c" hidden="true"/>
+        <files mask="PriceScheduler.c" hidden="true"/>
+        <files mask="PriceServerAttributeManager.c" hidden="true"/>
+        <files mask="PriceTableManager.c" hidden="true"/>
+        <files mask="SimpleMetering.c" hidden="true"/>
+        <files mask="SimpleMeteringCommandHandler.c" hidden="true"/>
+        <files mask="SimpleMetering_SendRequest.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Clusters/SmartEnergy/Source" project_relative_path="ZCL/Clusters/SmartEnergy/Source" type="c_include">
+        <files mask="DRLC_internal.h" hidden="true"/>
+        <files mask="Price_internal.h" hidden="true"/>
+        <files mask="SimpleMetering_internal.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZGP/Include" project_relative_path="ZCL/Devices/ZGP/Include" type="c_include">
+        <files mask="gp.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZGP/Source" project_relative_path="ZCL/Devices/ZGP/Source" type="src">
+        <files mask="gp.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZHA/ApplianceManagement/Include" project_relative_path="ZCL/Devices/ZHA/ApplianceManagement/Include" type="c_include">
+        <files mask="home_gateway.h" hidden="true"/>
+        <files mask="white_goods.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZHA/ApplianceManagement/Source" project_relative_path="ZCL/Devices/ZHA/ApplianceManagement/Source" type="src">
+        <files mask="home_gateway.c" hidden="true"/>
+        <files mask="white_goods.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZHA/Closures/Include" project_relative_path="ZCL/Devices/ZHA/Closures/Include" type="c_include">
+        <files mask="door_lock.h" hidden="true"/>
+        <files mask="door_lock_controller.h" hidden="true"/>
+        <files mask="window_covering.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZHA/Closures/Source" project_relative_path="ZCL/Devices/ZHA/Closures/Source" type="src">
+        <files mask="door_lock.c" hidden="true"/>
+        <files mask="door_lock_controller.c" hidden="true"/>
+        <files mask="window_covering.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZHA/Generic/Include" project_relative_path="ZCL/Devices/ZHA/Generic/Include" type="c_include">
+        <files mask="base_device.h" hidden="true"/>
+        <files mask="mains_power_outlet.h" hidden="true"/>
+        <files mask="on_off_output.h" hidden="true"/>
+        <files mask="plug_control.h" hidden="true"/>
+        <files mask="remote_control.h" hidden="true"/>
+        <files mask="simple_sensor.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZHA/Generic/Source" project_relative_path="ZCL/Devices/ZHA/Generic/Source" type="src">
+        <files mask="base_device.c" hidden="true"/>
+        <files mask="mains_power_outlet.c" hidden="true"/>
+        <files mask="on_off_output.c" hidden="true"/>
+        <files mask="plug_control.c" hidden="true"/>
+        <files mask="remote_control.c" hidden="true"/>
+        <files mask="simple_sensor.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZHA/HVAC/Include" project_relative_path="ZCL/Devices/ZHA/HVAC/Include" type="c_include">
+        <files mask="temperature_sensor.h" hidden="true"/>
+        <files mask="thermostat_device.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZHA/HVAC/Source" project_relative_path="ZCL/Devices/ZHA/HVAC/Source" type="src">
+        <files mask="temperature_sensor.c" hidden="true"/>
+        <files mask="thermostat_device.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZHA/SecurityAndSafety/Include" project_relative_path="ZCL/Devices/ZHA/SecurityAndSafety/Include" type="c_include">
+        <files mask="ancillary_control_equipment.h" hidden="true"/>
+        <files mask="control_and_indicating_equipment.h" hidden="true"/>
+        <files mask="warning_device.h" hidden="true"/>
+        <files mask="zone.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZHA/SecurityAndSafety/Source" project_relative_path="ZCL/Devices/ZHA/SecurityAndSafety/Source" type="src">
+        <files mask="ancillary_control_equipment.c" hidden="true"/>
+        <files mask="control_and_indicating_equipment.c" hidden="true"/>
+        <files mask="warning_device.c" hidden="true"/>
+        <files mask="zone.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZHA/SmartEnergy/Include" project_relative_path="ZCL/Devices/ZHA/SmartEnergy/Include" type="c_include">
+        <files mask="smart_plug.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZHA/SmartEnergy/Source" project_relative_path="ZCL/Devices/ZHA/SmartEnergy/Source" type="src">
+        <files mask="smart_plug.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZLO/Include" project_relative_path="ZCL/Devices/ZLO/Include" type="c_include">
+        <files mask="colour_controller.h" hidden="true"/>
+        <files mask="colour_dimmable_light.h" hidden="true"/>
+        <files mask="colour_dimmer_switch.h" hidden="true"/>
+        <files mask="colour_scene_controller.h" hidden="true"/>
+        <files mask="colour_temperature_light.h" hidden="true"/>
+        <files mask="commission_endpoint.h" hidden="true"/>
+        <files mask="control_bridge.h" hidden="true"/>
+        <files mask="dimmable_ballast.h" hidden="true"/>
+        <files mask="dimmable_light.h" hidden="true"/>
+        <files mask="dimmable_plug.h" hidden="true"/>
+        <files mask="dimmer_switch.h" hidden="true"/>
+        <files mask="extended_colour_light.h" hidden="true"/>
+        <files mask="light_level_sensor.h" hidden="true"/>
+        <files mask="light_sensor.h" hidden="true"/>
+        <files mask="non_colour_controller.h" hidden="true"/>
+        <files mask="non_colour_scene_controller.h" hidden="true"/>
+        <files mask="occupancy_sensor.h" hidden="true"/>
+        <files mask="on_off_ballast.h" hidden="true"/>
+        <files mask="on_off_light.h" hidden="true"/>
+        <files mask="on_off_light_switch.h" hidden="true"/>
+        <files mask="on_off_plug.h" hidden="true"/>
+        <files mask="on_off_sensor.h" hidden="true"/>
+        <files mask="zlo_device_id.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZCL/Devices/ZLO/Source" project_relative_path="ZCL/Devices/ZLO/Source" type="src">
+        <files mask="colour_controller.c" hidden="true"/>
+        <files mask="colour_dimmable_light.c" hidden="true"/>
+        <files mask="colour_dimmer_switch.c" hidden="true"/>
+        <files mask="colour_scene_controller.c" hidden="true"/>
+        <files mask="colour_temperature_light.c" hidden="true"/>
+        <files mask="commission_endpoint.c" hidden="true"/>
+        <files mask="control_bridge.c" hidden="true"/>
+        <files mask="dimmable_ballast.c" hidden="true"/>
+        <files mask="dimmable_light.c" hidden="true"/>
+        <files mask="dimmable_plug.c" hidden="true"/>
+        <files mask="dimmer_switch.c" hidden="true"/>
+        <files mask="extended_colour_light.c" hidden="true"/>
+        <files mask="light_level_sensor.c" hidden="true"/>
+        <files mask="light_sensor.c" hidden="true"/>
+        <files mask="non_colour_controller.c" hidden="true"/>
+        <files mask="non_colour_scene_controller.c" hidden="true"/>
+        <files mask="occupancy_sensor.c" hidden="true"/>
+        <files mask="on_off_ballast.c" hidden="true"/>
+        <files mask="on_off_light.c" hidden="true"/>
+        <files mask="on_off_light_switch.c" hidden="true"/>
+        <files mask="on_off_plug.c" hidden="true"/>
+        <files mask="on_off_sensor.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZigbeeCommon/Include" project_relative_path="ZigbeeCommon/Include" type="c_include">
+        <files mask="ZQueue.h" hidden="true"/>
+        <files mask="ZTimer.h" hidden="true"/>
+        <files mask="appZdpExtraction.h" hidden="true"/>
+        <files mask="appZpsBeaconHandler.h" hidden="true"/>
+        <files mask="portmacro.h" hidden="true"/>
+        <files mask="portmacro_JN516x.h" hidden="true"/>
+        <files mask="portmacro_JN517x.h" hidden="true"/>
+        <files mask="portmacro_JN518x.h" hidden="true"/>
+        <files mask="portmacro_linux.h" hidden="true"/>
+        <files mask="tlv.h" hidden="true"/>
+        <files mask="usart_dma_rxbuffer.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZigbeeCommon/Source" project_relative_path="ZigbeeCommon/Source" type="src">
+        <files mask="ZQueue.c" hidden="true"/>
+        <files mask="appZdpExtraction.c" hidden="true"/>
+        <files mask="appZpsExtendedDebug.c" hidden="true"/>
+        <files mask="port_JN518x.c" hidden="true"/>
+        <files mask="ZTimer.c" hidden="true"/>
+        <files mask="appZpsBeaconHandler.c" hidden="true"/>
+        <files mask="app_zps_link_keys.c" hidden="true"/>
+        <files mask="usart_dma_rxbuffer.c" hidden="true"/>
+      </source>
+      <source relative_path="./ZPSAPL/Include" project_relative_path="ZPSAPL/Include" type="c_include">
+        <files mask="zps_apl.h" hidden="true"/>
+        <files mask="zps_apl_af.h" hidden="true"/>
+        <files mask="zps_apl_aib.h" hidden="true"/>
+        <files mask="zps_apl_aps.h" hidden="true"/>
+        <files mask="zps_apl_zdo.h" hidden="true"/>
+        <files mask="zps_apl_zdp.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZPSMAC/Include" project_relative_path="ZPSMAC/Include" type="c_include">
+        <files mask="mac_vs_sap.h" hidden="true"/>
+        <files mask="zps_mac.h" hidden="true"/>
+        <files mask="zps_mac_if_table.h" hidden="true"/>
+        <files mask="zps_mac_prv.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZPSNWK/Include" project_relative_path="ZPSNWK/Include" type="c_include">
+        <files mask="zps_nwk_config.h" hidden="true"/>
+        <files mask="zps_nwk_mac_sap.h" hidden="true"/>
+        <files mask="zps_nwk_nib.h" hidden="true"/>
+        <files mask="zps_nwk_pub.h" hidden="true"/>
+        <files mask="zps_nwk_sap.h" hidden="true"/>
+        <files mask="zps_nwk_sec.h" hidden="true"/>
+        <files mask="zps_nwk_slist.h" hidden="true"/>
+      </source>
+      <source relative_path="./ZPSTSV/Include" project_relative_path="ZPSTSV/Include" type="c_include">
+        <files mask="zps_tsv.h" hidden="true"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee.cmake" hidden="true"/>
+      </source>
+    </component>
+    <component id="middleware.wireless.zigbee.examples.K32W1480" name="Wireless zigbee examples" brief="Middleware wireless zigbee examples" version="1.0.0" full_name="Wireless zigbee examples" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././" project_base_path="zigbee">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="./examples/zb_common" project_relative_path="examples/zb_common" type="c_include">
+        <files mask="PDM_IDs.h" hidden="true"/>
+        <files mask="app_leds.h" hidden="true"/>
+        <files mask="app_ota_server.h" hidden="true"/>
+        <files mask="app_buttons.h" hidden="true"/>
+        <files mask="app_common.h" hidden="true"/>
+        <files mask="app_ota_client.h" hidden="true"/>
+        <files mask="app_uart.h" hidden="true"/>
+        <files mask="app_crypto.h" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zb_common" project_relative_path="examples/zb_common" type="src">
+        <files mask="app_leds.c" hidden="true"/>
+        <files mask="app_ota_server.c" hidden="true"/>
+        <files mask="app_zigbee_config.c" hidden="true"/>
+        <files mask="app_buttons.c" hidden="true"/>
+        <files mask="app_ota_client.c" hidden="true"/>
+        <files mask="app_uart.c" hidden="true"/>
+        <files mask="app_crypto.c" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_router/src" project_relative_path="examples/zigbee_router/src" type="src">
+        <files mask="app_main.c" hidden="true"/>
+        <files mask="app_reporting.c" hidden="true"/>
+        <files mask="app_router_node.c" hidden="true"/>
+        <files mask="app_start.c" hidden="true"/>
+        <files mask="app_zcl_task.c" hidden="true"/>
+        <files mask="pdum_gen.c" hidden="true"/>
+        <files mask="zps_gen.c" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_router/src" project_relative_path="examples/zigbee_router/src" type="c_include">
+        <files mask="app_main.h" hidden="true"/>
+        <files mask="app_reporting.h" hidden="true"/>
+        <files mask="app_router_node.h" hidden="true"/>
+        <files mask="app_zcl_task.h" hidden="true"/>
+        <files mask="bdb_options.h" hidden="true"/>
+        <files mask="pdum_gen.h" hidden="true"/>
+        <files mask="zcl_options.h" hidden="true"/>
+        <files mask="zigbee_config.h" hidden="true"/>
+        <files mask="zps_gen.h" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_router/src" project_relative_path="examples/zigbee_router/src" type="asm_include">
+        <files mask="pdum_apdu.S" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_router/src" project_relative_path="examples/zigbee_router/src" type="doc">
+        <files mask="readme.txt" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_router/src" project_relative_path="examples/zigbee_router/src" type="other">
+        <files mask="router.zpscfg" hidden="true"/>
+        <files mask="router_subg.zpscfg" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_coordinator/src" project_relative_path="examples/zigbee_coordinator/src" type="src">
+        <files mask="app_coordinator.c" hidden="true"/>
+        <files mask="app_main.c" hidden="true"/>
+        <files mask="app_serial_commands.c" hidden="true"/>
+        <files mask="app_start.c" hidden="true"/>
+        <files mask="app_zcl_task.c" hidden="true"/>
+        <files mask="pdum_gen.c" hidden="true"/>
+        <files mask="zps_gen.c" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_coordinator/src" project_relative_path="examples/zigbee_coordinator/src" type="c_include">
+        <files mask="app_coordinator.h" hidden="true"/>
+        <files mask="app_main.h" hidden="true"/>
+        <files mask="app_serial_commands.h" hidden="true"/>
+        <files mask="app_zcl_task.h" hidden="true"/>
+        <files mask="bdb_options.h" hidden="true"/>
+        <files mask="pdum_gen.h" hidden="true"/>
+        <files mask="zcl_options.h" hidden="true"/>
+        <files mask="zigbee_config.h" hidden="true"/>
+        <files mask="zps_gen.h" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_coordinator/src" project_relative_path="examples/zigbee_coordinator/src" type="other">
+        <files mask="coordinator.zpscfg" hidden="true"/>
+        <files mask="coordinator_subg.zpscfg" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_coordinator/src/linux" project_relative_path="examples/zigbee_coordinator/src/linux" type="c_include">
+        <files mask="app.h" hidden="true"/>
+        <files mask="linux_glue.h" hidden="true"/>
+        <files mask="pdum_gen.h" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_coordinator/src/linux" project_relative_path="examples/zigbee_coordinator/src/linux" type="src">
+        <files mask="app_node.c" hidden="true"/>
+        <files mask="linux_glue.c" hidden="true"/>
+        <files mask="pdum_gen_glue.c" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_coordinator/src" project_relative_path="examples/zigbee_coordinator/src" type="asm_include">
+        <files mask="pdum_apdu.S" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_coordinator/src" project_relative_path="examples/zigbee_coordinator/src" type="doc">
+        <files mask="readme.txt" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_ed_rx_on/src" project_relative_path="examples/zigbee_ed_rx_on/src" type="src">
+        <files mask="app_end_device_node.c" hidden="true"/>
+        <files mask="app_main.c" hidden="true"/>
+        <files mask="app_reporting.c" hidden="true"/>
+        <files mask="app_start.c" hidden="true"/>
+        <files mask="app_zcl_task.c" hidden="true"/>
+        <files mask="pdum_gen.c" hidden="true"/>
+        <files mask="zps_gen.c" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_ed_rx_on/src" project_relative_path="examples/zigbee_ed_rx_on/src" type="c_include">
+        <files mask="app_end_device_node.h" hidden="true"/>
+        <files mask="app_main.h" hidden="true"/>
+        <files mask="app_reporting.h" hidden="true"/>
+        <files mask="app_zcl_task.h" hidden="true"/>
+        <files mask="bdb_options.h" hidden="true"/>
+        <files mask="pdum_gen.h" hidden="true"/>
+        <files mask="zcl_options.h" hidden="true"/>
+        <files mask="zigbee_config.h" hidden="true"/>
+        <files mask="zps_gen.h" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_ed_rx_on/src" project_relative_path="examples/zigbee_ed_rx_on/src" type="other">
+        <files mask="enddevice_rxon.zpscfg" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_ed_rx_on/src" project_relative_path="examples/zigbee_ed_rx_on/src" type="asm_include">
+        <files mask="pdum_apdu.S" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_ed_rx_on/src" project_relative_path="examples/zigbee_ed_rx_on/src" type="doc">
+        <files mask="readme.txt" hidden="true"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_examples.cmake" hidden="true"/>
+      </source>
+    </component>
+    <component id="middleware.wireless.zigbee.k32w1.K32W1480" name="Wireless zigbee k32w1" brief="Middleware wireless zigbee k32w1" version="1.0.0" full_name="Wireless zigbee k32w1" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././" project_base_path="zigbee">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+    </component>
+    <component id="middleware.wireless.zigbee.platform.k32w1.K32W1480" name="Wireless zigbee examples" brief="Middleware wireless zigbee platform" version="1.0.0" full_name="Wireless zigbee platform" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././platform" project_base_path="platform">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="./" type="c_include">
+        <files mask="zb_platform.h"/>
+      </source>
+      <source relative_path="../K32W1/framework/Common" project_relative_path="framework/Common" type="c_include">
+        <files mask="Heap.h"/>
+        <files mask="MicroSpecific.h"/>
+        <files mask="MicroSpecific_JN518x.h"/>
+        <files mask="MicroSpecific_arm_sdk2.h"/>
+        <files mask="dbg.h"/>
+        <files mask="glue.h"/>
+        <files mask="jendefs.h"/>
+      </source>
+      <source relative_path="../K32W1/framework/PDM" project_relative_path="framework/PDM" type="src">
+        <files mask="PDM_adapter.c"/>
+      </source>
+      <source relative_path="../K32W1/framework/PWRM" project_relative_path="framework/PWRM" type="src">
+        <files mask="PWRM_adapter.c"/>
+      </source>
+      <source relative_path="../K32W1/framework/PWRM/Include" project_relative_path="framework/PWRM/Include" type="c_include">
+        <files mask="pwrm.h"/>
+      </source>
+      <source relative_path="../K32W1/framework/SecLib" project_relative_path="framework/SecLib" type="src">
+        <files mask="SecLib_.c"/>
+        <files mask="aes_mmo.c"/>
+      </source>
+      <source relative_path="../K32W1/framework/SecLib" project_relative_path="framework/SecLib" type="c_include">
+        <files mask="aessw_ccm.h"/>
+      </source>
+      <source relative_path="../K32W1/platform" project_relative_path="platform" type="src">
+        <files mask="buttons.c"/>
+        <files mask="console.c"/>
+        <files mask="crypto.c"/>
+        <files mask="glue.c"/>
+        <files mask="leds.c"/>
+        <files mask="timer.c"/>
+        <files mask="uart.c"/>
+        <files mask="uart_hal.c"/>
+        <files mask="wdog.c"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_platform_k32w1.cmake" hidden="true"/>
+      </source>
+    </component>
+    <component id="middleware.wireless.zigbee.platform.k32w1_ncp_host.K32W1480" name="Wireless zigbee K32W1 NCP HOST examples" brief="Middleware wireless zigbee platform" version="1.0.0" full_name="Wireless zigbee platform for K32W1 NCP HOST" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././platform" project_base_path="platform">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+    </component>
+    <component id="middleware.wireless.zb_examples_common.K32W1480" name="Wireless zigbee examples common" brief="Middleware wireless zigbee platform" version="1.0.0" full_name="Wireless zigbee examples common" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././examples/zb_common" project_base_path="common">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="./" type="c_include">
+        <files mask="PDM_IDs.h"/>
+        <files mask="app_leds.h"/>
+        <files mask="app_ota_server.h"/>
+        <files mask="app_buttons.h"/>
+        <files mask="app_common.h"/>
+        <files mask="app_ota_client.h"/>
+        <files mask="app_console.h"/>
+        <files mask="app_uart.h"/>
+        <files mask="app_crypto.h"/>
+      </source>
+      <source relative_path="./" type="src">
+        <files mask="app_leds.c"/>
+        <files mask="app_zigbee_config.c"/>
+        <files mask="app_buttons.c"/>
+        <files mask="app_console.c"/>
+        <files mask="app_uart.c"/>
+        <files mask="app_crypto.c"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_zb_examples_common.cmake" hidden="true"/>
+      </source>
+    </component>
+    <component id="middleware.wireless.zb_examples_common.ota_client.K32W1480" name="Wireless zigbee examples common ota_client" brief="Middleware wireless zigbee platform ota" version="1.0.0" full_name="Wireless zigbee examples common ota_client" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././examples/zb_common" project_base_path="common">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="./" type="src">
+        <files mask="app_ota_client.c"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_zb_examples_common_ota_client.cmake" hidden="true"/>
+      </source>
+    </component>
+    <component id="middleware.wireless.zb_examples_common.ota_server.K32W1480" name="Wireless zigbee examples common ota_server" brief="Middleware wireless zigbee platform ota" version="1.0.0" full_name="Wireless zigbee examples common ota_server" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././examples/zb_common" project_base_path="common">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="./" type="src">
+        <files mask="app_ota_server.c"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_zb_examples_common_ota_server.cmake" hidden="true"/>
+      </source>
+    </component>
+    <component id="middleware.wireless.zb_examples_collaterals.K32W1480" name="Wireless zigbee examples common" brief="Middleware wireless zigbee examples collaterals" version="1.0.0" full_name="Wireless zigbee examples collaterals" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././examples" project_base_path="common">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="../zigbee_coordinator/src/linux" project_relative_path="zigbee_coordinator/src/linux" type="c_include">
+        <files mask="app.h" hidden="true"/>
+        <files mask="linux_glue.h" hidden="true"/>
+        <files mask="pdum_gen.h" hidden="true"/>
+      </source>
+      <source relative_path="../zigbee_coordinator/src/linux" project_relative_path="zigbee_coordinator/src/linux" type="src">
+        <files mask="app_node.c" hidden="true"/>
+        <files mask="linux_glue.c" hidden="true"/>
+        <files mask="pdum_gen_glue.c" hidden="true"/>
+      </source>
+      <source relative_path="../zigbee_coordinator/build_linux" project_relative_path="zigbee_coordinator/build_linux" type="doc">
+        <files mask="CMakeLists.txt" hidden="true"/>
+        <files mask="README.md" hidden="true"/>
+      </source>
+      <source relative_path="../zigbee_coordinator/build_linux" project_relative_path="zigbee_coordinator/build_linux" type="script">
+        <files mask="CreatePDUMLib.cmake" hidden="true"/>
+      </source>
+      <source relative_path="../zb_common" project_relative_path="zb_common" type="src">
+        <files mask="serial_link_cmds_ctrl.c" hidden="true"/>
+        <files mask="serial_link_ctrl_linux.c" hidden="true"/>
+        <files mask="serial_link_ctrl.c" hidden="true"/>
+      </source>
+      <source relative_path="../zb_common" project_relative_path="zb_common" type="c_include">
+        <files mask="serial_link_cmds_ctrl.h" hidden="true"/>
+        <files mask="serial_link_ctrl.h" hidden="true"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_zb_examples_collaterals.cmake" hidden="true"/>
+      </source>
+    </component>
+    <component id="middleware.wireless.zb_serial_link.K32W1480" name="Wireless zigbee serial link" brief="Middleware wireless zigbee serial link" version="1.0.0" full_name="Wireless zigbee serial link" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././examples/zb_common" project_base_path="SerialLink">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="./" type="src">
+        <files mask="serial_link_cmds_wkr.c"/>
+        <files mask="serial_link_wkr.c"/>
+      </source>
+      <source relative_path="./" type="c_include">
+        <files mask="serial_link_cmds_wkr.h"/>
+        <files mask="serial_link_wkr.h"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_zb_serial_link.cmake" hidden="true"/>
+      </source>
+      <include_paths>
+        <include_path relative_path="./" type="c_include"/>
+      </include_paths>
+    </component>
+    <component id="middleware.wireless.zigbee_core_ZCL_Clusters_OTA_Server.K32W1480" name="Wireless zigbee ZCL OTA Server" brief="Middleware wireless zigbee ZCL OTA Server" version="1.0.0" full_name="Wireless zigbee OTA Server" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././ZCL/Clusters/OTA" project_base_path="Dependencies/ZCL/Clusters/OTA">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="../../../Include" project_relative_path="Include" type="c_include">
+        <files mask="OTA.h"/>
+      </source>
+      <source relative_path="../../../Source" project_relative_path="Source" type="src">
+        <files mask="OTA.c"/>
+        <files mask="OTA_common.c"/>
+        <files mask="OTA_CustomCommandHandler.c"/>
+        <files mask="OTA_CustomReceiveCommands.c"/>
+        <files mask="OTA_server.c"/>
+        <files mask="OTA_ServerUpgradeManager.c"/>
+      </source>
+      <source relative_path="../../../Source" project_relative_path="Source" type="c_include">
+        <files mask="OTA_private.h"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_core_ZCL_Clusters_OTA_Server.cmake" hidden="true"/>
+      </source>
+      <include_paths>
+        <include_path relative_path="../../../Include" project_relative_path="./Include" type="c_include"/>
+        <include_path relative_path="../../../Source" project_relative_path="./Source" type="c_include"/>
+      </include_paths>
+    </component>
+    <component id="middleware.wireless.zigbee_core_ZCL_Clusters_OTA_Client.K32W1480" name="Wireless zigbee ZCL OTA Client" brief="Middleware wireless zigbee ZCL OTA Client" version="1.0.0" full_name="Wireless zigbee ZCL OTA Client" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././ZCL/Clusters/OTA" project_base_path="Dependencies/ZCL/Clusters/OTA">
+      <dependencies>
+        <device_dependency value="K32W1480xxxA"/>
+      </dependencies>
+      <source relative_path="../../../Include" project_relative_path="Include" type="c_include">
+        <files mask="OTA.h"/>
+      </source>
+      <source relative_path="../../../Source" project_relative_path="Source" type="src">
+        <files mask="OTA.c"/>
+        <files mask="OTA_common.c"/>
+        <files mask="OTA_CustomCommandHandler.c"/>
+        <files mask="OTA_CustomReceiveCommands.c"/>
+        <files mask="OTA_client.c"/>
+        <files mask="OTA_ClientUpgradeManager.c"/>
+      </source>
+      <source relative_path="../../../Source" project_relative_path="Source" type="c_include">
+        <files mask="OTA_private.h"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_core_ZCL_Clusters_OTA_Client.cmake" hidden="true"/>
+      </source>
+      <include_paths>
+        <include_path relative_path="../../../Include" project_relative_path="./Include" type="c_include"/>
+        <include_path relative_path="../../../Source" project_relative_path="./Source" type="c_include"/>
+      </include_paths>
+    </component>
+  </components>
+</ksdk:manifest>

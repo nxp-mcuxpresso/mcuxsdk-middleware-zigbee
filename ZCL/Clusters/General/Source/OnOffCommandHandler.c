@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP.
+ * Copyright 2020 NXP
  *
  * NXP Confidential. 
  * 
@@ -562,9 +562,9 @@ PRIVATE  teZCL_Status eCLD_OnOffHandleOffWithEffectCommand(
      * 6.6.1.4.4.3 Effect on receipt
      * On receipt of the off with effect command and if the GlobalSceneControl attribute is equal to TRUE,
      * the application on the associated endpoint shall store its settings in its global scene then set the
-     * GlobalSceneControl attribute to FALSE. The application shall then enter its “off” state, update the OnOff
+     * GlobalSceneControl attribute to FALSE. The application shall then enter its "off" state, update the OnOff
      * attribute accordingly, and set the OnTime attribute to 0x0000.
-     * In all other cases, the application on the associated endpoint shall enter its “off” state, update the OnOff
+     * In all other cases, the application on the associated endpoint shall enter its "off" state, update the OnOff
      * attribute accordingly, and set the OnTime attribute to 0x0000.
      */
 #ifdef CLD_ONOFF_ATTR_GLOBAL_SCENE_CONTROL

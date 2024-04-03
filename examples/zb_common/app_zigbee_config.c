@@ -39,8 +39,6 @@ tszQueue APP_msgSerialRx;
 #ifdef NCP_HOST
 uint8_t rxDmaTimerHandle;
 
-PRIVATE uint8 au8PdumBufferPool[ZB_BUFFER_SIZE] __attribute__ ((aligned (4)));
-
 PUBLIC void APP_vRxDmaTimerCallbackFnct(void *p_arg);
 #endif
 /****************************************************************************
@@ -144,9 +142,7 @@ void APP_vInitZigbeeResources(void)
     ZQ_vQueueCreate(&APP_msgBdbEvents,	BDB_QUEUE_SIZE,          sizeof(BDB_tsZpsAfEvent),    NULL);
     ZTIMER_eOpen(&rxDmaTimerHandle, APP_vRxDmaTimerCallbackFnct, NULL, ZTIMER_FLAG_PREVENT_SLEEP);
 
-    uint16_t u16NoOfBuffers;
-    bPdumInit(au8PdumBufferPool, APDU_PAYLOAD_SIZE, NUM_OF_APDU_BUFFERS,  sizeof(au8PdumBufferPool), &u16NoOfBuffers);
-    DBG_vPrintf(TRUE, "Allocated %d buffers in poll\n", u16NoOfBuffers);
+    PDUM_vInit();
 }
 #endif
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP.
+ * Copyright 2020 NXP
  *
  * NXP Confidential. 
  * 
@@ -47,7 +47,7 @@
 #include "bdb_start.h"
 #include "bdb_fr.h"
 #include "dbg.h"
-#include "rnd_pub.h"
+#include "zb_platform.h"
 #include <string.h>
 #include <stdlib.h>
 /****************************************************************************/
@@ -423,13 +423,13 @@ PUBLIC uint8 BDB_u8PickChannel(uint32 u32ChannelMask)
     /*
      * In case RAND_CHANNEL is TRUE, that is the channel selection is random,
      * ensure that all the selection on all elements of the array 0..u8ChanArSize.
-     * The reason why this works is because RND_u32GetRand uses the modulo operator
+     * The reason why this works is because zbPlatCryptoRandomGet uses the modulo operator
      * and returns (n % (u32Max - u32Min) + u32Min).
      *
      * As such, in order to include the last value in the au8ChanAr in the pool of
      * candidates, the input needs to go up to and including u8ChanArSize.
      */
-    return au8ChanAr[(uint8)RND_u32GetRand(0, u8ChanArSize)];
+    return au8ChanAr[(uint8)zbPlatCryptoRandomGet(0, u8ChanArSize)];
 #else
     /* TestEvent - Return first channel from u32bdbPrimaryChannelSet */
     /*

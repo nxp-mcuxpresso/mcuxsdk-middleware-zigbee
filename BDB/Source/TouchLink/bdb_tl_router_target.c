@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020,2023 NXP.
+ * Copyright 2020, 2023 NXP
  *
  * NXP Confidential. 
  * 
@@ -56,11 +56,10 @@
 
 #include "app_zcl_task.h"
 #include "zcl_customcommand.h"
-
+#include "zb_platform.h"
 #include "zps_nwk_nib.h"
 
 #include <string.h>
-#include <rnd_pub.h>
 #include <stdlib.h>
 
 #include "PDM_IDs.h"
@@ -338,7 +337,7 @@ PUBLIC void BDB_vTlStateMachine( tsBDB_ZCLEvent *psEvent)
                         DBG_vPrintf(TRACE_JOIN, "Back to %016llx Mode %d\r\n", sDstAddr.uAddress.u64Addr, sDstAddr.eMode);
                         sDstAddr.u16PanId = 0xffff;
                         sCommission.u32TransactionId = psZllMessage->uMessage.psScanReqPayload->u32TransactionId;
-                        sCommission.u32ResponseId = RND_u32GetRand(1, 0xffffffff);
+                        sCommission.u32ResponseId = zbPlatCryptoRandomGet(1, 0xffffffff);
                         if ( 0 == BDB_eTlSendScanResponse( psNib, &sDstAddr, sCommission.u32TransactionId, sCommission.u32ResponseId)) {
                             sCommission.eState = E_ACTIVE;
                             /* Timer to end inter pan */
@@ -408,7 +407,7 @@ PUBLIC void BDB_vTlStateMachine( tsBDB_ZCLEvent *psEvent)
                                         DBG_vPrintf(TRACE_JOIN, "New scan Back to %016llx Mode %d\r\n", sDstAddr.uAddress.u64Addr, sDstAddr.eMode);
                                         sDstAddr.u16PanId = 0xffff;
                                         sCommission.u32TransactionId = psZllMessage->uMessage.psScanReqPayload->u32TransactionId;
-                                        sCommission.u32ResponseId = RND_u32GetRand(1, 0xffffffff);
+                                        sCommission.u32ResponseId = zbPlatCryptoRandomGet(1, 0xffffffff);
                                         if ( 0 == BDB_eTlSendScanResponse( psNib, &sDstAddr, sCommission.u32TransactionId, sCommission.u32ResponseId))
                                         {
                                             /* Timer to end inter pan */
@@ -563,14 +562,14 @@ PUBLIC void BDB_vTlStateMachine( tsBDB_ZCLEvent *psEvent)
                                 {
                                     if (sStartParams.sNwkParams.u64ExtPanId == 0)
                                     {
-                                        sStartParams.sNwkParams.u64ExtPanId = RND_u32GetRand(1, 0xffffffff);
+                                        sStartParams.sNwkParams.u64ExtPanId = zbPlatCryptoRandomGet(1, 0xffffffff);
                                         sStartParams.sNwkParams.u64ExtPanId <<= 32;
-                                        sStartParams.sNwkParams.u64ExtPanId |= RND_u32GetRand(0, 0xffffffff);
+                                        sStartParams.sNwkParams.u64ExtPanId |= zbPlatCryptoRandomGet(0, 0xffffffff);
                                         DBG_vPrintf(TRACE_COMMISSION, "Gen Epid\r\n");
                                     }
                                     if (sStartParams.sNwkParams.u16PanId == 0)
                                     {
-                                        sStartParams.sNwkParams.u16PanId = RND_u32GetRand( 1, 0xfffe);
+                                        sStartParams.sNwkParams.u16PanId = zbPlatCryptoRandomGet( 1, 0xfffe);
                                         DBG_vPrintf(TRACE_COMMISSION, "Gen pan\r\n");
                                     }
                                     DBG_vPrintf(TRACE_COMMISSION, "Do discovery\r\n");
@@ -687,10 +686,10 @@ PUBLIC void BDB_vTlStateMachine( tsBDB_ZCLEvent *psEvent)
                 while (!BDB_bTlSearchDiscNt(psNib, sStartParams.sNwkParams.u64ExtPanId,
                         sStartParams.sNwkParams.u16PanId))
                 {
-                    sStartParams.sNwkParams.u16PanId = RND_u32GetRand(1, 0xfffe);
-                    sStartParams.sNwkParams.u64ExtPanId = RND_u32GetRand(1, 0xffffffff);
+                    sStartParams.sNwkParams.u16PanId = zbPlatCryptoRandomGet(1, 0xfffe);
+                    sStartParams.sNwkParams.u64ExtPanId = zbPlatCryptoRandomGet(1, 0xffffffff);
                     sStartParams.sNwkParams.u64ExtPanId <<= 32;
-                    sStartParams.sNwkParams.u64ExtPanId |= RND_u32GetRand(0, 0xffffffff);
+                    sStartParams.sNwkParams.u64ExtPanId |= zbPlatCryptoRandomGet(0, 0xffffffff);
                 };
                 //DBG_vPrintf(TRACE_JOIN, "New Epid %016llx Pan %04x\r\n", sStartParams.u64ExtPanId, sStartParams.u16PanId);
             }
@@ -865,7 +864,7 @@ PRIVATE teZCL_Status BDB_eTlSendScanResponse(ZPS_tsNwkNib *psNib,
     //u32TransactionId = psZllMessage->uPayload.sScanReqPayload.u32TransactionId;
     sScanRsp.u32TransactionId = u32TransactionId;
 
-    //u32ResponseId = RND_u32GetRand(1, 0xffffffff);
+    //u32ResponseId = zbPlatCryptoRandomGet(1, 0xffffffff);
     sScanRsp.u32ResponseId = u32ResponseId;
     sScanRsp.u8RSSICorrection = RSSI_CORRECTION;
     sScanRsp.u8ZigbeeInfo = TL_ROUTER | TL_RXON_IDLE;

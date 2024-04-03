@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020, 2023 NXP.
+ * Copyright 2020, 2021, 2023, 2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -118,7 +118,8 @@ PUBLIC  teZCL_Status eZCL_CreateZCL(tsZCL_Config *psZCL_Config)
     memset(&sZCL_Common, 0, sizeof(sZCL_Common));
     u8NumberOfRegEndpoints = 0;
 
-    psZCL_Common->u8TransactionSequenceNumber = 0;
+    psZCL_Common->u8TransactionSequenceNumber = ZCL_INITIAL_TRANSACTION_SEQ_NUM;
+    psZCL_Common->u8ApsSequenceNumberLastVerified = ZCL_INITIAL_TRANSACTION_SEQ_NUM;
     psZCL_Common->pfZCLinternalCallBackFunction = psZCL_Config->pfZCLcallBackFunction;
     psZCL_Common->hZCL_APdu = psZCL_Config->hAPdu;
     psZCL_Common->u32UTCTime = 0;

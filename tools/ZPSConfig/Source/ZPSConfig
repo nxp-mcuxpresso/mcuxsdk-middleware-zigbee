@@ -44,7 +44,7 @@ ${PYTHON} - "$@" <<SCRIPT_DOCUMENT
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE. 
 # 
-# Copyright NXP B.V. 2015-2023. All rights reserved
+# Copyright 2015-2023 NXP
 #
 ###############################################################################
 
@@ -952,7 +952,7 @@ def outputC(dir, configNode, sEndian):
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright NXP B.V. %s. All rights reserved
+ * Copyright %s NXP
  ****************************************************************************/
 
 /****************************************************************************/
@@ -1415,15 +1415,17 @@ typedef struct
     uint8  u8VsMaxOutgoingCost;
     uint8  u8VsLeaveRejoin;
     uint8  u8ZedTimeout;
-    uint8  u8ZedTimeoutDefault;
-    uint16 u16VerifyLinkCostTransmitRate;
-""")
+    uint8  u8ZedTimeoutDefault;""")
+    if R23_UPDATES:
+        Cfile.write("""
+    uint8  u8MaxInitialJoinParentAttempts;
+    uint8  u8MaxRejoinParentAttempts;""")
+    Cfile.write("""
+    uint16 u16VerifyLinkCostTransmitRate;""")
     if R23_UPDATES or WWAH_SUPPORT:
         Cfile.write("""
-    uint16 u16NextPanId;
-""")
+    uint16 u16NextPanId;""")
     Cfile.write("""
-
 } zps_tsNwkNibInitialValues;
 
 
@@ -2388,7 +2390,7 @@ PRIVATE const zps_tsNwkNibInitialValues s_sNibInitialValues =
     0,""")
     if R23_UPDATES:  # u8GoodParentLqa
         Cfile.write("""
-    75,""")
+    0,""")
     Cfile.write("""
     15,
     3,
@@ -2402,8 +2404,14 @@ PRIVATE const zps_tsNwkNibInitialValues s_sNibInitialValues =
     Cfile.write("\n    %d,"%(LeaveAllowedDefault))
     Cfile.write("""
     6,
-    8,
-    0, """) #/* u16VerifyLinkCostTransmitRate */
+    8,""")
+    if R23_UPDATES:
+        # nwkMaxInitialJoinParentAttempts
+        Cfile.write("""
+    1,
+    3,""") # u8MaxRejoinParentAttempts
+    Cfile.write("""
+    0,""") #/* u16VerifyLinkCostTransmitRate */
     if R23_UPDATES or WWAH_SUPPORT: # u16NextPanId
         Cfile.write("""
     65535""")
@@ -2903,7 +2911,7 @@ def outputHeader(dir, configNode):
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright NXP B.V. %s. All rights reserved
+ * Copyright %s NXP
  ****************************************************************************/
 """  % (datetime.datetime.ctime(datetime.datetime.now()), datetime.datetime.today().year))
 
@@ -3145,7 +3153,7 @@ if len(sys.argv) <= 1:
 \tARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 \tPOSSIBILITY OF SUCH DAMAGE.
 \t
-\tCopyright NXP B.V. %s. All rights reserved
+\tCopyright %s NXP
 """ % (datetime.datetime.today().year))
         print("For help: %s --help" % (sys.argv[0]))
         sys.exit(0)

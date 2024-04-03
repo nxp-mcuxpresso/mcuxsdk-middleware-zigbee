@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP.
+ * Copyright 2020 NXP
  *
  * NXP Confidential. 
  * 
@@ -37,7 +37,7 @@
 #include "dbg.h"
 #include "pdum_gen.h"
 #include "bdb_DeviceCommissioning.h"
-#include "rnd_pub.h"
+#include "zb_platform.h"
 #if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
 #include "AHI_AES.h"
 #else
@@ -227,7 +227,7 @@ PUBLIC uint8 BDB_u8OutOfBandCommissionStartDevice ( BDB_tsOobWriteDataToCommissi
          (psStartupData->u16ShortAddress == 0 || psStartupData->u16ShortAddress > 0xFFFA )
        )
     {
-        psStartupData->u16ShortAddress = (uint16)RND_u32GetRand( 1, 0xFFF7 ) ;
+        psStartupData->u16ShortAddress = (uint16)zbPlatCryptoRandomGet( 1, 0xFFF7 ) ;
     }
    
     ZPS_vNwkNibSetNwkAddr ( ZPS_pvAplZdoGetNwkHandle(), psStartupData->u16ShortAddress);
@@ -245,7 +245,7 @@ PUBLIC uint8 BDB_u8OutOfBandCommissionStartDevice ( BDB_tsOobWriteDataToCommissi
         /* If not Generate a Network Key */
         for ( i = 0; i < ZPS_SEC_KEY_LENGTH; i++ )
         {
-            psNib->sTbl.psSecMatSet[0].au8Key[i] =  (uint8)(RND_u32GetRand256() & 0xFF);
+            psNib->sTbl.psSecMatSet[0].au8Key[i] =  (uint8)(zbPlatCryptoRandom256Get() & 0xFF);
         }
 
     }     

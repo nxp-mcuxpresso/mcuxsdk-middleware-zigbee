@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP.
+ * Copyright 2020 NXP
  *
  * NXP Confidential. 
  * 
@@ -53,20 +53,20 @@ extern PUBLIC void vDebugHex(uint32 u32Data, int iSize);
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
 
-// 0x0000 – 0x7fff Standard ZigBee application profile.
+// 0x0000 - 0x7fff Standard ZigBee application profile.
 #define MAX_STD_PROFILE_ID              (0x7FFF)
-// 0x8000 – 0xbfff Reserved.
-// 0xc000 – 0xffff Manufacturer Specific application profile.
+// 0x8000 - 0xbfff Reserved.
+// 0xc000 - 0xffff Manufacturer Specific application profile.
 #define MIN_MAN_PROFILE_ID              (0xC000)
 
-// 0x0000 – 0xbfff Standard ZigBee device description.
+// 0x0000 - 0xbfff Standard ZigBee device description.
 #define MAX_STD_DEVICE_ID               (0xBFFF)
-// 0xc000 – 0xffff Reserved.
+// 0xc000 - 0xffff Reserved.
 
-// 0x0000 – 0x7fff Standard ZigBee cluster.
+// 0x0000 - 0x7fff Standard ZigBee cluster.
 #define MAX_STD_CLUSTER_ID              (0x7FFF)
-// 0x8000 – 0xfbff Reserved.
-// 0xfc00 – 0xffff Manufacturer specific cluster within a standard ZigBee profile.
+// 0x8000 - 0xfbff Reserved.
+// 0xfc00 - 0xffff Manufacturer specific cluster within a standard ZigBee profile.
 #define MIN_MAN_CLUSTER_ID              (0xFC00)
 
 #define MAX_COMMAND_ID                  (0x10)

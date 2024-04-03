@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020,2023 NXP.
+ * Copyright 2020, 2023 NXP
  *
  * NXP Confidential. 
  * 
@@ -58,7 +58,7 @@
 #include "zcl_customcommand.h"
 #include "mac_sap.h"
 #include "ZTimer.h"
-#include <rnd_pub.h>
+#include "zb_platform.h"
 #include <mac_pib.h>
 #include <string.h>
 #include <stdlib.h>
@@ -377,7 +377,7 @@ PUBLIC void BDB_vTlStateMachine( tsBDB_ZCLEvent *psEvent)
                 sScanTarget.u16LQI = 0;
                 ZTIMER_eStart(u8TimerBdbTl, ZTIMER_TIME_MSEC(10));
                 sCommission.eState = E_SCANNING;
-                sCommission.u32TransactionId = RND_u32GetRand(1, 0xffffffff);
+                sCommission.u32TransactionId = zbPlatCryptoRandomGet(1, 0xffffffff);
                 DBG_vPrintf(TRACE_COMMISSION, "\r\nRxIdle True");
                 ZPS_vMacPibSetRxOnWhenIdle(TRUE, FALSE);
                 sCommission.bResponded = FALSE;
@@ -433,7 +433,7 @@ jumpHere:
                     sDstAddr = sSrcAddr;
                     sDstAddr.u16PanId = 0xFFFF;
 
-                    sCommission.u32ResponseId = RND_u32GetRand(1, 0xffffffff);
+                    sCommission.u32ResponseId = zbPlatCryptoRandomGet(1, 0xffffffff);
                     sCommission.u32TransactionId = psZllMessage->uMessage.psScanReqPayload->u32TransactionId;
                     sCommission.bProfileInterOp =
                             (psZllMessage->uMessage.psScanReqPayload->u8ZllInfo & TL_PROFILE_INTEROP) ? TRUE : FALSE;
@@ -510,7 +510,7 @@ jumpHere:
                             sDstAddr = sSrcAddr;
                             sDstAddr.u16PanId = 0xFFFF;
 
-                            sCommission.u32TheirResponseId = RND_u32GetRand(1, 0xffffffff);
+                            sCommission.u32TheirResponseId = zbPlatCryptoRandomGet(1, 0xffffffff);
                             sCommission.u32TheirTransactionId = psZllMessage->uMessage.psScanReqPayload->u32TransactionId;
 
                             sCommission.bProfileInterOp =
@@ -646,7 +646,7 @@ jumpHere:
 
                 sCommission.u8Count = 0;
                 sScanTarget.u16LQI = 0;
-                sCommission.u32TransactionId = RND_u32GetRand(1, 0xffffffff);
+                sCommission.u32TransactionId = zbPlatCryptoRandomGet(1, 0xffffffff);
                 sCommission.bResponded = FALSE;
 
 
@@ -1473,7 +1473,7 @@ PRIVATE void vTlSendStartRequest(void *pvNwk,
 
     for (i=0; i<16; i++) {
 #ifndef FIXED_NWK_KEY
-        au8TempKeyStore[i] = (uint8)(RND_u32GetRand256() & 0xFF);
+        au8TempKeyStore[i] = (uint8)(zbPlatCryptoRandom256Get() & 0xFF);
 #else
         au8TempKeyStore[i] = 0x09;
 #endif
@@ -1584,7 +1584,7 @@ PRIVATE void vTlSendRouterJoinRequest(void *pvNwk,
     vTlSaveTempAddresses();
 
     if (sZllState.u16FreeAddrLow == 0) {
-        sTarget.u16NwkAddr = RND_u32GetRand(1, 0xfff6);
+        sTarget.u16NwkAddr = zbPlatCryptoRandomGet(1, 0xfff6);
         sNwkJoinRouterReqPayload.u16NwkAddr = sTarget.u16NwkAddr;
     } else  {
         sTarget.u16NwkAddr = sZllState.u16FreeAddrLow;
@@ -1671,7 +1671,7 @@ PRIVATE void vTlSendEndDeviceJoinRequest(void *pvNwk,
     vTlSaveTempAddresses();
 
     if (sZllState.u16FreeAddrLow == 0) {
-        sTarget.u16NwkAddr = RND_u32GetRand(1, 0xfff6);;
+        sTarget.u16NwkAddr = zbPlatCryptoRandomGet(1, 0xfff6);;
         sNwkJoinEndDeviceReqPayload.u16NwkAddr = sTarget.u16NwkAddr;
     } else  {
         sTarget.u16NwkAddr = sZllState.u16FreeAddrLow;
