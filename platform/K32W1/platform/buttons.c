@@ -1,5 +1,5 @@
 /*
-* Copyright 2023 NXP
+* Copyright 2023-2024 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -25,6 +25,7 @@ static BUTTON_HANDLE_ARRAY_DEFINE(board_button_handles, BOARD_BUTTONS_NUM);
 button_cb app_cb;
 static uint8_t app_num_buttons;
 
+#if defined(gAppButtonCnt_c) && (gAppButtonCnt_c > 0)
 static button_status_t buttons_cb(button_handle_t handle, button_callback_message_t *msg, void *param)
 {
     /* Param will hold the button ID, in order to send it to Zigbee stack */
@@ -48,6 +49,7 @@ static button_status_t buttons_cb(button_handle_t handle, button_callback_messag
     }
     return kStatus_BUTTON_Success;
 }
+#endif
 
 static void deinitButtons(void)
 {
@@ -80,7 +82,7 @@ bool zbPlatButtonInit(uint8_t num_buttons, button_cb cb)
     app_cb          = cb;
     app_num_buttons = num_buttons;
 
-    /* Always enable at least one BUTTON */
+#if defined(gAppButtonCnt_c) && (gAppButtonCnt_c > 0)
     BOARD_InitButton0(board_button_handles[0]);
 
     /* Init BUTTON1 if needed */
@@ -95,6 +97,7 @@ bool zbPlatButtonInit(uint8_t num_buttons, button_cb cb)
                                buttons_cb,
                                (void *)(uint32_t)i);
     }
+#endif
 
     return true;
 }

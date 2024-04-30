@@ -89,6 +89,30 @@ target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE
 endif()
 
 
+if (CONFIG_USE_middleware_wireless_zigbee_platform_ncp_host)
+# Add set(CONFIG_USE_middleware_wireless_zigbee_platform_ncp_host true) in config.cmake to use this component
+
+message("middleware_wireless_zigbee_platform_ncp_host component is included from ${CMAKE_CURRENT_LIST_FILE}.")
+
+target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE
+  ${CMAKE_CURRENT_LIST_DIR}/platform/NCP_HOST/framework/OtaSupport/Source/Posix/OtaSupport_adapter.c
+  ${CMAKE_CURRENT_LIST_DIR}/platform/NCP_HOST/framework/PDM/Source/Posix/PDM_adapter.c
+  ${CMAKE_CURRENT_LIST_DIR}/platform/NCP_HOST/framework/PDUM/Source/pdum.c
+  ${CMAKE_CURRENT_LIST_DIR}/platform/NCP_HOST/framework/PDUM/Source/pdum_apl.c
+  ${CMAKE_CURRENT_LIST_DIR}/platform/NCP_HOST/framework/PDUM/Source/pdum_dbg.c
+  ${CMAKE_CURRENT_LIST_DIR}/platform/NCP_HOST/framework/PDUM/Source/pdum_nwk.c
+  ${CMAKE_CURRENT_LIST_DIR}/platform/NCP_HOST/platform/Posix/console.c
+  ${CMAKE_CURRENT_LIST_DIR}/platform/NCP_HOST/platform/Posix/crypto.c
+  ${CMAKE_CURRENT_LIST_DIR}/platform/NCP_HOST/platform/Posix/glue.c
+  ${CMAKE_CURRENT_LIST_DIR}/platform/NCP_HOST/platform/Posix/leds.c
+  ${CMAKE_CURRENT_LIST_DIR}/platform/NCP_HOST/platform/Posix/timer.c
+  ${CMAKE_CURRENT_LIST_DIR}/platform/NCP_HOST/platform/Posix/uart.c
+)
+
+
+endif()
+
+
 if (CONFIG_USE_middleware_wireless_zigbee_zb_examples_common)
 # Add set(CONFIG_USE_middleware_wireless_zigbee_zb_examples_common true) in config.cmake to use this component
 

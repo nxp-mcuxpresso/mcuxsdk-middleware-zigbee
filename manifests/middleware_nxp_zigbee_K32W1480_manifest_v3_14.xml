@@ -2238,10 +2238,68 @@
         <files mask="middleware_wireless_zigbee_platform_k32w1.cmake" hidden="true"/>
       </source>
     </component>
-    <component id="middleware.wireless.zigbee.platform.k32w1_ncp_host.K32W1480" name="Wireless zigbee K32W1 NCP HOST examples" brief="Middleware wireless zigbee platform" version="1.0.0" full_name="Wireless zigbee platform for K32W1 NCP HOST" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././platform" project_base_path="platform">
+    <component id="middleware.wireless.zigbee.platform.ncp_host.K32W1480" name="Wireless zigbee NCP HOST examples" brief="Middleware wireless zigbee platform" version="1.0.0" full_name="Wireless zigbee platform for NCP HOST" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././platform" project_base_path="platform">
       <dependencies>
         <device_dependency value="K32W1480xxxA"/>
       </dependencies>
+      <source relative_path="../NCP_HOST/framework/Common" project_relative_path="framework/Common" type="c_include">
+        <files mask="MicroSpecific.h"/>
+        <files mask="dbg.h"/>
+        <files mask="glue.h"/>
+        <files mask="jendefs.h"/>
+      </source>
+      <source relative_path="../NCP_HOST/framework/OtaSupport/Interface" project_relative_path="framework/OtaSupport/Interface" type="c_include">
+        <files mask="OtaSupport.h"/>
+      </source>
+      <source relative_path="../NCP_HOST/framework/OtaSupport/Source/Posix" project_relative_path="framework/OtaSupport/Source/Posix" type="src">
+        <files mask="OtaSupport_adapter.c"/>
+      </source>
+      <source relative_path="../NCP_HOST/framework/PDM/Interface" project_relative_path="framework/PDM/Interface" type="c_include">
+        <files mask="PDM.h"/>
+      </source>
+      <source relative_path="../NCP_HOST/framework/PDM/Source/Posix" project_relative_path="framework/PDM/Source/Posix" type="src">
+        <files mask="PDM_adapter.c"/>
+      </source>
+      <source relative_path="../NCP_HOST/framework/PDUM/Include" project_relative_path="framework/PDUM/Include" type="c_include">
+        <files mask="pdum_apl.h"/>
+        <files mask="pdum_common.h"/>
+        <files mask="pdum_nwk.h"/>
+      </source>
+      <source relative_path="../NCP_HOST/framework/PDUM/Source" project_relative_path="framework/PDUM/Source" type="src">
+        <files mask="pdum.c"/>
+        <files mask="pdum_apl.c"/>
+        <files mask="pdum_dbg.c"/>
+        <files mask="pdum_nwk.c"/>
+      </source>
+      <source relative_path="../NCP_HOST/framework/PDUM/Source" project_relative_path="framework/PDUM/Source" type="c_include">
+        <files mask="pdum_private.h"/>
+      </source>
+      <source relative_path="../NCP_HOST/framework/PWRM/Include" project_relative_path="framework/PWRM/Include" type="c_include">
+        <files mask="pwrm.h"/>
+      </source>
+      <source relative_path="../NCP_HOST/ieee-802.15.4" project_relative_path="ieee-802.15.4" type="c_include">
+        <files mask="AppApi.h"/>
+        <files mask="MMAC.h"/>
+        <files mask="MiniMac.h"/>
+        <files mask="MiniMac_Pib.h"/>
+        <files mask="mac_pib.h"/>
+        <files mask="mac_sap.h"/>
+        <files mask="tsv_pub.h"/>
+      </source>
+      <source relative_path="../NCP_HOST/platform/Posix" project_relative_path="platform/Posix" type="src">
+        <files mask="console.c"/>
+        <files mask="crypto.c"/>
+        <files mask="glue.c"/>
+        <files mask="leds.c"/>
+        <files mask="timer.c"/>
+        <files mask="uart.c"/>
+      </source>
+      <source relative_path="../NCP_HOST/misc" project_relative_path="misc" type="c_include">
+        <files mask="fsl_component_generic_list.h"/>
+      </source>
+      <source toolchain="armgcc" relative_path="./" type="workspace">
+        <files mask="middleware_wireless_zigbee_platform_ncp_host.cmake" hidden="true"/>
+      </source>
     </component>
     <component id="middleware.wireless.zb_examples_common.K32W1480" name="Wireless zigbee examples common" brief="Middleware wireless zigbee platform" version="1.0.0" full_name="Wireless zigbee examples common" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././examples/zb_common" project_base_path="common">
       <dependencies>
