@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020, 2023 NXP.
+ * Copyright 2020, 2023 NXP
  *
  * NXP Confidential. 
  * 
@@ -35,7 +35,7 @@
 #include "bdb_start.h"
 #include "bdb_nf.h"
 #include "dbg.h"
-#include "rnd_pub.h"
+#include "zb_platform.h"
 #include <string.h>
 #include <stdlib.h>
 #include "zps_apl_af.h"
@@ -178,7 +178,11 @@ PUBLIC BDB_teStatus BDB_eNfStartNwkFormation(void)
     u32ScanChannels = sBDB.sAttrib.u32bdbPrimaryChannelSet;
     pau32ApsChannelMask = ZPS_pu32AplAibGetApsChannelMask(&u8ChannelMasksCount);
     u32BackUpApsChannelMask = pau32ApsChannelMask[0];
-    ZPS_eAplAibSetApsChannelMask(0);
+    /* This clears all channel masks for SubG */
+    ZPS_eAplAibSetApsChannelMask(MAC_PAGE_MASK_28);
+    ZPS_eAplAibSetApsChannelMask(MAC_PAGE_MASK_29);
+    ZPS_eAplAibSetApsChannelMask(MAC_PAGE_MASK_30);
+    ZPS_eAplAibSetApsChannelMask(MAC_PAGE_MASK_31);
 
     /* For SubG, the number of channels exceeds one 32bit quantity (62 channels).
      * As such, in order to still retain compatibility with the 2G4 spirit,
@@ -194,9 +198,9 @@ PUBLIC BDB_teStatus BDB_eNfStartNwkFormation(void)
     for (i = 0; i < NUM_SUBG_HALF_MASKS; i++) {
         while(u8ScanChannel <= BDB_CHANNEL_MAX) {
             if(u32ScanChannels & (1<<u8ScanChannel)) {
-                u32CurApsChanMask = ZPS_psAplAibGetAib()->pau32ApsChannelMask[0];
+                u32CurApsChanMask = pau32ApsChannelMask[0];
                 u32CurApsChanMask |= SUBG_CH2MASK(u8ScanChannel, bFirstHalf);
-                ZPS_psAplAibGetAib()->pau32ApsChannelMask[0] = u32CurApsChanMask;
+                ZPS_eAplAibSetApsChannelMask(u32CurApsChanMask);
             }
             u8ScanChannel++;
         }
@@ -344,17 +348,17 @@ PRIVATE void vNfDiscoverNwk()
 
     /* Set the start up parameters - To be used later while forming - ZPS_EVENT_NWK_DISCOVERY_COMPLETE */
     sStartParams.sNwkParams.u8LogicalChannel = BDB_u8PickChannel(u32ScanChannels);
-    sStartParams.sNwkParams.u16NwkAddr = RND_u32GetRand(1, 0xfffe);
+    sStartParams.sNwkParams.u16NwkAddr = zbPlatCryptoRandomGet(1, 0xfffe);
 
     if (sStartParams.sNwkParams.u64ExtPanId == 0)
     {
-        sStartParams.sNwkParams.u64ExtPanId = RND_u32GetRand(1, 0xffffffff);
+        sStartParams.sNwkParams.u64ExtPanId = zbPlatCryptoRandomGet(1, 0xffffffff);
         sStartParams.sNwkParams.u64ExtPanId <<= 32;
-        sStartParams.sNwkParams.u64ExtPanId |= RND_u32GetRand(0, 0xffffffff);
+        sStartParams.sNwkParams.u64ExtPanId |= zbPlatCryptoRandomGet(0, 0xffffffff);
     }
     if (sStartParams.sNwkParams.u16PanId == 0)
     {
-        sStartParams.sNwkParams.u16PanId = RND_u32GetRand( 1, 0xfffe);
+        sStartParams.sNwkParams.u16PanId = zbPlatCryptoRandomGet( 1, 0xfffe);
     }
 
 #ifdef ENABLE_SUBG_IF
@@ -401,10 +405,10 @@ PRIVATE void vNfFormDistributedNwk(void)
     /* get unique set of pans */
     while (!bNfSearchDiscNt(sStartParams.sNwkParams.u64ExtPanId, sStartParams.sNwkParams.u16PanId))
     {
-        sStartParams.sNwkParams.u16PanId = RND_u32GetRand(1, 0xfffe);
-        sStartParams.sNwkParams.u64ExtPanId = RND_u32GetRand(1, 0xffffffff);
+        sStartParams.sNwkParams.u16PanId = zbPlatCryptoRandomGet(1, 0xfffe);
+        sStartParams.sNwkParams.u64ExtPanId = zbPlatCryptoRandomGet(1, 0xffffffff);
         sStartParams.sNwkParams.u64ExtPanId <<= 32;
-        sStartParams.sNwkParams.u64ExtPanId |= RND_u32GetRand(0, 0xffffffff);
+        sStartParams.sNwkParams.u64ExtPanId |= zbPlatCryptoRandomGet(0, 0xffffffff);
     };
 
     #if RAND_DISTRIBUTED_NWK_KEY
@@ -565,17 +569,6 @@ PRIVATE bool_t vNfTcCallback (uint16 u16ShortAddress,
                 psAib->pu32IncomingFrameCounter[i]  = 0;
                 memset(&psKeyTbl[i], 0, sizeof(ZPS_tsAplApsKeyDescriptorEntry));
                 psKeyTbl[i].u16ExtAddrLkup          = 0xFFFF;
-#else
-                eStatus =  ZPS_bAplZdoTrustCenterGetDevicePermissions ( u64DeviceAddress,
-                                                                &eDevicePermissions );
-                if( eStatus == ZPS_E_SUCCESS )
-                { 
-                    if ( eDevicePermissions != ZPS_DEVICE_PERMISSIONS_ALL_PERMITED )
-                    {
-                        ZPS_bAplZdoTrustCenterSetDevicePermissions(u64DeviceAddress,
-                                                           ZPS_DEVICE_PERMISSIONS_ALL_PERMITED);
-                    }
-                }
 #endif
                 ZPS_vSaveAllZpsRecords();
             }

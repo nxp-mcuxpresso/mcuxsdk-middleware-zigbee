@@ -43,7 +43,7 @@ ${PYTHON} - "$@" <<SCRIPT_DOCUMENT
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE. 
 # 
-# Copyright NXP B.V. 2015-2023. All rights reserved
+# Copyright 2015-2023 NXP
 #
 ###############################################################################
 
@@ -206,7 +206,7 @@ def outputC(dir, pdumConfig, sEndian):
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright NXP B.V. %s. All rights reserved
+ * Copyright %s NXP
  ****************************************************************************/
 
 /****************************************************************************/
@@ -454,7 +454,7 @@ def outputHeader(dir, pdumConfig):
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * Copyright NXP B.V. %s. All rights reserved
+ * Copyright %s NXP
  ****************************************************************************/
 """  % ( datetime.datetime.ctime(datetime.datetime.now()),  datetime.datetime.today().year))
 
@@ -542,7 +542,7 @@ if len(sys.argv) <= 1:
 \tARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 \tPOSSIBILITY OF SUCH DAMAGE.
 \t
-\tCopyright NXP B.V. %s. All rights reserved
+\tCopyright %s NXP
 """ % (datetime.datetime.today().year))
         print("For help: %s --help" % (sys.argv[0]))
         sys.exit(0)

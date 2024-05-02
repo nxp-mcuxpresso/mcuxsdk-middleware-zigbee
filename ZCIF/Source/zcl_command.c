@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP.
+ * Copyright 2020, 2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -211,11 +211,33 @@ PUBLIC uint16 u16ZCL_ReadCommandHeader(
 PUBLIC uint8 u8GetTransactionSequenceNumber(void)
 {
     uint8 u8TransactionSequenceNumber;
- 
+
     #ifndef COOPERATIVE
     // get ZCL mutex
         vZCL_GetInternalMutex();
     #endif
+
+    if (psZCL_Common->u8TransactionSequenceNumber == ZCL_INITIAL_TRANSACTION_SEQ_NUM)
+    {
+        /* ZCL seq num has wrapped around, or is the initial value */
+        uint8 u8ApsSequenceNumber = ZPS_u8ApsGetSeqNum(ZPS_pvAplZdoGetAplHandle());
+
+        if (u8ApsSequenceNumber == psZCL_Common->u8ApsSequenceNumberLastVerified)
+        {
+            /* APS seq num evolved synchronously with the ZCL seq num and the
+             * APS duplicate rejection table at the receiver will hit an older
+             * transmission with the same APS seq num; the ZCL seq num must be
+             * uncorrelated to indicate a distinct packet to the receiver */
+
+            psZCL_Common->u8TransactionSequenceNumber++; /* make it out of sync */
+        }
+        else
+        {
+            /* ZCL seq num is no longer in sync with the APS seq num due to oth TX
+             * save it for the next ZCL wrap around */
+            psZCL_Common->u8ApsSequenceNumberLastVerified = u8ApsSequenceNumber;
+        }
+    }
 
     // read sequence number
     u8TransactionSequenceNumber = psZCL_Common->u8TransactionSequenceNumber;

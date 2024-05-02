@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020,2022-2023 NXP.
+ * Copyright 2020, 2022-2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -60,7 +60,7 @@
 #define ZPS_APL_SEC_STD_UNSEC_JOIN          1
 #define ZPS_APL_SEC_DEVICE_LEFT             2
 #define ZPS_APL_SEC_STD_UNSEC_REJOIN        3
-#define ZPS_APL_SEC_INT_LEAVE_REJION        4
+#define ZPS_APL_SEC_INT_LEAVE_REJOIN        4
 
 #define ZPS_APL_FILTER_NONE                 0
 #define ZPS_APL_FILTER_BCAST                1
@@ -222,6 +222,9 @@ typedef struct
     uint8 u8LinkQuality;
     uint8 u8APduOffset;
     bool_t bFramePending;
+#ifdef R23_UPDATES
+    uint8  u8KeyIndex;
+#endif
 } ZPS_tsAfDataIndEvent;
 
 typedef struct {
@@ -334,6 +337,7 @@ typedef struct {
         ZPS_ERROR_OS_MESSAGE_QUEUE_OVERRUN,
         ZPS_ERROR_APS_SECURITY_FAIL,
         ZPS_ERROR_ZDO_LINKSTATUS_FAIL,
+        ZPS_ERROR_NWK_EDTO_FAIL,
     } eError;
 
     union {

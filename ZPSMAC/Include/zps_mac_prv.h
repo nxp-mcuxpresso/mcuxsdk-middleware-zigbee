@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP.
+ * Copyright 2020 NXP
  *
  * NXP Confidential. 
  * 
@@ -164,6 +164,7 @@ MODULE	uint8		SOC_ZPS_u8MacPibGetEBsn(void);
 MODULE	bool_t		SOC_ZPS_bMacPibGetEBFilteringEnable(void);
 MODULE	uint8		SOC_ZPS_u8MacPibGetEBR_PayloadLength(void);
 MODULE	uint8		SOC_ZPS_u8MacPibGetEBR_Payload(uint8 *pu8EBRPayload);
+MODULE	bool_t		SOC_ZPS_bMacPibGetAutoRequest(void);
 
 /* ZPS MAC PIB Set Functions */
 MODULE	void		SOC_ZPS_vMacPibSetCoordShortAddress(uint16 u16CoordShortAddr);
@@ -189,6 +190,7 @@ MODULE	void		SOC_ZPS_vMacPibSetBeaconRequestLqiThreshold(uint8 u8LqiThreshold);
 MODULE	void		SOC_ZPS_vMacPibSetMaxMaxConcurrentAssocResponses(uint8 u8Max);
 MODULE	void 		SOC_ZPS_vMacPibSetExtAddr(tsExtAddr *psExtAddr);
 MODULE  void 		SOC_ZPS_vMacPibSetRxInCca(bool_t bEnable);
+MODULE	void		SOC_ZPS_vMacPibSetAutoRequest(bool_t bAutoRequest);
 
 /* TX POWER API */
 MODULE  uint8 		SOC_ZPS_u8MacGetTXPower(uint64 u64IEEEAddress, MAC_TxPower_s *psMacTxPower);
@@ -207,6 +209,9 @@ MODULE uint8		SOC_ZPS_u8MacMibIeeeGetTable(uint8 u8Index, uint8 u8Count, uint64 
 /* PHY PLME */
 MODULE PHY_Enum_e 	SOC_ZPS_eMacPlmeGet(PHY_PibAttr_e ePhyPibAttribute, uint32 *pu32PhyPibValue);
 MODULE PHY_Enum_e 	SOC_ZPS_eMacPlmeSet(PHY_PibAttr_e ePhyPibAttribute, uint32 u32PhyPibValue);
+
+MODULE PHY_Enum_e 	SOC_ZPS_eAddPhyFilteringAddr(uint16 u16Addr, uint64 u64ExtAddr);
+MODULE PHY_Enum_e 	SOC_ZPS_eClearPhyFilter();
 
 
 /****************************************************************************/
@@ -311,6 +316,7 @@ MODULE	void 		SERIAL_ZPS_vMacPibSetDutyCyleRegulated(uint16 u16HundredsOfPerc);
 MODULE	void 		SERIAL_ZPS_vMacPibSetDutyCyleWarningThreshold(uint16 u16HundredsOfPerc);
 PUBLIC	void 		SERIAL_ZPS_vMacPibSetDutyCyleCriticalThreshold(uint16 u16HundredsOfPerc);
 MODULE  void 		SERIAL_ZPS_vMacSetVsOUIBytes(uint8 *puint8VsOUI);
+PUBLIC	void 		SERIAL_ZPS_vMacPibSetAutoRequest(bool_t bAutoRequest);
 
 /* TX POWER API */
 MODULE  uint8 		SERIAL_ZPS_u8MacGetTXPower(uint64 u64IEEEAddress, MAC_TxPower_s *psMacTxPower);
@@ -330,6 +336,9 @@ MODULE uint8		SERIAL_ZPS_u8MacMibIeeeGetTable(uint8 u8Index, uint8 u8Count, uint
 MODULE PHY_Enum_e 	SERIAL_ZPS_eMacPlmeGet(PHY_PibAttr_e ePhyPibAttribute, uint32 *pu32PhyPibValue);
 MODULE PHY_Enum_e 	SERIAL_ZPS_eMacPlmeSet(PHY_PibAttr_e ePhyPibAttribute, uint32 u32PhyPibValue);
 PUBLIC void         SERIAL_ZPS_vSerialMacResetCallback( uint8 u8ResetReason , uint8 u8Length, uint8* pu8Buffer);
+
+MODULE PHY_Enum_e 	SERIAL_ZPS_eAddPhyFilteringAddr(uint16 u16Addr, uint64 u64ExtAddr);
+MODULE PHY_Enum_e 	SERIAL_ZPS_eClearPhyFilter();
 
 /* Antenna Input Setting */
 MODULE bool_t       SERIAL_ZPS_bSetAntennaInput(uint8 u8Input);

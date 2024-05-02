@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020,2023 NXP.
+ * Copyright 2020, 2023-2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -40,7 +40,7 @@
 #include "LevelControl.h"
 #include "OnOff.h"
 #include "dbg.h"
-#include "rnd_pub.h"
+#include "zb_platform.h"
 #include "zcl_customcommand.h"
 #include "pdum_gen.h"
 /****************************************************************************/
@@ -1935,10 +1935,13 @@ PUBLIC void vGp_TransmissionTimerCallback(
             	}
 
             }
+
+#ifdef GP_COMBO_BASIC_DEVICE
 			/* if it is a loop back command then remove from the allocated list only when it traversed for all translation table entry */
 			if(((E_GP_LOOP_BACK == psZgpBufferedApduRecord->sBufferedApduInfo.eGreenPowerBufferedCommand)&&
 			  (GP_NUMBER_OF_TRANSLATION_TABLE_ENTRIES == psZgpBufferedApduRecord->sBufferedApduInfo.u8TranslationIndex))||
 			  (E_GP_LOOP_BACK != psZgpBufferedApduRecord->sBufferedApduInfo.eGreenPowerBufferedCommand))
+#endif
 			{
 				tsGP_ZgpBufferedApduRecord *psTempZgpBufferedApduRecord =
 												(tsGP_ZgpBufferedApduRecord *)psDLISTgetHead(&psGpCustomDataStructure->lGpAllocList);
@@ -2794,7 +2797,7 @@ void vGP_SendDeviceAnnounce(uint16 u16AliasShortAddr, uint64 u64IeeeAddr)
     if(0xFFFFFFFFFFFFFFFFULL != u64IeeeAddr)
     {
 
-    	u16NwkAddr = (uint16)RND_u32GetRand(1,0xfff7);
+    	u16NwkAddr = (uint16)zbPlatCryptoRandomGet(1,0xfff7);
     	pvNwk = ZPS_pvAplZdoGetNwkHandle();
     	ZPS_vNwkNibSetNwkAddr(pvNwk, u16NwkAddr);
     	sZdpDeviceAnnceReq.u16NwkAddr = u16NwkAddr;

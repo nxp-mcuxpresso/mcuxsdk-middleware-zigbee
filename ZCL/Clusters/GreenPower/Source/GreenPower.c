@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP.
+ * Copyright 2020 NXP
  *
  * NXP Confidential. 
  * 
@@ -317,6 +317,9 @@ PUBLIC teZCL_Status eGP_CreateGreenPower(
  ****************************************************************************/
 PUBLIC teZCL_Status eCLD_GPRegisterTimeServer(void)
 {
+#ifndef CLD_GREENPOWER
+    return E_ZCL_FAIL;
+#else
 #ifndef IDENTIFY_PC_BUILD
     static bool_t bTimerRegistered = FALSE;
 #endif
@@ -330,11 +333,13 @@ PUBLIC teZCL_Status eCLD_GPRegisterTimeServer(void)
     }
 
     return E_ZCL_SUCCESS;
+#endif
 }
 
 /****************************************************************************/
 /***        Local Functions                                               ***/
 /****************************************************************************/
+#ifdef CLD_GREENPOWER
 /****************************************************************************
  **
  ** NAME:       vCLD_GPTimerClickCallback
@@ -364,6 +369,7 @@ PRIVATE void vCLD_GPTimerClickCallback(tsZCL_CallBackEvent *psCallBackEvent)
 		u16OneMSCounterValue = 0;
 	}
 }
+#endif
 
 /****************************************************************************
 **

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020,2022-2023 NXP.
+ * Copyright 2020-2023 NXP
  *
  * NXP Confidential. 
  * 
@@ -317,6 +317,11 @@ typedef enum
 #define ZPS_NWK_NT_ACTV_MATCH_NWK_ADDR_CHILD     (ZPS_NWK_NT_ACTV_MATCH_NWK_ADDR | ZPS_NWK_NT_ACTV_MATCH_CHILD)
 #define ZPS_NWK_NT_ACTV_MATCH_NWK_ADDR_ZED_CHILD (ZPS_NWK_NT_ACTV_MATCH_NWK_ADDR | ZPS_NWK_NT_ACTV_MATCH_CHILD | ZPS_NWK_NT_ACTV_MATCH_ZED)
 
+#ifdef R23_UPDATES
+#define ZPS_NWK_DISC_ONLY_PERMIT (1 << 0)
+#define ZPS_NWK_DISC_ONLY_EDCAP  (1 << 1)
+#endif
+
 /**************************/
 /**** TYPE DEFINITIONS ****/
 /**************************/
@@ -382,15 +387,18 @@ typedef struct
             unsigned u4StackProfile:4;      /**< Stack profile */
             unsigned u1PotentialParent:1;
             unsigned u1Used:1;
-#ifdef WWAH_SUPPORT
-            unsigned u2PriorityParent:2;
+#ifdef R23_UPDATES
+            unsigned u1IsRejoin:1;          /**< 1 if rejoin is tried to it */
 #endif
         } bfBitfields;
         uint8 au8Field[2];
     } uAncAttrs;
+#if defined(WWAH_SUPPORT) || defined(R23_UPDATES)
+    uint8 u8RankingParents;                 /**< Hub Connectivity | Preferred Parent (only R23) | Long Uptime | others */
+#endif
 #ifdef R23_UPDATES
-    uint8 u8RankingParents;                /**< B2: Hub Connectivity | B1: Preferred Parent | B0: Long Uptime */
-    uint8 u8BeaconAppendixLen;             /**< Bytes written into the appendix array */
+    uint8 u8CntJoinRejoinTriesParent;
+    uint8 u8BeaconAppendixLen;              /**< Bytes written into the appendix array */
     uint8 au8BeaconAppendixTlvs[ZPS_NWK_MAX_BEACON_PAYLOAD_LEN];
 #endif
 } ZPS_tsNwkDiscNtEntry;
@@ -480,11 +488,16 @@ typedef struct
     uint8  u8VsTxFailThreshold;                             /**< Vendor specific - transmit fail threshold when RT next hop gets cleared */
     uint8  u8VsMaxOutgoingCost;                             /**< Vendor specific - only uses links with cost >= than this */
     uint8  u8VsLeaveRejoin;
-    uint8 u8ZedTimeout;
-    uint8 u8ZedTimeoutDefault;                              /** nwkEndDeviceTimeoutDefault **/
-
-    uint16 u16VerifyLinkCostTransmitRate; 					/** nwkVerifyLinkCostTransmitRate 0-65535 **/
-
+    uint8  u8ZedTimeout;
+    uint8  u8ZedTimeoutDefault;                             /**< nwkEndDeviceTimeoutDefault */
+#ifdef R23_UPDATES
+    uint8  u8MaxInitialJoinParentAttempts;                  /**< nwkMaxInitialJoinParentAttempts */
+    uint8  u8MaxRejoinParentAttempts;                       /**< nwkMaxRejoinParentAttempts */
+#endif
+    uint16 u16VerifyLinkCostTransmitRate;                   /**< nwkVerifyLinkCostTransmitRate 0-65535 */
+#if defined(R23_UPDATES) || defined(WWAH_SUPPORT)
+    uint16 u16NextPanId;                                    /**< nwkNextPanId */
+#endif
 } ZPS_tsNwkNibInitialValues;
 
 /**
@@ -709,7 +722,11 @@ typedef struct
     uint8  u8VsMaxOutgoingCost;                             /**< Vendor specific - only uses links with cost >= than this */
     uint8  u8VsLeaveRejoin;
     uint8  u8ZedTimeout;
-    uint8  u8ZedTimeoutDefault;                              /** nwkEndDeviceTimeoutDefault **/
+    uint8  u8ZedTimeoutDefault;                             /** nwkEndDeviceTimeoutDefault **/
+#ifdef R23_UPDATES
+    uint8  u8MaxInitialJoinParentAttempts;                  /**< nwkMaxInitialJoinParentAttempts */
+    uint8  u8MaxRejoinParentAttempts;                       /**< nwkMaxRejoinParentAttempts */
+#endif
     uint16 u16VerifyLinkCostTransmitRate;                   /** nwkVerifyLinkCostTransmitRate 0-65535 **/
 #if defined(R23_UPDATES) || defined(WWAH_SUPPORT)
     uint16 u16NextPanId;                                    /**< nwkNextPanId */
@@ -721,6 +738,8 @@ typedef struct
     uint8  u8ConcentratorRadius;                            /**< nwkConcentratorRadius */
     uint8  u8ConcentratorDiscoveryTime;                     /**< nwkConcentratorDiscoveryTime */
     uint8  u8SequenceNumber;                                /**< nwkSequenceNumber */
+    uint8  u8LinkStatusLastError;                           /**< Last known status of a scheduled Link Status */
+    uint32 u32LinkStatusLastTimestamp;                      /**< Last timestamp of a successful TXed Link Status */
     uint16 u16ManagerAddr;                                  /**< nwkManagerAddr */
     uint16 u16VsFixedAlcAddr;                               /**< Vendor specific - fixed allocated address */
     uint64 u64VsLastPanIdConflict;                          /**< Vendor specific - EPID of other network in last Pan Id conflict detection */
@@ -739,8 +758,6 @@ typedef struct
     uint16 u16PacketBufferAllocateFailure;                  /**< Diagnostics - packet buffer allocation failures */
     uint16 u16LinkStatSuccess;                              /**< Diagnostics - Link Status sent successfully */
     uint16 u16LinkStatFailure;                              /**< Diagnostics - Link Status failure */
-    uint8  u8LinkStatusLastError;                           /**< Last known status of a scheduled Link Status */
-    uint32 u32LinkStatusLastTimestamp;                      /**< Last timestamp of a successful TXed Link Status */
     uint16 u16RReqRetry;                                    /**< TX Route Request broadcast retries */
     uint16 u16RReqProcDropped;                              /**< RX Route Request processing dropped */
     uint16 u16RReqProcCompleted;                            /**< RX Route Request processing completed */
@@ -761,13 +778,15 @@ typedef struct
     uint8         u8ZedTimeoutTlvsSize;                     /**< Allocated size for End Device Timeout */
     uint8         u8RouteRequestTlvsSize;                   /**< Allocated size for Route Request */
     uint8         u8RouteReplyTlvsSize;                     /**< Allocated size for Route Reply */
-    uint8         u8NetworkStatusTlvsSize;                  /**< Allocated size for Route Reply */
+    uint8         u8NetworkStatusTlvsSize;                  /**< Allocated size for Network status */
     uint8         u8CommissionTlvsSize;                     /**< Allocated size for Commission */
     uint8         u8CommissionOffsetTlvJoinEncaps;          /**< Offset of the TLV Joiner Encaps */
     uint8         u8CommissionOffsetTlvFragmParams;         /**< Offset of the TLV FRAGPARAMS */
     uint8         u8CommissionOffsetTlvKeyNegotMeth;        /**< Offset of the TLV SUPPKEYNEGMETH */
     uint8         u8PerformAdditionalMacDataPollRetries;    /**< nwkPerformAdditionalMacDataPollRetries */
     uint8         u8NumMacDataPollRetries;
+    uint8         u8NwkDiscFilter;                          /**< nwk Discovery Filters: OnlyPermitJoinNetworks | OnlyEndDeviceCapacity **/
+    uint8         u8HubConnectivity;                        /**< nwkHubConnectivity: bool */
 #endif
     /**** Tables ****/
     zps_tsNwkSlist       sActvSortedList;                   /**< Linked list of sorted NT entries */

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Copyright NXP B.V. 2015-2019,2022-2023. All rights reserved
+# Copyright 2015-2019, 2022-2023 NXP
 #
 ###############################################################################
 
@@ -46,12 +46,14 @@ OTA ?= 0
 OTA_INTERNAL_STORAGE ?= 0
 
 ifeq ($(ZIGBEE_PLAT),K32W1)
-    SDK_DEVICE_FAMILY   ?= K32W1480
+    SDK_DEVICE_FAMILY   ?= K32W1
+    SDK_DEVICE_NAME     ?= K32W1480
     SDK_BOARD           ?= k32w148evk
 else
 ifeq ($(ZIGBEE_PLAT),K32W0)
-    SDK_DEVICE_FAMILY   ?= JN5189
-    SDK_BOARD           ?= jn5189dk6
+    SDK_DEVICE_FAMILY   ?= K32W0
+    SDK_DEVICE_NAME     ?= K32W061
+    SDK_BOARD           ?= k32w061dk6
 endif
 endif
 
@@ -80,8 +82,8 @@ STACK_BASE_DIR       ?= $(ZIGBEE_BASE_DIR)/BuildConfig
 
 FRAMEWORK_BASE_DIR   ?= $(SDK_BASE_DIR)/middleware/wireless/framework
 
-CHIP_STARTUP_SRC     ?= $(SDK_BASE_DIR)/devices/$(SDK_DEVICE_FAMILY)/gcc
-CHIP_SYSTEM_SRC      ?= $(SDK_BASE_DIR)/devices/$(SDK_DEVICE_FAMILY)
+CHIP_STARTUP_SRC     ?= $(SDK_BASE_DIR)/devices/$(SDK_DEVICE_NAME)/gcc
+CHIP_SYSTEM_SRC      ?= $(SDK_BASE_DIR)/devices/$(SDK_DEVICE_NAME)
 BOARD_LEVEL_SRC      ?= $(SDK_BASE_DIR)/boards/$(SDK_BOARD)
 FSL_COMPONENTS       ?= $(SDK_BASE_DIR)/components
 

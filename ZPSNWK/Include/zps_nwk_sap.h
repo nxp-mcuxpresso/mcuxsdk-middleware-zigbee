@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020-2023 NXP.
+ * Copyright 2020-2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -371,6 +371,14 @@ extern "C" {
  * Beacon payload bitmaps
  * @{
  */
+#ifdef R23_UPDATES
+#define ZPS_NWK_BCN_PL_HUBCONNECTIVITY_PRIO (1 << 4)
+#define ZPS_NWK_BCN_PL_PREFERREDPARENT_PRIO (1 << 3)
+#define ZPS_NWK_BCN_PL_LONGUPTIME_PRIO      (1 << 2)
+#elif defined(WWAH_SUPPORT)
+#define ZPS_NWK_BCN_PL_HUBCONNECTIVITY_PRIO (1 << 1)
+#define ZPS_NWK_BCN_PL_LONGUPTIME_PRIO      (1)
+#endif
 #define ZPS_NWK_BCN_PL_PROTOCOL_ID(x)       ((x)[0])
 #define ZPS_NWK_BCN_PL_STACK_PROFILE(x)     ((x)[1] & 0xf)
 #define ZPS_NWK_BCN_PL_PROTOCOL_VER(x)      ((x)[1] >> 4)
@@ -379,6 +387,14 @@ extern "C" {
 #define ZPS_NWK_BCN_PL_ZED_CAPACITY(x)      (((x)[2] >> 7) & 0x1)
 #ifdef WWAH_SUPPORT
 #define ZPS_NWK_BCN_PL_PARENT_PRIORITY(x)      (((x)[2]) & 0x3)
+/* WWAH:
+End Devices examine all beacons in the Good Link quality group first and
+choose the parent with the highest parent priority, as shown below.
+0b11 = TC Connectivity and Long Uptime
+0b10 = TC Connectivity and Short Uptime
+0b01 = No TC Connectivity but Long Uptime
+0b00 = Non-WWAH parent or WWAH with No TC Connectivity and Short Uptime
+This is Hub Connectivity OR Long Uptime bits */
 #endif
 #define ZPS_NWK_BCN_PL_EXT_PAN_ID_PTR(x)    &((x)[3])
 #define ZPS_NWK_BCN_PL_TX_OFFSET_PTR(x)     &((x)[11])
@@ -1206,6 +1222,11 @@ typedef struct
     uint16       u16PanId;
 }ZPS_tsNwkNlmeIndStagePanID;
 
+typedef struct
+{
+    uint8       u8Status;
+}ZPS_tsNwkNlmeIndEdToRsp;
+
 typedef enum
 {
 	ZPS_NWK_DUTYCYCLE_NORMAL=0,
@@ -1431,7 +1452,8 @@ typedef enum
     ZPS_NWK_NLME_IND_ROUTE_RECORD,       /**< Use with ZPS_tsNwkNlmeCfmRouteRecord */
     ZPS_NWK_NLME_IND_FC_OVERFLOW,        /**< Use with ZPS_tsNwkNlmeCfmFCOverflow */
     ZPS_NWK_NLME_IND_TLV,                /**< Use with ZPS_tsNwkNlmeIndTlv */
-    ZPS_NWK_NLME_IND_STAGE_PAN_ID,       /**< Use with ZPS_tsNwkNlmeIndStagePanID*/
+    ZPS_NWK_NLME_IND_STAGE_PAN_ID,       /**< Use with ZPS_tsNwkNlmeIndStagePanID */
+    ZPS_NWK_NLME_IND_EDTO_FAIL,          /**< Use with ZPS_tsNwkNlmeIndEdToRsp */
     ZPS_NWK_NLME_DCFM_ACTIVE_DISCOVERY,
     NUM_ZPS_NWK_NLME_DCFM_IND
 } ZPS_teNwkNlmeDcfmIndType;
@@ -1462,7 +1484,8 @@ typedef union
     ZPS_tsNwkNlmeCfmRouteRecord      sCfmRouteRecord;       /**< Route Record Received confirm */
     ZPS_tsNwkNlmeCfmFCOverflow       sCfmFCOverflow;        /**< FC overflow */
     ZPS_tsNwkNlmeIndTlv              sIndTlv;               /**< Incoming TLV indication */
-    ZPS_tsNwkNlmeIndStagePanID       sIndStagePanID;         /**< Stage PAN ID */
+    ZPS_tsNwkNlmeIndStagePanID       sIndStagePanID;        /**< Stage PAN ID indication */
+    ZPS_tsNwkNlmeIndEdToRsp          sIndEndDeviceTimeout;  /**< End Device Timeout Rsp indication */
 } ZPS_tuNlmeDcfmIndParam;
 
 /**

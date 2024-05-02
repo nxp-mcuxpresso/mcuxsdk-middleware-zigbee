@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020-2022 NXP.
+ * Copyright 2020-2023 NXP
  *
  * NXP Confidential. 
  * 
@@ -229,6 +229,7 @@ typedef struct
 {
     tsTxFrameFormat sTxFrame;
     TSV_Timer_s sTimer;
+    uint8 u1TimerEnabled       :1;    /**< 1/TRUE if the timer was opened */
     uint8 u8HigherLayerRetryCount;
 } tsHigherLayerTxFrame;
 
@@ -477,7 +478,7 @@ typedef void (*PR_MAC_MLME_CALL)(void *, MAC_MlmeReqRsp_s *psMlmeReqRsp,
 										 MAC_MlmeSyncCfm_s *psMlmeSyncCfm);
 
 
-typedef void (*pfnMacVsDataRequest) (uint16 u16Pan, uint16 u16Short);
+typedef void (*pfnMacVsDataRequest) (uint16 u16Pan, uint16 u16Short, bool_t bDirect);
 
 typedef void (*pfnMacEmptyMcpsFrameWithFpSet) (void);
 
@@ -555,7 +556,8 @@ PUBLIC void 		ZPS_vMacInterruptHandler(void);
 PUBLIC PHY_Enum_e 	ZPS_eMacPlmeGet(PHY_PibAttr_e ePhyPibAttribute, uint32 *pu32PhyPibValue);
 PUBLIC PHY_Enum_e 	ZPS_eMacPlmeSet(PHY_PibAttr_e ePhyPibAttribute, uint32 u32PhyPibValue);
 
-
+PUBLIC PHY_Enum_e ZPS_eAddPhyFilteringAddr(uint16 u16Addr, uint64 u64ExtAddr);
+PUBLIC PHY_Enum_e ZPS_eClearPhyFilter();
 
 /****************************************************************************/
 /***        MAC Interface Table                                           ***/
@@ -644,6 +646,7 @@ PUBLIC	void 		ZPS_vMacSetEBRPayloadJoin(bool_t bPermitJoin);
 PUBLIC	void 		ZPS_vMacSetEBRPayloadReJoin(uint64 u64ExtPanId, uint16 u16ShortAddress);
 PUBLIC  void        ZPS_vMacBeaconRequest(bool_t bEnable);
 PUBLIC  void 		ZPS_vMacPibSetRxOnWhenIdleForInterface(uint8 u8MacIntfID, bool_t bNewState, bool_t bInReset);
+PUBLIC  void        ZPS_vMacPibSetAutoRequest(bool_t bAutoRequest);
 
 /****************************************************************************/
 /***       Beacons		                                                  ***/

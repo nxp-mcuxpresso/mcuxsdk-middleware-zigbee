@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP.
+ * Copyright 2020, 2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -115,6 +115,7 @@ typedef struct
 /****************************************************************************/
 
 PUBLIC ZPS_tsApsCounters *ZPS_psApsGetCounters(void *pvApl);
+PUBLIC uint8 ZPS_u8ApsGetSeqNum(void *pvApl);
 
 /****************************************************************************/
 /***        External Variables                                            ***/

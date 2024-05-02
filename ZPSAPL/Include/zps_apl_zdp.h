@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020,2022-2023 NXP.
+ * Copyright 2020, 2022-2023 NXP
  *
  * NXP Confidential. 
  * 
@@ -247,6 +247,7 @@ typedef enum {
     ZPS_APL_ZDP_E_NOT_AUTHORIZED      			= 0x8d,
     ZPS_APL_ZDP_E_DEVICE_BINDING_TABLE_FULL     = 0x8e,
     ZPS_APL_ZDP_E_INVALID_INDEX       			= 0x8f,
+    ZPS_APL_ZDP_E_FRAME_TOO_LARGE               = 0x90,
 } ZPS_teAplZdpStatus;
 
 /****************************************************************************/

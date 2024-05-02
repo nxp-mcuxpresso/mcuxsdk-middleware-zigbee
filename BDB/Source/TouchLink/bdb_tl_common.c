@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020,2023 NXP.
+ * Copyright 2020, 2023 NXP
  *
  * NXP Confidential. 
  * 
@@ -35,7 +35,7 @@
 #include "bdb_tl.h"
 #include "zll_commission.h"
 #include "dbg.h"
-#include <rnd_pub.h>
+#include "zb_platform.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -134,7 +134,7 @@ PUBLIC uint8 BDB_u8TlGetRandomPrimary(void)
         }
         if (u32NoOfBits > 1)
         {
-            u32RandomBitNo = RND_u32GetRand( 0, u32NoOfBits);
+            u32RandomBitNo = zbPlatCryptoRandomGet( 0, u32NoOfBits);
             u32RandomBitNo++;
         }
         else
