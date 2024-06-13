@@ -1,0 +1,110 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "displayName": "Base config",
+            "description": "Base configuration using armgcc toolchain file and Ninja",
+            "generator": "Ninja Multi-Config",
+            "toolchainFile": "$env{NXP_ZB_BASE}/cmake/toolchains/armgcc.cmake",
+            "hidden": true
+        },
+        {
+            "name": "base-verif",
+            "displayName": "Base config",
+            "description": "Base configuration using armgcc toolchain file and Ninja",
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "$env{NXP_ZB_BASE}/build",
+            "environment": {
+                "NXP_ZB_BASE": "${sourceDir}/../../../.."
+            },
+            "toolchainFile": "$env{NXP_ZB_BASE}/cmake/toolchains/armgcc.cmake",
+            "hidden": true
+        },
+        {
+            "name": "r23",
+            "displayName": "R23",
+            "description": "Enable R23 feature",
+            "cacheVariables": {
+                "CONFIG_ZB_LEGACY": "OFF",
+                "CONFIG_ZB_R23": "ON"
+            },
+            "hidden": true
+        },
+        {
+            "name": "legacy",
+            "displayName": "Legacy",
+            "description": "Enable Legacy feature",
+            "cacheVariables": {
+                "CONFIG_ZB_LEGACY": "ON",
+                "CONFIG_ZB_R23": "OFF"
+            },
+            "hidden": true
+        },
+        {
+            "name": "zed",
+            "displayName": "ZED",
+            "description": "Select Zigbee End Device role",
+            "cacheVariables": {
+                "CONFIG_ZB_DEVICE_TYPE": "ZED"
+            },
+            "hidden": true
+        },
+        {
+            "name": "large-packet",
+            "displayName": "Large packet",
+            "description": "Enable Large Packet",
+            "cacheVariables": {
+                "CONFIG_ZB_LARGE_PACKET": "ON"
+            },
+            "hidden": true
+        },
+        {
+            "name": "singlechannel",
+            "displayName": "Single Channel",
+            "description": "Forces the channel used to channel 12",
+            "cacheVariables": {
+                "CONFIG_ZB_SINGLE_CHANNEL": "12"
+            },
+            "hidden": true
+        },
+        {
+            "name": "rw612",
+            "displayName": "RW612 platform",
+            "description": "Use RW612 as target platform",
+            "cacheVariables": {
+                "CONFIG_ZB_PLATFORM": "RW612"
+            },
+            "hidden": true
+        },
+        {
+            "name": "rdrw612bga",
+            "displayName": "RD-RW612-BGA Board",
+            "description": "Use RD-RW612-BGA as target board",
+            "inherits": [
+                "rw612"
+            ],
+            "cacheVariables": {
+                "CONFIG_ZB_BOARD": "rdrw612bga"
+            },
+            "hidden": true
+        },
+        {
+            "name": "frdmrw612",
+            "displayName": "FRDM-RW612 Board",
+            "description": "Use FRDM-RW612 as target board",
+            "inherits": [
+                "rw612"
+            ],
+            "cacheVariables": {
+                "CONFIG_ZB_BOARD": "frdmrw612"
+            },
+            "hidden": true
+        }
+    ]
+}

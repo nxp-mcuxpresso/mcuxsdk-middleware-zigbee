@@ -1,0 +1,12 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "include": [
+        "presets/CMakePresets_rdrw612bga.json",
+        "presets/CMakePresets_frdmrw612.json"
+    ]
+}

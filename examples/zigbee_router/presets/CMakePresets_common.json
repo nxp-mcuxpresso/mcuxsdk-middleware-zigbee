@@ -1,0 +1,49 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "include": [
+        "../../../cmake/presets/CMakePresetsBase.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "router",
+            "binaryDir": "$env{NXP_ZB_BASE}/build/${presetName}",
+            "environment": {
+                "NXP_ZB_BASE": "${sourceDir}/../.."
+            },
+            "inherits": [
+                "base"
+            ],
+            "hidden": true
+        },
+        {
+            "name": "router-singlechannel",
+            "inherits": [
+                "router",
+                "singlechannel"
+            ],
+            "hidden": true
+        },
+        {
+            "name": "router-r23",
+            "inherits": [
+                "router",
+                "r23"
+            ],
+            "hidden": true
+        },
+        {
+            "name": "router-r23-singlechannel",
+            "inherits": [
+                "router",
+                "r23",
+                "singlechannel"
+            ],
+            "hidden": true
+        }
+    ]
+}

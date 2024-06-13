@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: com.jennic.zps.configeditor;singleton:=true
+Bundle-Version: 2.0.1
+Bundle-ClassPath: .
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7,
+ JavaSE-1.6
+Export-Package: com.jennic.ZPSConfiguration,
+ com.jennic.ZPSConfiguration.impl,
+ com.jennic.ZPSConfiguration.util
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.emf.ecore.xmi;visibility:=reexport
+Bundle-ActivationPolicy: lazy

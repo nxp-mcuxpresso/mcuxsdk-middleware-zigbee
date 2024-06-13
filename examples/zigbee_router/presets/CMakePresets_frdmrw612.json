@@ -1,0 +1,107 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "include": [
+        "CMakePresets_common.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "router-frdmrw612",
+            "displayName": "Zigbee Router FRDM-RW612",
+            "description": "Build Zigbee Router on FRDM-RW612 board",
+            "inherits": [
+                "router",
+                "frdmrw612"
+            ]
+        },
+        {
+            "name": "router-singlechannel-frdmrw612",
+            "displayName": "Zigbee Router Single Channel FRDM-RW612",
+            "description": "Build Zigbee Router using single channel 12 on FRDM-RW612 board",
+            "inherits": [
+                "router-singlechannel",
+                "frdmrw612"
+            ]
+        },
+        {
+            "name": "router-r23-frdmrw612",
+            "displayName": "Zigbee Router R23 FRDM-RW612",
+            "description": "Build Zigbee Router R23 on FRDM-RW612 board",
+            "inherits": [
+                "router-r23",
+                "frdmrw612"
+            ]
+        },
+        {
+            "name": "router-r23-singlechannel-frdmrw612",
+            "displayName": "Zigbee Router R23 Single Channel FRDM-RW612",
+            "description": "Build Zigbee Router R23 using single channel 12 on FRDM-RW612 board",
+            "inherits": [
+                "router-r23-singlechannel",
+                "frdmrw612"
+            ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "router-frdmrw612-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "router-frdmrw612",
+            "configuration": "Debug"
+        },
+        {
+            "name": "router-frdmrw612-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "router-frdmrw612",
+            "configuration": "MinSizeRel"
+        },
+        {
+            "name": "router-singlechannel-frdmrw612-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "router-singlechannel-frdmrw612",
+            "configuration": "Debug"
+        },
+        {
+            "name": "router-singlechannel-frdmrw612-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "router-singlechannel-frdmrw612",
+            "configuration": "MinSizeRel"
+        },
+        {
+            "name": "router-r23-frdmrw612-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "router-r23-frdmrw612",
+            "configuration": "Debug"
+        },
+        {
+            "name": "router-r23-frdmrw612-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "router-r23-frdmrw612",
+            "configuration": "MinSizeRel"
+        },
+        {
+            "name": "router-r23-singlechannel-frdmrw612-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "router-r23-singlechannel-frdmrw612",
+            "configuration": "Debug"
+        },
+        {
+            "name": "router-r23-singlechannel-frdmrw612-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "router-r23-singlechannel-frdmrw612",
+            "configuration": "MinSizeRel"
+        }
+    ]
+}

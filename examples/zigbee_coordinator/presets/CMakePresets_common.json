@@ -1,0 +1,49 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "include": [
+        "../../../cmake/presets/CMakePresetsBase.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "coordinator",
+            "binaryDir": "$env{NXP_ZB_BASE}/build/${presetName}",
+            "environment": {
+                "NXP_ZB_BASE": "${sourceDir}/../.."
+            },
+            "inherits": [
+                "base"
+            ],
+            "hidden": true
+        },
+        {
+            "name": "coordinator-singlechannel",
+            "inherits": [
+                "coordinator",
+                "singlechannel"
+            ],
+            "hidden": true
+        },
+        {
+            "name": "coordinator-r23",
+            "inherits": [
+                "coordinator",
+                "r23"
+            ],
+            "hidden": true
+        },
+        {
+            "name": "coordinator-r23-singlechannel",
+            "inherits": [
+                "coordinator",
+                "r23",
+                "singlechannel"
+            ],
+            "hidden": true
+        }
+    ]
+}

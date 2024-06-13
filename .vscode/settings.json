@@ -1,0 +1,8 @@
+{
+    "cmake.sourceDirectory": [
+        "${workspaceFolder:zigbee}/examples/zigbee_coordinator",
+        "${workspaceFolder:zigbee}/examples/zigbee_router"
+    ],
+    "cmake.configureOnOpen": false,
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+}

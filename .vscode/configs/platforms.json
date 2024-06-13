@@ -1,0 +1,28 @@
+{
+    "Platforms": [
+        {
+            "name": "RW612",
+            "description": "RW612 with MCU-LINK",
+            "JLinkDevice": "RW612",
+            "JLinkInterface": "swd",
+            "JLinkSpeed": "50000",
+            "svdFile": "${workspaceFolder:zigbee}/../../../svd/RW612/RW612.xml"
+        },
+        {
+            "name": "KW45B41Z83",
+            "description": "KW45B41Z83 with MCU-LINK",
+            "JLinkDevice": "KW45B41Z83",
+            "JLinkInterface": "swd",
+            "JLinkSpeed": "4000",
+            "svdFile": "${workspaceFolder:zigbee}/../../../svd/KW45B41Z83/KW45B41Z83.xml"
+        },
+        {
+            "name": "K32W148",
+            "description": "K32W148 with MCU-LINK",
+            "JLinkDevice": "K32W1480",
+            "JLinkInterface": "swd",
+            "JLinkSpeed": "4000",
+            "svdFile": "${workspaceFolder:zigbee}/../../../svd/K32W1480/K32W1480.xml"
+        }
+    ]
+}
