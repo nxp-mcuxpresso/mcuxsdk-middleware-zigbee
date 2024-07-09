@@ -20,31 +20,11 @@
             "hidden": false
         },
         {
-            "name": "coordinator-singlechannel-frdmrw612",
-            "displayName": "Zigbee Coordinator Single Channel FRDM-RW612",
-            "description": "Build Zigbee Coordinator using single channel 12 on FRDM-RW612 board",
-            "inherits": [
-                "coordinator-singlechannel",
-                "frdmrw612"
-            ],
-            "hidden": false
-        },
-        {
             "name": "coordinator-r23-frdmrw612",
             "displayName": "Zigbee Coordinator R23 FRDM-RW612",
             "description": "Build Zigbee Coordinator R23 on FRDM-RW612 board",
             "inherits": [
                 "coordinator-r23",
-                "frdmrw612"
-            ],
-            "hidden": false
-        },
-        {
-            "name": "coordinator-r23-singlechannel-frdmrw612",
-            "displayName": "Zigbee Coordinator R23 Single Channel FRDM-RW612",
-            "description": "Build Zigbee Coordinator R23 using single channel 12 on FRDM-RW612 board",
-            "inherits": [
-                "coordinator-r23-singlechannel",
                 "frdmrw612"
             ],
             "hidden": false
@@ -66,20 +46,6 @@
             "configuration": "MinSizeRel"
         },
         {
-            "name": "coordinator-singlechannel-frdmrw612-debug",
-            "description": "Build only the Debug configuration",
-            "displayName": "Debug",
-            "configurePreset": "coordinator-singlechannel-frdmrw612",
-            "configuration": "Debug"
-        },
-        {
-            "name": "coordinator-singlechannel-frdmrw612-minsizerel",
-            "description": "Build only the MinSizeRel configuration",
-            "displayName": "MinSizeRel",
-            "configurePreset": "coordinator-singlechannel-frdmrw612",
-            "configuration": "MinSizeRel"
-        },
-        {
             "name": "coordinator-r23-frdmrw612-debug",
             "description": "Build only the Debug configuration",
             "displayName": "Debug",
@@ -91,20 +57,6 @@
             "description": "Build only the MinSizeRel configuration",
             "displayName": "MinSizeRel",
             "configurePreset": "coordinator-r23-frdmrw612",
-            "configuration": "MinSizeRel"
-        },
-        {
-            "name": "coordinator-r23-singlechannel-frdmrw612-debug",
-            "description": "Build only the Debug configuration",
-            "displayName": "Debug",
-            "configurePreset": "coordinator-r23-singlechannel-frdmrw612",
-            "configuration": "Debug"
-        },
-        {
-            "name": "coordinator-r23-singlechannel-frdmrw612-minsizerel",
-            "description": "Build only the MinSizeRel configuration",
-            "displayName": "MinSizeRel",
-            "configurePreset": "coordinator-r23-singlechannel-frdmrw612",
             "configuration": "MinSizeRel"
         }
     ]

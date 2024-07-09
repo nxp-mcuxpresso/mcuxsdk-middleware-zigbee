@@ -2298,6 +2298,7 @@
         <files mask="app_end_device_node.c" hidden="true"/>
         <files mask="app_main.c" hidden="true"/>
         <files mask="app_reporting.c" hidden="true"/>
+        <files mask="app_serial_commands.c" hidden="true"/>
         <files mask="app_start.c" hidden="true"/>
         <files mask="app_zcl_task.c" hidden="true"/>
         <files mask="pdum_gen.c" hidden="true"/>
@@ -2307,6 +2308,7 @@
         <files mask="app_end_device_node.h" hidden="true"/>
         <files mask="app_main.h" hidden="true"/>
         <files mask="app_reporting.h" hidden="true"/>
+        <files mask="app_serial_commands.h" hidden="true"/>
         <files mask="app_zcl_task.h" hidden="true"/>
         <files mask="bdb_options.h" hidden="true"/>
         <files mask="pdum_gen.h" hidden="true"/>
@@ -2316,6 +2318,9 @@
       </source>
       <source relative_path="./examples/zigbee_ed_rx_on/src" project_relative_path="examples/zigbee_ed_rx_on/src" type="other">
         <files mask="enddevice_rxon.zpscfg" hidden="true"/>
+      </source>
+      <source relative_path="./examples/zigbee_ed_rx_on/src/freertos" project_relative_path="examples/zigbee_ed_rx_on/src/freertos" type="c_include">
+        <files mask="FreeRTOSConfig.h" hidden="true"/>
       </source>
       <source relative_path="./examples/zigbee_ed_rx_on/src" project_relative_path="examples/zigbee_ed_rx_on/src" type="asm_include">
         <files mask="pdum_apdu.S" hidden="true"/>

@@ -21,27 +21,10 @@
             "hidden": true
         },
         {
-            "name": "coordinator-singlechannel",
-            "inherits": [
-                "coordinator",
-                "singlechannel"
-            ],
-            "hidden": true
-        },
-        {
             "name": "coordinator-r23",
             "inherits": [
                 "coordinator",
                 "r23"
-            ],
-            "hidden": true
-        },
-        {
-            "name": "coordinator-r23-singlechannel",
-            "inherits": [
-                "coordinator",
-                "r23",
-                "singlechannel"
             ],
             "hidden": true
         }

@@ -19,29 +19,11 @@
             ]
         },
         {
-            "name": "router-singlechannel-rdrw612bga",
-            "displayName": "Zigbee Router Single Channel RD-RW612-BGA",
-            "description": "Build Zigbee Router using single channel 12 on RD-RW612-BGA board",
-            "inherits": [
-                "router-singlechannel",
-                "rdrw612bga"
-            ]
-        },
-        {
             "name": "router-r23-rdrw612bga",
             "displayName": "Zigbee Router R23 RD-RW612-BGA",
             "description": "Build Zigbee Router R23 on RD-RW612-BGA board",
             "inherits": [
                 "router-r23",
-                "rdrw612bga"
-            ]
-        },
-        {
-            "name": "router-r23-singlechannel-rdrw612bga",
-            "displayName": "Zigbee Router R23 Single Channel RD-RW612-BGA",
-            "description": "Build Zigbee Router R23 using single channel 12 on RD-RW612-BGA board",
-            "inherits": [
-                "router-r23-singlechannel",
                 "rdrw612bga"
             ]
         }
@@ -62,20 +44,6 @@
             "configuration": "MinSizeRel"
         },
         {
-            "name": "router-singlechannel-rdrw612bga-debug",
-            "description": "Build only the Debug configuration",
-            "displayName": "Debug",
-            "configurePreset": "router-singlechannel-rdrw612bga",
-            "configuration": "Debug"
-        },
-        {
-            "name": "router-singlechannel-rdrw612bga-minsizerel",
-            "description": "Build only the MinSizeRel configuration",
-            "displayName": "MinSizeRel",
-            "configurePreset": "router-singlechannel-rdrw612bga",
-            "configuration": "MinSizeRel"
-        },
-        {
             "name": "router-r23-rdrw612bga-debug",
             "description": "Build only the Debug configuration",
             "displayName": "Debug",
@@ -87,20 +55,6 @@
             "description": "Build only the MinSizeRel configuration",
             "displayName": "MinSizeRel",
             "configurePreset": "router-r23-rdrw612bga",
-            "configuration": "MinSizeRel"
-        },
-        {
-            "name": "router-r23-singlechannel-rdrw612bga-debug",
-            "description": "Build only the Debug configuration",
-            "displayName": "Debug",
-            "configurePreset": "router-r23-singlechannel-rdrw612bga",
-            "configuration": "Debug"
-        },
-        {
-            "name": "router-r23-singlechannel-rdrw612bga-minsizerel",
-            "description": "Build only the MinSizeRel configuration",
-            "displayName": "MinSizeRel",
-            "configurePreset": "router-r23-singlechannel-rdrw612bga",
             "configuration": "MinSizeRel"
         }
     ]

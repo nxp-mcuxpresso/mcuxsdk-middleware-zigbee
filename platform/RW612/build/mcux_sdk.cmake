@@ -1,3 +1,7 @@
+# Copyright 2024 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 set(MCUX_SDK_PROJECT_NAME "zb_platform")
 set(MCUX_DEVICE "RW612")
 set(CONFIG_CORE "cm33")
@@ -91,6 +95,7 @@ set(CONFIG_USE_component_els_pkc_hmac ON)
 set(CONFIG_USE_component_els_pkc_aead ON)
 set(CONFIG_USE_component_els_pkc_cipher ON)
 set(CONFIG_USE_component_els_pkc_platform_rw61x ON)
+set(CONFIG_USE_component_els_pkc_platform_rw61x_inf_header_only ON)
 set(CONFIG_USE_utility_debug_console ON)
 set(CONFIG_USE_utility_str ON)
 set(CONFIG_USE_utility_assert ON)

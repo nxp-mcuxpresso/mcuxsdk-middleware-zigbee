@@ -1442,7 +1442,13 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         /* wait for response to be sent, then reset the module */
         //vAppWaitUARTTx();
         do { } while (!UART_bTxReady());
+#ifndef DUAL_MODE_APP
+        /*
+         * If OT was initialized, it will receive a RCP RESET / Timeout (depending if
+         * it was sending commands at that time.
+         */
         App_vSoftwareReset();
+#endif
         return;
     }
         break;

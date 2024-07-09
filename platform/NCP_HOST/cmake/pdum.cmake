@@ -23,8 +23,7 @@ set_target_properties(${pdum_target}
   ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/pdum/lib"
 )
 
-if ("${MACHINE}" STREQUAL "imx8")
-    set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
+if ("${MACHINE_TYPE}" STREQUAL "imx8")
     target_compile_options(${pdum_target} PRIVATE
         -Wno-implicit-function-declaration
         -Wno-format
@@ -37,9 +36,8 @@ else()
         -Wno-format
         -m32
     )
+    target_link_options(${pdum_target} PUBLIC -m32)
 endif()
-
-target_link_options(${pdum_target} PUBLIC -m32)
 
 target_include_directories(${pdum_target} PUBLIC
     ${NXP_ZB_BASE}/platform

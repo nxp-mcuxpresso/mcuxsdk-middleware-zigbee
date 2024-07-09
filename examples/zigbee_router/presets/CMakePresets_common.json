@@ -21,27 +21,10 @@
             "hidden": true
         },
         {
-            "name": "router-singlechannel",
-            "inherits": [
-                "router",
-                "singlechannel"
-            ],
-            "hidden": true
-        },
-        {
             "name": "router-r23",
             "inherits": [
                 "router",
                 "r23"
-            ],
-            "hidden": true
-        },
-        {
-            "name": "router-r23-singlechannel",
-            "inherits": [
-                "router",
-                "r23",
-                "singlechannel"
             ],
             "hidden": true
         }

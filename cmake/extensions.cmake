@@ -1,3 +1,7 @@
+# Copyright 2024 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 macro(nxp_zb_library_named name)
     # This is a macro because we need add_library() to be executed
     # within the scope of the caller.

@@ -76,30 +76,31 @@ see [here](https://github.com/microsoft/vscode-cmake-tools/blob/main/docs/cmake-
 
 To get the list of available configuration presets, run the following command (adapt the path accordingly):
 ```bash
-cmake -S./examples/zigbee_coordinator/build_cmake --list-presets
+cmake -S./examples/zigbee_coordinator --list-presets
 ```
 
 >Note: the -S option specifies the source folder, this allows to run cmake from any folder, but the command can be
 >simplified when you are already in the source folder of the example:
 >```bash
->cd ./examples/zigbee_coordinator/build_cmake
+>cd ./examples/zigbee_coordinator
 > cmake --list-presets
 >```
 
 You should get an output similar to:
 ```bash
 Available configure presets:
-  "coordinator-rdrw612bga"                   - Zigbee Coordinator RD-RW612-BGA
-  "coordinator-singlechannel-rdrw612bga"     - Zigbee Coordinator Single Channel RD-RW612-BGA
-  "coordinator-r23-rdrw612bga"               - Zigbee Coordinator R23 RD-RW612-BGA
-  "coordinator-r23-singlechannel-rdrw612bga" - Zigbee Coordinator R23 Single Channel RD-RW612-BGA
+
+  "coordinator-rdrw612bga"     - Zigbee Coordinator RD-RW612-BGA
+  "coordinator-r23-rdrw612bga" - Zigbee Coordinator R23 RD-RW612-BGA
+  "coordinator-frdmrw612"      - Zigbee Coordinator FRDM-RW612
+  "coordinator-r23-frdmrw612"  - Zigbee Coordinator R23 FRDM-RW612bash
 ```
 
 ### Configuring CMake project using presets
 
 To configure the project with a specific preset, run the following command (adapt the path and preset name accordingly):
 ```bash
-cmake -S./examples/zigbee_coordinator/build_cmake --preset coordinator-rw612
+cmake -S./examples/zigbee_coordinator --preset coordinator-rw612
 ```
 This will create a binary folder `build/` at the root of the Zigbee repository.
 
@@ -127,8 +128,9 @@ You'll find below the list of NXP Zigbee examples supported with CMake.
 
 | Name | Source folder | Description |
 | - | - | - |
-| `zigbee_coordinator` | `examples/zigbee_coordinator/build_cmake` | See [README](./examples/zigbee_coordinator/README.md) |
-| `zigbee_router` | `examples/zigbee_router/build_cmake` | See [README](./examples/zigbee_router/README.md) |
+| `zigbee_coordinator` | `examples/zigbee_coordinator` | See [README](./examples/zigbee_coordinator/README.md) |
+| `zigbee_router` | `examples/zigbee_router` | See [README](./examples/zigbee_router/README.md) |
+| `zigbee_ed_rx_on` | `examples/zigbee_ed_rx_on` | See [README](./examples/zigbee_ed_rx_on/README.md) |
 
 # Configure, Build, Debug NXP Zigbee examples with VS Code
 
@@ -183,7 +185,7 @@ When generating the CMake project, the configuration will be displayed, similarl
 -- CONFIG_ZB_BDB=ON
 -- CONFIG_ZB_CONSOLE_INTERFACE=UART
 -- CONFIG_ZB_DEVICE_TYPE=ZCR
--- CONFIG_ZB_FREERTOS_CONFIG=/path/to/mcux-sdk/middleware/wireless/zigbee/examples/zigbee_coordinator/build_cmake/../src/freertos/FreeRTOSConfig.h
+-- CONFIG_ZB_FREERTOS_CONFIG=/path/to/mcux-sdk/middleware/wireless/zigbee/examples/zigbee_coordinator/src/freertos/FreeRTOSConfig.h
 -- CONFIG_ZB_LEGACY=OFF
 -- CONFIG_ZB_PLATFORM=RW612
 -- CONFIG_ZB_R23=OFF

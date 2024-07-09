@@ -1,3 +1,7 @@
+# Copyright 2024 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 set(CONFIG_JENNIC_CHIP_FAMILY "JN518x")
 set(CONFIG_JENNIC_CHIP "JN5189")
 set(CONFIG_JENNIC_STACK "MAC")

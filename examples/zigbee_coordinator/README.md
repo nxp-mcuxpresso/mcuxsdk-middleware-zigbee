@@ -7,6 +7,7 @@
   - [Operating the device](#operating-the-device)
   - [Rejoining a network](#rejoining-a-network)
   - [Performing a factory reset](#performing-a-factory-reset)
+  - [LED indication table](#led-indication-table)
   - [Available CLI commands](#available-cli-commands)
 
 # Zigbee Coordinator demo example
@@ -57,6 +58,16 @@ memory.
 
 The Coordinator can be returned to its factory-new state, which erases all persistent data except the outgoing
 network frame counter. To perform a factory reset, enter the `factory reset` command on the serial interface.
+
+## LED indication table
+
+| LED1 | LED2 | NOTES |
+| - | - | - |
+| OFF | OFF | The device is not on the network |
+| OFF | Blinking every 500ms | Network steering / permit to join is active |
+| OFF | Blinking every 1s | Find and Bind active |
+| OFF | ON | The device is active |
+| OFF | Blinking every 250ms | Both network steering and Find and Bind are active |
 
 ## Available CLI commands
 

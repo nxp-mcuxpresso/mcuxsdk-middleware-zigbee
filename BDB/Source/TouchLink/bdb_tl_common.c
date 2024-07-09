@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020, 2023 NXP
+ * Copyright 2020, 2023-2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -198,7 +198,7 @@ PUBLIC uint8 BDB_u8TlEncryptKey( uint8* au8InData,
     CRYPTO_tsAesBlock sAesBlock;
 #endif
 
-    tsReg128 sDataIn,sDataOut;
+    CRYPTO_tsReg128 sDataIn,sDataOut;
 #if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
     sExpanded.u32register0 = u32TransId;
     sExpanded.u32register1 = u32TransId;

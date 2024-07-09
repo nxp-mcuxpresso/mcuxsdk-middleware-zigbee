@@ -1,3 +1,7 @@
+# Copyright 2024 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 cmake_minimum_required(VERSION 3.24)
 find_package(NxpZb REQUIRED HINTS $ENV{NXP_ZB_BASE})
 project(zb_router VERSION 1.0.0)

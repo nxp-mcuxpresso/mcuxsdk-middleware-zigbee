@@ -15,10 +15,12 @@
 #include "zigbee_config.h"
 #include "fsl_gpio.h"
 #include "app_crypto.h"
-#if defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES)
+#if defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
 #include "fwk_platform.h"
-#include "fwk_platform_ics.h"
 #include "fsl_component_mem_manager.h"
+#if defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES)
+#include "fwk_platform_ics.h"
+#endif
 #else
 #include "MemManager.h"
 #include "TimersManager.h"
@@ -27,6 +29,10 @@
 #include "app_main.h"
 #include "app_end_device_node.h"
 #include "app_leds.h"
+
+#ifdef APP_END_DEVICE_NODE_CLI
+#include "app_serial_commands.h"
+#endif
 
 #if defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES)
 int PLATFORM_SwitchToOsc32k();
@@ -92,10 +98,12 @@ void main_task (uint32_t parameter)
     {
         /* place initialization code here... */
         initialized = TRUE;
-#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES)
+#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES) && !defined(RW612_SERIES)
         TMR_Init();
 #else
+#if defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES)
         PLATFORM_SwitchToOsc32k();
+#endif
         PLATFORM_InitTimerManager();
 #endif
         CRYPTO_u8RandomInit();
@@ -122,6 +130,9 @@ void main_task (uint32_t parameter)
         ZTIMER_vTask();
 
         APP_taskEndDevicNode();
+#ifdef APP_END_DEVICE_NODE_CLI
+        APP_taskAtSerial();
+#endif
 
 
         if(!gUseRtos_c)

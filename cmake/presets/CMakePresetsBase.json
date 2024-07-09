@@ -65,15 +65,6 @@
             "hidden": true
         },
         {
-            "name": "singlechannel",
-            "displayName": "Single Channel",
-            "description": "Forces the channel used to channel 12",
-            "cacheVariables": {
-                "CONFIG_ZB_SINGLE_CHANNEL": "12"
-            },
-            "hidden": true
-        },
-        {
             "name": "rw612",
             "displayName": "RW612 platform",
             "description": "Use RW612 as target platform",

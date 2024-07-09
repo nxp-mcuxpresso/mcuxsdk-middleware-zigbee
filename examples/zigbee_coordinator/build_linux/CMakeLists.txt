@@ -5,6 +5,23 @@
 cmake_minimum_required(VERSION 3.13)  # CMake version check
 project(zb_coord_linux)               # Create project
 
+set(TOOLCHAIN_DIR $ENV{ARMGCC_DIR})
+if (NOT TOOLCHAIN_DIR)
+    message(STATUS "***ARMGCC_DIR is not set, assume toolchain bins are in your PATH***")
+    set(TOOLCHAIN_BIN_DIR "")
+else()
+    message(STATUS "ARMGCC_DIR: " ${TOOLCHAIN_DIR})
+    set(TOOLCHAIN_BIN_DIR ${TOOLCHAIN_DIR}/bin/)
+endif()
+
+if ("${MACHINE}" STREQUAL "imx8")
+    message(WARNING "Cross-compiling for imx8")
+    set(CMAKE_C_COMPILER ${TOOLCHAIN_BIN_DIR}arm-linux-gnueabihf-gcc CACHE INTERNAL "C compiler")
+    set(MACHINE_TYPE imx8 CACHE INTERNAL "imx8")
+else()
+    message(WARNING "Compiling for x86")
+endif()
+
 if ("${NXP_SDK_BASE}" STREQUAL "")
     set(NXP_ZB_BASE_RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
     get_filename_component(NXP_ZB_BASE ${NXP_ZB_BASE_RELATIVE} ABSOLUTE)
@@ -267,10 +284,8 @@ endif()
 # Add executable target
 add_executable(zb_coord_linux ${NXP_NCP_HOST_COORDINATOR_SOURCES})
 
-if ("${MACHINE}" STREQUAL "imx8")
-    message(WARNING "Cross-compiling for ${MACHINE}")
-    set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
-    target_compile_options(zb_coord_linux PRIVATE
+if ("${MACHINE_TYPE}" STREQUAL "imx8")
+     target_compile_options(zb_coord_linux PRIVATE
         -Wno-implicit-function-declaration
         -Wno-format
         -Wno-incompatible-pointer-types
@@ -278,7 +293,6 @@ if ("${MACHINE}" STREQUAL "imx8")
         -Wno-int-conversion
     )
 else()
-    message(WARNING "Compiling for x86")
     target_compile_options(zb_coord_linux PRIVATE
         -O0
         -g3
