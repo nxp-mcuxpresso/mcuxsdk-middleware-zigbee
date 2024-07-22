@@ -8306,8 +8306,14 @@ PUBLIC uint8 ZPS_u8AplGetMaxPayloadSize(void *pvApl , uint16 u16Addr)
 }
 PUBLIC uint8 ZPS_u8NwkManagerState(void)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return 0;
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE];
+    uint16 u16TxLength = 0x00U;
+    uint8 u8NwkState = 0x0U;
+   
+    /* Send over serial */
+    u8SL_WriteMessage((uint16)E_SL_MSG_NWK_MANAGER_STATE, u16TxLength, au8TxSerialBuffer, &u8NwkState);
+  
+    return u8NwkState;
 }
 PUBLIC void ZPS_vNwkNibClearDiscoveryNT(void *pvNwk)
 {
