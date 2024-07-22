@@ -3670,6 +3670,11 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         u8Status = eZdpMgmtIeeeJoinListReq(u64ExtAddr, u8StartIndex);
         break;
     }
+    case E_SL_MSG_NWK_CLEAR_DISC_NT:
+    {
+        ZPS_vNwkNibClearDiscoveryNT(ZPS_pvAplZdoGetNwkHandle());
+        break;
+    }
     case E_SL_MSG_SERIAL_LINK_REQ_NEGATIVE:
     {
         uint8 u8TestCase;

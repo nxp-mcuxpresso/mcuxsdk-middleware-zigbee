@@ -8317,7 +8317,8 @@ PUBLIC uint8 ZPS_u8NwkManagerState(void)
 }
 PUBLIC void ZPS_vNwkNibClearDiscoveryNT(void *pvNwk)
 {
-    fprintf(stderr,"%s\n", __func__);
+    /* Send over serial */
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_NWK_CLEAR_DISC_NT, 0U, NULL, NULL);
 }
 PUBLIC  ZPS_tsNwkNetworkDescr* ZPS_psGetNetworkDescriptors (uint8 *pu8NumberOfNetworks)
 {
