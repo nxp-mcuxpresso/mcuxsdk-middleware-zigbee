@@ -12,6 +12,7 @@
 #include "bdb_api.h"
 #include "ZTimer.h"
 #include "zps_apl_af.h"
+#include "zps_nwk_pub.h"
 #include "pdum_gen.h"
 #include "PDM.h"
 #include "app_zcl_task.h"
@@ -31,6 +32,9 @@ tszQueue zclQueueHandle;
 bool_t bZCLQueueFull = FALSE;
 
 uint8_t rxDmaTimerHandle;
+
+PRIVATE void App_vSetDeviceType(ZPS_teZdoDeviceType u8DeviceType);
+
 PUBLIC void APP_vRxDmaTimerCallbackFnct(void *p_arg);
 
 extern tsNcpDeviceDesc sNcpDeviceDesc;
@@ -174,7 +178,7 @@ PUBLIC ZPS_teStatus APP_eZbModuleInitialise(void)
         vWaitForJNReady(JN_READY_TIME_MS);
 
         /* Set the device type of the coprocessor*/
-        ZPS_vSetZdoDeviceType(sNcpDeviceDesc.u8DeviceType);
+        App_vSetDeviceType(sNcpDeviceDesc.u8DeviceType);
     } 
     else 
     {
@@ -477,6 +481,25 @@ PUBLIC void vLockZCLMutex(void)
 PUBLIC void vUnlockZCLMutex(void)
 {
     DBG_vPrintf(FALSE, "%s\r\n", __func__);
+}
+
+PRIVATE void App_vSetDeviceType(ZPS_teZdoDeviceType u8DeviceType)
+{
+    if (u8DeviceType == ZPS_ZDO_DEVICE_COORD)
+    {
+        ZPS_vSetZdoDeviceType(ZPS_ZDO_DEVICE_COORD);
+        ZPS_vNwkSetDeviceType(ZPS_pvAplZdoGetNwkHandle(), ZPS_NWK_DT_COORDINATOR);
+    }
+    else if (u8DeviceType == ZPS_ZDO_DEVICE_ROUTER)
+    {
+        ZPS_vSetZdoDeviceType(ZPS_ZDO_DEVICE_ROUTER);
+        ZPS_vNwkSetDeviceType(ZPS_pvAplZdoGetNwkHandle(), ZPS_NWK_DT_ROUTER);
+    }
+    else if (u8DeviceType == ZPS_ZDO_DEVICE_ENDDEVICE)
+    {
+        ZPS_vSetZdoDeviceType(ZPS_ZDO_DEVICE_ENDDEVICE);
+        ZPS_vNwkSetDeviceType(ZPS_pvAplZdoGetNwkHandle(), ZPS_NWK_DT_END_DEVICE);
+    }
 }
 /****************************************************************************/
 /***        END OF FILE                                                   ***/
