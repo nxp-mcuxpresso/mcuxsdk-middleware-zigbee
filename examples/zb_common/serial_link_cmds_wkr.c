@@ -1494,59 +1494,17 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     }
         break;
     case E_SL_MSG_REJOIN_NETWORK:
-#ifndef ZB_COORD_DEVICE
-        DBG_vPrintf(TRACE_APP, "E_SL_MSG_REJOIN_NETWORK %d Channels %d\n",
-                au8LinkRxBuffer[0], au8LinkRxBuffer[1]);
-        u8Status = eEZ_ReJoin(au8LinkRxBuffer[0], au8LinkRxBuffer[1]);
-#endif
+
         break;
     case E_SL_MSG_INSECURE_REJOIN_NETWORK:
-#ifndef ZB_COORD_DEVICE
-         DBG_vPrintf(TRACE_EZMODE,"E_SL_MSG_INSECURE_REJOIN_NETWORK %d Channels %d\n",
-                 au8LinkRxBuffer[0], au8LinkRxBuffer[1]);
-         u8Status = eEZ_Insecure_ReJoin(au8LinkRxBuffer[0], au8LinkRxBuffer[1]);
-#endif
+
          break;
 
     case E_SL_MSG_INSECURE_REJOIN_SHORT_PAN:
     {
-#ifndef ZB_COORD_DEVICE
-         DBG_vPrintf(TRACE_EZMODE,"E_SL_MSG_INSECURE_REJOIN_SHORT_PAN Channels %d\n",
-                 au8LinkRxBuffer[0]);
-         u8Status = eEZ_Insecure_ReJoinToShortPan( au8LinkRxBuffer[0] );
-#endif
     }
     break;
 
-#ifndef ZB_COORD_DEVICE
-    case E_SL_MSG__REJOIN_WITH_CHANNEL_MASK:
-    {
-        uint32 u32ChannelMask;
-        bool_t bInsecure;
-        bool_t bToShortPan;
-
-        memcpy(&u32ChannelMask, au8LinkRxBuffer, sizeof(uint32) );
-        bInsecure = au8LinkRxBuffer[4];
-        bToShortPan = au8LinkRxBuffer[5];
-
-        DBG_vPrintf(TRACE_APP, "Rejoin to mask %08x Insecure %d To Short Pan %d\n",
-                u32ChannelMask,
-                bInsecure,
-                bToShortPan);
-
-        if ( MAC_ENUM_SUCCESS == ZPS_eMacValidateChannelMask( u32ChannelMask ) )
-        {
-            DBG_vPrintf(TRACE_EZMODE,"E_SL_MSG__REJOIN_WITH_CHANNEL_MASK Channels %08x Insecure %d  To Short %d\n",
-                    u32ChannelMask, bInsecure, bToShortPan );
-            u8Status = eEZ_ReJoinToChannelMask( u32ChannelMask, bInsecure, bToShortPan );
-        }
-        else
-        {
-            u8Status = ZPS_APL_APS_E_INVALID_PARAMETER;
-        }
-    }
-    break;
-#endif
     case E_SL_MSG_GET_DEFAULT_DISTRIBUTED_APS_LINK_KEY:
     {
         ZPS_tsAplApsKeyDescriptorEntry* psKeyDescr;
@@ -4738,12 +4696,7 @@ PRIVATE void vControlNodeScanStart(void)
         }
         else
         {
-#ifndef ZB_COORD_DEVICE
-            bRestartTimerExpired = FALSE;
-            eEZ_UpdateEZState(E_EZ_SETUP_START);
-#endif
             sNcpDeviceDesc.eNodeState = E_DISCOVERY;
-
             vSaveDevicePdmRecord();
 
         }
@@ -4759,9 +4712,6 @@ PRIVATE void vControlNodeScanStart(void)
         else
         {
             ZPS_eAplZdoStartStack();
-#ifndef ZB_COORD_DEVICE
-            eEZ_UpdateEZState(E_EZ_SETUP_DEVICE_IN_NETWORK);
-#endif
         }
     }
 }
