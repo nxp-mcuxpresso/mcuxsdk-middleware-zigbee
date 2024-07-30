@@ -67,8 +67,6 @@ PUBLIC tsNcpDeviceDesc sNcpDeviceDesc = {FACTORY_NEW, E_STARTUP, ZPS_ZDO_DEVICE_
 /***        Local Variables                                               ***/
 /****************************************************************************/
 
-teNodeState eNodeState;
-
 #define GREEN_POWER_ENDPOINT                   242
 
 PUBLIC bool_t bDataPending = FALSE;
@@ -145,7 +143,7 @@ void APP_vInitialiseCoordinator(void)
      * HERE
      */
 
-    DBG_vPrintf(TRACE_APP, "Recovered Application State %d \r\n", eNodeState);
+    DBG_vPrintf(TRACE_APP, "Recovered Application State %d \r\n", sNcpDeviceDesc.eNodeState);
 
 }
 
@@ -192,7 +190,7 @@ void APP_vFactoryResetRecords(void)
  ****************************************************************************/
 teNodeState APP_eGetCurrentApplicationState (void)
 {
-    return eNodeState;
+    return sNcpDeviceDesc.eNodeState;
 }
 
 
