@@ -1964,6 +1964,35 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 }
                 break;
 
+                case (uint16)E_SL_MSG_GET_NWK_DESCRIPTOR:
+                    if(NULL != pvData)
+                    {
+                        ZPS_tsNwkNetworkDescr *psNwkDesc = (ZPS_tsNwkNetworkDescr*)pvData;
+                        u16ReadIdx = SL_MSG_RSP_START_IDX;
+                        if ( u8Status == ZPS_E_SUCCESS )
+                        {
+                            psNwkDesc->u64ExtPanId = ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 56U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 48U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 40U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 32U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 24U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 16U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 8U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++));
+
+                            psNwkDesc->u8LogicalChan = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+                            psNwkDesc->u8StackProfile = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+                            psNwkDesc->u8ZigBeeVersion = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+                            psNwkDesc->u8PermitJoining = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+                            psNwkDesc->u8RouterCapacity = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+                            psNwkDesc->u8EndDeviceCapacity = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+#ifdef WWAH_SUPPORT
+                            psNwkDesc->u8ParentCapacity = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+#endif
+                        }
+                    }
+                break;
+
                 case (uint16)E_SL_MSG_CONVERT_LQI_TO_RSSI_DBM:
                 {
                     if(NULL != pu8Temp)

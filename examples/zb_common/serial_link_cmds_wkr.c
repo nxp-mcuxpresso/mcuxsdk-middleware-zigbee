@@ -564,6 +564,35 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     }
     break;
 
+    case E_SL_MSG_GET_NWK_DESCRIPTOR:
+    {
+        uint8 u8Index, u8NumOfNwks;
+        u8Index = au8LinkRxBuffer[0];
+
+        /* Get address of descriptor array */
+        ZPS_tsNwkNetworkDescr  *pNwkDescr;
+        pNwkDescr = ZPS_psGetNetworkDescriptors(&u8NumOfNwks);
+
+        /* Get the descriptor at the deisred index */
+        ZPS_tsNwkNetworkDescr sNwkDescrAtIndex;
+        sNwkDescrAtIndex = *(pNwkDescr + u8Index);
+
+        /* Copy descriptor into payload */
+        ZNC_BUF_U64_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u64ExtPanId, u8TxLength );
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8LogicalChan, u8TxLength );
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8StackProfile, u8TxLength );
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8ZigBeeVersion, u8TxLength );
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8PermitJoining, u8TxLength );
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8RouterCapacity, u8TxLength );
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8EndDeviceCapacity, u8TxLength );
+#ifdef WWAH_SUPPORT
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8ParentCapacity, u8TxLength );
+#endif
+
+        u8Status = ZPS_E_SUCCESS;
+    }
+    break;
+
     case E_SL_MSG_SET_REPROVISSION_DATA:
     {
         uint8 au8Key[16];
