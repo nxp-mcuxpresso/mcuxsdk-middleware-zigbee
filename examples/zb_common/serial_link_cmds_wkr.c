@@ -2611,7 +2611,7 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         /* copy u32ChannelMask */
         u32ChannelMask = ZNC_RTN_U32( au8LinkRxBuffer, 0 );
 
-#ifdef ZB_COORD_DEVICE
+        if (ZPS_ZDO_DEVICE_COORD == sNcpDeviceDesc.u8DeviceType)
         {
             MAC_MlmeReqRsp_s     sMlmeReqRsp;
             MAC_MlmeSyncCfm_s    sMlmeSyncCfm;
@@ -2631,19 +2631,12 @@ PUBLIC void vProcessIncomingSerialCommands(void)
             {
                 u8Status = 1;
             }
-#if 0
-            u8APPScanStatus = E_APP_SCAN_STARTED;
-
-
-            vStartStopTimer(u8APP_DiscoveryTimer,ZTIMER_TIME_MSEC(5000),NULL,0);
-#endif
         }
-
-#else
+        else
+        {
             u8Status = ZPS_eAplZdoDiscoverNetworks(u32ChannelMask);
             DBG_vPrintf(TRACE_APP, "\n u32ChannelMask = 0x%8x, ZPS_eAplZdoDiscoverNetworks... u8Status = %d \r\n", u32ChannelMask ,u8Status);
-#endif
-
+        }
     }
 
     break;
