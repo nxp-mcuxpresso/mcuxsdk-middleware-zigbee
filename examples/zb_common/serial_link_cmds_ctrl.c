@@ -82,6 +82,9 @@ uint8 u8NwkKey;
 uint32 u32ApsChannelMask[MAX_NUM_OF_CHANNEL_MASK] =
         {0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000};
 
+uint8 u8NumberOfNetworks;
+ZPS_tsNwkNetworkDescr psNwkDescriptors[ZPS_NWK_MAX_DISC_NWK_DESCRS]; 
+
 /****************************************************************************/
 /***        Exported Functions                                            ***/
 /****************************************************************************/
@@ -8322,9 +8325,25 @@ PUBLIC void ZPS_vNwkNibClearDiscoveryNT(void *pvNwk)
 }
 PUBLIC  ZPS_tsNwkNetworkDescr* ZPS_psGetNetworkDescriptors (uint8 *pu8NumberOfNetworks)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return NULL;
+    /* Get number of nwk descriptors */
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE];
+    uint16 u16TxLength = 0x00U;
+    uint8 i = 0;
+   
+    u8SL_WriteMessage((uint16)E_SL_MSG_GET_NUMBER_OF_NWK_DESCRIPTORS, u16TxLength, au8TxSerialBuffer, &u8NumberOfNetworks);
+    *pu8NumberOfNetworks = u8NumberOfNetworks;
+
+    /* Build nwk descriptor array */
+    for(i = 0; i < u8NumberOfNetworks; i++)
+    {
+        ZPS_tsNwkNetworkDescr tsCurrDesc;
+        u8SL_WriteMessage((uint16)E_SL_MSG_GET_NWK_DESCRIPTOR, u16TxLength, au8TxSerialBuffer, &tsCurrDesc);
+        *(psNwkDescriptors + i) = tsCurrDesc;
+    }
+
+    return psNwkDescriptors;
 }
+
 PUBLIC void ZPS_vTCSetCallback(void *pfTcFunc)
 {
     fprintf(stderr,"%s\n", __func__);
