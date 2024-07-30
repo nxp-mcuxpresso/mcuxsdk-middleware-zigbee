@@ -30,6 +30,7 @@
 #include "app_main.h"
 #include "PDM_IDs.h"
 #include "app_crypto.h"
+#include "zps_nwk_sap.h"
 
 #include <version.h>
 
@@ -1605,6 +1606,19 @@ PUBLIC void vProcessIncomingSerialCommands(void)
 
         /* Copy fragmentation support for sending over serial */
         ZNC_BUF_U8_UPD( &au8values[u8TxLength],  bFragSup, u8TxLength );
+
+        u8Status = ZPS_E_SUCCESS;
+        break;
+    }
+
+    case (E_SL_MSG_GET_NUMBER_OF_NWK_DESCRIPTORS):
+    {
+        uint8 u8NumberOfNetworks = 0;
+
+        ZPS_psGetNetworkDescriptors(&u8NumberOfNetworks);
+
+        /* Copy number of networks for sending over serial */
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  u8NumberOfNetworks, u8TxLength );
 
         u8Status = ZPS_E_SUCCESS;
         break;
