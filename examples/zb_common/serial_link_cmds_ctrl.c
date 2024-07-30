@@ -488,7 +488,7 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
         {
             uint32 u32Stop = zbPlatGetTime();
 
-            DBG_vPrintf((bool_t)TRUE, "Nwk formation took %d MS\n", (u32Stop - u32FormationStartTime));
+            DBG_vPrintf((bool_t)TRUE, "Nwk formation/joining took %d MS\n", (u32Stop - u32FormationStartTime));
             vSL_SetStandardResponsePeriod();
         }
 
@@ -7689,9 +7689,60 @@ PUBLIC ZPS_teStatus zps_eAfVerifyKeyReqRsp ( void* pvApl,  uint64 u64DstAddr,  u
 }
 PUBLIC ZPS_teStatus zps_eAplZdoJoinNetwork(void *pvApl, ZPS_tsNwkNetworkDescr *psNetworkDescr)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return 0;
+    uint8 au8TxSerialBuffer[40];
+    uint8 *pu8TxBuffer;
+    uint8 u8Status;
+    uint16 u16TxLength = 0x00U;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy psNetworkDescr->u64ExtPanId */
+    vSL_ConvU64ToBi( psNetworkDescr->u64ExtPanId, pu8TxBuffer);
+    pu8TxBuffer += sizeof(uint64);
+    u16TxLength += sizeof(uint64);
+
+    /* Copy psNetworkDescr->u8LogicalChan */
+    *pu8TxBuffer = psNetworkDescr->u8LogicalChan;
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+
+    /* Copy psNetworkDescr->u8StackProfile */
+    *pu8TxBuffer = psNetworkDescr->u8StackProfile;
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+
+    /* Copy psNetworkDescr->u8ZigBeeVersion */
+    *pu8TxBuffer = psNetworkDescr->u8ZigBeeVersion;
+    pu8TxBuffer += sizeof(uint8);    
+    u16TxLength += sizeof(uint8);
+
+    /* Copy psNetworkDescr->u8PermitJoining */
+    *pu8TxBuffer = psNetworkDescr->u8PermitJoining;
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+
+    /* Copy psNetworkDescr->u8RouterCapacity */
+    *pu8TxBuffer = psNetworkDescr->u8RouterCapacity;
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+
+    /* Copy psNetworkDescr->u8EndDeviceCapacity */
+    *pu8TxBuffer = psNetworkDescr->u8EndDeviceCapacity;
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+
+#ifdef WWAH_SUPPORT
+    /* Copy psNetworkDescr->u8ParentCapacity */
+    *pu8TxBuffer = psNetworkDescr->u8ParentCapacity;
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+#endif
+    vSL_SetLongResponsePeriod();
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_JOIN_NETWORK, u16TxLength, au8TxSerialBuffer, NULL);
+    vSL_SetStandardResponsePeriod();
+    return u8Status;
 }
+
 PUBLIC ZPS_tsAplApsKeyDescriptorEntry *zps_psFindKeyDescr(void *pvApl,  uint64 u64DeviceAddr,  uint32* pu32Index)
 {
     fprintf(stderr,"%s\n", __func__);

@@ -525,7 +525,8 @@ typedef enum
     E_SL_MSG_GET_GROUP_TABLE_ENTRY_ENDPOINT_ELEMENT =   0x9094U,
     E_SL_MSG_NWK_CLEAR_DISC_NT                      =   0x9095U,
     E_SL_MSG_GET_NUMBER_OF_NWK_DESCRIPTORS          =   0x9096U,
-    E_SL_MSG_GET_NWK_DESCRIPTOR                     =   0x9097U
+    E_SL_MSG_GET_NWK_DESCRIPTOR                     =   0x9097U,
+    E_SL_MSG_JOIN_NETWORK                           =   0x9098U
 
 } teSL_MsgType;
 typedef enum

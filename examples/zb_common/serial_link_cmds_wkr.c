@@ -640,6 +640,26 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     }
     break;
 
+    case E_SL_MSG_JOIN_NETWORK:
+    {
+        uint16 u16Index = 0x00;
+        ZPS_tsNwkNetworkDescr sNwkDesc;
+
+        /* Rebuild nwk descriptor from payload */
+        sNwkDesc.u64ExtPanId = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkDesc.u8LogicalChan = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkDesc.u8StackProfile = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkDesc.u8ZigBeeVersion = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkDesc.u8PermitJoining = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkDesc.u8RouterCapacity = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkDesc.u8EndDeviceCapacity = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+#ifdef WWAH_SUPPORT
+        sNwkDesc.u8ParentCapacity = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+#endif
+        u8Status = ZPS_eAplZdoJoinNetwork(&sNwkDesc);
+    }
+    break;
+
     case E_SL_MSG_ADD_REPLACE_LINK_KEY:
     {
         uint64 u64IEEEAddr;

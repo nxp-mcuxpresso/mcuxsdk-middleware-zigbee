@@ -1188,6 +1188,7 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_SET_TRSP_KEY_DECIDER_TABLE_POLICY:
                 case (uint16)E_SL_MSG_CLEAR_TRSP_KEY_DECIDER_TABLE:
                 case (uint16)E_SL_MSG_NWK_CLEAR_DISC_NT:
+                case (uint16)E_SL_MSG_JOIN_NETWORK:
                 {
                     /* no extra data; just status seq no & type */
                     u16ReadIdx = SL_MSG_RSP_START_IDX;
