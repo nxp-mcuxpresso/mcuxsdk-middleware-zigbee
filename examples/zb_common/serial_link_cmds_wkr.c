@@ -524,7 +524,6 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
-#ifdef ZB_COORD_DEVICE
     case E_SL_MSG_GET_REPROVISSION_DATA:
     {
         uint64 u64Address;
@@ -610,7 +609,6 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         }
     }
     break;
-#endif
 
     case E_SL_MSG_ADD_REPLACE_LINK_KEY:
     {
@@ -2558,7 +2556,7 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         u8TxLength += sizeof(uint8);
     }
     break;
-#ifdef ZB_COORD_DEVICE
+
     case E_SL_MSG_GET_GLOBAL_STATS:
 
         /* Copy sNwkStats for sending over serial */
@@ -2596,7 +2594,7 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         ZPS_vNwkNibSetExtPanId (ZPS_pvAplZdoGetNwkHandle(), u64Value);
     }
     break;
-#endif
+
     case E_SL_MSG_CHANGE_PANID:
     {
         uint16 u16Value;
@@ -3999,7 +3997,6 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
-#if (defined ZB_COORD_DEVICE) || (defined ZB_ROUTER_DEVICE)
     case E_SL_MSG_SET_PARENT_TIMEOUT:
     {
 
@@ -4012,7 +4009,6 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         u8Status = 0;
         break;
     }
-#endif
 
     case E_SL_MSG_SET_PANID_CNFL_RSVL:
     {
@@ -4930,7 +4926,7 @@ PRIVATE uint8 u8AppChangeChannel( uint32 u32Channel)
     }
     return u8Status;
 }
-//#ifdef ZB_COORD_DEVICE
+
 /****************************************************************************
  *
  * NAME: bGetDeviceStats
@@ -4962,7 +4958,7 @@ PRIVATE bool_t bGetDeviceStats(uint64 u64Mac, uint8 *pu8LastLqi, uint8 *pu8Avera
     }
     return FALSE;
 }
-//#endif
+
 /****************************************************************************
  *
  * NAME: u16GetTemp
