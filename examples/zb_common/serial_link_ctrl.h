@@ -499,7 +499,8 @@ typedef enum
     E_SL_MSG_GET_NUMBER_OF_NWK_DESCRIPTORS          =   0x9096U,
     E_SL_MSG_GET_NWK_DESCRIPTOR                     =   0x9097U,
     E_SL_MSG_JOIN_NETWORK                           =   0x9098U,
-    E_SL_MSG_FIND_KEY_DESCRIPTOR                    =   0x9099U
+    E_SL_MSG_FIND_KEY_DESCRIPTOR                    =   0x9099U,
+    E_SL_MSG_FIND_BIND_ENTRY_FOR_CLUSTER_ID         =   0x909AU
 } teSL_MsgType;
 
 

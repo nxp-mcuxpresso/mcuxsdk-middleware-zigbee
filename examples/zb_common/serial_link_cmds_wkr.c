@@ -1710,6 +1710,21 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
+    case (E_SL_MSG_FIND_BIND_ENTRY_FOR_CLUSTER_ID):
+    {
+        bool_t bEntryFound;
+        uint16_t u16ClusterId;
+        
+        u16ClusterId = ZNC_RTN_U16( au8LinkRxBuffer, 0 );
+        bEntryFound = ZPS_bAplAibFindBindTableEntryForClusterId(u16ClusterId);
+
+        /* Copy max payload size for sending over serial */
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  bEntryFound, u8TxLength );
+
+        u8Status = ZPS_E_SUCCESS;
+        break;
+    }
+
     case (E_SL_MSG_GET_NUMBER_OF_NWK_DESCRIPTORS):
     {
         uint8 u8NumberOfNetworks = 0;

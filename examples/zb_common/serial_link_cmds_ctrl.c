@@ -8710,8 +8710,40 @@ PUBLIC void vClearTrspKeyDeciderTable()
     u8SL_WriteMessage((uint16)E_SL_MSG_CLEAR_TRSP_KEY_DECIDER_TABLE, 0U, NULL, NULL);
 }
 
-
 #endif
+
+/****************************************************************************
+ *
+ * NAME: zps_bAplAibFindBindTableEntryForClusterId
+ *
+ * DESCRIPTION:
+ *  Searches for bind table entry corresponding to given cluster ID. Returns 
+ *  true if found, false otherwise.
+ *
+ * PARAMETERS:      Name                    RW      Usage
+ *                  pvApl                         APL handle
+ *                  u16ClusterId                  cluster ID to search for
+ * RETURNS:
+ *  bool
+ *
+ *****************************************************************************/
+PUBLIC bool zps_bAplAibFindBindTableEntryForClusterId( void *pvApl, uint16 u16ClusterId )
+{
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
+    uint16 u16TxLength = 0x00U;
+    bool bEntryFound = FALSE;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy u16ClusterId */
+    *pu8TxBuffer++ = (uint8)(u16ClusterId >> 8U);
+    *pu8TxBuffer++ = (uint8)(u16ClusterId);
+    u16TxLength += sizeof(uint16);
+
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_FIND_BIND_ENTRY_FOR_CLUSTER_ID, u16TxLength, au8TxSerialBuffer, &bEntryFound);
+
+    return bEntryFound;
+}
 /****************************************************************************/
 /***        END OF FILE                                                   ***/
 /****************************************************************************/
