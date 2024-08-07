@@ -25,4 +25,6 @@
     sigprocmask(SIG_BLOCK, &x, NULL);               \
 }
 
+#define MICRO_DISABLE_INTERRUPTS()
+
 #endif /* __MICROSPECIFIC_H__ */

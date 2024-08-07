@@ -432,7 +432,7 @@ PUBLIC  void vGP_HandleGPDCommand(
  	uint16 u16AliasShortAddr;
  	tsGP_ZgpCommissioningNotificationCmdPayload sZgpCommissioningNotificationCmdPayload;
     tsZCL_Address                               sDestinationAddress;
-    uint8 u8TransactionSequenceNumber;
+    uint8 u8TransactionSequenceNumber = u8GetTransactionSequenceNumber();
     sDestinationAddress.eAddressMode = E_ZCL_AM_BROADCAST;
     sDestinationAddress.uAddress.eBroadcastMode = ZPS_E_APL_AF_BROADCAST_RX_ON;
 
@@ -1038,8 +1038,8 @@ PRIVATE void vGP_TxGPResponse(
 	 uint8 u8SecKeyType,u8SecLevel;
 	 uint8 u8Length = *pu8Payloadlength;
      uint32 u32FrameCounter = 0;
-	 AESSW_Block_u                   uSecurityKey;
-	 AESSW_Block_u                   uOutKey;
+	 CRYPTO_tsAesBlock                   uSecurityKey;
+	 CRYPTO_tsAesBlock                   uOutKey;
 #ifdef CLD_GP_ATTR_ZGP_LINK_KEY
 	 uint32 u32MIC = 0;
 #endif
@@ -1221,7 +1221,7 @@ PRIVATE void vGP_TxGPResponse(
 	 tsGP_ZgppProxySinkTable                              *psSinkProxyTableEntry;
      tsZCL_Address                               sDestinationAddress;
      uint8 u8Status;
-     uint8 u8TransactionSequenceNumber;
+     uint8 u8TransactionSequenceNumber = u8GetTransactionSequenceNumber();
      sDestinationAddress.eAddressMode = E_ZCL_AM_BROADCAST;
      sDestinationAddress.uAddress.eBroadcastMode = ZPS_E_APL_AF_BROADCAST_RX_ON;
 

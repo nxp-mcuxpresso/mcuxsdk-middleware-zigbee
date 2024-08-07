@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2022-2023 NXP
+ * Copyright 2022-2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -59,6 +59,13 @@
 #define ZPS_TLV_G_SUPPKEYNEGMETH_STATKEYREQ  (1) /* Zigbee 3.0 Mechanism */
 #define ZPS_TLV_G_SUPPKEYNEGMETH_SPEKEAES128 (2) /* SPEKE using Curve25519 with Hash AES-MMO-128 */
 #define ZPS_TLV_G_SUPPKEYNEGMETH_SPEKESHA256 (4) /* SPEKE using Curve25519 with Hash SHA-256 */
+
+#define ZPS_TLV_G_PSK_SYMMETRIC    (1) /* Symmetric authentication token */
+#define ZPS_TLV_G_PSK_INSTALLCODE  (2) /* Pre-configured link-ley derived from installation code */
+#define ZPS_TLV_G_PSK_PASSCODE     (4) /* Variable-length pass code (for PAKE protocols) */
+#define ZPS_TLV_G_PSK_BASICAUTH    (8) /* Basic Authorization Key */
+#define ZPS_TLV_G_PSK_ADMINAUTH   (16) /* Administrative Authorization Key */
+#define ZPS_TLV_G_PSK_WELLKNOWN  (255) /* Anonymous Well-Known Secret */
 
 #define ZPS_TLV_G_ROUTERINFO_HUBCONN         (1) /* Hub Connectivity */
 #define ZPS_TLV_G_ROUTERINFO_LONGUPTIME      (2) /* Uptime > 24 hrs */
@@ -273,6 +280,19 @@ TLV_DEF(tuSupportedKeyNegotiationMethods,
 );
 _Static_assert(sizeof(tuSupportedKeyNegotiationMethods) == 12, "TLV type error");
 
+TLV_DEF(tuSelectedKeyNegotiationMethod,
+        uint8, u8KeyNegotiationProtocol,
+        uint8, u8PresharedSecrets,
+        uint8, au8SrcIeeeAddr[8]
+);
+_Static_assert(sizeof(tuSelectedKeyNegotiationMethod) == 12, "TLV type error");
+
+TLV_DEF(tuCurve25519PublicPoint,
+        uint64, u64DeviceEui64,
+        uint8, au8PublicPoint[32]
+);
+_Static_assert(sizeof(tuCurve25519PublicPoint) == 42, "TLV type error");
+
 TLV_DEF(tuSupportedKeyNegotiationMethodsNoAddr,
         uint8, u8KeyNegotProtMask,
         uint8, u8SharedSecretsMask
@@ -420,7 +440,6 @@ typedef ZPS_teTlvEnum (*tpfParseTLVContent)(uint8 u8Tag, uint8 u8Len,
 
 #if 0
 extern tsTlvDescr g_Tlv_ManufacturerSpecific;
-extern tsTlvDescr g_Tlv_SupportedKeyNegotiationMethods;
 extern tsTlvDescr g_Tlv_NextPanidChange;
 extern tsTlvDescr g_Tlv_NextChannelChange;
 extern tsTlvDescr g_Tlv_SymPass;
@@ -438,8 +457,8 @@ extern tsTlvDescr g_Tlv_NodeDescRsp;
 extern tsTlvDescr g_Tlv_ClearAllBindingsReq;
 extern tsTlvDescr g_Tlv_BeaconSurveyConfig;
 extern tsTlvDescr g_Tlv_BeaconSurveyRsp;
-extern tsTlvDescr g_Tlv_SecStartKeyNegReq;
-extern tsTlvDescr g_Tlv_SecStartKeyNegRsp;
+extern tsTlvDescr g_Tlv_SecStartKeyNegotiationReq;
+extern tsTlvDescr g_Tlv_SecStartKeyNegotiationRsp;
 extern tsTlvDescr g_Tlv_SecRetrAuthTokenReq;
 extern tsTlvDescr g_Tlv_SecGetAuthLvlReq;
 extern tsTlvDescr g_Tlv_SecGetAuthLvlRsp;

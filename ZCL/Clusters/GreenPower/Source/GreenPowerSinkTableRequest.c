@@ -86,7 +86,7 @@ PUBLIC teZCL_Status eGP_SinkTableRequestSend(
 
     zbmap8 b8Options;
     uint8 u8ItemsInPayload = 2;
-    uint8 u8TransactionSequenceNumber;
+    uint8 u8TransactionSequenceNumber = u8GetTransactionSequenceNumber();
     tsZCL_TxPayloadItem asPayloadDefinition[4] = { //size included for app id 2
      {1,  E_ZCL_BMAP8,   &psZgpSinkTableRequestCmdPayload->b8Options},
      {1,  E_ZCL_UINT32,  &psZgpSinkTableRequestCmdPayload->uZgpdDeviceAddr.u32ZgpdSrcId},
@@ -149,10 +149,9 @@ PUBLIC teZCL_Status eGP_SinkTableRequestSend(
 PUBLIC teZCL_Status eGP_SinkTableRequestReceive(
                     ZPS_tsAfEvent                               *pZPSevent,
                     uint16                                      u16Offset,
-                    tsGP_ZgpSinkTableRequestCmdPayload          *psZgpSinkTableRequestCmdPayload)
+                    tsGP_ZgpSinkTableRequestCmdPayload          *psZgpSinkTableRequestCmdPayload,
+                    uint8 *pu8TransactionSequenceNumber)
 {
-
-    uint8 u8TransactionSequenceNumber;
     uint16 u16ActualQuantity;
     zbmap8 b8Options;
     uint8 u8ItemsInPayload = 2;
@@ -188,7 +187,7 @@ PUBLIC teZCL_Status eGP_SinkTableRequestReceive(
 		asPayloadDefinition[1].pvDestination = &psZgpSinkTableRequestCmdPayload->u8Index;
     }
     return eZCL_CustomCommandReceive(pZPSevent,
-                              &u8TransactionSequenceNumber,
+                              pu8TransactionSequenceNumber,
                               asPayloadDefinition,
                               u8ItemsInPayload,
                               E_ZCL_ACCEPT_EXACT|E_ZCL_DISABLE_DEFAULT_RESPONSE);

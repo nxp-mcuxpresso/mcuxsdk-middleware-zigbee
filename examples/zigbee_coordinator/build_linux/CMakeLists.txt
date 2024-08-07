@@ -3,169 +3,272 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 cmake_minimum_required(VERSION 3.13)  # CMake version check
+
+set(MBEDTLS_MIN_VERSION "2.28" CACHE STRING "")
+message(STATUS "Setting mbedtls minimum required version: ${MBEDTLS_MIN_VERSION}")
+
+if("${CONFIG_ZB_SINGLE_CHANNEL}" STREQUAL "")
+    set(CONFIG_ZB_SINGLE_CHANNEL "13" CACHE STRING "Force the channel to be used.")
+endif()
+
+if ("${NXP_SDK_BASE}" STREQUAL "")
+    set(NXP_ZB_BASE_RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
+    get_filename_component(NXP_ZB_BASE ${NXP_ZB_BASE_RELATIVE} ABSOLUTE)
+    get_filename_component(NXP_SDK_BASE ${NXP_ZB_BASE}/../../.. ABSOLUTE)
+else()
+    #not implemented for now
+endif()
+
+# Determine whether the SDK used is the github repo, a package or the internal repo
+if(EXISTS ${NXP_SDK_BASE}/core/)
+    message(STATUS "Found MCUXPRESSO SDK GITHUB")
+    message(STATUS "Using SDK root path " ${NXP_SDK_BASE})
+    set(NXP_SDK_TYPE "GITHUB")
+elseif(EXISTS ${NXP_SDK_BASE}/bin/generator)
+    message(STATUS "Found MCUXPRESSO SDK internal")
+    message(STATUS "Using SDK root path " ${NXP_SDK_BASE})
+    set(NXP_SDK_TYPE "INTERNAL")
+elseif(EXISTS ${NXP_SDK_BASE}/SW-Content-Register.txt)
+    message(STATUS "Found MCUXPRESSO SDK")
+    message(STATUS "Using SDK root path " ${NXP_SDK_BASE})
+    set(NXP_SDK_TYPE "PACKAGE")
+else()
+    set(NXP_SDK_TYPE "NONE")
+endif()
+message(STATUS "Using Zigbee root path " ${NXP_ZB_BASE})
+
+# Use toolchain file
+if ("${MACHINE}" STREQUAL "imx8")
+    include(${NXP_ZB_BASE}/platform/NCP_HOST/cmake/toolchains/arm-linux-gnueabihf.cmake)
+    message(WARNING "Cross-compiling for imx8")
+    set(MACHINE_TYPE imx8 CACHE INTERNAL "imx8")
+else()
+    include(${NXP_ZB_BASE}/platform/NCP_HOST/cmake/toolchains/x86_64-linux-gnu.cmake)
+    message(WARNING "Compiling for x86")
+endif()
+enable_language(C CXX ASM)
+
+# Function for mbedtls validation
+include(${NXP_ZB_BASE}/platform/NCP_HOST/cmake/utils.cmake)
+
 project(zb_coord_linux)               # Create project
 
-if ("${NXP_NCP_ROOT}" STREQUAL "")
-    set(NXP_NCP_ROOT "../../../..")
-endif()
-
-set(FWK_PATH "${NXP_NCP_ROOT}/framework")
-set(ZIGBEE_PATH "${NXP_NCP_ROOT}/zigbee")
-
-message(STATUS "Using FWK root path " ${FWK_PATH})
-message(STATUS "Using ZB root path " ${ZIGBEE_PATH})
-
-set(PDUM_LIB_NAME PDUM_NCP)
-set(PDUM_LIB_PATH ${ZIGBEE_PATH}/examples/zigbee_coordinator/build_linux/out)
-
-find_library(PDUM_LIB_FOUND ${PDUM_LIB_NAME} PATHS ${PDUM_LIB_PATH})
-if (NOT PDUM_LIB_FOUND)
-    message(STATUS "PDUM NCP Library not found. Creating it...")
-
-    # Create library
-    include(CreatePDUMLib.cmake)
+set(ENV_MBEDTLS_ORIGIN $ENV{MBEDTLS_ORIGIN})
+if("${ENV_MBEDTLS_ORIGIN}" STREQUAL "")
+    if ("${NXP_SDK_TYPE}" STREQUAL "NONE")
+        use_mbedtls_as_package()
+    else()
+        set(MBEDTLS_VALID "YES")
+        check_mbedtls_is_valid(MBEDTLS_VALID)
+        if ("${MBEDTLS_VALID}" STREQUAL "YES")
+            set(MBEDTLS_ORIGIN "SDK")
+            set(MBEDTLS_INCLUDE ${NXP_SDK_BASE}/middleware/mbedtls/include/)
+        else()
+            message(FATAL_ERROR "")
+        endif()
+    endif()
+elseif("${ENV_MBEDTLS_ORIGIN}" STREQUAL "SDK")
+    message(STATUS "Using mbedtls from SDK")
+    set(MBEDTLS_ORIGIN "SDK")
+    set(MBEDTLS_INCLUDE ${NXP_SDK_BASE}/middleware/mbedtls/include/)
+elseif("${ENV_MBEDTLS_ORIGIN}" STREQUAL "GIT")
+    message(STATUS "Using mbedtls from GIT")
+    set(MBEDTLS_ORIGIN "GIT")
+    set(MBEDTLS_INCLUDE )
+elseif("${ENV_MBEDTLS_ORIGIN}" STREQUAL "SYSTEM")
+    use_mbedtls_as_package()
 else()
-    message(STATUS "PDUM NCP Library found at: ${PDUM_LIB_FOUND}")
-
-    # Add library target
-    add_library(PDUM_NCP STATIC IMPORTED)
-    set_target_properties(PDUM_NCP PROPERTIES IMPORTED_LOCATION "${PDUM_LIB_FOUND}")
+    message(STATUS "Valid options for environment variable MBEDTLS_ORIGIN options are: SDK,GIT,SYSTEM")
+    message(FATAL_ERROR "Usage example: `export MBEDTLS_ORIGIN=SDK`, `export MBEDTLS_ORIGIN=GIT` OR `export MBEDTLS_ORIGIN=SYSTEM`")
 endif()
 
+set(PDUM_LIB_PATH ${PROJECT_BINARY_DIR}/pdum/lib/libpdum.a)
+set(CRYPTO_USE_MBEDTLS "CRYPTO_USE_MBEDTLS")
 
-# Add main.cpp file of project root directory as source file
-set(COORDINATOR_NCP_SOURCES
-    ${ZIGBEE_PATH}/examples/zigbee_coordinator/src/linux/pdum_gen_glue.c
+set(NXP_NCP_HOST_COORDINATOR_INCLUDES
 
-    ${ZIGBEE_PATH}/examples/zigbee_coordinator/src/app_coordinator_ncp.c
-    ${ZIGBEE_PATH}/examples/zigbee_coordinator/src/app_main.c
-    ${ZIGBEE_PATH}/examples/zigbee_coordinator/src/app_start.c
-    ${ZIGBEE_PATH}/examples/zigbee_coordinator/src/app_zcl_task.c
-    ${ZIGBEE_PATH}/examples/zigbee_coordinator/src/app_serial_commands.c
+    # Coordinator includes
+    ${NXP_ZB_BASE}/examples/zigbee_coordinator/src/linux
+    ${NXP_ZB_BASE}/examples/zigbee_coordinator/src
 
-    ${ZIGBEE_PATH}/examples/zb_common/app_console.c
-    ${ZIGBEE_PATH}/examples/zb_common/app_uart.c
-    ${ZIGBEE_PATH}/examples/zb_common/app_crypto.c
-    ${ZIGBEE_PATH}/examples/zb_common/app_zigbee_config_ncp.c
-    ${ZIGBEE_PATH}/examples/zb_common/app_ota_server.c
-    ${ZIGBEE_PATH}/examples/zb_common/serial_link_ctrl.c
-    ${ZIGBEE_PATH}/examples/zb_common/serial_link_cmds_ctrl.c
-    ${ZIGBEE_PATH}/examples/zb_common/serial_link_ctrl_linux.c
+    # Platform specific includes
+    ${NXP_ZB_BASE}/platform
+    ${NXP_ZB_BASE}/platform/NCP_HOST/ieee-802.15.4
+    ${NXP_ZB_BASE}/platform/NCP_HOST/framework/Common
+    ${NXP_ZB_BASE}/platform/NCP_HOST/framework/OtaSupport/Interface
+    ${NXP_ZB_BASE}/platform/NCP_HOST/framework/PDUM/Include
+    ${NXP_ZB_BASE}/platform/NCP_HOST/framework/PDM/Interface
+    ${NXP_ZB_BASE}/platform/NCP_HOST/framework/PWRM/Include
+    ${NXP_ZB_BASE}/platform/NCP_HOST/framework/SecLib/Interface
+    ${NXP_ZB_BASE}/platform/NCP_HOST/platform
 
-    ${ZIGBEE_PATH}/platform/NCP_HOST/framework/PDM/Source/Posix/PDM_adapter.c
-    ${ZIGBEE_PATH}/platform/NCP_HOST/framework/OtaSupport/Source/Posix/OtaSupport_adapter.c
-    ${ZIGBEE_PATH}/platform/NCP_HOST/platform/Posix/console.c
-    ${ZIGBEE_PATH}/platform/NCP_HOST/platform/Posix/uart.c
-    ${ZIGBEE_PATH}/platform/NCP_HOST/platform/Posix/glue.c
-    ${ZIGBEE_PATH}/platform/NCP_HOST/platform/Posix/leds.c
-    ${ZIGBEE_PATH}/platform/NCP_HOST/platform/Posix/crypto.c
-    ${ZIGBEE_PATH}/platform/NCP_HOST/platform/Posix/timer.c
+    # Zigbee module specific includes
+    ${NXP_ZB_BASE}/examples/zb_common
+    ${NXP_ZB_BASE}/ZigbeeCommon/Include
+    ${NXP_ZB_BASE}/BDB/Include
+    ${NXP_ZB_BASE}/BDB/Source/Common
+    ${NXP_ZB_BASE}/BDB/Source/NwkSteering
+    ${NXP_ZB_BASE}/BDB/Source/FindAndBind
+    ${NXP_ZB_BASE}/BDB/Source/NwkFormation
+    ${NXP_ZB_BASE}/BDB/Source/OutOfBand
 
-    ${ZIGBEE_PATH}/BDB/Source/Common/bdb_start.c
-    ${ZIGBEE_PATH}/BDB/Source/Common/bdb_state_machine.c
-    ${ZIGBEE_PATH}/BDB/Source/Common/bdb_fr.c
-    ${ZIGBEE_PATH}/BDB/Source/Common/bdb_start.c
+    ${NXP_ZB_BASE}/ZCIF/Include
+    ${NXP_ZB_BASE}/ZCIF/Source
+    ${NXP_ZB_BASE}/ZCL/Devices/ZHA/Generic/Include
 
-    ${ZIGBEE_PATH}/BDB/Source/FindAndBind/bdb_fb_common.c
-    ${ZIGBEE_PATH}/BDB/Source/FindAndBind/bdb_fb_common.c
-    ${ZIGBEE_PATH}/BDB/Source/FindAndBind/bdb_fb_initiator.c
-    ${ZIGBEE_PATH}/BDB/Source/FindAndBind/bdb_fb_target.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Include
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/
+    ${NXP_ZB_BASE}/ZCL/Clusters/Commissioning/Include
 
-    ${ZIGBEE_PATH}/BDB/Source/NwkFormation/bdb_nf.c
-    ${ZIGBEE_PATH}/BDB/Source/NwkFormation/bdb_nf.h
-    ${ZIGBEE_PATH}/BDB/Source/NwkFormation/
+    ${NXP_ZB_BASE}/ZCL/Clusters/OTA/Include
+    ${NXP_ZB_BASE}/ZCL/Clusters/OTA/Source
 
-    ${ZIGBEE_PATH}/BDB/Source/NwkSteering/bdb_ns.c
-
-    ${ZIGBEE_PATH}/ZigbeeCommon/Source/port_linux.c
-    ${ZIGBEE_PATH}/ZigbeeCommon/Source/appZdpExtraction.c
-    ${ZIGBEE_PATH}/ZigbeeCommon/Source/ZTimer.c
-    ${ZIGBEE_PATH}/ZigbeeCommon/Source/ZQueue.c
-    ${ZIGBEE_PATH}/ZigbeeCommon/Source/appZpsBeaconHandler.c
-    ${ZIGBEE_PATH}/ZigbeeCommon/Source/appZpsExtendedDebug.c
-    ${ZIGBEE_PATH}/ZigbeeCommon/Source/app_zps_link_keys.c
-
-    ${ZIGBEE_PATH}/ZCL/Devices/ZHA/Generic/Source/base_device.c
-
-    ${ZIGBEE_PATH}/ZCIF/Source/dlist.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_CustomCommandReceive.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_CustomCommandSend.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_PDUbufferReadWrite.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_PDUbufferReadWriteString.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_WriteAttributesRequestHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_WriteAttributesRequestSend.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_WriteAttributesResponseHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_attribute.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_buffer.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_clusterCommand.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_command.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_common.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_configureReportingCommandHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_configureReportingCommandSend.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_configureReportingResponseHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_defaultResponse.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_discoverAttributesExtendedRequestHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_discoverAttributesExtendedRequestSend.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_discoverAttributesExtendedResponseHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_discoverAttributesRequestHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_discoverAttributesRequestSend.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_discoverAttributesResponseHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_discoverCommandsRequestHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_discoverCommandsRequestSend.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_discoverCommandsResponseHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_event.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_heap.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_library_options.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_readAttributesRequestHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_readAttributesRequestSend.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_readAttributesResponseHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_readReportingConfigurationCommandHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_readReportingConfigurationCommandSend.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_readReportingConfigurationResponseHandle.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_reportManager.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_reportMaths.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_reportScheduler.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_reportStringHandling.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_reportStructure.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_search.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_timer.c
-    ${ZIGBEE_PATH}/ZCIF/Source/zcl_transmit.c
-
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/Basic.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/BasicCommandHandler.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/BasicClientCommands.c
-
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/Identify.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/IdentifyCommandHandler.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/IdentifyClientCommands.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/IdentifyServerCommands.c
-
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/Groups.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/GroupsClientCommands.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/GroupsCommandHandler.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/GroupsServerCommands.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/GroupsTableManager.c
-
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/OnOff.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/OnOffCommandHandler.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/OnOffCommands.c
-
-    ${ZIGBEE_PATH}/ZCL/Clusters/OTA/Source/OTA_common.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/OTA/Source/OTA_CustomCommandHandler.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/OTA/Source/OTA_CustomReceiveCommands.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/OTA/Source/OTA_server.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/OTA/Source/OTA_ServerUpgradeManager.c
-    ${ZIGBEE_PATH}/ZCL/Clusters/OTA/Source/OTA.c
+    ${NXP_ZB_BASE}/ZPSAPL/Include
+    ${NXP_ZB_BASE}/ZPSMAC/Include
+    ${NXP_ZB_BASE}/ZPSNWK/Include
+    ${NXP_ZB_BASE}/ZPSTSV/Include
 )
 
-# Add executable target
-add_executable(zb_coord_linux ${COORDINATOR_NCP_SOURCES})
+set(NXP_NCP_HOST_COORDINATOR_SOURCES
+    ${NXP_ZB_BASE}/examples/zigbee_coordinator/src/linux/pdum_gen_glue.c
 
-if ("${MACHINE}" STREQUAL "imx8")
-    message(WARNING "Cross-compiling for ${MACHINE}")
-    set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
-    target_compile_options(zb_coord_linux PRIVATE
+    ${NXP_ZB_BASE}/examples/zigbee_coordinator/src/app_coordinator_ncp.c
+    ${NXP_ZB_BASE}/examples/zigbee_coordinator/src/app_main.c
+    ${NXP_ZB_BASE}/examples/zigbee_coordinator/src/app_start.c
+    ${NXP_ZB_BASE}/examples/zigbee_coordinator/src/app_zcl_task.c
+    ${NXP_ZB_BASE}/examples/zigbee_coordinator/src/app_serial_commands.c
+
+    ${NXP_ZB_BASE}/examples/zb_common/app_console.c
+    ${NXP_ZB_BASE}/examples/zb_common/app_uart.c
+    ${NXP_ZB_BASE}/examples/zb_common/app_crypto.c
+    ${NXP_ZB_BASE}/examples/zb_common/app_zigbee_config_ncp.c
+    ${NXP_ZB_BASE}/examples/zb_common/app_ota_server.c
+    ${NXP_ZB_BASE}/examples/zb_common/serial_link_ctrl.c
+    ${NXP_ZB_BASE}/examples/zb_common/serial_link_cmds_ctrl.c
+    ${NXP_ZB_BASE}/examples/zb_common/serial_link_ctrl_linux.c
+
+    ${NXP_ZB_BASE}/platform/NCP_HOST/framework/PDM/Source/Posix/PDM_adapter.c
+    ${NXP_ZB_BASE}/platform/NCP_HOST/framework/OtaSupport/Source/Posix/OtaSupport_adapter.c
+    ${NXP_ZB_BASE}/platform/NCP_HOST/platform/Posix/console.c
+    ${NXP_ZB_BASE}/platform/NCP_HOST/platform/Posix/uart.c
+    ${NXP_ZB_BASE}/platform/NCP_HOST/platform/Posix/glue.c
+    ${NXP_ZB_BASE}/platform/NCP_HOST/platform/Posix/leds.c
+    ${NXP_ZB_BASE}/platform/NCP_HOST/platform/Posix/crypto.c
+    ${NXP_ZB_BASE}/platform/NCP_HOST/platform/Posix/timer.c
+
+    ${NXP_ZB_BASE}/BDB/Source/Common/bdb_start.c
+    ${NXP_ZB_BASE}/BDB/Source/Common/bdb_state_machine.c
+    ${NXP_ZB_BASE}/BDB/Source/Common/bdb_fr.c
+    ${NXP_ZB_BASE}/BDB/Source/Common/bdb_start.c
+
+    ${NXP_ZB_BASE}/BDB/Source/FindAndBind/bdb_fb_common.c
+    ${NXP_ZB_BASE}/BDB/Source/FindAndBind/bdb_fb_common.c
+    ${NXP_ZB_BASE}/BDB/Source/FindAndBind/bdb_fb_initiator.c
+    ${NXP_ZB_BASE}/BDB/Source/FindAndBind/bdb_fb_target.c
+
+    ${NXP_ZB_BASE}/BDB/Source/NwkFormation/bdb_nf.c
+    ${NXP_ZB_BASE}/BDB/Source/NwkFormation/bdb_nf.h
+    ${NXP_ZB_BASE}/BDB/Source/NwkFormation/
+
+    ${NXP_ZB_BASE}/BDB/Source/NwkSteering/bdb_ns.c
+
+    ${NXP_ZB_BASE}/ZigbeeCommon/Source/port_linux.c
+    ${NXP_ZB_BASE}/ZigbeeCommon/Source/appZdpExtraction.c
+    ${NXP_ZB_BASE}/ZigbeeCommon/Source/ZTimer.c
+    ${NXP_ZB_BASE}/ZigbeeCommon/Source/ZQueue.c
+    ${NXP_ZB_BASE}/ZigbeeCommon/Source/appZpsBeaconHandler.c
+    ${NXP_ZB_BASE}/ZigbeeCommon/Source/appZpsExtendedDebug.c
+    ${NXP_ZB_BASE}/ZigbeeCommon/Source/app_zps_link_keys.c
+
+    ${NXP_ZB_BASE}/ZCL/Devices/ZHA/Generic/Source/base_device.c
+
+    ${NXP_ZB_BASE}/ZCIF/Source/dlist.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_CustomCommandReceive.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_CustomCommandSend.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_PDUbufferReadWrite.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_PDUbufferReadWriteString.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_WriteAttributesRequestHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_WriteAttributesRequestSend.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_WriteAttributesResponseHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_attribute.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_buffer.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_clusterCommand.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_command.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_common.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_configureReportingCommandHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_configureReportingCommandSend.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_configureReportingResponseHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_defaultResponse.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_discoverAttributesExtendedRequestHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_discoverAttributesExtendedRequestSend.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_discoverAttributesExtendedResponseHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_discoverAttributesRequestHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_discoverAttributesRequestSend.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_discoverAttributesResponseHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_discoverCommandsRequestHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_discoverCommandsRequestSend.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_discoverCommandsResponseHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_event.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_heap.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_library_options.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_readAttributesRequestHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_readAttributesRequestSend.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_readAttributesResponseHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_readReportingConfigurationCommandHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_readReportingConfigurationCommandSend.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_readReportingConfigurationResponseHandle.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_reportManager.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_reportMaths.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_reportScheduler.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_reportStringHandling.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_reportStructure.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_search.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_timer.c
+    ${NXP_ZB_BASE}/ZCIF/Source/zcl_transmit.c
+
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/Basic.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/BasicCommandHandler.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/BasicClientCommands.c
+
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/Identify.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/IdentifyCommandHandler.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/IdentifyClientCommands.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/IdentifyServerCommands.c
+
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/Groups.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/GroupsClientCommands.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/GroupsCommandHandler.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/GroupsServerCommands.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/GroupsTableManager.c
+
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/OnOff.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/OnOffCommandHandler.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/General/Source/OnOffCommands.c
+
+    ${NXP_ZB_BASE}/ZCL/Clusters/OTA/Source/OTA_common.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/OTA/Source/OTA_CustomCommandHandler.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/OTA/Source/OTA_CustomReceiveCommands.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/OTA/Source/OTA_server.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/OTA/Source/OTA_ServerUpgradeManager.c
+    ${NXP_ZB_BASE}/ZCL/Clusters/OTA/Source/OTA.c
+)
+
+# Build pdum library
+include("${NXP_ZB_BASE}/platform/NCP_HOST/cmake/pdum.cmake")
+
+# Build mbedtls library
+if (MBEDTLS_ORIGIN STREQUAL "SDK")
+    include("${NXP_ZB_BASE}/platform/NCP_HOST/cmake/mbedtls_sdk.cmake")
+elseif(MBEDTLS_ORIGIN STREQUAL "GIT")
+    include("${NXP_ZB_BASE}/platform/NCP_HOST/cmake/mbedtls_git.cmake")
+endif()
+
+# Add executable target
+add_executable(zb_coord_linux ${NXP_NCP_HOST_COORDINATOR_SOURCES})
+
+if ("${MACHINE_TYPE}" STREQUAL "imx8")
+     target_compile_options(zb_coord_linux PRIVATE
         -Wno-implicit-function-declaration
         -Wno-format
         -Wno-incompatible-pointer-types
@@ -173,69 +276,27 @@ if ("${MACHINE}" STREQUAL "imx8")
         -Wno-int-conversion
     )
 else()
-    message(WARNING "Compiling for x86")
     target_compile_options(zb_coord_linux PRIVATE
         -O0
         -g3
         -ggdb
         -m32
-        -Wno-incompatible-pointer-types
-        -Wno-discarded-qualifiers
     )
 
-    target_compile_options(zb_coord_linux
-        PRIVATE
-            -include ${CMAKE_CURRENT_SOURCE_DIR}/../src/linux/linux_glue.h
-    )
     target_link_options(zb_coord_linux PUBLIC -m32)
 endif()
 
 target_include_directories(zb_coord_linux
     PUBLIC
-        ${ZIGBEE_PATH}/examples/zigbee_coordinator/src/linux
-
-        ${ZIGBEE_PATH}/examples/zigbee_coordinator/src
-        ${ZIGBEE_PATH}/platform
-        ${ZIGBEE_PATH}/platform/NCP_HOST/ieee-802.15.4
-        ${ZIGBEE_PATH}/platform/NCP_HOST/framework/Common
-        ${ZIGBEE_PATH}/platform/NCP_HOST/framework/OtaSupport/Interface
-        ${ZIGBEE_PATH}/platform/NCP_HOST/framework/PDUM/Include
-        ${ZIGBEE_PATH}/platform/NCP_HOST/framework/PDM/Interface
-        ${ZIGBEE_PATH}/platform/NCP_HOST/framework/PWRM/Include
-        ${ZIGBEE_PATH}/platform/NCP_HOST/platform
-        ${ZIGBEE_PATH}/platform/NCP_HOST/misc
-        ${ZIGBEE_PATH}/platform/K32W1/framework/SecLib
-
-        ${ZIGBEE_PATH}/examples/zb_common
-
-        ${ZIGBEE_PATH}/ZigbeeCommon/Include
-        ${ZIGBEE_PATH}/BDB/Include
-        ${ZIGBEE_PATH}/BDB/Source/Common
-        ${ZIGBEE_PATH}/BDB/Source/NwkSteering
-        ${ZIGBEE_PATH}/BDB/Source/FindAndBind
-        ${ZIGBEE_PATH}/BDB/Source/NwkFormation
-        ${ZIGBEE_PATH}/BDB/Source/OutOfBand
-
-        ${ZIGBEE_PATH}/ZCIF/Include
-        ${ZIGBEE_PATH}/ZCIF/Source
-        ${ZIGBEE_PATH}/ZCL/Devices/ZHA/Generic/Include
-
-        ${ZIGBEE_PATH}/ZCL/Clusters/General/Include
-        ${ZIGBEE_PATH}/ZCL/Clusters/General/Source/
-        ${ZIGBEE_PATH}/ZCL/Clusters/Commissioning/Include
-
-        ${ZIGBEE_PATH}/ZCL/Clusters/OTA/Include
-        ${ZIGBEE_PATH}/ZCL/Clusters/OTA/Source
-
-        ${ZIGBEE_PATH}/ZPSAPL/Include
-        ${ZIGBEE_PATH}/ZPSMAC/Include
-        ${ZIGBEE_PATH}/ZPSNWK/Include
-        ${ZIGBEE_PATH}/ZPSTSV/Include
-
-        ${FWK_PATH}/Common
-        ${FWK_PATH}/SecLib
+    ${NXP_NCP_HOST_COORDINATOR_INCLUDES}
+    ${thirdparty_inc_public}
+    ${MBEDTLS_INCLUDE}
 )
 
+target_compile_options(zb_coord_linux
+    PRIVATE
+        -include ${CMAKE_CURRENT_SOURCE_DIR}/../src/linux/linux_glue.h
+)
 target_compile_definitions(zb_coord_linux
     PRIVATE
         NCP_HOST
@@ -244,12 +305,34 @@ target_compile_definitions(zb_coord_linux
         DEBUG_ZQUEUE=1
         TRACE_REMOTE_ECHO=1
         DEBUG_BDB=1
-        SINGLE_CHANNEL=13
+        SINGLE_CHANNEL=${CONFIG_ZB_SINGLE_CHANNEL}
         TRACE_APP=1
         LITTLE_ENDIAN_PROCESSOR=1
         SERIAL_BAUD_RATE=B1000000
+        ${CRYPTO_USE_MBEDTLS}
 )
 
-target_link_libraries(zb_coord_linux rt pthread m ${PDUM_LIB_NAME})
+if(MBEDTLS_ORIGIN STREQUAL "SDK")
+    #Make sure mbedtls is built before executable
+    add_dependencies(zb_coord_linux ${mbedtls_target})
+
+    set(MBEDTLS_LIB_PATH ${PROJECT_BINARY_DIR}/mbedtls/library/libmbedcrypto.a)
+    set(MBEDTLS_LIB_NAME mbedcrypto)
+
+    add_library(mbedcrypto STATIC IMPORTED)
+    set_target_properties(mbedcrypto PROPERTIES IMPORTED_LOCATION ${MBEDTLS_LIB_PATH})
+endif()
+
+if(MBEDTLS_ORIGIN STREQUAL "GIT")
+    #Make sure mbedtls is built before executable
+    add_dependencies(zb_coord_linux ${mbedtls_target})
+
+    set(MBEDTLS_LIB_NAME ${PROJECT_BINARY_DIR}/mbedtls/library/libmbedcrypto.a)
+endif()
+
+add_library(pdum STATIC IMPORTED)
+set_target_properties(pdum PROPERTIES IMPORTED_LOCATION ${PDUM_LIB_PATH})
+
+target_link_libraries(zb_coord_linux rt pthread m pdum ${MBEDTLS_LIB_NAME})
 
 

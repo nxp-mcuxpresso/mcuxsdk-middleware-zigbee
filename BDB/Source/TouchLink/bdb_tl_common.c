@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020, 2023 NXP
+ * Copyright 2020, 2023-2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -40,14 +40,6 @@
 #include <stdlib.h>
 
 #include "portmacro.h"
-#if !(defined JENNIC_CHIP_FAMILY_JN516x) && !(defined JENNIC_CHIP_FAMILY_JN517x)
-#ifndef K32W1480_SERIES
-#include "fsl_aes.h"
-#else
-#include "SecLib.h"
-#endif
-#endif
-#include "aessw_ccm.h"
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
@@ -95,8 +87,10 @@
 /***        Local Variables                                               ***/
 /****************************************************************************/
 #if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
-extern PUBLIC tsReg128 sTLMasterKey;
-extern PUBLIC tsReg128 sTLCertKey;
+extern PUBLIC CRYPTO_tsReg128 sTLMasterKey;
+extern PUBLIC CRYPTO_tsReg128 sTLCertKey;
+extern PUBLIC uint8 *au8TLMasterKey;
+extern PUBLIC uint8 *au8TLCertKey;
 #else
 extern PUBLIC uint8 au8TLMasterKey[16];
 extern PUBLIC uint8 au8TLCertKey[16];
@@ -198,13 +192,13 @@ PUBLIC uint8 BDB_u8TlEncryptKey( uint8* au8InData,
                                   uint32 u32ResponseId,
                                   uint8 u8KeyIndex)
 {
-    tsReg128 sExpanded;
-    tsReg128 sTransportKey;
+    CRYPTO_tsReg128 sExpanded;
+    CRYPTO_tsReg128 sTransportKey;
 #if (JENNIC_CHIP_FAMILY == JN517x) && (defined LITTLE_ENDIAN_PROCESSOR)
-    AESSW_Block_u sAesBlock;
+    CRYPTO_tsAesBlock sAesBlock;
 #endif
 
-    tsReg128 sDataIn,sDataOut;
+    CRYPTO_tsReg128 sDataIn,sDataOut;
 #if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
     sExpanded.u32register0 = u32TransId;
     sExpanded.u32register1 = u32TransId;
@@ -226,34 +220,12 @@ PUBLIC uint8 BDB_u8TlEncryptKey( uint8* au8InData,
             sTransportKey.u32register3 = u32ResponseId;
             break;
         case TL_MASTER_KEY_INDEX:
-#if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
-            bACI_ECBencodeStripe( &sTLMasterKey,
-                                  TRUE,
-                                  &sExpanded,
-                                  &sTransportKey);
-#else
-#ifndef K32W1480_SERIES
-            AES_SetKey(AES0, au8TLMasterKey, AESSW_BLK_SIZE);
-            AES_EncryptEcb(AES0, (uint8*)&sExpanded, (uint8*)&sTransportKey, AESSW_BLK_SIZE);
-#else
-            AES_128_ECB_Encrypt((uint8*)&sExpanded,AESSW_BLK_SIZE,au8TLMasterKey,(uint8*)&sTransportKey);
-#endif
-#endif
+            zbPlatCryptoAes128EcbEncrypt((uint8*)&sExpanded, CRYPTO_AES_BLK_SIZE,
+                    au8TLMasterKey, (uint8*)&sTransportKey);
             break;
         case TL_CERTIFICATION_KEY_INDEX:
-#if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
-            bACI_ECBencodeStripe( &sTLCertKey,
-                                  TRUE,
-                                  &sExpanded,
-                                  &sTransportKey);
-#else
-#ifndef K32W1480_SERIES
-            AES_SetKey(AES0, au8TLCertKey, AESSW_BLK_SIZE);
-            AES_EncryptEcb(AES0, (uint8*)&sExpanded, (uint8*)&sTransportKey, AESSW_BLK_SIZE);
-#else
-            AES_128_ECB_Encrypt((uint8*)&sExpanded,AESSW_BLK_SIZE,au8TLCertKey,(uint8*)&sTransportKey);
-#endif
-#endif
+            zbPlatCryptoAes128EcbEncrypt((uint8*)&sExpanded, CRYPTO_AES_BLK_SIZE,
+                    au8TLCertKey, (uint8*)&sTransportKey);
             break;
 
         default:
@@ -261,7 +233,7 @@ PUBLIC uint8 BDB_u8TlEncryptKey( uint8* au8InData,
             break;
     }
 #if (JENNIC_CHIP_FAMILY == JN517x) && (defined LITTLE_ENDIAN_PROCESSOR)
-    memcpy( &sAesBlock.au8, au8InData, AES_BLOCK_SIZE);
+    memcpy( &sAesBlock.au8, au8InData, CRYPTO_AES_BLK_SIZE);
     vSwipeEndian( &sAesBlock, &sDataIn, BLOCK_TO_REG);
 #else
     memcpy(&sDataIn,au8InData,0x10);
@@ -270,22 +242,12 @@ PUBLIC uint8 BDB_u8TlEncryptKey( uint8* au8InData,
 
     memcpy(&sDataOut,au8OutData,0x10);
 
-#if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
-    bACI_ECBencodeStripe(&sTransportKey,
-                         TRUE,
-                         &sDataIn,
-                         &sDataOut);
-#else
-#ifndef K32W1480_SERIES
-    AES_SetKey(AES0, (uint8*)&sTransportKey, AESSW_BLK_SIZE);
-    AES_EncryptEcb(AES0, (uint8*)&sDataIn, (uint8*)&sDataOut, AESSW_BLK_SIZE);
-#else
-    AES_128_ECB_Encrypt((uint8*)&sDataIn,AESSW_BLK_SIZE,(uint8*)&sTransportKey,(uint8*)&sDataOut);
-#endif
-#endif
+    zbPlatCryptoAes128EcbEncrypt((uint8*)&sDataIn, CRYPTO_AES_BLK_SIZE,
+            (uint8*)&sTransportKey, (uint8*)&sDataOut);
+
 #if ( JENNIC_CHIP_FAMILY == JN517x) && (defined LITTLE_ENDIAN_PROCESSOR)
     vSwipeEndian( &sAesBlock, &sDataOut, REG_TO_BLOCK);
-    memcpy( au8OutData, &sAesBlock.au8, AES_BLOCK_SIZE);
+    memcpy( au8OutData, &sAesBlock.au8, CRYPTO_AES_BLK_SIZE);
 #else
     memcpy(au8OutData,&sDataOut,0x10);
 
@@ -312,8 +274,8 @@ PUBLIC uint8 BDB_eTlDecryptKey( uint8* au8InData,
                                   uint32 u32ResponseId,
                                   uint8 u8KeyIndex)
 {
-    tsReg128 sTransportKey;
-    tsReg128 sExpanded;
+    CRYPTO_tsReg128 sTransportKey;
+    CRYPTO_tsReg128 sExpanded;
 
 #if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
     sExpanded.u32register0 = u32TransId;
@@ -336,34 +298,12 @@ PUBLIC uint8 BDB_eTlDecryptKey( uint8* au8InData,
             sTransportKey.u32register3 = u32ResponseId;
             break;
         case TL_MASTER_KEY_INDEX:
-#if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
-            bACI_ECBencodeStripe( &sTLMasterKey,
-                                  TRUE,
-                                  &sExpanded,
-                                  &sTransportKey);
-#else
-#ifndef K32W1480_SERIES
-            AES_SetKey(AES0, au8TLMasterKey, AESSW_BLK_SIZE);
-            AES_EncryptEcb(AES0, (uint8*)&sExpanded, (uint8*)&sTransportKey, AESSW_BLK_SIZE);
-#else
-            AES_128_ECB_Encrypt((uint8*)&sExpanded,AESSW_BLK_SIZE,au8TLMasterKey,(uint8*)&sTransportKey);
-#endif
-#endif
+            zbPlatCryptoAes128EcbEncrypt((uint8*)&sExpanded, CRYPTO_AES_BLK_SIZE,
+                    au8TLMasterKey, (uint8*)&sTransportKey);
             break;
         case TL_CERTIFICATION_KEY_INDEX:
-#if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
-            bACI_ECBencodeStripe( &sTLCertKey,
-                                  TRUE,
-                                  &sExpanded,
-                                  &sTransportKey);
-#else
-#ifndef K32W1480_SERIES
-            AES_SetKey(AES0, au8TLCertKey, AESSW_BLK_SIZE);
-            AES_EncryptEcb(AES0, (uint8*)&sExpanded, (uint8*)&sTransportKey, AESSW_BLK_SIZE);
-#else
-            AES_128_ECB_Encrypt((uint8*)&sExpanded,AESSW_BLK_SIZE,au8TLCertKey,(uint8*)&sTransportKey);
-#endif
-#endif
+            zbPlatCryptoAes128EcbEncrypt((uint8*)&sExpanded,
+                    CRYPTO_AES_BLK_SIZE, au8TLCertKey, (uint8*)&sTransportKey);
             break;
 
         default:
@@ -379,18 +319,8 @@ PUBLIC uint8 BDB_eTlDecryptKey( uint8* au8InData,
     sTransportKey.u32register3 = u32Reverse(sTransportKey.u32register3);
 #endif
 
-#if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
-    vECB_Decrypt( (uint8*)&sTransportKey,
-                  au8InData,
-                  au8OutData);
-#else
-#ifndef K32W1480_SERIES
-    AES_SetKey(AES0, (uint8*)&sTransportKey, AESSW_BLK_SIZE);
-    AES_DecryptEcb(AES0, (uint8*)au8InData, (uint8*)au8OutData, AESSW_BLK_SIZE);
-#else
-    AES_128_Decrypt((uint8*)au8InData, (uint8*)&sTransportKey, (uint8*)au8OutData);
-#endif
-#endif
+    zbPlatCryptoAes128EcbDecrypt((uint8*)au8InData, (uint8*)&sTransportKey, (uint8*)au8OutData);
+
 #ifdef SHOW_KEY
     int i;
     for (i=0; i<16; i++) {

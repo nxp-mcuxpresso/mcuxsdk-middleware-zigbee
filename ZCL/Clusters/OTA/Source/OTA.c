@@ -1,17 +1,17 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP
+ * Copyright 2020, 2024 NXP
  *
- * NXP Confidential. 
- * 
- * This software is owned or controlled by NXP and may only be used strictly 
- * in accordance with the applicable license terms.  
- * By expressly accepting such terms or by downloading, installing, activating 
- * and/or otherwise using the software, you are agreeing that you have read, 
- * and that you agree to comply with and are bound by, such license terms.  
- * If you do not agree to be bound by the applicable license terms, 
- * then you may not retain, install, activate or otherwise use the software. 
- * 
+ * NXP Confidential.
+ *
+ * This software is owned or controlled by NXP and may only be used strictly
+ * in accordance with the applicable license terms.
+ * By expressly accepting such terms or by downloading, installing, activating
+ * and/or otherwise using the software, you are agreeing that you have read,
+ * and that you agree to comply with and are bound by, such license terms.
+ * If you do not agree to be bound by the applicable license terms,
+ * then you may not retain, install, activate or otherwise use the software.
+ *
  *
  ****************************************************************************/
 
@@ -41,12 +41,11 @@
 #include "eccapi.h"
 #include "sbmce_cb.h"
 #endif
-#include "aessw_ccm.h"
 #include "zb_platform.h"
 #ifndef TRACE_OTA_DEBUG
 #define TRACE_OTA_DEBUG FALSE
 #endif
-#if (defined JENNIC_CHIP_FAMILY_JN518x) && !(defined(NCP_HOST) || defined(K32W1480_SERIES))
+#if (defined JENNIC_CHIP_FAMILY_JN518x) && !(defined(NCP_HOST) || defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES))
 #include "fsl_aes.h"
 #ifdef WEAK
 #undef WEAK
@@ -85,7 +84,7 @@
         {E_CLD_OTA_COMMAND_UPGRADE_END_RESPONSE,              E_ZCL_CF_TX},
         {E_CLD_OTA_COMMAND_QUERY_SPECIFIC_FILE_REQUEST,       E_ZCL_CF_RX},
         {E_CLD_OTA_COMMAND_QUERY_SPECIFIC_FILE_RESPONSE,      E_ZCL_CF_TX},
-        {E_CLD_OTA_COMMAND_QUERY_NEXT_IMAGE_RESPONSE_ERROR,   E_ZCL_CF_TX} 
+        {E_CLD_OTA_COMMAND_QUERY_NEXT_IMAGE_RESPONSE_ERROR,   E_ZCL_CF_TX}
     };
 #endif
 
@@ -133,7 +132,7 @@ const tsZCL_AttributeDefinition asOTAClusterAttributeDefinitions[] = {
     #endif
 
 #endif
-        {E_CLD_GLOBAL_ATTR_ID_FEATURE_MAP,                (E_ZCL_AF_RD|E_ZCL_AF_GA),  E_ZCL_BMAP32,   (uint32)(&((tsCLD_AS_Ota*)(0))->u32FeatureMap),0},   /* Mandatory  */ 
+        {E_CLD_GLOBAL_ATTR_ID_FEATURE_MAP,                (E_ZCL_AF_RD|E_ZCL_AF_GA),  E_ZCL_BMAP32,   (uint32)(&((tsCLD_AS_Ota*)(0))->u32FeatureMap),0},   /* Mandatory  */
 
 
         {E_CLD_GLOBAL_ATTR_ID_CLUSTER_REVISION,           E_ZCL_AF_RD | E_ZCL_AF_GA,    E_ZCL_UINT16,    (uint32)(&((tsCLD_AS_Ota*)(0))->u16ClusterRevision),0},   /* Mandatory  */
@@ -150,11 +149,11 @@ tsZCL_ClusterDefinition sCLD_OTA = {
         (sizeof(asOTAClusterAttributeDefinitions) / sizeof(tsZCL_AttributeDefinition)),
         (tsZCL_AttributeDefinition*)asOTAClusterAttributeDefinitions,
         NULL
-        #ifdef ZCL_COMMAND_DISCOVERY_SUPPORTED        
+        #ifdef ZCL_COMMAND_DISCOVERY_SUPPORTED
             ,
             (sizeof(asCLD_OTAClusterCommandDefinitions) / sizeof(tsZCL_CommandDefinition)),
             (tsZCL_CommandDefinition*)asCLD_OTAClusterCommandDefinitions
-        #endif        
+        #endif
 };
 
 /****************************************************************************/
@@ -206,7 +205,7 @@ extern uint32 g_au32OtaEncCred [4];
 #endif
 
  unsigned char cOTA_atoh (unsigned char data)
- { if (data > '9') 
+ { if (data > '9')
     { data += 9;
     }
     return (data &= 0x0F);
@@ -241,9 +240,9 @@ PUBLIC  teZCL_Status eOTA_Create(
                 tsOTA_Common                       *psCustomDataStruct)
 {
     teZCL_Status eZCLstatus = E_ZCL_SUCCESS;
-    tsReg128 sOtaUseKey = eOTA_retOtaUseKey();
+    CRYPTO_tsReg128 sOtaUseKey = eOTA_retOtaUseKey();
 
-    #ifdef STRICT_PARAM_CHECK 
+    #ifdef STRICT_PARAM_CHECK
         if((psClusterInstance==NULL)            ||
            (psClusterDefinition==NULL)         ||
            (psCustomDataStruct == NULL))
@@ -251,13 +250,13 @@ PUBLIC  teZCL_Status eOTA_Create(
             return E_ZCL_ERR_PARAMETER_NULL;
         }
     #endif
-    
+
     #ifdef INTERNAL_ENCRYPTED
     const char* sString = CLD_OTA_KEY;
     uint32 i;
     for(i = 0; i < 4; i++)
     {
-        g_au32OtaEncCred[ i ] = (( cOTA_atoh ( sString [ ( i * 8 ) ] )<< 4) & 0xF0 ) | 
+        g_au32OtaEncCred[ i ] = (( cOTA_atoh ( sString [ ( i * 8 ) ] )<< 4) & 0xF0 ) |
                                 ( ( cOTA_atoh ( sString [ ( i * 8 ) + 1 ]) ) & 0x0F) |
                                 ( ( cOTA_atoh ( sString [ ( i * 8 ) + 2 ]) << 12) & 0xF000) |
                                 ( ( cOTA_atoh ( sString [ ( i * 8 ) + 3 ]) << 8 ) & 0xF00) |
@@ -273,13 +272,13 @@ PUBLIC  teZCL_Status eOTA_Create(
     psCustomDataStruct->sReceiveEventAddress.bInitialised = FALSE;
     // cluster data
     vZCL_InitializeClusterInstance(
-                                   psClusterInstance, 
+                                   psClusterInstance,
                                    bIsServer,
                                    psClusterDefinition,
                                    pvEndPointSharedStructPtr,
                                    pu8AttributeControlBits,
                                    NULL,
-                                   eOtaCommandHandler);        
+                                   eOtaCommandHandler);
 
     psClusterInstance->pvEndPointCustomStructPtr = psCustomDataStruct;
     psCustomDataStruct->sOTACustomCallBackEvent.eEventType = E_ZCL_CBET_CLUSTER_CUSTOM;
@@ -302,8 +301,8 @@ PUBLIC  teZCL_Status eOTA_Create(
 #endif
     ((tsCLD_AS_Ota*)pvEndPointSharedStructPtr)->u32FeatureMap = CLD_OTA_FEATURE_MAP;
     ((tsCLD_AS_Ota*)pvEndPointSharedStructPtr)->u16ClusterRevision = CLD_OTA_CLUSTER_REVISION;
-    
-#ifdef OTA_SERVER   
+
+#ifdef OTA_SERVER
     #ifdef OTA_PAGE_REQUEST_SUPPORT
         eZCLstatus = eOtaRegisterTimeServer();
     #endif
@@ -381,12 +380,12 @@ PUBLIC void vOTA_SetApp1OtaEnable(uint8            u8Endpoint,
  ** PARAMETERS:
  ** None
  ** RETURN:
- ** tsReg128
+ ** CRYPTO_tsReg128
  **
  ****************************************************************************/
-PUBLIC tsReg128 eOTA_retOtaUseKey(void)
+PUBLIC CRYPTO_tsReg128 eOTA_retOtaUseKey(void)
 {
-    tsReg128 sOtaUseKey = {0};
+    CRYPTO_tsReg128 sOtaUseKey = {0};
 
 #ifndef OTA_UNIT_TEST_FRAMEWORK
 
@@ -439,7 +438,7 @@ PUBLIC  teZCL_Status eOTA_VerifyImage(
     uint8 au8Signature[OTA_SIGNITURE_SIZE], au8PublicKey[22] = {0},au8Mac[8];
     uint64 u64Mac,u64Cert;
 #endif
-    AESSW_Block_u uHash;
+    CRYPTO_tsAesBlock uHash;
     uint8 au8Header[OTA_MAX_HEADER_SIZE];
     uint16 u16HeaderSize = OTA_MIN_HEADER_SIZE;
 
@@ -533,7 +532,7 @@ PUBLIC  teZCL_Status eOTA_VerifyImage(
                     /* ZCL_OPT_2 Not sure about the change */
                     vReverseMemcpy((uint8*)&u64Cert,&au8Certificate[22],sizeof(uint64));
                     memcpy(&u64Mac,&au8Mac[0],sizeof(uint64));
-                                        
+
                     DBG_vPrintf(TRACE_OTA_DEBUG,"mac cert %llx , mac header %llx \n", u64Cert, u64Mac);
                     if(u64Cert == u64Mac)
                     {
@@ -547,7 +546,7 @@ PUBLIC  teZCL_Status eOTA_VerifyImage(
                             u32CurrentOffset += 8;
                             vOtaFlashLockRead(psEndPointDefinition, psCustomData,u32CurrentOffset,OTA_SIGNITURE_SIZE, au8Signature);
                             DBG_vPrintf(TRACE_OTA_DEBUG, "\n Hash Value :");
-                            for (i=0; i < AESSW_BLK_SIZE; i++)
+                            for (i=0; i < CRYPTO_AES_BLK_SIZE; i++)
                                 DBG_vPrintf(TRACE_OTA_DEBUG, "%x", uHash.au8[i]);
 
                             DBG_vPrintf(TRACE_OTA_DEBUG, "\n Signature :");
@@ -1032,7 +1031,7 @@ PUBLIC  void vOtaTimerClickCallback(tsZCL_CallBackEvent *psCallBackEvent)
     uint8 u8NumberOfendpoints;
 
     u8NumberOfendpoints = u8ZCL_GetNumberOfEndpointsRegistered();
-    
+
     // find price clusters on each EP - if any
     for(i=1; i<(u8NumberOfendpoints+1); i++)
     {
@@ -1107,8 +1106,8 @@ PUBLIC  teZCL_Status eOtaTimeUpdate(
                 u32UTCTime)&& (psCustomData->sOTACallBackMessage.sPersistedData.u32RequestBlockRequestTime != 0))
 #ifdef OTA_CLD_ATTR_REQUEST_DELAY
                 &&
-                (psCustomData->sOTACallBackMessage.sPersistedData.bWaitForBlockReq != TRUE)    
-#endif                
+                (psCustomData->sOTACallBackMessage.sPersistedData.bWaitForBlockReq != TRUE)
+#endif
                 )
             {
                 psCustomData->sOTACallBackMessage.eEventId = E_CLD_OTA_INTERNAL_COMMAND_TIMER_EXPIRED;
@@ -1377,7 +1376,7 @@ PUBLIC  teZCL_Status eOTA_NewImageLoaded(
                 //first read the initial 7 bytes to see how big the header is
                 vOtaFlashLockRead(psEndPointDefinition, psCustomData,u32FlashOffset,OTA_MAX_HEADER_SIZE, aHeader);
 
-                
+
                 vReverseMemcpy((uint8*)&u16HeaderLength,&aHeader[6],sizeof(uint16));
                 vReverseMemcpy((uint8*)&u32HeaderType,&aHeader[0],sizeof(uint32));
                 if(u32HeaderType == OTA_FILE_IDENTIFIER &&
@@ -1581,7 +1580,7 @@ PUBLIC  teZCL_Status eOTA_ServerSwitchToNewImage(
 
 
     uint32 u32OtaOffset = u32OTA_DlOtaHdrOffset();
-#if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)    
+#if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
     uint32 u32CustomerSettings = *((uint32*)FL_INDEX_SECTOR_CUSTOMER_SETTINGS);
 #endif
 
@@ -1589,10 +1588,10 @@ PUBLIC  teZCL_Status eOTA_ServerSwitchToNewImage(
     bool_t bEncExternalFlash = (u32CustomerSettings & FL_INDEX_SECTOR_ENC_EXT_FLASH)?FALSE:TRUE;
 #else
      bool_t bEncExternalFlash = FALSE;
-#endif 
-    
+#endif
+
 #ifndef OTA_UNIT_TEST_FRAMEWORK
-    tsReg128 sOtaUseKey = eOTA_retOtaUseKey();
+    CRYPTO_tsReg128 sOtaUseKey = eOTA_retOtaUseKey();
 #endif
 #ifdef OTA_ACCEPT_ONLY_SIGNED_IMAGES
     uint16 u16OTAHeaderLength = 0;
@@ -1627,9 +1626,9 @@ PUBLIC  teZCL_Status eOTA_ServerSwitchToNewImage(
                 uint8 *pu8Start = (uint8*)&_flash_start;
                 uint8 *pu8LinkKey =    (uint8*)&_FlsLinkKey;
                 uint8 *pu8Cert =       (uint8*)&FlsZcCert;
-#ifdef COPY_PRIVATE_KEY                
+#ifdef COPY_PRIVATE_KEY
                 uint8 *pu8PrvKey =     (uint8*)&FlsPrivateKey;
-#endif                
+#endif
 #ifdef OTA_COPY_MAC_ADDRESS
                 uint8 *pu8MacAddress = (uint8*)&_FlsMACAddress;
 #endif
@@ -1696,7 +1695,7 @@ PUBLIC  teZCL_Status eOTA_ServerSwitchToNewImage(
 
                         au8ivector[15] = au8ivector[15]+((OTA_6X_MAC_OFFSET - OTA_ENC_OFFSET)/OTA_AES_BLOCK_SIZE);
 
-                        //bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(tsReg128 *)au8ivector,(tsReg128 *)au8DataOut);
+                        //bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(CRYPTO_tsReg128 *)au8ivector,(CRYPTO_tsReg128 *)au8DataOut);
                         vOTA_EncodeString(&sOtaUseKey,au8ivector,au8DataOut);
 
                         for(u8Loop=0;u8Loop<16;u8Loop++)
@@ -1715,7 +1714,7 @@ PUBLIC  teZCL_Status eOTA_ServerSwitchToNewImage(
                         vOtaFlashLockRead(psEndPointDefinition, psCustomData, u32TempOffset,OTA_AES_BLOCK_SIZE, au8ivector);
 
                         au8ivector[15] = au8ivector[15]+((u32OtaOffset - OTA_ENC_OFFSET)/OTA_AES_BLOCK_SIZE) + (80 / OTA_AES_BLOCK_SIZE);
-                        //bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(tsReg128 *)au8ivector,(tsReg128 *)au8DataOut);
+                        //bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(CRYPTO_tsReg128 *)au8ivector,(CRYPTO_tsReg128 *)au8DataOut);
                         vOTA_EncodeString(&sOtaUseKey,au8ivector,au8DataOut);
                         // For Copying Link Key
 
@@ -1737,7 +1736,7 @@ PUBLIC  teZCL_Status eOTA_ServerSwitchToNewImage(
                             if((u8Loop % OTA_AES_BLOCK_SIZE) == 0 )
                             {
                                 au8ivector[15]++;
-                                //bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(tsReg128 *)au8ivector,(tsReg128 *)au8DataOut);
+                                //bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(CRYPTO_tsReg128 *)au8ivector,(CRYPTO_tsReg128 *)au8DataOut);
                                 vOTA_EncodeString(&sOtaUseKey,au8ivector,au8DataOut);
                             }
                             au8TempBuffer[u8Loop] = (au8TempBuffer[u8Loop] ^ au8DataOut[(u8Loop %16)]);
@@ -1748,7 +1747,7 @@ PUBLIC  teZCL_Status eOTA_ServerSwitchToNewImage(
                         vOtaFlashLockWrite(psEndPointDefinition, psCustomData,u32Offset,48, au8TempBuffer);
 
                         // For Copying Private Key
-#ifdef COPY_PRIVATE_KEY                        
+#ifdef COPY_PRIVATE_KEY
 
                         memcpy(au8TempBuffer, pu8PrvKey, 21);
 
@@ -1757,7 +1756,7 @@ PUBLIC  teZCL_Status eOTA_ServerSwitchToNewImage(
                             if((u8Loop % OTA_AES_BLOCK_SIZE) == 0 )
                             {
                                 au8ivector[15]++;
-                                bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(tsReg128 *)au8ivector,(tsReg128 *)au8DataOut);
+                                zbPlatCryptoAes128EcbEncrypt((uint8*)au8ivector, CRYPTO_AES_BLK_SIZE, (uint8 *)&sOtaUseKey, (uint8 *)au8DataOut);
                             }
 
                             au8TempBuffer[u8Loop] = (au8TempBuffer[u8Loop] ^ au8DataOut[(u8Loop %16)]);
@@ -1807,7 +1806,7 @@ PUBLIC  teZCL_Status eOTA_ServerSwitchToNewImage(
                         u32Offset = pu8PrvKey - pu8Start;
                         u32Offset += (psCustomData->sOTACallBackMessage.u8ImageStartSector[u8ImageIndex] * sNvmDefsStruct.u32SectorSize);
                         vOtaFlashLockWrite(psEndPointDefinition, psCustomData,u32Offset,21, au8TempBuffer);
-#endif                        
+#endif
                     }
 
 
@@ -1828,8 +1827,7 @@ PUBLIC  teZCL_Status eOTA_ServerSwitchToNewImage(
                             u32TempOffset += OTA_IV_LOCATION;
                             vOtaFlashLockRead(psEndPointDefinition, psCustomData, u32TempOffset,OTA_AES_BLOCK_SIZE, au8ivector);
                             au8ivector[15] = au8ivector[15]+((u32OtaOffset - OTA_ENC_OFFSET)/OTA_AES_BLOCK_SIZE) + (80 / OTA_AES_BLOCK_SIZE) + ( (pu8CustData - pu8LinkKey) / OTA_AES_BLOCK_SIZE);
-                            bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(tsReg128 *)au8ivector,(tsReg128 *)au8DataOut);
-
+                            zbPlatCryptoAes128EcbEncrypt((uint8*)au8ivector, CRYPTO_AES_BLK_SIZE, (uint8 *)&sOtaUseKey, (uint8 *)au8DataOut);
                             u32WriteOffset += (psCustomData->sOTACallBackMessage.u8ImageStartSector[u8ImageIndex] * sNvmDefsStruct.u32SectorSize) * OTA_SECTOR_CONVERTION;
 
 
@@ -1844,7 +1842,7 @@ PUBLIC  teZCL_Status eOTA_ServerSwitchToNewImage(
 
                                 au8ivector[15]++;
 
-                                bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(tsReg128 *)au8ivector,(tsReg128 *)au8DataOut);
+                                zbPlatCryptoAes128EcbEncrypt((uint8*)au8ivector, CRYPTO_AES_BLK_SIZE, (uint8 *)&sOtaUseKey, (uint8 *)au8DataOut);
                             }
 
                             /* copy remaining data */
@@ -2122,7 +2120,7 @@ PUBLIC  tsOTA_ImageHeader sOtaGetHeader(uint8 *pu8HeaderBytes)
 {
     tsOTA_ImageHeader sTempStruct;
     memset(&sTempStruct, 0, sizeof(sTempStruct));
-    
+
     vReverseMemcpy((uint8*)&sTempStruct.u32FileIdentifier,&pu8HeaderBytes[0],sizeof(uint32));
     vReverseMemcpy((uint8*)&sTempStruct.u16HeaderVersion,&pu8HeaderBytes[4],sizeof(uint16));
     vReverseMemcpy((uint8*)&sTempStruct.u16HeaderControlField,&pu8HeaderBytes[8],sizeof(uint16));
@@ -2141,7 +2139,7 @@ PUBLIC  tsOTA_ImageHeader sOtaGetHeader(uint8 *pu8HeaderBytes)
         {
             /* ZCL_OPT_2 Not sure about the change */
             vReverseMemcpy((uint8*)&sTempStruct.u64UpgradeFileDest,&pu8HeaderBytes[57],sizeof(uint64));
-            
+
              if(sTempStruct.u16HeaderControlField & OTA_HDR_HW_VER_PRESENT)
              {
                  vReverseMemcpy((uint8*)&sTempStruct.u16MinimumHwVersion,&pu8HeaderBytes[65],sizeof(uint16));
@@ -2365,7 +2363,7 @@ PUBLIC  void vOTA_SetImageValidityFlag(
         #else /*JN516x*/
             uint8 au8Values[OTA_FLS_MAGIC_NUMBER_LENGTH + 4] = {0x78,0x56,0x34,0x12,0x44,0x33,0x22,0x11,0x88,0x77,0x66,0x55}; // TODO fill the magic value
         #endif
-       
+
         uint32     u32Offset =  (psCustomData->sOTACallBackMessage.u8ImageStartSector[u8Location] * sNvmDefsStruct.u32SectorSize)
                                 + OTA_FLS_VALIDITY_OFFSET;
 
@@ -2373,7 +2371,7 @@ PUBLIC  void vOTA_SetImageValidityFlag(
         au8Values[13] = psCustomData->sOTACallBackMessage.sPersistedData.u8Buf[1];
         au8Values[14] = psCustomData->sOTACallBackMessage.sPersistedData.u8Buf[2];
         au8Values[15] = psCustomData->sOTACallBackMessage.sPersistedData.u8Buf[3];
-        
+
         DBG_vPrintf(TRACE_OTA_DEBUG, "Magic write u32Offset %08x", u32Offset);
         vOtaFlashLockWrite(psEndPointDefinition, psCustomData, u32Offset,OTA_FLS_MAGIC_NUMBER_LENGTH+4, au8Values);
 #endif /*External flash JN516x or JN517x */
@@ -2525,7 +2523,7 @@ PUBLIC  teZCL_Status eOTA_UpdateCoProcessorOTAHeader(
  ** tsOTA_Common               *psCustomData                 OTA custom data
  ** bool_t                        bIsServer                    Is server
  ** bool_t                        bHeaderPresent               Is header present
- ** AESSW_Block_u              *puHash                       Hash
+ ** CRYPTO_tsAesBlock              *puHash                       Hash
  ** uint8                       u8ImageLocation              Image location
  ** RETURN:
  ** None
@@ -2535,10 +2533,10 @@ PUBLIC  void vOTA_GenerateHash(
                                 tsOTA_Common             *psCustomData,
                                 bool_t                      bIsServer,
                                 bool_t                      bHeaderPresent,
-                                AESSW_Block_u            *puHash,
+                                CRYPTO_tsAesBlock            *puHash,
                                 uint8                     u8ImageLocation)
 {
-    AESSW_Block_u uBuf;
+    CRYPTO_tsAesBlock uBuf;
     uint32 u32ImageSize, u32TotalImageBlocks,u32FlashOffset,i,u32TagLength;
     int iBytes;
     uint8 u8BlockElements, au8Tag[OTA_TAG_HEADER_SIZE];
@@ -2547,8 +2545,8 @@ PUBLIC  void vOTA_GenerateHash(
     uint8 u8Length;
     uint16 u16HeaderSize = OTA_MIN_HEADER_SIZE;
 
-    memset(uBuf.au8, 0, AESSW_BLK_SIZE);
-    memset(puHash->au8, 0, AESSW_BLK_SIZE);
+    memset(uBuf.au8, 0, CRYPTO_AES_BLK_SIZE);
+    memset(puHash->au8, 0, CRYPTO_AES_BLK_SIZE);
 
     psCustomData->sOTACallBackMessage.eEventId = E_CLD_OTA_INTERNAL_COMMAND_LOCK_FLASH_MUTEX;
     psEndPointDefinition->pCallBackFunctions(&psCustomData->sOTACustomCallBackEvent);
@@ -2594,7 +2592,7 @@ PUBLIC  void vOTA_GenerateHash(
     DBG_vPrintf(TRACE_OTA_DEBUG, "\n u32ImageSize %d u32TagLength %d \n", u32ImageSize, u32TagLength);
     au8Tag[0] = 0;
     au8Tag[1] = 0;
-    
+
     vReverseMemcpy(&au8Tag[2],(uint8*)&u32TagLength,sizeof(uint32));
 
     /* Copy Tag Id */
@@ -2606,15 +2604,15 @@ PUBLIC  void vOTA_GenerateHash(
         u32FlashOffset = ( (psCustomData->sOTACallBackMessage.u8ImageStartSector[u8ImageLocation] *
                         sNvmDefsStruct.u32SectorSize) * OTA_SECTOR_CONVERTION) + u16HeaderSize + OTA_TAG_HEADER_SIZE;
 
-        u32TotalImageBlocks = (u16HeaderSize+OTA_TAG_HEADER_SIZE) / AESSW_BLK_SIZE;
+        u32TotalImageBlocks = (u16HeaderSize+OTA_TAG_HEADER_SIZE) / CRYPTO_AES_BLK_SIZE;
         u8Length = (u16HeaderSize+OTA_TAG_HEADER_SIZE);
     }
     else
     {
         if(u32TagLength)
         {
-            
-            #ifndef LITTLE_ENDIAN_PROCESSOR 
+
+            #ifndef LITTLE_ENDIAN_PROCESSOR
                 uint8 au8MagicFlashNumbers[OTA_FLS_MAGIC_NUMBER_LENGTH] = {0x12,0x34,0x56,0x78,0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88}; // TODO fill the magic value
             #else
               #if (defined JENNIC_CHIP_FAMILY_JN517x)
@@ -2628,7 +2626,7 @@ PUBLIC  void vOTA_GenerateHash(
             u32FlashOffset = (psCustomData->sOTACallBackMessage.u8ImageStartSector[u8ImageLocation] *
                                     sNvmDefsStruct.u32SectorSize * OTA_SECTOR_CONVERTION) + OTA_FLS_MAGIC_NUMBER_LENGTH;
 
-            u32TotalImageBlocks = (u16HeaderSize+ OTA_TAG_HEADER_SIZE + OTA_FLS_MAGIC_NUMBER_LENGTH) / AESSW_BLK_SIZE;
+            u32TotalImageBlocks = (u16HeaderSize+ OTA_TAG_HEADER_SIZE + OTA_FLS_MAGIC_NUMBER_LENGTH) / CRYPTO_AES_BLK_SIZE;
             u8Length = (u16HeaderSize+ OTA_TAG_HEADER_SIZE + OTA_FLS_MAGIC_NUMBER_LENGTH);
 
         }
@@ -2637,47 +2635,47 @@ PUBLIC  void vOTA_GenerateHash(
             u32FlashOffset = (psCustomData->sOTACallBackMessage.u8ImageStartSector[u8ImageLocation] *
                                     sNvmDefsStruct.u32SectorSize) * OTA_SECTOR_CONVERTION;
 
-            u32TotalImageBlocks = (u16HeaderSize + OTA_TAG_HEADER_SIZE) / AESSW_BLK_SIZE;
+            u32TotalImageBlocks = (u16HeaderSize + OTA_TAG_HEADER_SIZE) / CRYPTO_AES_BLK_SIZE;
             u8Length = (u16HeaderSize + OTA_TAG_HEADER_SIZE);
         }
     }
 
     for(i=0; i < u32TotalImageBlocks; i++)
     {
-        memcpy(uBuf.au8, (au8Buffer+(i*AESSW_BLK_SIZE)), AESSW_BLK_SIZE);
-        AESSW_vMMOBlockUpdate(puHash, &uBuf);
-        for(j=0; j<AESSW_BLK_SIZE; j++)
+        memcpy(uBuf.au8, (au8Buffer+(i*CRYPTO_AES_BLK_SIZE)), CRYPTO_AES_BLK_SIZE);
+        zbPlatCryptoAesMmoBlockUpdate(puHash, &uBuf);
+        for(j=0; j<CRYPTO_AES_BLK_SIZE; j++)
             DBG_vPrintf(TRACE_OTA_DEBUG, "%02x", uBuf.au8[j]);
         DBG_vPrintf(TRACE_OTA_DEBUG, "\n");
-        u32ImageSize -= AESSW_BLK_SIZE ;
+        u32ImageSize -= CRYPTO_AES_BLK_SIZE ;
     }
 
-    iBytes = u8Length % AESSW_BLK_SIZE;
-    u8BlockElements = AESSW_BLK_SIZE - iBytes;
-    memcpy(uBuf.au8, (au8Buffer+(i*AESSW_BLK_SIZE)), iBytes);
+    iBytes = u8Length % CRYPTO_AES_BLK_SIZE;
+    u8BlockElements = CRYPTO_AES_BLK_SIZE - iBytes;
+    memcpy(uBuf.au8, (au8Buffer+(i*CRYPTO_AES_BLK_SIZE)), iBytes);
 
     /* Read Remaining bytes from flash */
     sNvmDefsStruct.sOtaFnTable.prReadCb(u32FlashOffset, u8BlockElements, (uBuf.au8+iBytes));
-    AESSW_vMMOBlockUpdate(puHash, &uBuf);
-    for(j=0; j<AESSW_BLK_SIZE; j++)
+    zbPlatCryptoAesMmoBlockUpdate(puHash, &uBuf);
+    for(j=0; j<CRYPTO_AES_BLK_SIZE; j++)
         DBG_vPrintf(TRACE_OTA_DEBUG, "%02x", uBuf.au8[j]);
     DBG_vPrintf(TRACE_OTA_DEBUG, "\n");
     u32FlashOffset += u8BlockElements;
-    u32ImageSize -= AESSW_BLK_SIZE ;
-    u32TotalImageBlocks = u32ImageSize/AESSW_BLK_SIZE;
+    u32ImageSize -= CRYPTO_AES_BLK_SIZE ;
+    u32TotalImageBlocks = u32ImageSize/CRYPTO_AES_BLK_SIZE;
 
     for(i=0; i < u32TotalImageBlocks; i++)
     {
-        sNvmDefsStruct.sOtaFnTable.prReadCb(u32FlashOffset,AESSW_BLK_SIZE, uBuf.au8);
-        AESSW_vMMOBlockUpdate(puHash, &uBuf);
-        u32FlashOffset += AESSW_BLK_SIZE;
+        sNvmDefsStruct.sOtaFnTable.prReadCb(u32FlashOffset,CRYPTO_AES_BLK_SIZE, uBuf.au8);
+        zbPlatCryptoAesMmoBlockUpdate(puHash, &uBuf);
+        u32FlashOffset += CRYPTO_AES_BLK_SIZE;
     }
 
-    iBytes = u32ImageSize % AESSW_BLK_SIZE;
+    iBytes = u32ImageSize % CRYPTO_AES_BLK_SIZE;
     sNvmDefsStruct.sOtaFnTable.prReadCb(u32FlashOffset,iBytes, uBuf.au8);
     vReverseMemcpy((uint8*)&u32ImageSize,&au8Buffer[52],sizeof(uint32));
-    AESSW_vMMOFinalUpdate(puHash, uBuf.au8, (u32ImageSize - OTA_SIGNITURE_SIZE), iBytes);
-    for(j=0; j<AESSW_BLK_SIZE; j++)
+    zbPlatCryptoAesMmoFinalUpdate(puHash, uBuf.au8, (u32ImageSize - OTA_SIGNITURE_SIZE), iBytes);
+    for(j=0; j<CRYPTO_AES_BLK_SIZE; j++)
         DBG_vPrintf(TRACE_OTA_DEBUG, "%02x", uBuf.au8[j]);
     DBG_vPrintf(TRACE_OTA_DEBUG, "\n");
 
@@ -2799,7 +2797,7 @@ PUBLIC  bool_t bOtaIsSerializationDataValid(
 
 #if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
     uint8 au8ivector[OTA_AES_BLOCK_SIZE], au8DataOut[OTA_AES_BLOCK_SIZE],u8Loop;
-     tsReg128 sOtaUseKey =  eOTA_retOtaUseKey();
+     CRYPTO_tsReg128 sOtaUseKey =  eOTA_retOtaUseKey();
     uint32 u32OtaOffset = u32OTA_DlOtaHdrOffset();
 #endif
     uint32 u32Offset;
@@ -2829,7 +2827,7 @@ PUBLIC  bool_t bOtaIsSerializationDataValid(
 
         au8ivector[15] = au8ivector[15]+((OTA_6X_MAC_OFFSET - OTA_ENC_OFFSET)/OTA_AES_BLOCK_SIZE);
 
-        //bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(tsReg128 *)au8ivector,(tsReg128 *)au8DataOut);
+        //bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(CRYPTO_tsReg128 *)au8ivector,(CRYPTO_tsReg128 *)au8DataOut);
         vOTA_EncodeString(&sOtaUseKey, au8ivector,au8DataOut);
 
         for(u8Loop=0;u8Loop<16;u8Loop++)
@@ -2870,7 +2868,7 @@ PUBLIC  bool_t bOtaIsSerializationDataValid(
         vOtaFlashLockRead(psEndPointDefinition, psCustomData, u32Offset,OTA_AES_BLOCK_SIZE, au8ivector);
 
         au8ivector[15] = au8ivector[15]+((u32OtaOffset - OTA_ENC_OFFSET)/OTA_AES_BLOCK_SIZE) + (80 / OTA_AES_BLOCK_SIZE);
-        //bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(tsReg128 *)au8ivector,(tsReg128 *)au8DataOut);
+        //bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(CRYPTO_tsReg128 *)au8ivector,(CRYPTO_tsReg128 *)au8DataOut);
         vOTA_EncodeString(&sOtaUseKey, au8ivector,au8DataOut);
 
         for(u8Loop=0;u8Loop<16;u8Loop++)
@@ -2909,7 +2907,8 @@ PUBLIC  bool_t bOtaIsSerializationDataValid(
             if((u8Loop % OTA_AES_BLOCK_SIZE) == 0 )
             {
                 au8ivector[15]++;
-                bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(tsReg128 *)au8ivector,(tsReg128 *)au8DataOut);
+                zbPlatCryptoAes128EcbEncrypt((uint8*)au8ivector, CRYPTO_AES_BLK_SIZE, &sOtaUseKey, (uint8*)au8DataOut);
+
             }
             au8ReadBuffer1[u8Loop] = au8ReadBuffer1[u8Loop] ^ au8DataOut[(u8Loop %16)] ;
         }
@@ -2933,7 +2932,7 @@ PUBLIC  bool_t bOtaIsSerializationDataValid(
             if((u8Loop % OTA_AES_BLOCK_SIZE) == 0 )
             {
                 au8ivector[15]++;
-                bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(tsReg128 *)au8ivector,(tsReg128 *)au8DataOut);
+                zbPlatCryptoAes128EcbEncrypt((uint8*)au8ivector, CRYPTO_AES_BLK_SIZE, &sOtaUseKey, (uint8*)au8DataOut);
             }
 
             au8ReadBuffer1[u8Loop] = (au8ReadBuffer1[u8Loop] ^ au8DataOut[(u8Loop %16)]) ;
@@ -2965,7 +2964,7 @@ PUBLIC  bool_t bOtaIsSerializationDataValid(
 
         au8ivector[15] = au8ivector[15]+((u32OtaOffset - OTA_ENC_OFFSET)/OTA_AES_BLOCK_SIZE) + (80 / OTA_AES_BLOCK_SIZE) + ( (pu8CustData - pu8LinkKey) / OTA_AES_BLOCK_SIZE);
 
-        bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(tsReg128 *)au8ivector,(tsReg128 *)au8DataOut);
+        zbPlatCryptoAes128EcbEncrypt((uint8*)au8ivector, CRYPTO_AES_BLK_SIZE, &sOtaUseKey, (uint8*)au8DataOut);
 
         for(u8LoopCount = 0; u8LoopCount < u8NoOf16BytesBlocks; u8LoopCount++)
         {
@@ -2986,7 +2985,7 @@ PUBLIC  bool_t bOtaIsSerializationDataValid(
                 return FALSE;
 
             au8ivector[15]++;
-            bACI_ECBencodeStripe(&sOtaUseKey,TRUE,(tsReg128 *)au8ivector,(tsReg128 *)au8DataOut);
+            zbPlatCryptoAes128EcbEncrypt((uint8*)au8ivector, CRYPTO_AES_BLK_SIZE, &sOtaUseKey, (uint8*)au8DataOut);
         }
 
         /* read remaining data */
@@ -3192,12 +3191,13 @@ PUBLIC void vOTA_GetTagIdandLengh(uint16 *pu16TagId,uint32 *pu32TagLength,uint8 
     vReverseMemcpy((uint8*)pu32TagLength,&pu8Tag[2],sizeof(uint32));
 }
 
-PUBLIC void vOTA_EncodeString(tsReg128 *psKey, uint8 *pu8Iv,uint8 * pu8DataOut)
+PUBLIC void vOTA_EncodeString(CRYPTO_tsReg128 *psKey, uint8 *pu8Iv,uint8 * pu8DataOut)
 {
-    tsReg128 sIv,sDataOut;
-    #if (JENNIC_CHIP_FAMILY == JN517x) && (defined LITTLE_ENDIAN_PROCESSOR)
-        AESSW_Block_u uTempData;
-        memcpy(&uTempData,pu8Iv,sizeof(AESSW_Block_u));
+    CRYPTO_tsReg128 sIv,sDataOut;
+
+    #if (defined JENNIC_CHIP_FAMILY) && (JENNIC_CHIP_FAMILY == JN517x) && (defined LITTLE_ENDIAN_PROCESSOR)
+        CRYPTO_tsAesBlock uTempData;
+        memcpy(&uTempData,pu8Iv,sizeof(CRYPTO_tsAesBlock));
         vSwipeEndian(&uTempData,&sIv,TRUE);
     #else
         memcpy(&sIv,pu8Iv,0x10);
@@ -3205,27 +3205,15 @@ PUBLIC void vOTA_EncodeString(tsReg128 *psKey, uint8 *pu8Iv,uint8 * pu8DataOut)
 
     memcpy(&sDataOut,pu8DataOut,0x10);
 
-#if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
-    bACI_ECBencodeStripe(psKey,
-                         TRUE,
-                         &sIv,
-                         &sDataOut);
-#else
-#ifndef K32W1480_SERIES
-    AES_SetKey(AES0, (uint8*)psKey, AESSW_BLK_SIZE);
-    AES_EncryptEcb(AES0, (uint8*)&sIv, (uint8*)&sDataOut, AESSW_BLK_SIZE);
-#else
-    AES_128_ECB_Encrypt((uint8*)&sIv, AESSW_BLK_SIZE, (uint8*)psKey, (uint8*)&sDataOut);
-#endif
-#endif
+    zbPlatCryptoAes128EcbEncrypt((uint8*)&sIv, CRYPTO_AES_BLK_SIZE, (uint8*)psKey, (uint8*)&sDataOut);
 
-    #if (JENNIC_CHIP_FAMILY == JN517x) && (defined LITTLE_ENDIAN_PROCESSOR)
+    #if (defined JENNIC_CHIP_FAMILY) && (JENNIC_CHIP_FAMILY == JN517x) && (defined LITTLE_ENDIAN_PROCESSOR)
         vSwipeEndian(&uTempData,&sDataOut,FALSE);
-        memcpy(pu8DataOut,&uTempData,sizeof(AESSW_Block_u));
+        memcpy(pu8DataOut,&uTempData,sizeof(CRYPTO_tsAesBlock));
 
     #else
         memcpy(pu8DataOut,&sDataOut,0x10);
-    #endif    
+    #endif
 }
 #endif /* CLD_OTA */
 /****************************************************************************/

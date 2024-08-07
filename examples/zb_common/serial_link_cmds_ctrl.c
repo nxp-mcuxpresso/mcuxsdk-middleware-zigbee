@@ -737,15 +737,6 @@ PUBLIC void vSL_HandleApduEvent(
 
                 /* Update Event Data Confirm Seq Num */
                 psStackEvent->uEvent.sApsDataConfirmEvent.u8SequenceNum = *(pu8Msg+u16Len++);
-                if( (psStackEvent->uEvent.sApsDataConfirmEvent.u8Status != 0U) &&
-                        (psStackEvent->uEvent.sApsDataConfirmEvent.u8Status != 0xD4u)   )
-                {
-                    DBG_vPrintf((bool_t)TRUE, "psStackEvent->uEvent.sApsDataConfirmEvent.u8Status   %d u8SequenceNum %d u16Addr 0x%4x, Mode %d\r\n",
-                            psStackEvent->uEvent.sApsDataConfirmEvent.u8Status ,
-                            psStackEvent->uEvent.sApsDataConfirmEvent.u8SequenceNum ,
-                            psStackEvent->uEvent.sApsDataConfirmEvent.uDstAddr.u16Addr,
-                            psStackEvent->uEvent.sApsDataConfirmEvent.u8DstAddrMode);
-                }
             }
         }
     }
@@ -1570,18 +1561,13 @@ PUBLIC teZCL_Status eAPP_GetKeyTableEntry(uint16 u16Index, ZPS_tsAplApsKeyDescri
 
     pu8TxBuffer = au8TxSerialBuffer;
 
-    /* Copy u16Index */
-    *pu8TxBuffer++ = (uint8)(u16Index >> 8U);
-    *pu8TxBuffer++ = (uint8)(u16Index);
-    u16TxLength += sizeof(uint16);
-    /*
-     * Alternative, to use the "new" API:
-     *
-     * *pu8TxBuffer++ = 0U;
-     * u16TxLength += sizeof(uint8);
-     * vSL_ConvU64ToBi((uint64)u16Index, pu8TxBuffer);
-     * u16TxLength += sizeof(uint64);
-     */
+    /* Add a byte of padding */
+    *pu8TxBuffer++ = 0U;
+    u16TxLength += sizeof(uint8);
+
+    /* Serialize u16Index */
+    vSL_ConvU64ToBi((uint64)u16Index, pu8TxBuffer);
+    u16TxLength += sizeof(uint64);
 
     (void)ZBmemset(psEntry, 0x00, sizeof(ZPS_tsAplApsKeyDescriptorEntry));
 
@@ -2141,8 +2127,9 @@ PUBLIC uint8 u8GetVersionAndDeviceType(
 
     bIsReadingZBVersion = (bool_t)TRUE;
     /* Send over serial */
+    vSL_SetLongResponsePeriod();
     u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_GET_VERSION, 0U, NULL, au8Temp);
-
+    vSL_SetStandardResponsePeriod();
     if(u8Status == ZPS_E_SUCCESS)
     {
         bIsReadingZBVersion = (bool_t)FALSE;
@@ -5466,9 +5453,30 @@ PUBLIC ZPS_teStatus zps_eAplZdpActiveEpRequest(
 {
     uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
     uint16 u16TxLength = 0x00U;
+    bool_t bIsExtAddress;
     uint8 u8Status;
 
     pu8TxBuffer = au8TxSerialBuffer;
+
+    bIsExtAddress = (FALSE != bExtAddr) ? (bool_t)TRUE : (bool_t)FALSE;
+
+    /* Copy bIsExtAddress */
+    *pu8TxBuffer++ = u8FromBool(bIsExtAddress);
+    u16TxLength += sizeof(uint8);
+
+    /* Copy destination address */
+    if(bIsExtAddress)
+    {
+        vSL_ConvU64ToBi(uDstAddr.u64Addr, pu8TxBuffer);
+        pu8TxBuffer += sizeof(uint64);
+        u16TxLength += sizeof(uint64);
+    }
+    else
+    {
+        *pu8TxBuffer++ = (uint8)(uDstAddr.u16Addr >> 8U);
+        *pu8TxBuffer++ = (uint8)(uDstAddr.u16Addr);
+        u16TxLength += sizeof(uint16);
+    }
 
     /* Copy address of interest */
     *pu8TxBuffer++ = (uint8)(psZdpActiveEpReq->u16NwkAddrOfInterest >> 8U);
@@ -5478,6 +5486,7 @@ PUBLIC ZPS_teStatus zps_eAplZdpActiveEpRequest(
     /* Send over serial */
     u8Status = u8SL_WriteMessage( (uint16)E_SL_MSG_ACTIVE_ENDPOINT_REQUEST, u16TxLength, au8TxSerialBuffer, pu8SeqNumber);
 
+    (void)PDUM_eAPduFreeAPduInstance(hAPduInst);
     return u8Status;
 }
 
@@ -5529,7 +5538,7 @@ PUBLIC ZPS_teStatus zps_eAplZdoAddReplaceInstallCodes (void *pvApl,
     pu8TxBuffer += sizeof(uint64);
 
     /* Copy au8Key */
-    (void)ZBmemcpy( pu8TxBuffer, &au8Key, ZPS_SEC_KEY_LENGTH);
+    (void)ZBmemcpy( pu8TxBuffer, au8Key, ZPS_SEC_KEY_LENGTH);
     pu8TxBuffer += ZPS_SEC_KEY_LENGTH;
     u16TxLength += ZPS_SEC_KEY_LENGTH;
 
@@ -6000,6 +6009,53 @@ PUBLIC uint64 ZPS_u64NwkNibGetMappedIeeeAddr(void* pvNwk, uint16 u16Location)
                       &u64IeeeAddress);
 
     return u64IeeeAddress;
+}
+
+/********************************************************************************
+  *
+  * @fn PUBLIC uint64 zps_u16AplAibGetDeviceKeyPairTableSize
+  *
+  */
+ /**
+  *
+  * @param pvApl void *
+  *
+  * @brief Attempt to read a complete message from the serial link
+  *
+  * @return APS key table size
+  *
+  * @note
+  *
+  * imported description
+ ********************************************************************************/
+PUBLIC uint16 zps_u16AplAibGetDeviceKeyPairTableSize(void *pvApl)
+{
+    return u16GetApsKeyTableSize();
+}
+
+/********************************************************************************
+  *
+  * @fn PUBLIC uint64 zps_tsAplAibGetDeviceKeyPairTableEntry
+  *
+  */
+ /**
+  *
+  * @param pvApl void *
+  * @param u16Location u16Index
+  *
+  * @brief Attempt to read a complete message from the serial link
+  *
+  * @return APS key table entry at given index
+  *
+  * @note
+  *
+  * imported description
+ ********************************************************************************/
+PUBLIC ZPS_tsAplApsKeyDescriptorEntry zps_tsAplAibGetDeviceKeyPairTableEntry(void *pvApl, uint16 u16Index)
+{
+    ZPS_tsAplApsKeyDescriptorEntry key;
+    eAPP_GetKeyTableEntry(u16Index, &key);
+    return key;
 }
 
 /********************************************************************************
@@ -7662,6 +7718,41 @@ PUBLIC uint64 ZPS_u64NwkNibGetEpid(void *pvNwk)
 
 /********************************************************************************
   *
+  * @fn PUBLIC uint64 ZPS_u64NwkNibGetPid
+  *
+  */
+ /**
+  *
+  * @param pvNwk void *
+  *
+  * @brief Attempt to read a complete message from the serial link
+  *
+  * @return TRUE if a complete valid message has been received
+  *
+  * @note
+  *
+  * imported description
+ ********************************************************************************/
+PUBLIC uint16 ZPS_u16NwkNibGetPid(void *pvNwk)
+{
+    uint8 u8Status;
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE];
+    uint16 u16TxLength = 0x00U;
+    uint16 u16PanId = 0x00U;
+
+    /* Send over serial */
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_GET_SHORT_PANID, u16TxLength, au8TxSerialBuffer, &u16PanId);
+    /* check status */
+    if(u8Status == ZPS_E_SUCCESS)
+    {
+        return u16PanId;
+    }
+
+    return 0x00U;
+}
+
+/********************************************************************************
+  *
   * @fn PUBLIC bool_t ZPS_bNwkNibAddrMapAddEntry
   *
   */
@@ -8064,13 +8155,32 @@ PUBLIC void ZPS_vSetKeys (void)
 
 PUBLIC bool_t ZPS_bAplDoesDeviceSupportFragmentation(void *pvApl)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return FALSE;
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE];
+    uint16 u16TxLength = 0x00U;
+    bool bFragSup = FALSE;
+   
+    /* Send over serial */
+    u8SL_WriteMessage((uint16)E_SL_MSG_GET_FRAGMENTATION_SUPPORT, u16TxLength, au8TxSerialBuffer, &bFragSup);
+  
+    return bFragSup;
 }
+
 PUBLIC uint8 ZPS_u8AplGetMaxPayloadSize(void *pvApl , uint16 u16Addr)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return 0;
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
+    uint16 u16TxLength = 0x00U;
+    uint8 u8MaxPayloadSize;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy u16Addr */
+    (void)ZBmemcpy(pu8TxBuffer, &u16Addr, sizeof(uint16));
+    pu8TxBuffer += sizeof(uint16);
+    u16TxLength += sizeof(uint16);
+
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_GET_MAX_PAYLOAD_SIZE, u16TxLength, au8TxSerialBuffer, &u8MaxPayloadSize);
+
+    return u8MaxPayloadSize;
 }
 PUBLIC uint8 ZPS_u8NwkManagerState(void)
 {
@@ -8090,10 +8200,27 @@ PUBLIC void ZPS_vTCSetCallback(void *pfTcFunc)
 {
     fprintf(stderr,"%s\n", __func__);
 }
+
 PUBLIC void ZPS_vSetTCLockDownOverride (void* pvApl, bool_t u8RemoteOverride, bool_t bDisableAuthentications )
 {
-    fprintf(stderr,"%s\n", __func__);
+ uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
+    uint16 u16TxLength = 0x00U;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy u8RemoteOverride */
+    (void)ZBmemcpy(pu8TxBuffer, &u8RemoteOverride, sizeof(uint8));
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+
+    /* Copy bDisableAuthentications */
+    (void)ZBmemcpy(pu8TxBuffer, &bDisableAuthentications, sizeof(uint8));
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_SET_TC_LOCKDOWN_OVERRIDE, u16TxLength, au8TxSerialBuffer, NULL);
 }
+
 PUBLIC ZPS_tsNwkNib *ZPS_psNwkNibGetHandle(void *pvNwk)
 {
     fprintf(stderr,"%s\n", __func__);
@@ -8116,6 +8243,18 @@ PUBLIC void ZPS_vSetExtendedStatus(ZPS_teExtendedStatus eExtendedStatus)
 void ZPS_vSecondTimerCallback()
 {
     fprintf(stderr, "%s\n", __func__);
+}
+
+PUBLIC bool_t ZPS_bIsCoprocessorNewModule(void)
+{
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE];
+    uint16 u16TxLength = 0x00U;
+    bool bCoproFactoryNew = FALSE;
+   
+    /* Send over serial */
+    u8SL_WriteMessage((uint16)E_SL_MSG_IS_COPROCESSOR_NEW_MODULE, u16TxLength, au8TxSerialBuffer, &bCoproFactoryNew);
+  
+    return bCoproFactoryNew;
 }
 
 /****************************************************************************/

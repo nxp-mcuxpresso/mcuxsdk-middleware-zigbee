@@ -90,7 +90,7 @@ PUBLIC teZCL_Status eGP_ProxyCommissioningMode(
     tsGP_ZgpProxyCommissioningModeCmdPayload    sZgpProxyCommissioningModeCmdPayload = {0};
     uint16                                      u16CommissionWindow;
     uint8                                       u8TransactionSequenceNumber, u8Temp;
-
+    u8TransactionSequenceNumber = u8GetTransactionSequenceNumber();
     /* Check Parameter range */
     if(eGreenPowerProxyCommissionMode > 0x01)
     {

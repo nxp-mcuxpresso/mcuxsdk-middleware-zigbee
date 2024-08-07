@@ -139,6 +139,23 @@ extern "C" {
 
 /* Signals that the JN can accept commands sent from the host */
 #define JN_READY_FOR_COMMANDS                   (1u << 0u)
+
+#ifdef SL_HOST_TO_COPROCESSOR_SECURE
+/* Number of bytes to use as Message Integrity Check (MIC) for secured communication */
+#define SL_SECURED_MSG_MIC_SIZE             8
+
+/*
+ *  Format of secured serial messsage
+ * ==========================================================================================================
+ * | Index in Serial Buffer |   0   | 1, 2 | 3, 4          |  5  |  6  |  7  | 8..8+n  | 8+n  | 8+n+MICsize |
+ * |------------------------|-------|------|-------------- |-----|-----|-----|---------|------|-------------|
+ * |                        | start | Msg  | Data Length + | Tx  | Rx  | CRC | Data    | MIC  | End         |
+ * |                        | char  | Type | MIC size      | Seq | Seq |     | n bytes |      | Char        |
+ * ==========================================================================================================
+ *
+ */
+#endif
+
 /****************************************************************************/
 /***        Type Definitions                                              ***/
 /****************************************************************************/
@@ -463,8 +480,11 @@ typedef enum
     E_SL_MSG_SET_NWK_ADDR                           =   0x907DU,
     E_SL_MSG_SET_MAC_CAPABILITY                     =   0x907EU,
     E_SL_MSG_SET_NWK_STATE_ACTIVE                   =   0x907FU,
-    E_SL_MSG_SET_DEPTH                              =   0x9080U
-
+    E_SL_MSG_SET_DEPTH                              =   0x9080U,
+    E_SL_MSG_GET_FRAGMENTATION_SUPPORT              =   0x9081U,
+    E_SL_MSG_GET_MAX_PAYLOAD_SIZE                   =   0x9082U,
+    E_SL_MSG_SET_TC_LOCKDOWN_OVERRIDE               =   0x9083U,
+    E_SL_MSG_IS_COPROCESSOR_NEW_MODULE              =   0x9084U
 } teSL_MsgType;
 
 
@@ -510,16 +530,6 @@ typedef enum
 }teSL_BaudRate;
 
 /** ZigBee Device types */
-#ifdef SL_HOST_TO_JN_SECURE
-typedef enum
-{
-    E_SL_DEVICE_COMMS_HUB = 0x10,
-    E_SL_DEVICE_IHD,
-    E_SL_DEVICE_GAS_METER,
-    E_SL_DEVICE_ESI_METER,
-    E_SL_DEVICE_INVALID
-}teSL_ZigBeeDeviceType;
-#else
 typedef enum
 {
     E_SL_DEVICE_COMMS_HUB,
@@ -528,7 +538,7 @@ typedef enum
     E_SL_DEVICE_ESI_METER,
     E_SL_DEVICE_INVALID
 }teSL_ZigBeeDeviceType;
-#endif
+
 typedef enum
 {
     E_SL_MAC_UNDEFINED,
@@ -712,12 +722,6 @@ PUBLIC uint16 u16SL_GetMaxLargeBufferAllocated(void);
 PUBLIC uint16 u16SL_GetMaxSmallBufferAllocated(void);
 PUBLIC uint16 u16SL_GetLargeBufferAllocated(void);
 PUBLIC uint16 u16SL_GetSmallBufferAllocated(void);
-#ifdef SL_HOST_TO_JN_SECURE
-PUBLIC void vSL_SecureTransmitLength(uint16 u16Length);
-PUBLIC void vSL_SecureTransmitMessageAuth(uint16 u16Length, uint8 *pu8Data);
-PUBLIC void vSL_SecureEncryptMessage(uint16 u16Length, uint8 *pu8Data);
-PUBLIC bool_t bSL_SecureDecryptMessage(uint16 *pu16Length, uint8 *pu8Data);
-#endif
 #if defined __cplusplus
 }
 #endif

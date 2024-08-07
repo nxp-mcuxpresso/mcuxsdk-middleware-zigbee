@@ -84,10 +84,10 @@ PUBLIC teZCL_Status eGP_ProxyTableResponseSend(
                         uint8                               u8SourceEndPointId,
                         uint8                               u8DestEndPointId,
                         tsZCL_Address                       *psDestinationAddress,
-                        tsGP_ProxyTableRespCmdPayload  *psZgpProxyTableRespCmdPayload)
+                        tsGP_ProxyTableRespCmdPayload  *psZgpProxyTableRespCmdPayload,
+                        uint8                               *pu8TransactionSequenceNumber)
 {
 
-    uint8 u8TransactionSequenceNumber;
     tsZCL_TxPayloadItem asPayloadDefinition[] = {
      {1,  E_ZCL_ENUM8,   &psZgpProxyTableRespCmdPayload->u8Status},
      {1,  E_ZCL_UINT8,   &psZgpProxyTableRespCmdPayload->u8TotalNoOfEntries},
@@ -102,7 +102,7 @@ PUBLIC teZCL_Status eGP_ProxyTableResponseSend(
                               GREENPOWER_CLUSTER_ID,
                               FALSE,
                               E_GP_ZGP_PROXY_TABLE_RESPONSE,
-                              &u8TransactionSequenceNumber,
+                              pu8TransactionSequenceNumber,
                               asPayloadDefinition,
                               FALSE,
                               0,
