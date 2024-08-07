@@ -1,17 +1,17 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP
+ * Copyright 2020, 2024 NXP
  *
- * NXP Confidential. 
- * 
- * This software is owned or controlled by NXP and may only be used strictly 
- * in accordance with the applicable license terms.  
- * By expressly accepting such terms or by downloading, installing, activating 
- * and/or otherwise using the software, you are agreeing that you have read, 
- * and that you agree to comply with and are bound by, such license terms.  
- * If you do not agree to be bound by the applicable license terms, 
- * then you may not retain, install, activate or otherwise use the software. 
- * 
+ * NXP Confidential.
+ *
+ * This software is owned or controlled by NXP and may only be used strictly
+ * in accordance with the applicable license terms.
+ * By expressly accepting such terms or by downloading, installing, activating
+ * and/or otherwise using the software, you are agreeing that you have read,
+ * and that you agree to comply with and are bound by, such license terms.
+ * If you do not agree to be bound by the applicable license terms,
+ * then you may not retain, install, activate or otherwise use the software.
+ *
  *
  ****************************************************************************/
 
@@ -39,7 +39,7 @@
 #include "OTA_private.h"
 #include "OtaSupport.h"
 
-#if !defined(K32W1480_SERIES) && !defined(NCP_HOST)
+#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES) && !defined(NCP_HOST) && !defined(RW612_SERIES)
 #include "fsl_reset.h"
 #include "rom_psector.h"
 #endif
@@ -106,13 +106,18 @@ PUBLIC  void vOtaFlashInitHw ( uint8    u8FlashType,
 #if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x) || (defined APP0)
     bAHI_FlashInit(u8FlashType, NULL);
 #else
-#if !(defined(K32W1480_SERIES)) && !(defined(NCP_HOST))
+#if !(defined(K32W1480_SERIES)) && !(defined(MCXW716A_SERIES)) && !(defined(MCXW716C_SERIES)) && !(defined(NCP_HOST)) && !(defined(RW612_SERIES))
     OTA_ClientInit();
-#elif (defined(K32W1480_SERIES))
+#elif (defined(K32W1480_SERIES)) || (defined(MCXW716A_SERIES)) || (defined(MCXW716C_SERIES)) || (defined(RW612_SERIES))
     /* If posted_ops_storage is NULL and posted_ops_sz is 0, the direct operation mode is opted
      * (no deferred flash transactions)
      */
+#if defined(gAppOtaExternalStorage_c) && (gAppOtaExternalStorage_c > 0)
+    OTA_SelectExternalStoragePartition();
+#else
     OTA_SelectInternalStoragePartition();
+#endif
+
     OTA_ServiceInit(NULL, 0);
 #elif (defined(NCP_HOST))
     OTA_ServiceInit(NULL, 0);
@@ -169,7 +174,7 @@ PUBLIC  void vOtaFlashWrite(
     bAHI_FullFlashProgram(u32FlashByteLocation, u16Len, pu8Data);
 #else
 
-#if !(defined(K32W1480_SERIES)) && !(defined(NCP_HOST))
+#if !(defined(K32W1480_SERIES)) && !(defined(MCXW716A_SERIES)) && !(defined(MCXW716C_SERIES)) && !(defined(NCP_HOST)) && !(defined(RW612_SERIES))
     OTA_PushImageChunkBlocking  ( pu8Data,
                           u16Len,
                           &g_u32ImageOffsetInEEPROM,
@@ -252,7 +257,7 @@ PUBLIC  void vOtaSwitchLoads(void)
  ****************************************************************************/
 PUBLIC void vOtaFlagNewImage(void)
 {
-#ifndef K32W1480_SERIES
+#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES)
     OTA_SetNewImageFlag();
 #else
     /* TODO OTA: Extract function in platform dependent code */
@@ -265,9 +270,9 @@ PUBLIC void vOtaFlagNewImage(void)
 
 PUBLIC bool_t bOtaIsImageAuthenticated(void)
 {
-#if (defined JENNIC_CHIP_FAMILY_JN518x) && !(defined K32W1480_SERIES) && !(defined(NCP_HOST))
+#if (defined JENNIC_CHIP_FAMILY_JN518x) && !(defined K32W1480_SERIES) && !(defined(MCXW716A_SERIES)) && !(defined(MCXW716C_SERIES)) && !(defined(NCP_HOST)) && !(defined(RW612_SERIES))
     bool_t authenticationEnabled = bOtaIsAuthenticationEnabled();
-    bool_t imgAuthenticated = false; 
+    bool_t imgAuthenticated = false;
     if (authenticationEnabled)
     {
         imgAuthenticated = (gOtaImageAuthPass_c == OTA_ImageAuthenticate());
@@ -284,7 +289,7 @@ PUBLIC bool_t bOtaIsImageAuthenticated(void)
 
 PUBLIC bool_t bOtaIsAuthenticationEnabled(void)
 {
-#if ((defined JENNIC_CHIP_FAMILY_JN518x) && !(defined(NCP_HOST) || (defined K32W1480_SERIES)))
+#if ((defined JENNIC_CHIP_FAMILY_JN518x) && !(defined(NCP_HOST) || (defined K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)))
     return (psector_Read_ImgAuthLevel()>0);
 #else
     return FALSE;
@@ -308,7 +313,7 @@ extern uint32 _enc_start;
  ****************************************************************************/
 PUBLIC uint32 u32OTA_DlOtaHdrOffset(void)
 {
-#ifndef K32W1480_SERIES
+#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES) && !defined(RW612_SERIES)
     return ((uint8*)&_FlsOtaHeader) - ((uint8*)&_flash_start);
 #else
     // OTA Header on K32W1 image is located at offset 0
@@ -318,7 +323,7 @@ PUBLIC uint32 u32OTA_DlOtaHdrOffset(void)
 
 PUBLIC uint32_t u32OTA_DlLinkKeyOffset(void)
 {
-#ifndef K32W1480_SERIES
+#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES) && !defined(RW612_SERIES)
     return (uint32_t)(&(_FlsLinkKey)) - (uint32_t)(&(_flash_start));
 #else
     // Link Key on K32W1 image is located after OTA HDR and NONCE
@@ -328,9 +333,9 @@ PUBLIC uint32_t u32OTA_DlLinkKeyOffset(void)
 
 PUBLIC uint32_t u32OTA_DlEncOffset(void)
 {
-#if !defined(K32W1480_SERIES) && !defined(NCP_HOST)
+#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES) && !defined(NCP_HOST) && !defined(RW612_SERIES)
     return ((uint32)(&(_enc_start))) - (uint32)(&(_flash_start));
-#elif (defined(K32W1480_SERIES))
+#elif (defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES))
     // Encryption starts on Link Key on K32W1 image which is located
     // after OTA HDR and NONCE
     return K32W1480_OTA_HDR_SIZE + K32W1480_OTA_NONCE_SIZE; // OTA HDR + NONCE
@@ -344,7 +349,7 @@ PUBLIC uint32_t u32OTA_DlNonceOffset(void)
 #if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
     return 0x10;
 #else
-#ifndef K32W1480_SERIES
+#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES)
     return 0x150;
 #else
     // Nonce on K32W1 image is located after OTA HDR
@@ -353,7 +358,7 @@ PUBLIC uint32_t u32OTA_DlNonceOffset(void)
 #endif
 }
 
-#if (defined JENNIC_CHIP_FAMILY_JN518x) && (!defined K32W1480_SERIES)
+#if (defined JENNIC_CHIP_FAMILY_JN518x) && (!defined K32W1480_SERIES)  && (!defined MCXW716A_SERIES) && (!defined MCXW716C_SERIES) && (!defined RW612_SERIES)
 #ifdef APP0
 
 
@@ -556,7 +561,7 @@ PUBLIC bool_t bAHI_FullFlashRead(
     int i;
     volatile uint8 *pu8FlashAddress;
     int iAPIreturn;
-   
+
     iAPIreturn =
     FLASH_BlankCheck(
         FLASH,

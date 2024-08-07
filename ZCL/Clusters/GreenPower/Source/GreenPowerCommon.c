@@ -1606,7 +1606,7 @@ bool_t bEncryptDecryptKey(
 	uint32 u32SrcId;
 	uint64 u64IeeeAddress;
 	uint32 u32FrameCounter;
-	AESSW_Block_u uNonce,   uLinkKey ;
+	CRYPTO_tsAesBlock uNonce,   uLinkKey ;
 	bool_t bIsSsever = FALSE;
 
 	uint8 u8Header[4]/*, u8KeyMic[4]*/;
@@ -1718,16 +1718,10 @@ bool_t bEncryptDecryptKey(
 	}
 	DBG_vPrintf(TRACE_GP_DEBUG, " \n ") ;
 
-#if (defined LITTLE_ENDIAN_PROCESSOR) && (defined JENNIC_CHIP_FAMILY_JN517x)
-	tsReg128 sKey;
-	memcpy(&sKey, &uLinkKey.au8[0], 16);
-	vSwipeEndian(&uLinkKey, &sKey, FALSE);
-#endif
-
 	memcpy(pu8DataOut, pu8DataEncyptDecrypt, 16);
-	if (!bACI_WriteKey((tsReg128*)&uLinkKey))
+	if (!zbPlatCryptoAesSetKey((CRYPTO_tsReg128*)&uLinkKey))
 	    return FALSE;
-    vACI_OptimisedCcmStar(bEncrypt,				/* TRUE=Encrypt / FALSE=Decrypt */
+    zbPlatCryptoAesCcmStar(bEncrypt,				/* TRUE=Encrypt / FALSE=Decrypt */
     	 	 	 	 	  4,					/* Required number of checksum bytes */
 						  4,					/* Length of authentication data in bytes */
 						  16,					/* Length of input data in bytes */
@@ -3220,7 +3214,7 @@ PUBLIC  bool_t bGP_AddOrUpdateProxySinkTableEntries   (
 	uint8 u8NoOfEntries;
 	tsGP_ZgppProxySinkTable                 *psZgppProxySinkTable;
 	bool_t         bIsTableEntryPresent;
-	AESSW_Block_u uInKey;
+	CRYPTO_tsAesBlock uInKey;
 #ifdef GP_COMBO_BASIC_DEVICE
 	bool_t bIsServer = TRUE;
 #else
@@ -3395,7 +3389,7 @@ PUBLIC  bool_t bGP_AddOrUpdateProxySinkTableEntries   (
 							uInKey.au8);
 	   if(u8SharedKeyType == E_GP_NWK_KEY_DERIVED_ZGPD_GROUP_KEY)
 	   {
-		   AESSW_Block_u uOutKey;
+		   CRYPTO_tsAesBlock uOutKey;
 			psZgppProxySinkTable->b8SecOptions &= ~GP_SECURITY_KEY_TYPE_MASK;
 			psZgppProxySinkTable->b8SecOptions |= u8SharedKeyType << 2;
 
@@ -3413,7 +3407,7 @@ PUBLIC  bool_t bGP_AddOrUpdateProxySinkTableEntries   (
 	   }
 	   else if((u8SharedKeyType == E_GP_ZIGBEE_NWK_KEY))
 		{
-			   AESSW_Block_u uOutKey;
+			   CRYPTO_tsAesBlock uOutKey;
 
 			   ZPS_vZgpTransformKey(ZPS_E_ZGP_ZIGBEE_NWK_KEY,
 					   (uint8)psZgpDataIndication->u2ApplicationId,
@@ -4217,7 +4211,7 @@ bool_t bGP_ValidateComissionCmdFields(
 {
     uint8 u8SecLevel,u8SecKeyType;
     uint8 u8SecLevelRecvd = 0;
-    AESSW_Block_u                   uSecurityKey;
+    CRYPTO_tsAesBlock                   uSecurityKey;
 
 
     if(bGP_GetSecurityDetails(
@@ -4371,13 +4365,13 @@ bool_t bGP_GetSecurityDetails(
 		 uint8									      u8AppId,
 		 uint8										  *pu8SecLevel,
 		 uint8										  *pu8KeyType,
-		 AESSW_Block_u                                *pu8Key,
+		 CRYPTO_tsAesBlock                                *pu8Key,
 		 tuGP_ZgpdDeviceAddr                          *puZgpdDeviceAddr,
 		 tsZCL_EndPointDefinition                     *psEndPointDefinition,
 		 tsGP_GreenPowerCustomData                    *psGpCustomDataStructure)
 {
 	 uint8 u8ZgpSecKeyType ;
-	 AESSW_Block_u                   sKey;
+	 CRYPTO_tsAesBlock                   sKey;
 	 tsGP_ZgppProxySinkTable                *psSinkTableEntry;
 	 uint8 u8SinkTableKeyType = 0;
 #ifdef GP_COMBO_BASIC_DEVICE
@@ -4438,7 +4432,7 @@ bool_t bGP_GetSecurityDetails(
 			  eZCL_ReleaseMutex(psEndPointDefinition);
 		  #endif
 
-            memcpy(&sKey, pu8Key, sizeof(AESSW_Block_u));
+            memcpy(&sKey, pu8Key, sizeof(CRYPTO_tsAesBlock));
 
 #else
 		  // fill in callback event structure
@@ -4472,7 +4466,7 @@ bool_t bGP_GetSecurityDetails(
 			  }
 			  if(*pu8KeyType != E_GP_NO_KEY)
 			  {
-                 memcpy(&sKey, &psSinkTableEntry->sZgpdKey, sizeof(AESSW_Block_u));
+                 memcpy(&sKey, &psSinkTableEntry->sZgpdKey, sizeof(CRYPTO_tsAesBlock));
 				 memcpy(&pu8Key->au8[0],&sKey.au8[0],E_ZCL_KEY_128_SIZE);
 			  }
 		 }

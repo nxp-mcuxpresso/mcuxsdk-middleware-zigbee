@@ -1,17 +1,17 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP
+ * Copyright 2020, 2024 NXP
  *
- * NXP Confidential. 
- * 
- * This software is owned or controlled by NXP and may only be used strictly 
- * in accordance with the applicable license terms.  
- * By expressly accepting such terms or by downloading, installing, activating 
- * and/or otherwise using the software, you are agreeing that you have read, 
- * and that you agree to comply with and are bound by, such license terms.  
- * If you do not agree to be bound by the applicable license terms, 
- * then you may not retain, install, activate or otherwise use the software. 
- * 
+ * NXP Confidential.
+ *
+ * This software is owned or controlled by NXP and may only be used strictly
+ * in accordance with the applicable license terms.
+ * By expressly accepting such terms or by downloading, installing, activating
+ * and/or otherwise using the software, you are agreeing that you have read,
+ * and that you agree to comply with and are bound by, such license terms.
+ * If you do not agree to be bound by the applicable license terms,
+ * then you may not retain, install, activate or otherwise use the software.
+ *
  *
  ****************************************************************************/
 
@@ -45,7 +45,6 @@
 #if (defined KSDK2)
 #include "OtaSupport.h"
 #endif
-#include "aessw_ccm.h"
 #ifdef SOTA_ENABLED
 #include "blob_utils.h"
 #endif
@@ -219,7 +218,7 @@ PUBLIC  void vOtaInitStateMachine(tsOTA_Common *psCustomData)
 #ifdef APP0
            g_u16OtaPageIndex = 0;
 #else
-#ifndef K32W1480_SERIES
+#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES) && !defined(RW612_SERIES)
     OTA_AlignOnReset();
 #endif
 #endif
@@ -536,7 +535,7 @@ PRIVATE  void vOtaUpgManClientStateDownloadInProgress(
                                                                     (0xFFFFFFFF - psOTA_Common->sOTACallBackMessage.sPersistedData.sAttributes.u32FileOffset - 1);
         }
 #else
-#ifdef K32W1480_SERIES
+#if defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES)
         if(psOTA_Common->sOTACallBackMessage.sPersistedData.u32CurrentFlashOffset % 8192 == 0)
 #else
         if(psOTA_Common->sOTACallBackMessage.sPersistedData.u32CurrentFlashOffset % 1024 == 0)
@@ -753,7 +752,7 @@ PRIVATE  void vOtaUpgManClientStateWaitForRunCommand(
                 sZCL_Address.eAddressMode = E_ZCL_AM_SHORT_NO_ACK;
     #endif
             sZCL_Address.uAddress.u16DestinationAddress = psOTA_Common->sOTACallBackMessage.sPersistedData.u16ServerShortAddress;
-            
+
             sEndRequest.u8Status = OTA_STATUS_SUCCESS;
             sEndRequest.u16ImageType = sOTAHeader.u16ImageType;
             sEndRequest.u16ManufacturerCode = sOTAHeader.u16ManufacturerCode;
@@ -923,7 +922,7 @@ PRIVATE  void vOtaAbortDownload(
     vOtaClientUpgMgrMapStates(E_CLD_OTA_STATUS_NORMAL,psEndPointDefinition,psOTA_Common);
     eOtaSetEventTypeAndGiveCallBack(psOTA_Common, E_CLD_OTA_INTERNAL_COMMAND_OTA_DL_ABORTED,psEndPointDefinition);
     /* persisted data changed send event to the  application to save it*/
-    eOtaSetEventTypeAndGiveCallBack(psOTA_Common, E_CLD_OTA_INTERNAL_COMMAND_SAVE_CONTEXT,psEndPointDefinition);   
+    eOtaSetEventTypeAndGiveCallBack(psOTA_Common, E_CLD_OTA_INTERNAL_COMMAND_SAVE_CONTEXT,psEndPointDefinition);
 #ifdef APP0
     u32LocalIndex = 0;
     memset (u8StandaloneBuffer, 0xFF, NVM_BYTES_PER_SEGMENT);
@@ -1195,7 +1194,7 @@ PRIVATE  void vOtaHandleWaitForDataStatus(
 #ifdef OTA_CLD_ATTR_REQUEST_DELAY
     if(psBlockResponse->uMessage.sWaitForData.u16BlockRequestDelayMs == 0)
     {
-        /* Disable rate limiting feature */ 
+        /* Disable rate limiting feature */
         psOTA_Common->sOTACallBackMessage.sPersistedData.bWaitForBlockReq = FALSE;
     }
     else
@@ -1203,7 +1202,7 @@ PRIVATE  void vOtaHandleWaitForDataStatus(
         /* Enable the rate limiting feature */
         psOTA_Common->sOTACallBackMessage.sPersistedData.bWaitForBlockReq = TRUE;
     }
-    
+
     /* Enter only if Disabling OTA block request delay after being enabled or If it is requested to enable*/
     if((((psOTA_Common->sOTACallBackMessage.sPersistedData.bWaitForBlockReq == FALSE) && (psOTA_Common->sOTACallBackMessage.sPersistedData.sAttributes.u16MinBlockRequestDelay != 0)) ||
           (psOTA_Common->sOTACallBackMessage.sPersistedData.bWaitForBlockReq == TRUE)))
@@ -1213,12 +1212,12 @@ PRIVATE  void vOtaHandleWaitForDataStatus(
             psOTA_Common->sOTACallBackMessage.sPersistedData.sAttributes.u16MinBlockRequestDelay = psBlockResponse->uMessage.sWaitForData.u16BlockRequestDelayMs;
         else
             psOTA_Common->sOTACallBackMessage.sPersistedData.sAttributes.u16MinBlockRequestDelay = OTA_BLOCK_REQUEST_DELAY_MAX_VALUE;
-            
-        
+
+
         tsZCL_ClusterInstance *psClusterInstance;
         tsZCL_EndPointDefinition *psEndPointDefinition1;
         tsOTA_Common *psOtaCustomData;
-         
+
         if(eOtaFindCluster(psEndPointDefinition->u8EndPointNumber,
                           &psEndPointDefinition1,
                           &psClusterInstance,
@@ -1242,14 +1241,14 @@ PRIVATE  void vOtaHandleWaitForDataStatus(
         {
             if(psOTA_Common->sOTACallBackMessage.sPersistedData.bWaitForBlockReq)
                 eZCL_UpdateMsTimer(psEndPointDefinition, TRUE,(uint32)psOTA_Common->sOTACallBackMessage.sPersistedData.sAttributes.u16MinBlockRequestDelay*1000);
-            else 
+            else
                 eZCL_UpdateMsTimer(psEndPointDefinition, TRUE,(uint32)OTA_MIN_TIMER_MS_RESOLUTION);
         }
         else if(psOTA_Common->sOTACallBackMessage.sPersistedData.bWaitForBlockReq)
         {
             uint32 u32MinBlockRequestDelay = ( psBlockResponse->uMessage.sWaitForData.u32RequestTime - psBlockResponse->uMessage.sWaitForData.u32CurrentTime);
             eZCL_UpdateMsTimer(psEndPointDefinition, TRUE,(u32MinBlockRequestDelay*1000));
-        }        
+        }
     }
 #endif
     psOTA_Common->sOTACallBackMessage.sPersistedData.u32RequestBlockRequestTime = 0;
@@ -1325,7 +1324,7 @@ PRIVATE void vOtaProcessInternalEncryption(
         DBG_vPrintf(TRACE_INT_DECRYPT, "Decrypt %d bytes\n", u32EncryptedToWrite);
         uint8 au8Iv[0x10];
         uint8 au8DataOut[0x10];
-        tsReg128 sKey;
+        CRYPTO_tsReg128 sKey;
         uint32 u32IVCount;
         /* Must have the full IV otherwise can't get here */
         if ( u32StartAddress <= u32IVLocation ) {
@@ -1409,8 +1408,8 @@ PRIVATE void vOtaProcessInternalEncryption(
 #else
 #ifdef OTA_USE_KEY_IN_PSECTOR
 #else
-    uint32 *pu32KeyPtr = g_au32OtaEncCred;    
-#endif        
+    uint32 *pu32KeyPtr = g_au32OtaEncCred;
+#endif
 #endif
         sKey.u32register0 = *pu32KeyPtr;
         sKey.u32register1 = *(pu32KeyPtr+1);
@@ -1422,14 +1421,14 @@ PRIVATE void vOtaProcessInternalEncryption(
         DBG_vPrintf(TRACE_INT_DECRYPT,"sKey.u32register1: 0x%08x ",sKey.u32register1);
         DBG_vPrintf(TRACE_INT_DECRYPT,"sKey.u32register2: 0x%08x ",sKey.u32register2);
         DBG_vPrintf(TRACE_INT_DECRYPT,"sKey.u32register3: 0x%08x\n",sKey.u32register3);
-       
+
         uint32 u32Offset = u32UnEncryptedToWrite;
         while (u32EncryptedToWrite > 0)
        {
            /*Encrypt the IV*/
            DBG_vPrintf(TRACE_INT_DECRYPT, "TO DO -> %d at offset %d\n", u32EncryptedToWrite, u32Offset );
            vOTA_EncodeString(&sKey,au8Iv,au8DataOut);
-           
+
            /* Decrypt a block of the buffer */
            for(i=0;i<16;i++)
            {
@@ -1438,12 +1437,12 @@ PRIVATE void vOtaProcessInternalEncryption(
 
            /* increment the IV for the next block  */
            u32IVCount++;
-           
+
            au8Iv[12] = (uint8)((u32IVCount >> 24) &  0xff);
            au8Iv[13] = (uint8)((u32IVCount >> 16) &  0xff);
            au8Iv[14] = (uint8)((u32IVCount >> 8) &  0xff);
-           au8Iv[15] = (uint8)(u32IVCount &  0xff);           
-           
+           au8Iv[15] = (uint8)(u32IVCount &  0xff);
+
            u32EncryptedToWrite -= 16;   /* 1 block of 16 bytes done */
            u32Offset += 16;             /* increment the buffer offset */
 
@@ -2253,8 +2252,8 @@ PRIVATE bool_t bOtaHandleBlockResponseIdle( tsOTA_Common *psOTA_Common,
                                                                                                                            OTA_FLS_MAGIC_NUMBER_LENGTH + 2) );
                                     psOTA_Common->sOTACallBackMessage.sPersistedData.u8Buf[3] = *(sBlockResponse.uMessage.sBlockPayloadSuccess.pu8Data +
                                                                                                                   ( u32TagIdOverflow + u32FileOverflow +
-                                                                                                                           OTA_FLS_MAGIC_NUMBER_LENGTH + 3) );      
-                                #endif   
+                                                                                                                           OTA_FLS_MAGIC_NUMBER_LENGTH + 3) );
+                                #endif
 #endif
                                 }
 #if !(defined OTA_INTERNAL_STORAGE) && ((defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x))
@@ -2886,7 +2885,7 @@ PRIVATE bool_t bOtaHandleBlockResponseStandardImage( tsOTA_Common *psOTA_Common,
                                /* Increase the flash offset with Value to Write */
                                 psOTA_Common->sOTACallBackMessage.sPersistedData.u32CurrentFlashOffset += u32ValueToWrite;
                             }
-                            
+
 
                             psOTA_Common->sOTACallBackMessage.sPersistedData.sAttributes.u32FileOffset += u32DataOverflow;
                             psOTA_Common->sOTACallBackMessage.sPersistedData.u32TagDataWritten +=  u32DataOverflow;
@@ -2965,8 +2964,8 @@ PRIVATE bool_t bOtaHandleBlockResponseStandardImage( tsOTA_Common *psOTA_Common,
                             psOTA_Common->sOTACallBackMessage.uMessage.sBlockResponseEvent.u8DataSize = u8DataSize;
                             psOTA_Common->sOTACallBackMessage.uMessage.sBlockResponseEvent.pu8Data = psResponse->uMessage.sBlockPayloadSuccess.pu8Data +
                                                                                                      u32CurrOverflow;
-                           
-                            eOtaSetEventTypeAndGiveCallBack(psOTA_Common, E_CLD_OTA_BLOCK_RESPONSE_TAG_OTHER_THAN_UPGRADE_IMAGE,psEndPointDefinition); 
+
+                            eOtaSetEventTypeAndGiveCallBack(psOTA_Common, E_CLD_OTA_BLOCK_RESPONSE_TAG_OTHER_THAN_UPGRADE_IMAGE,psEndPointDefinition);
                             psOTA_Common->sOTACallBackMessage.sPersistedData.sAttributes.u32FileOffset += u8DataSize;
                             psOTA_Common->sOTACallBackMessage.sPersistedData.u32CurrentFlashOffset += u8DataSize;
                             DBG_vPrintf(TRACE_INT_FLASH, "OFFSET10 -> %08x, added %d\n",

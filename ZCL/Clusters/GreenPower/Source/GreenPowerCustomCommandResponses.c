@@ -164,6 +164,7 @@ PUBLIC teZCL_Status  eGP_HandleSinkTableRequest(
         uint16                         u16Offset)
 {
 	uint8 i,u8Index = 0;
+	uint8 u8TransactionSequenceNumber = 0;
 	bool_t bIsRequestByAddr;
 	tsGP_GreenPowerCustomData                   *psGPCustomDataStructure;
 	tsGP_ZgpSinkTableRequestCmdPayload           sSinkTableRequestCmdPayload;
@@ -188,7 +189,8 @@ PUBLIC teZCL_Status  eGP_HandleSinkTableRequest(
 	if((eStatus = eGP_SinkTableRequestReceive(
 									pZPSevent,
 									u16Offset,
-									&sSinkTableRequestCmdPayload)) != E_ZCL_SUCCESS)
+									&sSinkTableRequestCmdPayload,
+									&u8TransactionSequenceNumber)) != E_ZCL_SUCCESS)
 	{
 		// release mutex
 		#ifndef COOPERATIVE
@@ -259,7 +261,8 @@ PUBLIC teZCL_Status  eGP_HandleSinkTableRequest(
 			 	 	 	 psEndPointDefinition->u8EndPointNumber,
 			             ZCL_GP_PROXY_ENDPOINT_ID,
 	                      &sDestAddress,
-	                      &sSinkTableRespCmdPayload);
+	                      &sSinkTableRespCmdPayload,
+                          &u8TransactionSequenceNumber);
 
 
 	return eStatus;
@@ -351,6 +354,7 @@ PUBLIC teZCL_Status  eGP_HandleProxyTableRequest(
         uint16                         u16Offset)
 {
 	uint8 i,  u8Index=0;
+	uint8 u8TransactionSequenceNumber = 0;
 	bool_t bIsRequestByAddr;
 	tsGP_GreenPowerCustomData                   *psGPCustomDataStructure;
 	tsGP_ZgpProxyTableRequestCmdPayload           sProxyTableRequestCmdPayload;
@@ -375,7 +379,8 @@ PUBLIC teZCL_Status  eGP_HandleProxyTableRequest(
 	if((eStatus = eGP_ProxyTableRequestReceive(
 									pZPSevent,
 									u16Offset,
-									&sProxyTableRequestCmdPayload)) != E_ZCL_SUCCESS)
+									&sProxyTableRequestCmdPayload,
+									&u8TransactionSequenceNumber)) != E_ZCL_SUCCESS)
 	{
 		// release mutex
 		#ifndef COOPERATIVE
@@ -459,7 +464,8 @@ PUBLIC teZCL_Status  eGP_HandleProxyTableRequest(
 			 	 	 	 psEndPointDefinition->u8EndPointNumber,
 			             ZCL_GP_PROXY_ENDPOINT_ID,
 	                      &sDestAddress,
-	                      &sProxyTableRespCmdPayload);
+	                      &sProxyTableRespCmdPayload,
+                          &u8TransactionSequenceNumber);
 
 
 	return eStatus;
@@ -2269,7 +2275,7 @@ PUBLIC teZCL_Status eGP_HandleZgpPairingSearch(
     teGP_GreenPowerCommunicationMode            eCommunicationMode = E_GP_UNI_FORWARD_ZGP_NOTIFICATION_BY_PROXIES_BOTH;
     // initialise pointer
     psGpCustomDataStructure = (tsGP_GreenPowerCustomData *)psClusterInstance->pvEndPointCustomStructPtr;
-
+    u8TransactionSequenceNumber =  u8GetTransactionSequenceNumber();
     // get EP mutex
     #ifndef COOPERATIVE
         eZCL_GetMutex(psEndPointDefinition);
@@ -3447,6 +3453,7 @@ void vFillAndSendPairingCmdFromSinkTable(uint8                                u8
 	 sZgpPairingPayload.b24Options = psSinkTableEntry->b16Options & GP_APPLICATION_ID_MASK;
 	 sZgpPairingPayload.b24Options |= u8AddSinkTableMask;
 	 sZgpPairingPayload.uZgpdDeviceAddr = psSinkTableEntry->uZgpdDeviceAddr;
+     u8TransactionSequenceNumber = u8GetTransactionSequenceNumber();
 	 if(!(u8AddSinkTableMask & GP_PAIRING_REMOVE_GPD_MASK))
 	 {
 		 sZgpPairingPayload.b24Options |= (psSinkTableEntry->b8SinkOptions & GP_SINK_TABLE_COMM_MODE_MASK )<< 5;
@@ -3997,7 +4004,7 @@ bool_t bIsNotificationValid(tsGP_ZgpNotificationCmdPayload *psNotificationCmdPyl
 					 (pZPSevent->uEvent.sApsDataIndEvent.u8DstAddrMode == ZPS_E_ADDR_MODE_IEEE)))
 		 {
 			/* send pairing with correct received mode and bAddSink to FALSE*/
-			uint8 u8TransactionSequenceNumber;
+			uint8 u8TransactionSequenceNumber = u8GetTransactionSequenceNumber();
 			tsGP_ZgpPairingCmdPayload                   sZgpPairingPayload = { 0 };
 			tsZCL_Address                               sDestinationAddress;
 			sDestinationAddress.eAddressMode = E_ZCL_AM_SHORT;
@@ -4081,7 +4088,7 @@ bool_t bDecryptGPDFData(
 {
 	 bool_t                       bValid = FALSE;
 	 uint8                        u8Alen;
-	 AESSW_Block_u                uNonce;
+	 CRYPTO_tsAesBlock                uNonce;
 	 uint8                        au8Header[24];
 	 uint8                        au8Data[GP_MAX_ZB_CMD_PAYLOAD_LENGTH];
 	 uint8                        u8NonceOffset = 0, u8Offset = 1;
@@ -4089,7 +4096,7 @@ bool_t bDecryptGPDFData(
 	 uint8                        u8SecLevel, u8SecKeyType;
 	 tsGP_ZgppProxySinkTable      *psZgpsSinkTable;
 	 bool						  bIsSinkTableEntryPresent;
-	 AESSW_Block_u                uSecurityKey;
+	 CRYPTO_tsAesBlock                uSecurityKey;
 
 
 	 u8NonceOffset = 1;
@@ -4220,14 +4227,8 @@ bool_t bDecryptGPDFData(
 			DBG_vPrintf(TRACE_GP_DEBUG," %x  " ,au8Mic[j] );
 		}
 
-#if (defined LITTLE_ENDIAN_PROCESSOR) && (defined JENNIC_CHIP_FAMILY_JN517x)
-		tsReg128 sKey;
-		memcpy(&sKey, &uSecurityKey.au8[0], 16);
-		vSwipeEndian(&uSecurityKey, &sKey, FALSE);
-#endif
-
-		u8Status = bACI_WriteKey((tsReg128*)&uSecurityKey);
-		vACI_OptimisedCcmStar(
+		u8Status = zbPlatCryptoAesSetKey((CRYPTO_tsReg128*)&uSecurityKey);
+		zbPlatCryptoAesCcmStar(
 			FALSE,
 			4,
 			u8Alen,
@@ -4253,7 +4254,7 @@ bool_t bDecryptGPDFData(
 		}
 		else
 		{
-			DBG_vPrintf(TRACE_GP_DEBUG,"vACI_OptimisedCcmStar API failed %x\n ", u8Status);
+			DBG_vPrintf(TRACE_GP_DEBUG,"zbPlatCryptoAesCcmStar API failed %x\n ", u8Status);
 		}
 	}
 	else
@@ -4261,8 +4262,8 @@ bool_t bDecryptGPDFData(
 		uint8 au8Mic[4],i,au8CmpMic[4] ;
 		u8Alen = u8Alen +  psZgpCommissioningNotificationCmdPayload->sZgpdCommandPayload.u8Length;
 		vWrite32Nbo(psZgpCommissioningNotificationCmdPayload->u32Mic, au8CmpMic);
-		u8Status = bACI_WriteKey((tsReg128*)&uSecurityKey);
-		vACI_OptimisedCcmStar(
+		u8Status = zbPlatCryptoAesSetKey((CRYPTO_tsReg128*)&uSecurityKey);
+		zbPlatCryptoAesCcmStar(
 				TRUE,
 			4,
 			u8Alen,

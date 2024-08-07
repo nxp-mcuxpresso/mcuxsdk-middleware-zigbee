@@ -21,7 +21,6 @@
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
-#define PDM_ID_APP_CHAN_MASK_LIST 	  (0x1002)
 
 #define VAR_UNUSED(x) (void)(x)
 
@@ -50,7 +49,7 @@ PUBLIC void ZNC_BUF_U16_UPD_R(uint8 *, uint16);
     ( ( LEN ) += sizeof( uint16 ) ) )
 
 /* Macros take buffer and return data and the next offset of within the buffer */
-#define ZNC_RTN_U8_OFFSET(BUFFER, i, OFFSET )   ( ( uint8 ) (BUFFER)[ i + 1 ] & 0xFF );\
+#define ZNC_RTN_U8_OFFSET(BUFFER, i, OFFSET )   ( ( uint8 ) (BUFFER)[ i ] & 0xFF );\
 ( ( OFFSET ) += sizeof (uint8) )
 
 #define ZNC_RTN_U16_OFFSET(BUFFER, i, OFFSET )   ( ZNC_RTN_U16 (BUFFER, i) );\

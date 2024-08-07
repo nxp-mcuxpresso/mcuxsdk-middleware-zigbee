@@ -588,7 +588,8 @@ uint16 u16GetSinkTableString(
 PUBLIC teZCL_Status eGP_SinkTableRequestReceive(
 		ZPS_tsAfEvent                               *pZPSevent,
 		uint16                                      u16Offset,
-		tsGP_ZgpSinkTableRequestCmdPayload          *psZgpSinkTableRequestCmdPayload);
+		tsGP_ZgpSinkTableRequestCmdPayload          *psZgpSinkTableRequestCmdPayload,
+        uint8 *pu8TransactionSequenceNumber);
 
 PUBLIC teZCL_Status eGP_SinkTableResponseReceive(
                     ZPS_tsAfEvent                               *pZPSevent,
@@ -598,7 +599,8 @@ PUBLIC teZCL_Status eGP_SinkTableResponseSend(
                         uint8                               u8SourceEndPointId,
                         uint8                               u8DestEndPointId,
                         tsZCL_Address                       *psDestinationAddress,
-                        tsGP_SinkTableRespCmdPayload  *psZgpSinkTableRespCmdPayload);
+                        tsGP_SinkTableRespCmdPayload  *psZgpSinkTableRespCmdPayload,
+                        uint8 *pu8TransactionSequenceNumber);
 
 bool_t bGP_CheckGPDAddressMatch(
 		uint8 						u8AppIdSrc,
@@ -636,12 +638,14 @@ PUBLIC teZCL_Status eGP_HandleProxyTableResponse(
 PUBLIC teZCL_Status eGP_ProxyTableRequestReceive(
                     ZPS_tsAfEvent                               *pZPSevent,
                     uint16                                      u16Offset,
-                    tsGP_ZgpProxyTableRequestCmdPayload          *psZgpProxyTableRequestCmdPayload);
+                    tsGP_ZgpProxyTableRequestCmdPayload          *psZgpProxyTableRequestCmdPayload,
+                    uint8                                       *pu8TransactionSequenceNumber);
 PUBLIC teZCL_Status eGP_ProxyTableResponseSend(
                         uint8                               u8SourceEndPointId,
                         uint8                               u8DestEndPointId,
                         tsZCL_Address                       *psDestinationAddress,
-                        tsGP_ProxyTableRespCmdPayload  *psZgpProxyTableRespCmdPayload);
+                        tsGP_ProxyTableRespCmdPayload  *psZgpProxyTableRespCmdPayload,
+                        uint8                               *pu8TransactionSequenceNumber);
 PUBLIC teZCL_Status eGP_ProxyTableResponseReceive(
                     ZPS_tsAfEvent                               *pZPSevent,
                     uint16										u16Offset,
@@ -650,7 +654,7 @@ bool_t bGP_GetSecurityDetails(
 		 uint8									      u8AppId,
 		 uint8										  *pu8SecLevel,
 		 uint8										  *pu8KeyType,
-		 AESSW_Block_u                                *pu8Key,
+		 CRYPTO_tsAesBlock                                *pu8Key,
 		 tuGP_ZgpdDeviceAddr                          *puZgpdDeviceAddr,
 		 tsZCL_EndPointDefinition                     *psEndPointDefinition,
 		 tsGP_GreenPowerCustomData                    *psGpCustomDataStructure);
@@ -662,7 +666,7 @@ bool_t  bGP_GetGPDKey(
 		tuGP_ZgpdDeviceAddr                  *puZgpdDeviceAddr,
 		tsGP_ZgppProxySinkTable              *psZgppProxySinkTable,
 		teGP_GreenPowerSecKeyType            eZgpSecKeyType,
-		AESSW_Block_u                        *puSecurityKey,
+		CRYPTO_tsAesBlock                        *puSecurityKey,
 		tsZCL_EndPointDefinition             *psEndPointDefinition,
 	    tsGP_GreenPowerCustomData            *psGpCustomDataStructure);
 

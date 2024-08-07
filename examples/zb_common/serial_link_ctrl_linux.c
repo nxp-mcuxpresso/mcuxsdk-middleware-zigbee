@@ -760,7 +760,9 @@ PUBLIC void APP_vRxDmaTimerCallbackFnct(void *p_arg)
  ********************************************************************************/
 PUBLIC void APP_vNcpHostResetZigBeeModule(void)
 {
+    vSL_SetLongResponsePeriod();
     (void)u8SL_WriteMessage((uint16)E_SL_MSG_RESET, 0U, NULL,NULL);
+    vSL_SetStandardResponsePeriod();
     vSetJNState(JN_NOT_READY);
 }
 

@@ -1,17 +1,17 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP
+ * Copyright 2020, 2024 NXP
  *
- * NXP Confidential. 
- * 
- * This software is owned or controlled by NXP and may only be used strictly 
- * in accordance with the applicable license terms.  
- * By expressly accepting such terms or by downloading, installing, activating 
- * and/or otherwise using the software, you are agreeing that you have read, 
- * and that you agree to comply with and are bound by, such license terms.  
- * If you do not agree to be bound by the applicable license terms, 
- * then you may not retain, install, activate or otherwise use the software. 
- * 
+ * NXP Confidential.
+ *
+ * This software is owned or controlled by NXP and may only be used strictly
+ * in accordance with the applicable license terms.
+ * By expressly accepting such terms or by downloading, installing, activating
+ * and/or otherwise using the software, you are agreeing that you have read,
+ * and that you agree to comply with and are bound by, such license terms.
+ * If you do not agree to be bound by the applicable license terms,
+ * then you may not retain, install, activate or otherwise use the software.
+ *
  *
  ****************************************************************************/
 
@@ -37,10 +37,7 @@ extern "C" {
 #include "zcl.h"
 #include "zcl_options.h"
 #include "zcl_customcommand.h"
-#if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x)
-#include "AHI_AES.h"
-#endif
-#include "aessw_ccm.h"
+#include "zb_platform.h"
 
 #ifndef OTA_NO_CERTIFICATE
     #include "eccapi.h"
@@ -92,7 +89,7 @@ extern "C" {
 #endif
 
 /* TODO OTA: These defines should be extracted in platform dependent code*/
-#ifdef K32W1480_SERIES
+#if defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
 #define K32W1480_OTA_HDR_SIZE (80)
 #define K32W1480_OTA_NONCE_SIZE (16)
 #define K32W1480_OTA_LNKKEY_SIZE (16)
@@ -273,12 +270,12 @@ extern "C" {
 
 #ifndef CLD_OTA_CLUSTER_REVISION
     #define CLD_OTA_CLUSTER_REVISION        1
-#endif 
+#endif
 
 #ifndef CLD_OTA_FEATURE_MAP
     #define CLD_OTA_FEATURE_MAP             0
-#endif   
-  
+#endif
+
 #define CLD_OTA_NUMBER_OF_OPTIONAL_ATTRIBUTE                        \
     ((ATTR_FILE_OFFSET)                            +              \
     (ATTR_CURRENT_FILE_VERSION)                    +              \
@@ -299,7 +296,7 @@ extern "C" {
 /****************************************************************************/
 
 #ifdef OTA_SERVER
-typedef enum 
+typedef enum
 {
     E_CLD_OTA_STATE_ALLOW_ALL,
     E_CLD_OTA_STATE_USE_LIST
@@ -336,7 +333,7 @@ typedef struct
     tsOTA_ImageHeader sOTA_ImageHeader[OTA_MAX_CO_PROCESSOR_IMAGES];
 }tsOTA_CoProcessorOTAHeader;
 
-typedef enum 
+typedef enum
 {
     E_CLD_OTA_STACK_ZIGBEE_2006,
     E_CLD_OTA_STACK_ZIGBEE_2007,
@@ -344,7 +341,7 @@ typedef enum
     E_CLD_OTA_STACK_ZIGBEE_IP
 }teOTA_StackVersion;
 
-typedef enum 
+typedef enum
 {
     E_CLD_OTA_ATTR_UPGRADE_SERVER_ID,                   /* 0x0000 */
     E_CLD_OTA_ATTR_FILE_OFFSET,                         /* 0x0001 */
@@ -359,7 +356,7 @@ typedef enum
     E_CLD_OTA_ATTR_IMAGE_STAMP                          /* 0x000A */
 }teOTA_Cluster;
 
-typedef enum 
+typedef enum
 {
     E_CLD_OTA_PARAMS_QUERY_JITTER,
     E_CLD_OTA_PARAMS_IMAGE_SIZE,
@@ -369,7 +366,7 @@ typedef enum
     E_CLD_OTA_PARAMS_UPGRADE_SIGNATURE
 }teOTA_ServerParms;
 
-typedef enum 
+typedef enum
 {
     E_CLD_OTA_STATUS_NORMAL,
     E_CLD_OTA_STATUS_DL_IN_PROGRESS,
@@ -395,7 +392,7 @@ typedef struct
     uint16 u16MinBlockRequestDelay;
     uint32 u32ImageStamp;
 #endif
-    zbmap32 u32FeatureMap;    
+    zbmap32 u32FeatureMap;
     uint16 u16ClusterRevision;
 } tsCLD_AS_Ota;
 
@@ -423,7 +420,7 @@ typedef struct
 } tsCLD_PR_Ota;
 
 
-typedef enum 
+typedef enum
 {
     E_CLD_OTA_COMMAND_IMAGE_NOTIFY,
     E_CLD_OTA_COMMAND_QUERY_NEXT_IMAGE_REQUEST,
@@ -466,7 +463,7 @@ typedef enum
     E_CLD_OTA_BLOCK_RESPONSE_TAG_OTHER_THAN_UPGRADE_IMAGE
 }teOTA_UpgradeClusterEvents;
 
-typedef enum 
+typedef enum
 {
     E_CLD_OTA_QUERY_JITTER,
     E_CLD_OTA_MANUFACTURER_ID_AND_JITTER,
@@ -826,7 +823,7 @@ PUBLIC  void vOTA_GenerateHash(
                     tsOTA_Common               *psCustomData,
                     bool_t                        bIsServer,
                     bool_t                        bHeaderPresent,
-                    AESSW_Block_u              *puHash,
+                    CRYPTO_tsAesBlock              *puHash,
                     uint8                       u8ImageLocation);
 
 PUBLIC void vOTA_SetImageValidityFlag(
@@ -845,7 +842,7 @@ PUBLIC bool_t bOtaIsSerializationDataValid(
                     tsOTA_Common               *psCustomData,
                     uint8                       u8UpgradeImageIndex);
 
-PUBLIC void vOTA_EncodeString(tsReg128 *psKey, uint8 *pu8Iv,uint8 * pu8DataOut);
+PUBLIC void vOTA_EncodeString(CRYPTO_tsReg128 *psKey, uint8 *pu8Iv,uint8 * pu8DataOut);
 #ifdef OTA_SERVER
 PUBLIC teZCL_Status eOTA_ServerUpgradeEndResponse(
                     uint8                       u8SourceEndpoint,

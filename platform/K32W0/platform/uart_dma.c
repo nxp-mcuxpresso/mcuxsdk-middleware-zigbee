@@ -6,7 +6,7 @@
  */
 #include <stdint.h>
 #include <stdbool.h>
-#include "EmbeddedTypes.h"
+#include "zb_platform.h"
 #include "board.h"
 #include "app.h"
 #include "fsl_usart.h"

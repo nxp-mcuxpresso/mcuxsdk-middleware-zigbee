@@ -169,7 +169,7 @@ PUBLIC bool_t bOtaIsAuthenticationEnabled(void);
 
 PUBLIC void vOtaSwitchLoads(void);
 PUBLIC void vOtaFlagNewImage(void);
-PUBLIC tsReg128 eOTA_retOtaUseKey(void);
+PUBLIC CRYPTO_tsReg128 eOTA_retOtaUseKey(void);
 
 #ifdef OTA_CLIENT
 PUBLIC void vOtaInitStateMachine(

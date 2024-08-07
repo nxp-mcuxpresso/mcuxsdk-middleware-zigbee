@@ -1,10 +1,11 @@
 # Copyright 2024 NXP
-# All rights reserved.
+#
 # SPDX-License-Identifier: BSD-3-Clause
 
 cmake_policy(SET CMP0079 NEW)
 
 set(MBEDTLS_CLONE ${NXP_ZB_BASE}/platform/NCP_HOST/third_party/mbedtls)
+string(CONCAT MBEDTLS_GIT_VERSION "mbedtls-" ${MBEDTLS_MIN_VERSION} ".0")
 
 if(EXISTS "${MBEDTLS_CLONE}/repo")
     message(STATUS "Repo for mbedtls is already available")
@@ -13,7 +14,7 @@ else()
     include(FetchContent)
     FetchContent_Declare(mbetls_repo
       GIT_REPOSITORY "https://github.com/Mbed-TLS/mbedtls.git"
-      GIT_TAG mbedtls-2.28.0
+      GIT_TAG ${MBEDTLS_GIT_VERSION}
       SOURCE_DIR "${MBEDTLS_CLONE}/repo"
     )
     FetchContent_MakeAvailable(mbetls_repo)
@@ -61,14 +62,19 @@ if(${CMAKE_C_COMPILER_ID} MATCHES "GNU")
             -Wno-unused-const-variable
             -Wno-memset-elt-size
             -Wno-int-conversion
-            -m32
     )
-    target_compile_options(${mbedtls_target}
-        PRIVATE
-            -m32
-    )
-    target_compile_options(${mbedx509_target}
-        PRIVATE
-            -m32
-    )
+    if (NOT "${MACHINE_TYPE}" STREQUAL "imx8")
+        target_compile_options(${mbedcrypto_target}
+            PRIVATE
+                -m32
+        )
+        target_compile_options(${mbedtls_target}
+            PRIVATE
+                -m32
+        )
+        target_compile_options(${mbedx509_target}
+            PRIVATE
+                -m32
+        )
+    endif()
 endif()

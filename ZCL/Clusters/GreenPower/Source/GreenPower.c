@@ -1,17 +1,17 @@
 /****************************************************************************
  *
- * Copyright 2020 NXP
+ * Copyright 2020, 2024 NXP
  *
- * NXP Confidential. 
- * 
- * This software is owned or controlled by NXP and may only be used strictly 
- * in accordance with the applicable license terms.  
- * By expressly accepting such terms or by downloading, installing, activating 
- * and/or otherwise using the software, you are agreeing that you have read, 
- * and that you agree to comply with and are bound by, such license terms.  
- * If you do not agree to be bound by the applicable license terms, 
- * then you may not retain, install, activate or otherwise use the software. 
- * 
+ * NXP Confidential.
+ *
+ * This software is owned or controlled by NXP and may only be used strictly
+ * in accordance with the applicable license terms.
+ * By expressly accepting such terms or by downloading, installing, activating
+ * and/or otherwise using the software, you are agreeing that you have read,
+ * and that you agree to comply with and are bound by, such license terms.
+ * If you do not agree to be bound by the applicable license terms,
+ * then you may not retain, install, activate or otherwise use the software.
+ *
  *
  ****************************************************************************/
 
@@ -56,7 +56,9 @@
 /****************************************************************************/
 /***        Local Function Prototypes                                     ***/
 /****************************************************************************/
+#ifdef CLD_GREENPOWER
 PRIVATE void vCLD_GPTimerClickCallback(tsZCL_CallBackEvent *psCallBackEvent);
+#endif
  teZCL_Status eCLD_GPRegisterTimeServer(void);
 /****************************************************************************/
 /***        Exported Variables                                            ***/
@@ -101,8 +103,8 @@ const tsZCL_AttributeDefinition asCLD_GreenPowerClusterAttributeDefinitionsServe
 #ifdef  CLD_GP_ATTR_ZGP_LINK_KEY
     {E_CLD_GP_ATTR_ZGP_LINK_KEY,                      (E_ZCL_AF_WR | E_ZCL_AF_RD),             E_ZCL_KEY_128,   (uint32)(&((tsCLD_GreenPower*)(0))->sZgpLinkKey), 0},
 #endif
-    {E_CLD_GLOBAL_ATTR_ID_FEATURE_MAP,              (E_ZCL_AF_RD|E_ZCL_AF_GA),                 E_ZCL_BMAP32,   (uint32)(&((tsCLD_GreenPower*)(0))->u32FeatureMap),0},   /* Mandatory  */ 
-    
+    {E_CLD_GLOBAL_ATTR_ID_FEATURE_MAP,              (E_ZCL_AF_RD|E_ZCL_AF_GA),                 E_ZCL_BMAP32,   (uint32)(&((tsCLD_GreenPower*)(0))->u32FeatureMap),0},   /* Mandatory  */
+
     {E_CLD_GLOBAL_ATTR_ID_CLUSTER_REVISION,         (E_ZCL_AF_RD|E_ZCL_AF_GA),                                E_ZCL_UINT16,  (uint32)(&((tsCLD_GreenPower*)(0))->u16ClusterRevision),0},   /* Mandatory  */
 
 };
@@ -110,9 +112,11 @@ const tsZCL_AttributeDefinition asCLD_GreenPowerClusterAttributeDefinitionsServe
 /* Client Attributes */
 const tsZCL_AttributeDefinition asCLD_GreenPowerClusterAttributeDefinitionsClient[] = {
 
-
     {E_CLD_GP_ATTR_ZGPP_MAX_PROXY_TABLE_ENTRIES,      (E_ZCL_AF_RD | E_ZCL_AF_CA),             E_ZCL_UINT8,     (uint32)(&((tsCLD_GreenPower*)(0))->u8ZgppMaxProxyTableEntries), 0},
     {E_CLD_GP_ATTR_ZGPP_PROXY_TABLE,                  (E_ZCL_AF_RD | E_ZCL_AF_CA),             E_ZCL_LOSTRING,  (uint32)(&((tsCLD_GreenPower*)(0))->sProxyTable), 0},
+    {E_CLD_GP_ATTR_ZGPP_FUNCTIONALITY,                (E_ZCL_AF_RD | E_ZCL_AF_CA),             E_ZCL_BMAP24,    (uint32)(&((tsCLD_GreenPower*)(0))->b24ZgppFunctionality), 0},
+    {E_CLD_GP_ATTR_ZGPP_ACTIVE_FUNCTIONALITY,         (E_ZCL_AF_RD | E_ZCL_AF_CA),             E_ZCL_BMAP24,    (uint32)(&((tsCLD_GreenPower*)(0))->b24ZgppActiveFunctionality), 0},
+
 #ifdef GP_PROXY_BASIC_DEVICE
 #ifdef  CLD_GP_ATTR_ZGPP_NOTIFICATION_RETRY_NUMBER
     {E_CLD_GP_ATTR_ZGPP_NOTIFICATION_RETRY_NUMBER,    (E_ZCL_AF_WR | E_ZCL_AF_RD| E_ZCL_AF_CA),             E_ZCL_UINT8,     (uint32)(&((tsCLD_GreenPower*)(0))->u8ZgppNotificationRetryNumber), 0},
@@ -130,10 +134,6 @@ const tsZCL_AttributeDefinition asCLD_GreenPowerClusterAttributeDefinitionsClien
     {E_CLD_GP_ATTR_ZGPP_BLOCKED_ZGPD_ID,              (E_ZCL_AF_RD| E_ZCL_AF_CA),                           E_ZCL_LOSTRING,  (uint32)(&((tsCLD_GreenPower*)(0))->sZgppBlockedGpdID), 0},
 #endif
 
-    {E_CLD_GP_ATTR_ZGPP_FUNCTIONALITY,                (E_ZCL_AF_RD| E_ZCL_AF_CA),                           E_ZCL_BMAP24,    (uint32)(&((tsCLD_GreenPower*)(0))->b24ZgppFunctionality), 0},
-    {E_CLD_GP_ATTR_ZGPP_ACTIVE_FUNCTIONALITY,         (E_ZCL_AF_RD| E_ZCL_AF_CA),                           E_ZCL_BMAP24,    (uint32)(&((tsCLD_GreenPower*)(0))->b24ZgppActiveFunctionality), 0},
-
-
     /* Shared Attributes b/w server and client */
 #ifdef  CLD_GP_ATTR_ZGP_SHARED_SECURITY_KEY_TYPE
     {E_CLD_GP_ATTR_ZGP_SHARED_SECURITY_KEY_TYPE,      (E_ZCL_AF_WR | E_ZCL_AF_RD | E_ZCL_AF_CA), E_ZCL_BMAP8,   (uint32)(&((tsCLD_GreenPower*)(0))->b8ZgpSharedSecKeyType), 0},
@@ -147,7 +147,7 @@ const tsZCL_AttributeDefinition asCLD_GreenPowerClusterAttributeDefinitionsClien
     {E_CLD_GP_ATTR_ZGP_LINK_KEY,                      (E_ZCL_AF_WR | E_ZCL_AF_RD | E_ZCL_AF_CA), E_ZCL_KEY_128, (uint32)(&((tsCLD_GreenPower*)(0))->sZgpLinkKey), 0},
 #endif
 #endif
-    {E_CLD_GLOBAL_ATTR_ID_FEATURE_MAP,              (E_ZCL_AF_RD|E_ZCL_AF_GA),  E_ZCL_BMAP32,   (uint32)(&((tsCLD_GreenPower*)(0))->u32FeatureMap),0},   /* Mandatory  */ 
+    {E_CLD_GLOBAL_ATTR_ID_FEATURE_MAP,              (E_ZCL_AF_RD|E_ZCL_AF_GA),  E_ZCL_BMAP32,   (uint32)(&((tsCLD_GreenPower*)(0))->u32FeatureMap),0},   /* Mandatory  */
 
 
     {E_CLD_GLOBAL_ATTR_ID_CLUSTER_REVISION,         (E_ZCL_AF_RD|E_ZCL_AF_GA),                                E_ZCL_UINT16,  (uint32)(&((tsCLD_GreenPower*)(0))->u16ClusterRevision),0},   /* Mandatory  */
@@ -224,7 +224,7 @@ PUBLIC teZCL_Status eGP_CreateGreenPower(
     tsGP_Common    *psGP_Common;
     uint8          u8Count = 0;
     uint8 u8NoOfEntries;
-    #ifdef STRICT_PARAM_CHECK 
+    #ifdef STRICT_PARAM_CHECK
         /* Check pointers */
         if((psClusterInstance==NULL)            ||
            (psClusterDefinition==NULL)          ||
@@ -235,15 +235,15 @@ PUBLIC teZCL_Status eGP_CreateGreenPower(
     #endif
 
     // cluster data
-    
+
     vZCL_InitializeClusterInstance(
-                                   psClusterInstance, 
+                                   psClusterInstance,
                                    bIsServer,
                                    psClusterDefinition,
                                    pvEndPointSharedStructPtr,
                                    pu8AttributeControlBits,
                                    psCustomDataStructure,
-                                   eGP_GreenPowerCommandHandler);    
+                                   eGP_GreenPowerCommandHandler);
 
     psClusterInstance->pvEndPointCustomStructPtr = (void *)psCustomDataStructure;
     psClusterInstance->pStringCallBackFunction = u16GP_APduInstanceReadWriteLongString;
@@ -285,6 +285,21 @@ PUBLIC teZCL_Status eGP_CreateGreenPower(
         ((tsCLD_GreenPower*)pvEndPointSharedStructPtr)->sProxyTable.u16MaxLength = u16GP_GetStringSizeOfProxyTable(0, &u8NoOfEntries, psCustomDataStructure);
         ((tsCLD_GreenPower*)pvEndPointSharedStructPtr)->sProxyTable.u16Length = u16GP_GetStringSizeOfProxyTable(0, &u8NoOfEntries, psCustomDataStructure);
         ((tsCLD_GreenPower*)pvEndPointSharedStructPtr)->sProxyTable.pu8Data =(uint8 *) psCustomDataStructure->asZgpsSinkProxyTable;
+
+        ((tsCLD_GreenPower*)pvEndPointSharedStructPtr)->b24ZgppFunctionality = GP_FEATURE_ZGPP_FEATURE |
+                                                                               GP_FEATURE_ZGPP_DIRECT_COMM |
+                                                                               GP_FEATURE_ZGPP_DERIVED_GC_COMM |
+                                                                               GP_FEATURE_ZGPP_COMMISSION_GC_COMM |
+                                                                               GP_FEATURE_ZGPP_LIGHTWEIGHT_UNICAST_COMM|
+                                                                               GP_FEATURE_ZGPP_GP_COMMISSIONING |
+                                                                               GP_FEATURE_ZGPP_CT_BASED_CMSNG |
+                                                                               GP_FEATURE_ZGPP_ZGPD_SEC_LVL_0B00 |
+                                                                               GP_FEATURE_ZGPP_ZGPD_SEC_LVL_0B10 |
+                                                                               GP_FEATURE_ZGPP_ZGPD_SEC_LVL_0B11;
+#ifdef GP_IEEE_ADDR_SUPPORT
+        ((tsCLD_GreenPower *)pvEndPointSharedStructPtr)->b24ZgppFunctionality |= GP_FEATURE_ZGPP_ZGPD_IEEE_ADDR;
+#endif
+        ((tsCLD_GreenPower *)pvEndPointSharedStructPtr)->b24ZgppActiveFunctionality = GP_ZGP_ACTIVE_FEATURES_ATTR_DEFAULT_VALUE;
     }
     /* Initialize sink/Proxy table size */
 #ifdef GP_COMBO_BASIC_DEVICE
@@ -1028,8 +1043,7 @@ PUBLIC uint8 u8GP_SecurityProcessCallback(ZPS_tsAfZgpSecReq *psSec, uint8 *pu8Se
     }
 
 #if 1
-    
-    for(i=0;i<AESSW_BLK_SIZE;i++)
+    for(i=0;i<CRYPTO_AES_BLK_SIZE;i++)
     DBG_vPrintf(TRACE_GP_DEBUG, " 0x%x,", psZgpGpstEntry->uSecurityKey.au8[i]);
     DBG_vPrintf(TRACE_GP_DEBUG, "\nGPD ID 0x%08x\n", psZgpGpstEntry->uGpId.u32SrcId);
     DBG_vPrintf(TRACE_GP_DEBUG, "GPST security level %d\n", psZgpGpstEntry->u8SecurityLevel);
@@ -1202,6 +1216,21 @@ PUBLIC void vGP_RestorePersistedData( tsGP_ZgppProxySinkTable                   
 #endif
 #endif
 
+                ((tsCLD_GreenPower *)(psClusterInstance->pvEndPointSharedStructPtr))->b24ZgppFunctionality = GP_FEATURE_ZGPP_FEATURE |
+                                                                                                             GP_FEATURE_ZGPP_DIRECT_COMM |
+                                                                                                             GP_FEATURE_ZGPP_DERIVED_GC_COMM |
+                                                                                                             GP_FEATURE_ZGPP_COMMISSION_GC_COMM |
+                                                                                                             GP_FEATURE_ZGPP_LIGHTWEIGHT_UNICAST_COMM|
+                                                                                                             GP_FEATURE_ZGPP_GP_COMMISSIONING |
+                                                                                                             GP_FEATURE_ZGPP_CT_BASED_CMSNG |
+                                                                                                             GP_FEATURE_ZGPP_ZGPD_SEC_LVL_0B00 |
+                                                                                                             GP_FEATURE_ZGPP_ZGPD_SEC_LVL_0B10 |
+                                                                                                             GP_FEATURE_ZGPP_ZGPD_SEC_LVL_0B11;
+
+#ifdef GP_IEEE_ADDR_SUPPORT
+                ((tsCLD_GreenPower *)(psClusterInstance->pvEndPointSharedStructPtr))->b24ZgppFunctionality |= GP_FEATURE_ZGPP_ZGPD_IEEE_ADDR;
+#endif
+                ((tsCLD_GreenPower *)(psClusterInstance->pvEndPointSharedStructPtr))->b24ZgppActiveFunctionality = GP_ZGP_ACTIVE_FEATURES_ATTR_DEFAULT_VALUE;
 
 #ifdef GP_PROXY_BASIC_DEVICE
 #ifdef  CLD_GP_ATTR_ZGPP_NOTIFICATION_RETRY_NUMBER
@@ -1220,20 +1249,6 @@ PUBLIC void vGP_RestorePersistedData( tsGP_ZgppProxySinkTable                   
 			((tsCLD_GreenPower *)(psClusterInstance->pvEndPointSharedStructPtr))->sZgppBlockedGpdID.u16Length = 0;
 #endif
 
-			((tsCLD_GreenPower *)(psClusterInstance->pvEndPointSharedStructPtr))->b24ZgppFunctionality = GP_FEATURE_ZGPP_FEATURE |
-																										GP_FEATURE_ZGPP_DIRECT_COMM |
-																										GP_FEATURE_ZGPP_DERIVED_GC_COMM |
-																										GP_FEATURE_ZGPP_COMMISSION_GC_COMM |
-																										GP_FEATURE_ZGPP_LIGHTWEIGHT_UNICAST_COMM|
-																										GP_FEATURE_ZGPP_GP_COMMISSIONING |
-																										GP_FEATURE_ZGPP_CT_BASED_CMSNG |
-																										 GP_FEATURE_ZGPP_ZGPD_SEC_LVL_0B00 |
-																										 GP_FEATURE_ZGPP_ZGPD_SEC_LVL_0B10 |
-																										 GP_FEATURE_ZGPP_ZGPD_SEC_LVL_0B11;
-#ifdef GP_IEEE_ADDR_SUPPORT
-			((tsCLD_GreenPower *)(psClusterInstance->pvEndPointSharedStructPtr))->b24ZgppFunctionality |= GP_FEATURE_ZGPP_ZGPD_IEEE_ADDR;
-#endif
-			((tsCLD_GreenPower *)(psClusterInstance->pvEndPointSharedStructPtr))->b24ZgppActiveFunctionality = GP_ZGP_ACTIVE_FEATURES_ATTR_DEFAULT_VALUE;
 #ifdef CLD_GP_ATTR_ZGP_LINK_KEY
 				memcpy(((tsCLD_GreenPower *)(psClusterInstance->pvEndPointSharedStructPtr))->sZgpLinkKey.au8Key,"ZigBeeAlliance09",16);
 #endif
@@ -1336,7 +1351,7 @@ PUBLIC ZPS_teAfSecActions eGP_AddDeviceSecurity(ZPS_tsAfZgpSecReq *psSec)
     tuGP_ZgpdDeviceAddr             uZgpdDeviceAddr;
     bool_t                            bIsTableEntryPresent = FALSE;
     tsGP_ZgppProxySinkTable         *psZgppProxySinkTable;
-    AESSW_Block_u                   uSecurityKey;
+    CRYPTO_tsAesBlock                   uSecurityKey;
 #ifdef GP_COMBO_BASIC_DEVICE
     bIsServer= TRUE;
 #else
@@ -1458,7 +1473,16 @@ PUBLIC ZPS_teAfSecActions eGP_AddDeviceSecurity(ZPS_tsAfZgpSecReq *psSec)
     	    psEndPointDefinition,
     	    psGpCustomDataStructure) == FALSE)
 		{
-    		return ZPS_E_DROP_FRAME;
+            if (psGpCustomDataStructure->eGreenPowerDeviceMode == E_GP_OPERATING_MODE)
+            {
+                DBG_vPrintf(TRACE_GP_DEBUG, "GP get gpd key failed drop frame %d\n", psGpCustomDataStructure->eGreenPowerDeviceMode);
+                return ZPS_E_DROP_FRAME;
+            }
+            else
+            {
+                DBG_vPrintf(TRACE_GP_DEBUG, "GP get gpd key failed unprocess frame %d\n", psGpCustomDataStructure->eGreenPowerDeviceMode);
+                return ZPS_E_PASS_UNPROCESSED;
+            }
 		}
 
 
@@ -1493,7 +1517,7 @@ PUBLIC ZPS_teAfSecActions eGP_AddDeviceSecurity(ZPS_tsAfZgpSecReq *psSec)
  ** tuGP_ZgpdDeviceAddr                  *puZgpdDeviceAddr,
  ** tsGP_ZgppProxySinkTable              *psZgppProxySinkTable,
  ** teGP_GreenPowerSecKeyType            eZgpSecKeyType,
- ** AESSW_Block_u                        *puSecurityKey,
+ ** CRYPTO_tsAesBlock                        *puSecurityKey,
  ** tsZCL_EndPointDefinition             *psEndPointDefinition,
  ** tsGP_GreenPowerCustomData            *psGpCustomDataStructure
  **
@@ -1506,18 +1530,18 @@ bool_t  bGP_GetGPDKey(
 		tuGP_ZgpdDeviceAddr                  *puZgpdDeviceAddr,
 		tsGP_ZgppProxySinkTable              *psZgppProxySinkTable,
 		teGP_GreenPowerSecKeyType            eZgpSecKeyType,
-		AESSW_Block_u                        *puSecurityKey,
+		CRYPTO_tsAesBlock                        *puSecurityKey,
 	    tsZCL_EndPointDefinition             *psEndPointDefinition,
 	    tsGP_GreenPowerCustomData            *psGpCustomDataStructure)
 {
+#ifdef CLD_GP_ATTR_ZGP_SHARED_SECURITY_KEY
 	bool_t bIsServer = TRUE;
 
 #ifdef GP_PROXY_BASIC_DEVICE
 	bIsServer = FALSE;
 #endif
 
-#ifdef CLD_GP_ATTR_ZGP_SHARED_SECURITY_KEY
-    AESSW_Block_u                   uInKey;
+    CRYPTO_tsAesBlock                   uInKey;
 #endif
 
 	if((eZgpSecKeyType == E_GP_ZGPD_GROUP_KEY)||(eZgpSecKeyType == E_GP_NWK_KEY_DERIVED_ZGPD_GROUP_KEY))

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020, 2022-2023 NXP
+ * Copyright 2020, 2022-2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -118,9 +118,12 @@
 #define ZPS_ZDP_MGMT_MIB_IEEE_REQ_CLUSTER_ID                (0x003A)
 
 #ifdef R23_UPDATES
+#define ZPS_ZDP_SECURITY_START_KEY_NEGOTIATION_REQ_CLUSTER_ID (0x0040)
+#define ZPS_ZDP_SECURITY_RETRIEVE_AUTH_TOKEN_REQ_CLUSTER_ID (0x0041)
 #define ZPS_ZDP_SECURITY_GET_AUTH_LVL_REQ_CLUSTER_ID        (0x0042)
 #define ZPS_ZDP_SECURITY_SET_CONFIG_REQ_CLUSTER_ID          (0x0043)
 #define ZPS_ZDP_SECURITY_GET_CONFIG_REQ_CLUSTER_ID          (0x0044)
+#define ZPS_ZDP_SECURITY_START_KEY_UPDATE_REQ_CLUSTER_ID    (0x0045)
 #define ZPS_ZDP_SECURITY_DECOMMISSION_REQ_CLUSTER_ID        (0x0046)
 #define ZPS_ZDP_SECURITY_CHALLENGE_REQ_CLUSTER_ID           (0x0047)
 #endif
@@ -195,9 +198,12 @@
 #define ZPS_ZDP_MGMT_MIB_IEEE_RSP_CLUSTER_ID				(0x803A)
 #define ZPS_ZDP_MGMT_NWK_UNSOLICITED_ENHANCE_UPDATE_NOTIFY_CLUSTER_ID   (0x803B)
 #ifdef R23_UPDATES
+#define ZPS_ZDP_SECURITY_START_KEY_NEGOTIATION_RSP_CLUSTER_ID (0x8040)
+#define ZPS_ZDP_SECURITY_RETRIEVE_AUTH_TOKEN_RSP_CLUSTER_ID (0x8041)
 #define ZPS_ZDP_SECURITY_GET_AUTH_LVL_RSP_CLUSTER_ID        (0x8042)
 #define ZPS_ZDP_SECURITY_SET_CONFIG_RSP_CLUSTER_ID          (0x8043)
 #define ZPS_ZDP_SECURITY_GET_CONFIG_RSP_CLUSTER_ID          (0x8044)
+#define ZPS_ZDP_SECURITY_START_KEY_UPDATE_RSP_CLUSTER_ID    (0x8045)
 #define ZPS_ZDP_SECURITY_DECOMMISSION_RSP_CLUSTER_ID        (0x8046)
 #define ZPS_ZDP_SECURITY_CHALLENGE_RSP_CLUSTER_ID           (0x8047)
 #endif
@@ -248,6 +254,8 @@ typedef enum {
     ZPS_APL_ZDP_E_DEVICE_BINDING_TABLE_FULL     = 0x8e,
     ZPS_APL_ZDP_E_INVALID_INDEX       			= 0x8f,
     ZPS_APL_ZDP_E_FRAME_TOO_LARGE               = 0x90,
+    ZPS_APL_ZDP_E_BAD_KEY_NEGOTIATION_METHOD    = 0x91,
+    ZPS_APL_ZDP_E_TEMPORARY_FAILURE             = 0x92,
 } ZPS_teAplZdpStatus;
 
 /****************************************************************************/
@@ -770,6 +778,23 @@ typedef struct {
 typedef struct {
     uint64 u64SenderEUI;
 } ZPS_tsAplZdpSecurityChallengeReq;
+
+typedef struct {
+    uint64 u64JoinerAddr;
+    bool_t bNoNwkKey;
+    uint8  u8SelectedKeyNegotiationMethod;
+    uint8  u8SelectedPresharedSecret;
+} ZPS_tsAplZdpSecurityStartKeyUpdateReq;
+
+typedef struct {
+    uint64 u64RelayAddr;
+    uint64 u64PartnerAddr;
+    CRYPTO_ecdhPublicKey_t  *psPublicKey;
+    CRYPTO_ecdhPrivateKey_t *psSecretKey;
+    bool_t bNoNwkKey;
+    uint8  u8ReqKeyNegotiationMethod;
+    uint8  u8ReqPreSharedSecretType;
+} ZPS_tsAplZdpSecurityStartKeyNegotiationReq;
 #endif
 
 /****************************************************************************/
@@ -804,6 +829,10 @@ typedef struct {
     uint16 u16NwkAddrOfInterest;
     /* rest of the message is variable length */
     ZPS_tsAplZdpNodeDescriptor sNodeDescriptor;
+#ifdef R23_UPDATES
+    uint8  u8SelectedKeyNegotiationMethod;
+    uint8  u8SelectedPresharedSecret;
+#endif
 } ZPS_tsAplZdpNodeDescRsp;
 
 /* [I SP001377_sfr 60]  */
@@ -1227,6 +1256,26 @@ typedef struct {
     uint8                  u8OverallStatus;
     tuApsFrameCounterResponse *psTlv;
 } ZPS_tsAplZdpSecurityChallengeRsp;
+
+typedef struct {
+    uint64                 u64RelayAddr;
+    uint8                  u8OverallStatus;
+} ZPS_tsAplZdpSecurityStartKeyUpdateRsp;
+
+typedef struct {
+    uint64                  u64PartnerAddr;
+    CRYPTO_ecdhPublicKey_t  *psPublicKey;
+    CRYPTO_ecdhPublicKey_t  *psPartnerPublicKey;
+    CRYPTO_ecdhPrivateKey_t *psSecretKey;
+#ifdef CRYPTO_ECDH_P256
+    uint8                   au8PublicPointY[32];
+#endif
+    uint64                  u64RelayAddr;
+    bool_t                  bNoNwkKey;
+    uint8                   u8OverallStatus;
+    uint8                   u8KeyNegotiationMethod;
+    uint8                   u8PreSharedSecretType;
+} ZPS_tsAplZdpSecurityStartKeyNegotiationRsp;
 #endif
 
 typedef struct {
@@ -1713,6 +1762,22 @@ PUBLIC ZPS_teStatus zps_eAplZdpSecurityChallengeRequest(
     bool bExtAddr,
     uint8 *pu8SeqNumber,
     ZPS_tsAplZdpSecurityChallengeReq *psZdpSecuritychallengeReq);
+
+PUBLIC ZPS_teStatus zps_eAplZdpSecurityStartKeyUpdateRequest(
+    void *pvApl,
+    PDUM_thAPduInstance hAPduInst,
+    ZPS_tuAddress uDstAddr,
+    bool bExtAddr,
+    uint8 *pu8SeqNumber,
+    ZPS_tsAplZdpSecurityStartKeyUpdateReq *psZdpSecurityStartKeyUpdateReq);
+
+PUBLIC ZPS_teStatus zps_eAplZdpSecurityStartKeyNegotiationRequest(
+    void *pvApl,
+    PDUM_thAPduInstance hAPduInst,
+    ZPS_tuAddress uDstAddr,
+    bool bExtAddr,
+    uint8 *pu8SeqNumber,
+    ZPS_tsAplZdpSecurityStartKeyNegotiationReq *psParams);
 #endif
 
 /****************************************************************************/
@@ -2574,6 +2639,40 @@ ZPS_APL_INLINE ZPS_teStatus ZPS_eAplZdpSecurityDecommissionRequest(
     return zps_eAplZdpSecurityDecommissionRequest(ZPS_pvAplZdoGetAplHandle(), hAPduInst,
             uDstAddr, bExtAddr, pu8SeqNumber, psTlvDeviceEUI64ListReq);
 
+}
+
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplZdpSecurityStartKeyUpdateRequest(
+    PDUM_thAPduInstance hAPduInst,
+    ZPS_tuAddress uDstAddr,
+    bool bExtAddr,
+    uint8 *pu8SeqNumber,
+    ZPS_tsAplZdpSecurityStartKeyUpdateReq *psZdpSecurityStartKeyUpdateReq) ZPS_ZDP_ALWAYS_INLINE;
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplZdpSecurityStartKeyUpdateRequest(
+    PDUM_thAPduInstance hAPduInst,
+    ZPS_tuAddress uDstAddr,
+    bool bExtAddr,
+    uint8 *pu8SeqNumber,
+    ZPS_tsAplZdpSecurityStartKeyUpdateReq *psZdpSecurityStartKeyUpdateReq)
+{
+    return zps_eAplZdpSecurityStartKeyUpdateRequest(ZPS_pvAplZdoGetAplHandle(), hAPduInst,
+            uDstAddr, bExtAddr, pu8SeqNumber, psZdpSecurityStartKeyUpdateReq);
+}
+
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplZdpSecurityStartKeyNegotiationRequest(
+    PDUM_thAPduInstance hAPduInst,
+    ZPS_tuAddress uDstAddr,
+    bool bExtAddr,
+    uint8 *pu8SeqNumber,
+    ZPS_tsAplZdpSecurityStartKeyNegotiationReq *psParams) ZPS_ZDP_ALWAYS_INLINE;
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplZdpSecurityStartKeyNegotiationRequest(
+    PDUM_thAPduInstance hAPduInst,
+    ZPS_tuAddress uDstAddr,
+    bool bExtAddr,
+    uint8 *pu8SeqNumber,
+    ZPS_tsAplZdpSecurityStartKeyNegotiationReq *psParams)
+{
+    return zps_eAplZdpSecurityStartKeyNegotiationRequest(ZPS_pvAplZdoGetAplHandle(), hAPduInst,
+            uDstAddr, bExtAddr, pu8SeqNumber, psParams);
 }
 #endif
 

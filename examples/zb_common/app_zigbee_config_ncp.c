@@ -13,6 +13,7 @@
 #include "ZTimer.h"
 #include "zps_apl_af.h"
 #include "pdum_gen.h"
+#include "PDM.h"
 #include "app_zcl_task.h"
 #include "app_common_ncp.h"
 #include "serial_link_ctrl.h"
@@ -111,19 +112,15 @@ PUBLIC ZPS_teStatus APP_eZbModuleInitialise(void)
     ZPS_teStatus 	eStatus = 0U;
     uint32	u32ZbVersion = 0U;
     uint16	u16OptionMask = 0U;
-    uint16	u16SDKVersion = 0U;
-
-    vSL_SetLongResponsePeriod();
+    uint32	u32SDKVersion = 0U;
 
     DBG_vPrintf((bool_t)TRACE_APP_INIT, "Zigbee Module initialization\r\n");
-
-//    vSL_ResetRxBufferPool();
 
     DBG_vPrintf((bool_t)TRACE_APP_INIT, "Reading Zigbee Module Version Number\r\n");
     uint32 u32Count = 0U;
     while(u32Count < MAX_HOST_TO_COPROCESSOR_COMMS_ATTEMPS)
     {
-        eStatus = u8GetVersionAndDeviceType(&u32ZbVersion, &eDeviceType, &eMacType, &u16OptionMask, &u16SDKVersion);
+        eStatus = u8GetVersionAndDeviceType(&u32ZbVersion, &eDeviceType, &eMacType, &u16OptionMask, &u32SDKVersion);
         if((eStatus == (ZPS_teStatus)E_SL_MSG_STATUS_BUSY) ||
            (eStatus == (ZPS_teStatus)E_SL_MSG_STATUS_TIME_OUT))
         {
@@ -141,7 +138,7 @@ PUBLIC ZPS_teStatus APP_eZbModuleInitialise(void)
         DBG_vPrintf ((bool_t)TRACE_APP_INIT, "Success: ");
         DBG_vPrintf((bool_t)TRACE_APP_INIT,
                 "Version number of Zigbee Module FW 0x%08x Mac type %d Options Mask 0x%04x SDK Version = %d\n",
-				u32ZbVersion, eMacType, u16OptionMask, u16SDKVersion);
+				u32ZbVersion, eMacType, u16OptionMask, u32SDKVersion);
     }
     else if(eStatus == (ZPS_teStatus)E_SL_MSG_STATUS_HARDWARE_FAILURE)
     {
@@ -169,19 +166,29 @@ PUBLIC ZPS_teStatus APP_eZbModuleInitialise(void)
         {
             DBG_vPrintf((bool_t)TRUE,
                     "Error: Erasing Persistent Data on Zigbee Module 0x%x\r\n", eStatus);
-            vSL_SetStandardResponsePeriod();
             return eStatus;
         }
         /* wait for Zigbee module to stabilize after PDM erase */
         vSetJNState(JN_NOT_READY);
         vWaitForJNReady(JN_READY_TIME_MS);
 
-        /* wait for Zigbee module to stabilize after Reset */
-        vSetJNState(JN_NOT_READY);
         APP_vNcpHostResetZigBeeModule();
+        /* wait for Zigbee module to stabilize after Reset */
         vWaitForJNReady(JN_READY_TIME_MS);
+    } 
+    else 
+    {
+        bool bCoproFactoryNew = ZPS_bIsCoprocessorNewModule();
+        /* Handle mismatch between host and coprocessor state */
+        if (eNodeState == E_RUNNING && bCoproFactoryNew == TRUE)
+        {
+            DBG_vPrintf((bool_t)TRACE_APP_INIT, "Host state is %d, coprocessor module is new.\r\n", eNodeState);
+            DBG_vPrintf((bool_t)TRACE_APP_INIT, "Erasing Persistent Data on Host.\r\n");
+            PDM_vDeleteAllDataRecords();
+            DBG_vPrintf((bool_t)TRACE_APP_INIT, "Resetting Host.\r\n");
+            APP_vNcpHostReset();
+        }
     }
-    vSL_SetStandardResponsePeriod();
     return eStatus;
 }
 

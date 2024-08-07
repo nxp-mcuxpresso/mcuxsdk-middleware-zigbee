@@ -53,6 +53,22 @@ extern "C" {
  * =============================================================================================
  *
  */
+
+#ifdef SL_COPROCESSOR_TO_HOST_SECURE
+/* Number of bytes to use as Message Integrity Check (MIC) for secured communication */
+#define SL_SECURED_MSG_MIC_SIZE             8
+
+/*
+ *  Format of secured serial messsage
+ * ==========================================================================================================
+ * | Index in Serial Buffer |   0   | 1, 2 | 3, 4          |  5  |  6  |  7  | 8..8+n  | 8+n  | 8+n+MICsize |
+ * |------------------------|-------|------|-------------- |-----|-----|-----|---------|------|-------------|
+ * |                        | start | Msg  | Data Length + | Tx  | Rx  | CRC | Data    | MIC  | End         |
+ * |                        | char  | Type | MIC size      | Seq | Seq |     | n bytes |      | Char        |
+ * ==========================================================================================================
+ *
+ */
+#endif
 /****************************************************************************/
 /***        Type Definitions                                              ***/
 /****************************************************************************/
@@ -387,8 +403,8 @@ typedef enum
     E_SL_MSG_CLEAR_IEEE_PERMIT_TABLE                =   0x0605U,
     E_SL_MSG_GET_IEEE_PERMIT_TABLE_SIZE             =   0x0606U,
     E_SL_MSG_GET_IEEE_PERMIT_TABLE                  =   0x0607U,
-    E_SL_MSG_SET_MIT_CHANMASK_LIST                  =   0x0608U,
-    E_SL_MSG_GET_MIT_CHANMASK_LIST                  =   0x0609U,
+    /* 0x0608U reserved for SmartEnergy specific E_SL_MSG_SET_MIT_CHANMASK_LIST */
+    /* 0x0609U reserved for SmartEnergy specific E_SL_MSG_GET_MIT_CHANMASK_LIST */
     E_SL_MSG_CHANGE_SUB_GHZ_CHANNEL                 =   0x060AU,
     E_SL_MSG_GET_PIB_ATTR                           =   0x060BU,
     E_SL_MSG_SET_NWK_INTERFACE_REQ                  =   0x060CU,
@@ -492,17 +508,13 @@ typedef enum
     E_SL_MSG_SET_NWK_ADDR                           =   0x907DU,
     E_SL_MSG_SET_MAC_CAPABILITY                     =   0x907EU,
     E_SL_MSG_SET_NWK_STATE_ACTIVE                   =   0x907FU,
-    E_SL_MSG_SET_DEPTH                              =   0x9080U
+    E_SL_MSG_SET_DEPTH                              =   0x9080U,
+    E_SL_MSG_GET_FRAGMENTATION_SUPPORT              =   0x9081U,
+    E_SL_MSG_GET_MAX_PAYLOAD_SIZE                   =   0x9082U,
+    E_SL_MSG_SET_TC_LOCKDOWN_OVERRIDE               =   0x9083U,
+    E_SL_MSG_IS_COPROCESSOR_NEW_MODULE              =   0x9084U
+
 } teSL_MsgType;
-#ifdef SL_JN_TO_HOST_SECURE
-typedef enum
-{
-    E_SL_DEVICE_COMMS_HUB  = 0x10,
-    E_SL_DEVICE_IHD,
-    E_SL_DEVICE_GAS_METER,
-    E_SL_DEVICE_ESI_METER
-}teSL_ZigBeeDeviceType;
-#else
 typedef enum
 {
     E_SL_DEVICE_COMMS_HUB,
@@ -510,7 +522,6 @@ typedef enum
     E_SL_DEVICE_GAS_METER,
     E_SL_DEVICE_ESI_METER
 }teSL_ZigBeeDeviceType;
-#endif
 
 typedef enum
 {

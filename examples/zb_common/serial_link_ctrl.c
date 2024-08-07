@@ -128,6 +128,15 @@ PUBLIC bool_t bSL_TransmitHook(
 PUBLIC void vSL_JNResetHook(void);
 #endif // SL_JN_RESET_HOOK
 
+#ifdef SL_HOST_TO_COPROCESSOR_SECURE
+PUBLIC void vSL_SecureTransmitLength(uint16 u16Length);
+PUBLIC void vSL_SecureTransmitMessageAuth(uint16 u16Length, uint8 *pu8Data);
+PUBLIC void vSL_SecureEncryptMessage(uint16 u16Length, uint8 *pu8Data);
+PUBLIC bool_t bSL_SecureDecryptMessage(uint8 *pu8RxSerialBuffer, uint16 *pu16Length);
+WEAK bool_t SEC_bDecryptBlock(uint8 *pu8Data, uint16 u16Length, uint8 *pu8Mic);
+WEAK void SEC_vEncryptBlock(uint8 *pu8Data, uint16 u16Length, uint8 *pu8Mic);
+#endif
+
 PRIVATE void vSL_WakeJN( uint16 u16Length, bool_t bJNInDeepSleep, uint16 u16Type );
 
 PRIVATE void vHandleRxBufferExhausted( void);
@@ -922,7 +931,7 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
             vSL_TxByte((bool_t)FALSE, (uint8)((uint16)(u16Type >> 0U) & 0xffU));
 
             /* Send message length */
-#ifdef SL_HOST_TO_JN_SECURE
+#ifdef SL_HOST_TO_COPROCESSOR_SECURE
             vSL_SecureTransmitLength(u16Length);
 #else
             vSL_TxByte((bool_t)FALSE, (uint8)((uint16)(u16Length >> 8U) & 0xffU));
@@ -939,7 +948,7 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
             /* Send message checksum */
             vSL_TxByte((bool_t)FALSE, u8CRC);
 
-#ifdef SL_HOST_TO_JN_SECURE
+#ifdef SL_HOST_TO_COPROCESSOR_SECURE
             vSL_SecureEncryptMessage(u16Length, pu8Data);
 #endif
 
@@ -963,10 +972,10 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 }
             }
 
-#ifdef SL_HOST_TO_JN_SECURE
+#ifdef SL_HOST_TO_COPROCESSOR_SECURE
             vSL_SecureTransmitMessageAuth(u16Length, pu8Data);
 #endif
-        /* Send end character */
+            /* Send end character */
             vSL_TxByte((bool_t)TRUE, SL_END_CHAR);
 
             u32TimeSent = zbPlatGetTime();
@@ -1170,6 +1179,7 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_SET_NWK_STATE_ACTIVE:
                 case (uint16)E_SL_MSG_SET_DEPTH:
                 case (uint16)E_SL_MSG_ADD_REPLACE_INSTALL_CODES:
+                case (uint16)E_SL_MSG_SET_TC_LOCKDOWN_OVERRIDE:
                 {
                     /* no extra data; just status seq no & type */
                     u16ReadIdx = SL_MSG_RSP_START_IDX;
@@ -1306,6 +1316,9 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_GET_CLUSTER_DISCOVERY_STATE:
                 case (uint16)E_SL_MSG_GET_USE_INSECURE_JOIN:
                 case (uint16)E_SL_MSG_GET_APS_SEQ_NUM:
+                case (uint16)E_SL_MSG_GET_FRAGMENTATION_SUPPORT:
+                case (uint16)E_SL_MSG_GET_MAX_PAYLOAD_SIZE:
+                case (uint16)E_SL_MSG_IS_COPROCESSOR_NEW_MODULE:
                 {
                     u16ReadIdx = SL_MSG_RSP_START_IDX;
                     if(NULL != pu8Temp)
@@ -1370,8 +1383,11 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                         psEntry->u32OutgoingFrameCounter += ((uint32)*(pu8RxBuffer+u16ReadIdx++)) << 16U;
                         psEntry->u32OutgoingFrameCounter += ((uint32)*(pu8RxBuffer+u16ReadIdx++)) << 8U;
                         psEntry->u32OutgoingFrameCounter += ((uint32)*(pu8RxBuffer+u16ReadIdx++));
-                    }
 
+                        /* pu32IncomingFrameCounter and  u8BitMapSecLevl (in total 5 bytes) are received in 
+                        the payload but not used, so increase read index by their size to avoid mismatch warning */
+                        u16ReadIdx += 5;
+                    }
                     break;
                 }
                 case (uint16)E_SL_MSG_GET_DEFAULT_TC_APS_LINK_KEY:
@@ -1623,6 +1639,8 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                         *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+5);
                         *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+7);
                         *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+6);
+                        *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+11);
+                        *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+10);
                         *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+9);
                         *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+8);
                     }
@@ -1630,7 +1648,7 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                     {
                         DBG_vPrintf((bool_t)TRUE, "JN Busy message rx\r\n");
                     }
-                    u16ReadIdx = (uint16)SL_MSG_RSP_START_IDX + 10U;
+                    u16ReadIdx = (uint16)SL_MSG_RSP_START_IDX + 12U;
                     sSLCommon.bIsSlMsgGetVer = (bool_t)FALSE;
                    break;
                 case (uint16)E_SL_MSG_GET_APS_KEY_TABLE_SIZE:
@@ -2018,8 +2036,8 @@ PUBLIC bool_t bSL_ValidateIncomingMessage(uint8 *pu8RxSerialBuffer)
     u8RxSeqNo = *(pu8RxSerialBuffer + SL_MSG_RX_SEQ_NO_IDX);
     u8CRC = *(pu8RxSerialBuffer + SL_MSG_RX_CRC__IDX);
 
-#ifdef SL_HOST_TO_JN_SECURE
-    if(FALSE == bSL_SecureDecryptMessage(&u16Length, pu8RxSerialBuffer))
+#ifdef SL_HOST_TO_COPROCESSOR_SECURE
+    if(FALSE == bSL_SecureDecryptMessage(pu8RxSerialBuffer, &u16Length))
     {
         DBG_vPrintf((bool_t)TRUE, "Decryption FAIL\n");
         return FALSE;
@@ -3199,7 +3217,7 @@ PRIVATE uint32 u32GetJNInfoSafe(uint16 u16Type)
     vSL_TxByte((bool_t)FALSE, (uint8)((uint16)(u16Type >> 0U) & 0xffU));
 
     /* Send message length */
-#ifdef SL_HOST_TO_JN_SECURE
+#ifdef SL_HOST_TO_COPROCESSOR_SECURE
     vSL_SecureTransmitLength(u16Length);
 #else
     vSL_TxByte((bool_t)FALSE, (uint8)((uint16)(u16Length >> 8U) & 0xffU));
@@ -3261,6 +3279,226 @@ PRIVATE uint32 u32GetJNInfoSafe(uint16 u16Type)
 PRIVATE void vSl_LogJnerrors(uint32 u32Flags)
 {
 }
+
+#ifdef SL_HOST_TO_COPROCESSOR_SECURE
+/********************************************************************************
+  *
+  * @fn PUBLIC void vSL_SecureTransmitLength
+  *
+  */
+ /**
+  *
+  * @param u16Length uint16
+  *
+  *
+  * @return void
+  *
+ ********************************************************************************/
+PUBLIC void vSL_SecureTransmitLength(uint16 u16Length)
+{
+    if (u16Length)
+    {
+        vSL_TxByte(FALSE, (uint8)((uint16)((u16Length + SL_SECURED_MSG_MIC_SIZE) >> 8U) & 0xffU));
+        vSL_TxByte(FALSE, (uint8)((uint16)((u16Length + SL_SECURED_MSG_MIC_SIZE) >> 0U) & 0xffU));
+    }
+    else
+    {
+        vSL_TxByte(FALSE, (uint8)((uint16)(u16Length >> 8U) & 0xffU));
+        vSL_TxByte(FALSE, (uint8)((uint16)(u16Length >> 0U) & 0xffU));
+    }
+}
+
+/********************************************************************************
+  *
+  * @fn PUBLIC void vSL_SecureTransmitMessageAuth
+  *
+  */
+ /**
+  *
+  * @param u16Length uint16
+  * @param pu8Data uint8 *
+  *
+  *
+  * @return void
+  *
+ ********************************************************************************/
+PUBLIC void vSL_SecureTransmitMessageAuth(uint16 u16Length, uint8 *pu8Data)
+{
+    if (u16Length)
+    {
+        /* Send message authentication */
+        for (uint8 i = 0; i < SL_SECURED_MSG_MIC_SIZE; i++)
+        {
+            vSL_TxByte(FALSE, pu8Data[u16Length+i]);
+        }
+    }
+}
+
+/********************************************************************************
+  *
+  * @fn PUBLIC void vSL_SecureEncryptMessage
+  *
+  */
+ /**
+  *
+  * @param u16Length uint16
+  * @param pu8Data uint8 *
+  *
+  *
+  * @return void
+  *
+ ********************************************************************************/
+PUBLIC void vSL_SecureEncryptMessage(uint16 u16Length, uint8 *pu8Data)
+{
+    if (u16Length)
+    {
+        SEC_vEncryptBlock(pu8Data, u16Length, pu8Data + u16Length);
+    }
+}
+
+/********************************************************************************
+  *
+  * @fn PUBLIC bool_t bSL_SecureDecryptMessage
+  *
+  */
+ /**
+  *
+  * @param pu16Length uint16 *
+  * @param pu8Data uint8 *
+  *
+  *
+  * @return void
+  *
+ ********************************************************************************/
+PUBLIC bool_t bSL_SecureDecryptMessage(uint8 *pu8RxSerialBuffer, uint16 *pu16Length)
+{
+    if (*pu16Length > SL_SECURED_MSG_MIC_SIZE)
+    {
+        uint8 *pu8Data = pu8RxSerialBuffer + SL_MSG_DATA_START_IDX;
+
+        /* Encrypted message from Serial Link contains data & MIC */
+        *pu16Length -= SL_SECURED_MSG_MIC_SIZE;
+
+        if (SEC_bDecryptBlock(pu8Data, *pu16Length, pu8Data+(*pu16Length)) == (bool_t)FALSE)
+        {
+            // Bad MIC is a fatal error as the coprocessor and Host are now out of sync
+            // Need to watchdog and reboot
+            if(!sSLCommon.bIsSlMsgGetVer)
+                APP_vVerifyFatal(FALSE, "Decryption Error on serial link", ERR_FATAL_ZIGBEE_RESTART);
+            return FALSE;
+        }
+        /* Update length in message */
+        memcpy(pu8RxSerialBuffer + SL_MSG_RX_LEN_IDX, pu16Length, sizeof(uint16));
+    }
+
+    return TRUE;
+}
+
+/********************************************************************************
+  *
+  * @fn PUBLIC bool_t SEC_bDecryptBlock
+  *
+  */
+ /**
+  *
+  * @param pu8Data uint8 *
+  * @param u16Length uint16
+  * @param pu8Mic uint8 *
+  *
+  * @brief generates random number as integer
+  *
+  * @return None
+  *
+  * @note
+  *
+  * imported description
+ ********************************************************************************/
+WEAK bool_t SEC_bDecryptBlock(uint8 *pu8Data, uint16 u16Length, uint8 *pu8Mic)
+{
+    CRYPTO_tsAesBlock key,nonce;
+    const uint8 au8key[16] = {0x0, 0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
+    const uint8 au8nonce[16] = {0xa0, 0xa1, 0xa2, 0xa3,0xa4, 0xa5, 0xa6, 0xa7,0x03,0x02,0x01,0x00,0x06,0,0,0};
+    const uint8 au8Auth[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+    bool_t bReturn = FALSE;
+
+    ZBmemcpy(key.au8, au8key, 16);
+    ZBmemset(&nonce, 0, sizeof(CRYPTO_tsAesBlock));
+    ZBmemcpy(&nonce.au8[1], au8nonce, 15);
+
+    bReturn = zbPlatCryptoAesSetKey((CRYPTO_tsReg128*)&key);
+    if(bReturn)
+    {
+        zbPlatCryptoAesCcmStar(
+            FALSE, /* TRUE=Encrypt / FALSE=Decrypt */
+            SL_SECURED_MSG_MIC_SIZE, /* Required number of checksum bytes */
+            sizeof(au8Auth), /* Length of authentication data in bytes */
+            u16Length, /* Length of input data in bytes */
+            &nonce, /* A pointer to the 128bit nonce data */
+            (uint8*)au8Auth, /* Authentication data */
+            pu8Data, /* Input and output data */
+            pu8Mic, /* Checksum (MIC) */
+            &bReturn); /* Authenticated flag */
+        return bReturn;
+    }
+    else
+    {
+        DBG_vPrintf(TRUE, "Fail to set zbPlatCryptoAesSetKey %d\n", bReturn);
+        return bReturn;
+    }
+}
+
+/********************************************************************************
+  *
+  * @fn PUBLIC void SEC_vEncryptBlock
+  *
+  */
+ /**
+  *
+  * @param pu8Data uint8 *
+  * @param u16Length uint16
+  * @param pu8Mic uint8 *
+  *
+  * @brief Encrypt the block
+  *
+  * @return None
+  *
+  * @note
+  *
+  * imported description
+ ********************************************************************************/
+WEAK void SEC_vEncryptBlock(uint8 *pu8Data, uint16 u16Length, uint8 *pu8Mic)
+{
+    CRYPTO_tsAesBlock key,nonce;
+    const uint8 au8key[16] = {0x00, 0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
+    const uint8 au8nonce[16] = {0xa0, 0xa1, 0xa2, 0xa3,0xa4, 0xa5, 0xa6, 0xa7,0x03,0x02,0x01,0x00,0x06,0,0,0};
+    const uint8 au8Auth[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+    bool_t bReturn = FALSE;
+
+    ZBmemcpy(key.au8, au8key, 16);
+    ZBmemset(&nonce, 0, sizeof(CRYPTO_tsAesBlock));
+    ZBmemcpy(&nonce.au8[1], au8nonce, 15);
+
+    bReturn = zbPlatCryptoAesSetKey((CRYPTO_tsReg128*)&key);
+    if(bReturn)
+    {
+        zbPlatCryptoAesCcmStar(
+            TRUE, /* TRUE=Encrypt / FALSE=Decrypt */
+            SL_SECURED_MSG_MIC_SIZE, /* Required number of checksum bytes */
+            sizeof(au8Auth), /* Length of authentication data in bytes */
+            u16Length, /* Length of input data in bytes */
+            &nonce, /* A pointer to the 128bit nonce data */
+            (uint8*)au8Auth, /* Authentication data */
+            pu8Data, /* Input and output data */
+            pu8Mic, /* Checksum (MIC) */
+            NULL); /* Authenticated flag */
+    }
+    else
+    {
+        DBG_vPrintf(TRUE, "Fail to set zbPlatCryptoAesSetKey %d\n", bReturn);
+    }
+}
+
+#endif
 
 /****************************************************************************/
 /***        END OF FILE                                                   ***/

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Copyright 2015-2019, 2022-2023 NXP
+# Copyright 2015-2019, 2022-2024 NXP
 #
 ###############################################################################
 
@@ -54,6 +54,14 @@ ifeq ($(ZIGBEE_PLAT),K32W0)
     SDK_DEVICE_FAMILY   ?= K32W0
     SDK_DEVICE_NAME     ?= K32W061
     SDK_BOARD           ?= k32w061dk6
+else
+ifeq ($(ZIGBEE_PLAT),NCP_HOST)
+    SDK_DEVICE_FAMILY   ?= K32W1
+    SDK_DEVICE_NAME     ?= K32W1480
+    SDK_BOARD           ?= k32w148evk
+else
+    $(error ZIGBEE_PLAT must be set to either K32W0, K32W1 or NCP_HOST)
+endif
 endif
 endif
 
@@ -88,7 +96,9 @@ BOARD_LEVEL_SRC      ?= $(SDK_BASE_DIR)/boards/$(SDK_BOARD)
 FSL_COMPONENTS       ?= $(SDK_BASE_DIR)/components
 
 # OSA Config
+ifneq ($(ZIGBEE_PLAT),NCP_HOST)
 include $(SDK_BASE_DIR)/middleware/wireless/zigbee/BuildConfig/ZBPro/Build/config_OSA.mk
+endif 
 
 # Platform specific configs
 include $(ZIGBEE_BASE_DIR)/platform/$(ZIGBEE_PLAT)/build/device.mk
@@ -128,8 +138,11 @@ CFLAGS += -DSDK_DEVICE_FAMILY=$(SDK_DEVICE_FAMILY)
 CFLAGS += -DPDM_USER_SUPPLIED_ID
 CFLAGS += -DPDM_NO_RTOS
 
+
 ifeq ($(FRAMEWORK_SWITCH),1)
+ifneq ($(ZIGBEE_PLAT),NCP_HOST)
 CFLAGS  += -DZIGBEE_USE_FRAMEWORK=1
+endif
 endif
 
 ##################################################################################
@@ -139,9 +152,13 @@ ifneq ($(SELOTA),NONE)
     APPLIBS += Selective_OTA
 endif
 
+ifneq ($(ZIGBEE_PLAT),NCP_HOST)
 ifneq ($(SELOTA),APP0)
+
     APPLIBS += ZPSTSV
+
     APPLIBS += PDUM
+
     ifeq ($(WWAH),0)
         ifeq ($(LEGACY),0)
             APPLIBS += ZPSAPL$(R22PLUS)
@@ -256,4 +273,10 @@ LDFLAGS += -Wl,--defsym,__ram_vector_table__=$(__ram_vector_table__)
 LDFLAGS += -L $(ZIGBEE_BASE_DIR)/platform/$(ZIGBEE_PLAT)/libs
 LDFLAGS += --specs=nosys.specs
 
+else 
+# Platform is NCP_HOST,get the NCP ver. of the PDUM lib 
+APPLIBS += PDUM_NCP
+# Temporary location for pdum ncp lib
+LDFLAGS += -L $(ZIGBEE_BASE_DIR)/verfication/AT-BDB/Build/libPDUM_NCP
+endif
 ###############################################################################

@@ -84,10 +84,9 @@ PUBLIC teZCL_Status eGP_SinkTableResponseSend(
                         uint8                               u8SourceEndPointId,
                         uint8                               u8DestEndPointId,
                         tsZCL_Address                       *psDestinationAddress,
-                        tsGP_SinkTableRespCmdPayload  *psZgpSinkTableRespCmdPayload)
+                        tsGP_SinkTableRespCmdPayload  *psZgpSinkTableRespCmdPayload,
+                        uint8 *pu8TransactionSequenceNumber)
 {
-
-    uint8 u8TransactionSequenceNumber;
     tsZCL_TxPayloadItem asPayloadDefinition[] = {
      {1,  E_ZCL_ENUM8,   &psZgpSinkTableRespCmdPayload->u8Status},
      {1,  E_ZCL_UINT8,   &psZgpSinkTableRespCmdPayload->u8TotalNoOfEntries},
@@ -107,7 +106,7 @@ PUBLIC teZCL_Status eGP_SinkTableResponseSend(
                               GREENPOWER_CLUSTER_ID,
                               TRUE,
                               E_GP_ZGP_SINK_TABLE_RESPONSE,
-                              &u8TransactionSequenceNumber,
+                              pu8TransactionSequenceNumber,
                               asPayloadDefinition,
                               FALSE,
                               0,
