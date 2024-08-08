@@ -25,6 +25,7 @@
 #if (BDB_SET_DEFAULT_TC_POLICY == TRUE)
 #include "bdb_tkd.h"
 #endif
+#include "bdb_api.h"
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
@@ -68,7 +69,8 @@ PRIVATE bool_t bIsInProgramMode;
 
 #define ZERO_KEY {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 
-ZPS_tsAplApsKeyDescriptorEntry s_keyPairTableStorage[3] = {
+ZPS_tsAplApsKeyDescriptorEntry s_keyPairTableStorage[4] = {
+        {0, 0x0000, ZERO_KEY, 0x00},
         {0, 0x0000, ZERO_KEY, 0x00},
         {0, 0x0000, ZERO_KEY, 0x00},
         {0, 0x0000, ZERO_KEY, 0x00}
@@ -77,6 +79,8 @@ ZPS_tsAplApsKeyDescriptorEntry s_keyPairTableStorage[3] = {
 ZPS_tsAplApsKeyDescriptorEntry  *psAplDefaultDistributedAPSLinkKey = &s_keyPairTableStorage[0];
 ZPS_tsAplApsKeyDescriptorEntry  *psAplDefaultGlobalAPSLinkKey = &s_keyPairTableStorage[1];
 ZPS_tsAplApsKeyDescriptorEntry  *psAplDefaultTCAPSLinkKey = &s_keyPairTableStorage[2];
+ZPS_tsAplApsKeyDescriptorEntry  *psAplTCAPSLinkKey = &s_keyPairTableStorage[3];
+
 uint8 u8NwkKey;
 
 uint32 u32ApsChannelMask[MAX_NUM_OF_CHANNEL_MASK] =
@@ -485,6 +489,7 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
     case (uint16)E_SL_MSG_ZPS_FRAME_COUNTER_HIGH:
     case (uint16)E_SL_MSG_NWK_ROUTE_DISCOVERY:
     case (uint16)E_SL_MSG_PANID_CNFL_INDICATION:
+    case (uint16)E_SL_MSG_TC_STATUS:
 
         if (u16PktType == (uint16)E_SL_MSG_NETWORK_JOINED_FORMED)
         {
@@ -1026,6 +1031,49 @@ PUBLIC void vSL_HandleNwkEvent(
         psStackEvent->uEvent.sNwkJoinFailedEvent.u8Status = (uint8)ZPS_NWK_ENUM_NO_NETWORKS;
         u8TempStatus = (uint8)ZPS_NWK_ENUM_NO_NETWORKS;
         psStackEvent->uEvent.sNwkJoinFailedEvent.bRejoin = (bool_t)FALSE;
+    }
+    else if(u16PktType == (uint16)E_SL_MSG_TC_STATUS)
+    {
+        /* Update Event type */
+        psStackEvent->eType = ZPS_EVENT_TC_STATUS;
+
+        /* Copy TC status */
+        uint8 u8TcStatus = *(pu8Msg+u16Len++);
+        psStackEvent->uEvent.sApsTcEvent.u8Status = u8TcStatus;
+
+        switch (u8TcStatus) 
+        {
+        case ZPS_APL_APS_E_SECURED_LINK_KEY:
+        case ZPS_APL_APS_E_SECURITY_FAIL:
+        {
+            psStackEvent->uEvent.sApsTcEvent.uTcData.u64ExtendedAddress = u64SL_ConvBiToU64(pu8Msg+u16Len);
+            u16Len += sizeof(uint64);
+        }
+        break;
+        case ZPS_E_SUCCESS:
+        {
+            /* Copy outgoing frame counter */
+            psAplTCAPSLinkKey->u32OutgoingFrameCounter = u32SL_ConvBiToU32(pu8Msg+u16Len);
+            u16Len += (uint16)sizeof(uint32);
+
+            /* Copy ext address lookup */
+            psAplTCAPSLinkKey->u16ExtAddrLkup = ((uint16)*(pu8Msg+u16Len++))  << 8U;
+            psAplTCAPSLinkKey->u16ExtAddrLkup += *(pu8Msg+u16Len++);
+
+            /* Copy TC APS link key */
+            (void)ZBmemcpy( psAplTCAPSLinkKey->au8LinkKey, pu8Msg, ZPS_SEC_KEY_LENGTH);
+            u16Len += ZPS_SEC_KEY_LENGTH;
+
+            /* Copy bitmap sec level */
+            psAplTCAPSLinkKey->u8BitMapSecLevl = *(pu8Msg+u16Len++);
+
+            psStackEvent->uEvent.sApsTcEvent.uTcData.pKeyDesc = psAplTCAPSLinkKey;
+        }
+        break;
+        default:
+            DBG_vPrintf(TRUE, "Unhandled ZPS_EVENT_TC_STATUS status %x", u8TcStatus);
+            break;
+        }
     }
     else if (u16PktType == (uint16)E_SL_MSG_NWK_ED_SCAN)
     {

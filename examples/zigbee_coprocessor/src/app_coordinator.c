@@ -683,6 +683,43 @@ PUBLIC void APP_ZpsEventTask(void)
         case ZPS_EVENT_NWK_POLL_CONFIRM:
             break;
 
+        case ZPS_EVENT_TC_STATUS:
+        {
+            uint8 u8TcStatus = sStackEvent.uEvent.sApsTcEvent.u8Status;
+
+            ZNC_BUF_U8_UPD( &au8StatusBuffer[u16Length], u8TcStatus , u16Length );
+
+            switch (u8TcStatus) 
+            {
+            case ZPS_APL_APS_E_SECURED_LINK_KEY:
+            case ZPS_APL_APS_E_SECURITY_FAIL:
+                ZNC_BUF_U64_UPD( &au8StatusBuffer[u16Length], sStackEvent.uEvent.sApsTcEvent.uTcData.u64ExtendedAddress , u16Length );
+                break;
+            case ZPS_E_SUCCESS:
+
+                // sStackEvent.uEvent.sApsTcEvent.uTcData.pKeyDesc.u32OutgoingFrameCounter
+                ZNC_BUF_U32_UPD( &au8StatusBuffer[u16Length], sStackEvent.uEvent.sApsTcEvent.uTcData.pKeyDesc->u32OutgoingFrameCounter , u16Length );
+
+                // sStackEvent.uEvent.sApsTcEvent.uTcData.pKeyDesc.u16ExtAddrLkup
+                ZNC_BUF_U16_UPD( &au8StatusBuffer[u16Length], sStackEvent.uEvent.sApsTcEvent.uTcData.pKeyDesc->u16ExtAddrLkup , u16Length );
+
+                // sStackEvent.uEvent.sApsTcEvent.uTcData.pKeyDesc.au8LinkKey[]
+                memcpy(&au8StatusBuffer[u16Length], sStackEvent.uEvent.sApsTcEvent.uTcData.pKeyDesc->au8LinkKey, ZPS_SEC_KEY_LENGTH);
+                u16Length += ZPS_SEC_KEY_LENGTH;
+                
+                // sStackEvent.uEvent.sApsTcEvent.uTcData.pKeyDesc.u8BitMapSecLevl
+                ZNC_BUF_U8_UPD( &au8StatusBuffer[u16Length], sStackEvent.uEvent.sApsTcEvent.uTcData.pKeyDesc->u8BitMapSecLevl , u16Length );
+
+                break;
+            default:
+                DBG_vPrintf(TRACE_EVENT_HANDLER, "Unhandled ZPS_EVENT_TC_STATUS status %x", u8TcStatus);
+                break;
+            }
+
+            vSL_WriteMessage(E_SL_MSG_TC_STATUS, u16Length, NULL, au8StatusBuffer);
+        }
+        break;
+
         default:
             DBG_vPrintf(TRACE_EVENT_HANDLER, "Unhandled Zps stack event %d", sStackEvent.eType);
             break;
