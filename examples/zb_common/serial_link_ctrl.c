@@ -1994,6 +1994,39 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                     }
                 break;
 
+                case (uint16)E_SL_MSG_FIND_KEY_DESCRIPTOR:
+                    if(NULL != pvData)
+                    {
+                        u16ReadIdx = SL_MSG_RSP_START_IDX;
+                        if ( u8Status == ZPS_E_SUCCESS )
+                        {
+                            /* Copy u32OutgoingFrameCounter */
+                            (void)ZBmemcpy(pu8Temp, &pu8RxBuffer[u16ReadIdx], sizeof(uint32));
+                            pu8Temp += sizeof(uint32);
+                            u16ReadIdx += sizeof(uint32);
+
+                            /* Copy u16ExtAddrLkup*/
+                            (void)ZBmemcpy(pu8Temp, &pu8RxBuffer[u16ReadIdx], sizeof(uint16));
+                            pu8Temp += sizeof(uint16);
+                            u16ReadIdx += sizeof(uint16);
+                             
+                            /* Copy au8LinkKey */
+                            (void)ZBmemcpy(pu8Temp, &pu8RxBuffer[u16ReadIdx], ZPS_SEC_KEY_LENGTH);
+                            pu8Temp += ZPS_SEC_KEY_LENGTH;
+                            u16ReadIdx += ZPS_SEC_KEY_LENGTH;
+
+                            /* Copy u8BitMapSecLevl */
+                            *pu8Temp++ = pu8RxBuffer[u16ReadIdx];
+                            u16ReadIdx ++;
+
+                            /* Copy u32Index */
+                            (void)ZBmemcpy(pu8Temp, &pu8RxBuffer[u16ReadIdx], sizeof(uint32));
+                            pu8Temp += sizeof(uint32);
+                            u16ReadIdx += sizeof(uint32);
+                        }
+                    }
+                break;
+
                 case (uint16)E_SL_MSG_CONVERT_LQI_TO_RSSI_DBM:
                 {
                     if(NULL != pu8Temp)

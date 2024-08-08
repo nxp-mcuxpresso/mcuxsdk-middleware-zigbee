@@ -717,6 +717,56 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
+    case E_SL_MSG_FIND_KEY_DESCRIPTOR:
+    {
+        uint16 u16Index = 0x00;
+        ZPS_tsAplApsKeyDescriptorEntry* psEntry;
+        uint32 u32Index = 0;
+        uint64 u64DeviceAddr = 0x00U;
+
+        /* copy u64DeviceAddr */
+        u64DeviceAddr = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+
+        psEntry = zps_psFindKeyDescr(ZPS_pvAplZdoGetAplHandle(), u64DeviceAddr, &u32Index);
+
+        if(psEntry != NULL)
+        {
+            /* Copy sEntry.u32OutgoingFrameCounter for sending over serial */
+            ZNC_BUF_U32_UPD( &au8values[u8TxLength],  psEntry->u32OutgoingFrameCounter, u8TxLength );
+
+            /* Copy sEntry.u16ExtAddrLkup for sending over serial */
+            ZNC_BUF_U16_UPD( &au8values[u8TxLength], psEntry->u16ExtAddrLkup, u8TxLength );
+
+            /* Copy sEntry.au8LinkKey for sending over serial. Both are byte arrays, endianness irrelevant */
+            memcpy(&au8values[u8TxLength], psEntry->au8LinkKey, ZPS_SEC_KEY_LENGTH);
+            u8TxLength += ZPS_SEC_KEY_LENGTH;
+
+            /* Copy sEntry.u8BitMapSecLevl */
+            /*
+                * This is done in the same way in zigbee/ZPSAPL/Source/APS/zps_apl_aib.c, in
+                * function zps_u8AplAibGetDeviceApsKeyType
+                */
+            if (psEntry->u8BitMapSecLevl == ZPS_APS_NO_KEY_PRESENT)
+            {
+                ZNC_BUF_U8_UPD( &au8values[u8TxLength], ZPS_APS_UNIQUE_LINK_KEY, u8TxLength);
+            }
+            else
+            {
+                ZNC_BUF_U8_UPD( &au8values[u8TxLength],  psEntry->u8BitMapSecLevl, u8TxLength );
+            }
+
+            /* Copy u32Index for sending over serial */
+            ZNC_BUF_U32_UPD( &au8values[u8TxLength],  u32Index, u8TxLength );
+
+            u8Status = 0x00;
+        }
+        else
+        {
+            u8Status = 0x1;
+        }
+        break;
+    }
+
     case E_SL_MSG_GET_NWK_KEY:
     {
         uint8 u8NWKKey = *(( uint8* ) ZPS_pvNwkSecGetNetworkKey ( ZPS_pvAplZdoGetNwkHandle ( ) ));

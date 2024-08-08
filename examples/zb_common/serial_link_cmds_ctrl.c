@@ -85,6 +85,8 @@ uint32 u32ApsChannelMask[MAX_NUM_OF_CHANNEL_MASK] =
 uint8 u8NumberOfNetworks;
 ZPS_tsNwkNetworkDescr psNwkDescriptors[ZPS_NWK_MAX_DISC_NWK_DESCRS]; 
 
+ZPS_tsAplApsKeyDescriptorEntry sKeyDescriptorEntry = {0, 0x0000, ZERO_KEY, 0x00};
+
 /****************************************************************************/
 /***        Exported Functions                                            ***/
 /****************************************************************************/
@@ -7745,9 +7747,54 @@ PUBLIC ZPS_teStatus zps_eAplZdoJoinNetwork(void *pvApl, ZPS_tsNwkNetworkDescr *p
 
 PUBLIC ZPS_tsAplApsKeyDescriptorEntry *zps_psFindKeyDescr(void *pvApl,  uint64 u64DeviceAddr,  uint32* pu32Index)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return NULL;
+    uint8 au8TxSerialBuffer[40];
+    uint8 *pu8TxBuffer;
+    uint8 u8Status;
+    uint8 u8Index = 0;
+    uint16 u16TxLength = 0x00U;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    uint8 au8FindKeyDescResp[27];
+
+    /* Copy u64DeviceAddr */
+    vSL_ConvU64ToBi(u64DeviceAddr, pu8TxBuffer);
+    pu8TxBuffer += sizeof(uint64);
+    u16TxLength += sizeof(uint64);
+
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_FIND_KEY_DESCRIPTOR, u16TxLength, au8TxSerialBuffer, au8FindKeyDescResp);
+
+    if (u8Status == ZPS_E_SUCCESS)
+    {
+        
+        /* Copy sKeyDescriptorEntry.u32OutgoingFrameCounter */
+        sKeyDescriptorEntry.u32OutgoingFrameCounter = u32SL_ConvBiToU32(&au8FindKeyDescResp[u8Index]);
+        u8Index += sizeof(uint32);
+
+        /* Copy sKeyDescriptorEntry.u16ExtAddrLkup */
+        sKeyDescriptorEntry.u16ExtAddrLkup = ((uint32)au8FindKeyDescResp[u8Index++] << 8U);
+        sKeyDescriptorEntry.u16ExtAddrLkup += (uint32)au8FindKeyDescResp[u8Index++];
+        
+        /*Copy sKeyDescriptorEntry.au8LinkKey */
+        memcpy(sKeyDescriptorEntry.au8LinkKey, &au8FindKeyDescResp[u8Index], ZPS_SEC_KEY_LENGTH);
+        u8Index += ZPS_SEC_KEY_LENGTH;
+
+        /* sKeyDescriptorEntry.u8BitMapSecLevl */
+        sKeyDescriptorEntry.u8BitMapSecLevl = au8FindKeyDescResp[u8Index];
+        u8Index += sizeof(uint8);
+
+        /* Copy u32Index */
+        *pu32Index = u32SL_ConvBiToU32(&au8FindKeyDescResp[u8Index]);
+        u8Index += sizeof(uint32);
+        
+        return &sKeyDescriptorEntry;
+    }
+    else
+    {
+        return NULL;
+    }
 }
+
 PUBLIC ZPS_teStatus zps_eAplFormDistributedNetworkRouter(
     void *pvApl ,
     ZPS_tsAftsStartParamsDistributed *psStartParms,
