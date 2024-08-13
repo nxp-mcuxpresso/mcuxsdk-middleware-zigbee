@@ -530,6 +530,8 @@ PUBLIC void APP_ZpsEventTask(void)
             else if ( (sStackEvent.eType == ZPS_EVENT_NWK_JOINED_AS_ROUTER) ||
                     (sStackEvent.eType == ZPS_EVENT_NWK_JOINED_AS_ENDDEVICE  ))
             {
+                sNcpDeviceDesc.eNodeState = E_RUNNING;
+                sNcpDeviceDesc.eState = NOT_FACTORY_NEW;
                 //uint8 i;
                 bRejoinInProgress = FALSE;
                 vResetBeaconCount();
