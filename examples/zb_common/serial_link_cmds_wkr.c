@@ -3799,36 +3799,12 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     break;
     case E_SL_MSG_START_ROUTER:
     {
-        ZPS_tsAftsStartParamsDistributed sStartParms;
-        uint16 u16Index = 0;
-        uint64 u64TCAddr;
-        uint8 au8NwkKey[16];
-
-        /* Both are byte arrays, endianness irrelevant */
-        memcpy(au8NwkKey, au8LinkRxBuffer, 16);
-        u16Index     += 16;
-
-        sStartParms.u64ExtPanId = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
-
-        u64TCAddr = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
-
-        sStartParms.u8KeyIndex       = ZNC_RTN_U8_OFFSET(au8LinkRxBuffer, u16Index, u16Index);
-        sStartParms.u8LogicalChannel = ZNC_RTN_U8_OFFSET(au8LinkRxBuffer, u16Index, u16Index);
-
-        ZNC_RTN_U16_OFFSET( &au8LinkRxBuffer[u16Index],  sStartParms.u16NwkAddr, u16Index );
-        ZNC_RTN_U16_OFFSET( &au8LinkRxBuffer[u16Index],  sStartParms.u16PanId, u16Index );
-
-        sStartParms.pu8NwkKey = au8NwkKey;
-
-        u8Status = ZPS_eAplFormDistributedNetworkRouter( &sStartParms, TRUE);
-
-        ZPS_eAplAibSetApsTrustCenterAddress(u64TCAddr);
-        /* set and save the device state */
+        u8Status = zps_eAplZdoStartRouter(ZPS_pvAplZdoGetAplHandle(), (bool_t)au8LinkRxBuffer[0]);
         sNcpDeviceDesc.eNodeState = E_RUNNING;
         sNcpDeviceDesc.eState = NOT_FACTORY_NEW;
         vSaveDevicePdmRecord();
-        break;
     }
+    break;
     case E_SL_MSG_GET_MAC_TYPE:
     {
         /* Version is <Installer version : 16bits><Node version : 16bits> */

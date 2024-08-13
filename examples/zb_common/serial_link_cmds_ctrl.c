@@ -3882,80 +3882,6 @@ PUBLIC ZPS_teStatus eSendGetClearMacIfTxCount(uint8 u8GetClear,
 
 /********************************************************************************
   *
-  * @fn PUBLIC uint8 u8SendStrtRouter
-  *
-  */
- /**
-  *
-  * @param pu8NwkKey uint8 *
-  * @param u64Epid uint64
-  * @param u64TCAddr uint64
-  * @param u8KSN uint8
-  * @param u8Channel uint8
-  * @param u16NwkAddr uint16
-  * @param u16PanId uint16
-  *
-  * @brief void
-  *
-  * @return PUBLIC uint8
-  *
-  * @note
-  *
- ********************************************************************************/
-PUBLIC uint8 u8SendStrtRouter( uint8 *pu8NwkKey,
-                               uint64 u64Epid,
-                               uint64 u64TCAddr,
-                               uint8 u8KSN,
-                               uint8 u8Channel,
-                                 uint16 u16NwkAddr,
-                                 uint16 u16PanId)
-{
-    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], u8Status;
-    uint16 u16TxLength = 0x00U;
-    uint8 *pu8TxBuffer;
-
-    pu8TxBuffer = au8TxSerialBuffer;
-
-    /* Copy Network Key */
-    (void)ZBmemcpy(pu8TxBuffer, pu8NwkKey, 16UL);
-    u16TxLength += 16U;
-    pu8TxBuffer += 16;
-
-    /* Copy Extended PAN ID */
-    vSL_ConvU64ToBi( u64Epid, pu8TxBuffer);
-    u16TxLength += sizeof(uint64);
-    pu8TxBuffer += sizeof(uint64);
-
-    /* Copy Trust Center Address */
-    vSL_ConvU64ToBi( u64TCAddr, pu8TxBuffer);
-    u16TxLength += sizeof(uint64);
-    pu8TxBuffer += sizeof(uint64);
-
-    /* Copy Key Sequence Number */
-    *pu8TxBuffer++  = u8KSN;
-    u16TxLength++;
-
-    /* Copy Channel */
-    *pu8TxBuffer++  = u8Channel;
-    u16TxLength++;
-
-    /* Copy Network Address */
-    *pu8TxBuffer++ = (uint8)(u16NwkAddr >> 8U);
-    *pu8TxBuffer++ = (uint8)u16NwkAddr;
-    u16TxLength += sizeof(uint16);
-
-    /* Copy PAN ID */
-    *pu8TxBuffer++ = (uint8)(u16PanId >> 8U);
-    *pu8TxBuffer++ = (uint8)u16PanId;
-    u16TxLength += sizeof(uint16);
-
-    /* Send over serial */
-    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_START_ROUTER, u16TxLength, au8TxSerialBuffer, NULL);
-    return u8Status;
-}
-
-/********************************************************************************
-  *
   * @fn PUBLIC uint8 u8SendCloneZed
   *
   */
@@ -7870,8 +7796,8 @@ PUBLIC ZPS_teStatus zps_eAplZdoBind(    void   *pvApl,
 }
 PUBLIC ZPS_teStatus zps_eAplZdoStartRouter(void *pvApl, bool_t bDeviceAnnounce)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return 0;
+    uint8 u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_START_ROUTER, (uint16)sizeof(bDeviceAnnounce), &bDeviceAnnounce, NULL);
+    return u8Status;
 }
 
 uint64 zps_u64NwkLibFromPayload(

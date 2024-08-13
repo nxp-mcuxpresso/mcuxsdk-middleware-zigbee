@@ -132,14 +132,6 @@ PUBLIC ZPS_teStatus APP_eAplZdoUnbind( uint16 u16ClusterId,
                                       uint8 u8DstEndpoint,
                                       uint8 u8DstAddrMode);
 
-PUBLIC uint8 u8SendStrtRouter( uint8* pu8NwkKey,
-                               uint64 u64Epid,
-                               uint64 u64TCAddr,
-                               uint8 u8KSN,
-                               uint8 u8Channel,
-                                 uint16 u16NwkAddr,
-                                 uint16 u16PanId);
-
 PUBLIC uint8 u8SendPdmConversionCommand(uint8 u8FromVersion, uint8 u8ToVersion);
 PUBLIC ZPS_teStatus eSL_EnableDisableDualMac(uint8 u8Endpoint,
                                              uint16 u16ClusterId,
