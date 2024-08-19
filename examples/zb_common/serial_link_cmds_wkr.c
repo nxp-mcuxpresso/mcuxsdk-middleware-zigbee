@@ -2908,8 +2908,10 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         ZPS_teNwkDeviceType eNwkDeviceType = (ZPS_teNwkDeviceType) au8LinkRxBuffer[0];
         ZPS_vNwkSetDeviceType(ZPS_pvAplZdoGetNwkHandle(), eNwkDeviceType);
         sNcpDeviceDesc.u8DeviceType = ZPS_ZDO_DEVICE_ROUTER;
+
+        break;
     }
-    
+        
     case E_SL_MSG_GET_NWK_INTERFACE_REQ:
     {
         uint8 u8InterfaceIndex;
