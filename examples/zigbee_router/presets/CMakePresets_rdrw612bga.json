@@ -1,0 +1,61 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "include": [
+        "CMakePresets_common.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "router-rdrw612bga",
+            "displayName": "Zigbee Router RD-RW612-BGA",
+            "description": "Build Zigbee Router on RD-RW612-BGA board",
+            "inherits": [
+                "router",
+                "rdrw612bga"
+            ]
+        },
+        {
+            "name": "router-r23-rdrw612bga",
+            "displayName": "Zigbee Router R23 RD-RW612-BGA",
+            "description": "Build Zigbee Router R23 on RD-RW612-BGA board",
+            "inherits": [
+                "router-r23",
+                "rdrw612bga"
+            ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "router-rdrw612bga-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "router-rdrw612bga",
+            "configuration": "Debug"
+        },
+        {
+            "name": "router-rdrw612bga-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "router-rdrw612bga",
+            "configuration": "MinSizeRel"
+        },
+        {
+            "name": "router-r23-rdrw612bga-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "router-r23-rdrw612bga",
+            "configuration": "Debug"
+        },
+        {
+            "name": "router-r23-rdrw612bga-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "router-r23-rdrw612bga",
+            "configuration": "MinSizeRel"
+        }
+    ]
+}

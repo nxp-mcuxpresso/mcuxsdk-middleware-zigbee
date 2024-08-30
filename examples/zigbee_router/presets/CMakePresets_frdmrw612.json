@@ -1,0 +1,61 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "include": [
+        "CMakePresets_common.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "router-frdmrw612",
+            "displayName": "Zigbee Router FRDM-RW612",
+            "description": "Build Zigbee Router on FRDM-RW612 board",
+            "inherits": [
+                "router",
+                "frdmrw612"
+            ]
+        },
+        {
+            "name": "router-r23-frdmrw612",
+            "displayName": "Zigbee Router R23 FRDM-RW612",
+            "description": "Build Zigbee Router R23 on FRDM-RW612 board",
+            "inherits": [
+                "router-r23",
+                "frdmrw612"
+            ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "router-frdmrw612-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "router-frdmrw612",
+            "configuration": "Debug"
+        },
+        {
+            "name": "router-frdmrw612-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "router-frdmrw612",
+            "configuration": "MinSizeRel"
+        },
+        {
+            "name": "router-r23-frdmrw612-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "router-r23-frdmrw612",
+            "configuration": "Debug"
+        },
+        {
+            "name": "router-r23-frdmrw612-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "router-r23-frdmrw612",
+            "configuration": "MinSizeRel"
+        }
+    ]
+}

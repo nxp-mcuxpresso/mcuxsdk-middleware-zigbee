@@ -1,0 +1,61 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "include": [
+        "CMakePresets_common.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "ed-rdrw612bga",
+            "displayName": "Zigbee EndDevice RD-RW612-BGA",
+            "description": "Build Zigbee EndDevice on RD-RW612-BGA board",
+            "inherits": [
+                "ed",
+                "rdrw612bga"
+            ]
+        },
+        {
+            "name": "ed-r23-rdrw612bga",
+            "displayName": "Zigbee EndDevice R23 RD-RW612-BGA",
+            "description": "Build Zigbee EndDevice R23 on RD-RW612-BGA board",
+            "inherits": [
+                "ed-r23",
+                "rdrw612bga"
+            ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "ed-rdrw612bga-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "ed-rdrw612bga",
+            "configuration": "Debug"
+        },
+        {
+            "name": "ed-rdrw612bga-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "ed-rdrw612bga",
+            "configuration": "MinSizeRel"
+        },
+        {
+            "name": "ed-r23-rdrw612bga-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "ed-r23-rdrw612bga",
+            "configuration": "Debug"
+        },
+        {
+            "name": "ed-r23-rdrw612bga-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "ed-r23-rdrw612bga",
+            "configuration": "MinSizeRel"
+        }
+    ]
+}

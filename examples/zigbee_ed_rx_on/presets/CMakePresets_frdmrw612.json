@@ -1,0 +1,61 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "include": [
+        "CMakePresets_common.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "ed-frdmrw612",
+            "displayName": "Zigbee EndDevice FRDM-RW612",
+            "description": "Build Zigbee EndDevice on FRDM-RW612 board",
+            "inherits": [
+                "ed",
+                "frdmrw612"
+            ]
+        },
+        {
+            "name": "ed-r23-frdmrw612",
+            "displayName": "Zigbee EndDevice R23 FRDM-RW612",
+            "description": "Build Zigbee EndDevice R23 on FRDM-RW612 board",
+            "inherits": [
+                "ed-r23",
+                "frdmrw612"
+            ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "ed-frdmrw612-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "ed-frdmrw612",
+            "configuration": "Debug"
+        },
+        {
+            "name": "ed-frdmrw612-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "ed-frdmrw612",
+            "configuration": "MinSizeRel"
+        },
+        {
+            "name": "ed-r23-frdmrw612-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "ed-r23-frdmrw612",
+            "configuration": "Debug"
+        },
+        {
+            "name": "ed-r23-frdmrw612-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "ed-r23-frdmrw612",
+            "configuration": "MinSizeRel"
+        }
+    ]
+}

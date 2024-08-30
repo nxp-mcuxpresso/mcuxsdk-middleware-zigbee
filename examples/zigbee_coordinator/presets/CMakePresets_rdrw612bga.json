@@ -1,0 +1,63 @@
+{
+    "version": 5,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "include": [
+        "CMakePresets_common.json"
+    ],
+    "configurePresets": [
+        {
+            "name": "coordinator-rdrw612bga",
+            "displayName": "Zigbee Coordinator RD-RW612-BGA",
+            "description": "Build Zigbee Coordinator on RD-RW612-BGA board",
+            "inherits": [
+                "coordinator",
+                "rdrw612bga"
+            ],
+            "hidden": false
+        },
+        {
+            "name": "coordinator-r23-rdrw612bga",
+            "displayName": "Zigbee Coordinator R23 RD-RW612-BGA",
+            "description": "Build Zigbee Coordinator R23 on RD-RW612-BGA board",
+            "inherits": [
+                "coordinator-r23",
+                "rdrw612bga"
+            ],
+            "hidden": false
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "coordinator-rdrw612bga-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "coordinator-rdrw612bga",
+            "configuration": "Debug"
+        },
+        {
+            "name": "coordinator-rdrw612bga-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "coordinator-rdrw612bga",
+            "configuration": "MinSizeRel"
+        },
+        {
+            "name": "coordinator-r23-rdrw612bga-debug",
+            "description": "Build only the Debug configuration",
+            "displayName": "Debug",
+            "configurePreset": "coordinator-r23-rdrw612bga",
+            "configuration": "Debug"
+        },
+        {
+            "name": "coordinator-r23-rdrw612bga-minsizerel",
+            "description": "Build only the MinSizeRel configuration",
+            "displayName": "MinSizeRel",
+            "configurePreset": "coordinator-r23-rdrw612bga",
+            "configuration": "MinSizeRel"
+        }
+    ]
+}

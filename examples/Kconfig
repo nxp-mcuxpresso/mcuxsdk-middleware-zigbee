@@ -1,0 +1,34 @@
+# examples configuration
+
+# Copyright 2024 NXP
+# SPDX-License-Identifier: BSD-3-Clause
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.examples_common
+    bool
+    select MCUX_COMPONENT_middleware.wireless.zigbee.freertos_common if  MCUX_COMPONENT_middleware.freertos-kernel
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.coprocessor
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.examples_common_ota_client
+    bool
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.examples_common_ota_server
+    bool
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator 
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.serial_link_wkr
+    bool "Coprocessor Serial Link support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coprocessor
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.freertos_common
+    bool
+    depends on MCUX_COMPONENT_middleware.freertos-kernel
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.ncp_host
+    bool

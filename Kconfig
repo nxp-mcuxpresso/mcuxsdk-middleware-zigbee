@@ -1,0 +1,265 @@
+# Copyright 2024 NXP
+# SPDX-License-Identifier: BSD-3-Clause
+
+menuconfig MCUX_COMPONENT_middleware.wireless.zigbee
+    bool "MCUX Connectivity Zigbee"
+    help
+      Enable the MCUX Connectivity Zigbee
+      
+    if MCUX_COMPONENT_middleware.wireless.zigbee
+        rsource "platform/Kconfig"
+        rsource "BDB/Kconfig"
+        rsource "examples/Kconfig"
+        rsource "tools/Kconfig"
+        rsource "ZCIF/Kconfig"
+        rsource "ZCL/Kconfig"
+        rsource "ZigbeeCommon/Kconfig"
+
+        config MCUX_COMPONENT_middleware.wireless.zigbee.features
+            bool "MCUX Zigbee Additional Capabilities"
+
+            if MCUX_COMPONENT_middleware.wireless.zigbee.features
+            endif
+
+        choice
+        optional
+            prompt "MCUX Zigbee examples selection"
+            optional
+
+        config MCUX_COMPONENT_middleware.wireless.zigbee.coordinator
+            bool "MCUX Zigbee Coordinator Example"
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.tools
+            select MCUX_COMPONENT_middleware.wireless.zigbee.core_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.examples_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.examples_common_ota_server
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_nwksteering
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_nwkformation
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_findbind_initiator
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_transport_keydecider
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcif
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_hf
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_general
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_ota_server
+            select MCUX_COMPONENT_middleware.wireless.zigbee.device_zha_generic
+
+            help
+              The zigbee Coordinator example is a simple coordinator example on the MCUXpresso SDK.
+              The application implements a Zigbee coordinator that can form a network and steer it.
+            
+            if MCUX_COMPONENT_middleware.wireless.zigbee.coordinator
+                choice Feature
+                bool "Feature selection"
+                default ZB_COORD_R22_REVISION
+                    config ZB_COORD_R22_REVISION
+                        bool "Zigbee PRO 2017 (R22) selected"
+                        select MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs
+                    config ZB_COORD_R23_REVISION
+                        bool "Zigbee PRO 2023 (R23) selected"
+                        select MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs_r23
+                endchoice
+
+                config ZB_COORD_SINGLE_CHANNEL
+                    int "ZB_COORD_SINGLE_CHANNEL"
+                    default 12
+                    help
+                        Zigbee Coordinator channel selection
+                config ZB_COORD_TRACE_APP
+                    bool "Enable application tracing"
+                    default y
+                    help
+                        Zigbee Coordinator enable/disable application tracing
+                config ZB_COORD_TRACE_ZCL
+                    bool "Enable ZCL tracing"
+                    default y
+                    help
+                        Zigbee Coordinator enable/disable ZCL tracing
+            endif
+
+        config MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off
+            bool "MCUX Zigbee End Device Rx Off Example"
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.tools
+            select MCUX_COMPONENT_middleware.wireless.zigbee.core_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.examples_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.examples_common_ota_client
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_nwksteering
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_findbind_target
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcif
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_hf
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_general
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_ota_client
+            select MCUX_COMPONENT_middleware.wireless.zigbee.device_zha_generic
+
+            help
+              The zigbee_ed_rx_off example is a simple end device example on the MCUXpresso SDK.
+              The application implements a Zigbee end device RX off that will attempt to connect 
+              to a Zigbee coordinator.
+            
+            if MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off
+                choice Feature
+                bool "Feature selection"
+                default ZB_ED_RXOFF_R22_REVISION
+                    config ZB_ED_RXOFF_R22_REVISION
+                        bool "Zigbee PRO 2017 (R22) selected"
+                        select MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs
+                    config ZB_ED_RXOFF_R23_REVISION
+                        bool "Zigbee PRO 2023 (R23) selected"
+                        select MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs_r23
+                endchoice
+
+                config ZB_ED_RXOFF_SINGLE_CHANNEL
+                    int "ZB_ED_RXOFF_SINGLE_CHANNEL"
+                    default 12
+                    help
+                        Zigbee Enddevice rx off channel selection
+                config ZB_ED_RXOFF_TRACE_APP
+                    bool "Enable application tracing"
+                    default y
+                    help
+                        Zigbee Enddevice rx off enable/disable application tracing
+                config ZB_ED_RXOFF_TRACE_ZCL
+                    bool "Enable ZCL tracing"
+                    default y
+                    help
+                        Zigbee Enddevice rx off enable/disable ZCL tracing
+
+            endif
+
+        config MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on
+            bool "MCUX Zigbee End Device Rx On Example"
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.tools
+            select MCUX_COMPONENT_middleware.wireless.zigbee.core_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.examples_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.examples_common_ota_client
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_nwksteering
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_findbind_target
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcif
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_hf
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_general
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_ota_client
+            select MCUX_COMPONENT_middleware.wireless.zigbee.device_zha_generic
+
+            help
+              The zigbee_ed_rx_on example is a simple end device example on the MCUXpresso SDK.
+              The application implements a Zigbee end device RX on that will attempt to connect 
+              to a Zigbee coordinator.
+            
+            if MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on
+                choice Feature
+                bool "Feature selection"
+                default ZB_ED_RXON_R22_REVISION
+                    config ZB_ED_RXON_R22_REVISION
+                        bool "Zigbee PRO 2017 (R22) selected"
+                        select MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs
+                    config ZB_ED_RXON_R23_REVISION
+                        bool "Zigbee PRO 2023 (R23) selected"
+                        select MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs_r23
+                endchoice
+
+                config ZB_ED_RXON_SINGLE_CHANNEL
+                    int "ZB_ED_RXON_SINGLE_CHANNEL"
+                    default 12
+                    help
+                        Zigbee Enddevice rx on channel selection
+                config ZB_ED_RXON_TRACE_APP
+                    bool "Enable application tracing"
+                    default y
+                    help
+                        Zigbee Enddevice rx on enable/disable application tracing
+                config ZB_ED_RXON_TRACE_ZCL
+                    bool "Enable ZCL tracing"
+                    default y
+                    help
+                        Zigbee Enddevice rx on enable/disable ZCL tracing
+            endif
+
+        config MCUX_COMPONENT_middleware.wireless.zigbee.router
+            bool "MCUX Zigbee Router Example"
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.tools
+            select MCUX_COMPONENT_middleware.wireless.zigbee.core_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.examples_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.examples_common_ota_client
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_nwksteering
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_findbind_target
+            select MCUX_COMPONENT_middleware.wireless.zigbee.bdb_outofband
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcif
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_hf
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_general
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_ota_client
+            select MCUX_COMPONENT_middleware.wireless.zigbee.device_zha_generic
+            help
+              The Zigbee Router example is a simple router example on the MCUXpresso SDK.
+              The application implements a Zigbee router that will attempt to connect to a Zigbee
+              coordinator.
+            
+            if MCUX_COMPONENT_middleware.wireless.zigbee.router
+                choice Feature
+                bool "Feature selection"
+                default ZB_ROUTER_R22_REVISION
+                    config ZB_ROUTER_R22_REVISION
+                        bool "Zigbee PRO 2017 (R22) selected"
+                        select MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs
+                    config ZB_ROUTER_R23_REVISION
+                        bool "Zigbee PRO 2023 (R23) selected"
+                        select MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs_r23
+                endchoice
+
+                config ZB_ROUTER_SINGLE_CHANNEL
+                    int "ZB_ROUTER_SINGLE_CHANNEL"
+                    default 12
+                    help
+                        Zigbee Router channel selection
+                config ZB_ROUTER_TRACE_APP
+                    bool "Enable application tracing"
+                    default y
+                    help
+                        Zigbee Router enable/disable application tracing
+                config ZB_ROUTER_TRACE_ZCL
+                    bool "Enable ZCL tracing"
+                    default y
+                    help
+                        Zigbee Router on enable/disable ZCL tracing
+            endif
+
+        config MCUX_COMPONENT_middleware.wireless.zigbee.coprocessor
+            bool "MCUX Zigbee Coprocessor Example"
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.tools
+            select MCUX_COMPONENT_middleware.wireless.zigbee.core_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.examples_common
+            select MCUX_COMPONENT_middleware.wireless.zigbee.serial_link_wkr
+
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcif_hf
+            select MCUX_COMPONENT_middleware.wireless.zigbee.zcl_hf
+            select MCUX_COMPONENT_middleware.wireless.zigbee.device_zha_generic
+            select MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs
+
+            help
+              The zigbee_coprocessor application is a simple demonstration program 
+              based on the MCUXpresso SDK. This application implements a zigbee coprocessor.
+            
+            if MCUX_COMPONENT_middleware.wireless.zigbee.coprocessor
+                config ZB_COPROCESSOR_TRACE_APP
+                    bool "Enable application tracing"
+                    default y
+                    help
+                        Zigbee Coprocessor enable/disable application tracing
+            endif
+        endchoice
+    endif
+

@@ -1,0 +1,145 @@
+# ZCL configuration
+
+# Copyright 2024 NXP
+# SPDX-License-Identifier: BSD-3-Clause
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_hf
+    bool
+    help
+      Zigbee module providing include paths for various headers
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_appliance_mgmt
+    bool "Appliance Management Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Appliance Management Cluster support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_closures
+    bool "Closures Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Closures Cluster support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_commissioning
+    bool "Commissioning Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Commissioning Cluster support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_general
+    bool "General Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router
+    help
+      Zigbee module providing APIs to handle General Cluster support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_general_pollcontrol
+    bool "General Poll Control Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle General Poll Control Cluster support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_greenpower
+    bool "Green Power Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Green Power Cluster support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_hvac
+    bool "HVAC (Heating, Ventilation, and Air-Conditioning) Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle HVAC support Cluster support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_lighting
+    bool "Lighting Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Lighting Cluster support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_measurement_sensing
+    bool "Measurement and Sensing Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Measurement and Sensing Cluster support
+    
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_ota_server
+    bool "Over-the-Air Server Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator
+    help
+      Zigbee module providing APIs to handle Over-the-Air Server Cluster support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_ota_client
+    bool "Over-the-Air Client Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router
+    help
+      Zigbee module providing APIs to handle Over-the-Air Client Cluster support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_security_safety
+    bool "Security and Safety Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Security and Safety Cluster support
+      
+config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_smart_energy
+    bool "Smart Energy Cluster support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Smart Energy Cluster support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.device_zgp
+    bool "Green Power Device support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Green Power Device support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.device_zha_appliance_mgmt
+    bool "Appliance Management Device support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Appliance Management Device support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.device_zha_closures
+    bool "Closures Device support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Closures Device support
+    
+config MCUX_COMPONENT_middleware.wireless.zigbee.device_zha_generic
+    bool "Home Automation Basic Device support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.coprocessor
+    help
+      Zigbee module providing APIs to handle Home Automation Basic Device support
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.device_zha_hvac
+    bool "Closures Device support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Closures Device support
+      
+config MCUX_COMPONENT_middleware.wireless.zigbee.device_zha_security_safety
+    bool "Security and Safety Device support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Security and Safety Device support
+      
+config MCUX_COMPONENT_middleware.wireless.zigbee.device_zha_smart_energy
+    bool "Smart Energy Device support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Smart Energy Device support
+      
+config MCUX_COMPONENT_middleware.wireless.zigbee.device_zlo
+    bool "Lighting and Occupancy Device support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.features
+    help
+      Zigbee module providing APIs to handle Lighting and Occupancy Device
+

@@ -1,0 +1,110 @@
+# Copyright 2024 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
+if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x)
+    mcux_add_source(
+        SOURCES
+            ../zb_platform.h
+            ../common/framework/Common/dbg.h
+            ../common/framework/Common/glue.h
+            ../common/framework/Common/Heap.h
+            ../common/framework/Common/jendefs.h
+            ../common/framework/Common/MicroSpecific_arm_sdk2.h
+            ../common/framework/Common/MicroSpecific_JN518x.h
+            ../common/framework/Common/MicroSpecific.h
+            ../common/framework/PDM/PDM_adapter_nvs.c
+            ../common/framework/PWRM/PWRM_adapter.c
+            ../common/framework/PWRM/Include/pwrm.h
+            ../common/framework/SecLib/aessw_ccm.h
+            ../common/framework/SecLib/aes_mmo.c
+            ../common/framework/SecLib/SecLib_.c
+            ../common/timer.c
+            ../common/console.c
+            ../common/crypto.c
+            platform/buttons.c
+            platform/uart.c
+            platform/glue.c
+            platform/wdog.c
+            platform/leds.c
+    )
+    mcux_add_include(
+        INCLUDES
+            ..
+            ../common/framework/Common
+            ../common/framework/PWRM/Include
+            ../common/framework/SecLib
+    )
+    mcux_add_macro(
+        JENNIC_CHIP=JN5189
+        JENNIC_CHIP_JN5189
+        JENNIC_CHIP_NAME=_JN5189
+        JENNIC_CHIP_FAMILY=JN518x
+        JENNIC_CHIP_FAMILY_JN518x
+        JENNIC_CHIP_FAMILY_NAME=_JN518x
+        JN5189=5189
+        JN518x=5189
+        JENNIC_STACK_MAC
+        JENNIC_MAC_MiniMac
+        ZIGBEE_USE_FRAMEWORK=1
+        LITTLE_ENDIAN_PROCESSOR
+        gAppOtaExternalStorage_c=1
+        CONFIG_MONOLITHIC_BLE_15_4=1
+        CONFIG_SOC_SERIES_RW6XX_REVISION_A2=1
+        RW610
+        BLE_FW_ADDRESS=0
+        WIFI_FW_ADDRESS=0
+        gEepromParams_bufferedWrite_c=1
+        IMU_TASK_PRIORITY=1
+        MCUXPRESSO_SDK
+        FSL_RTOS_FREE_RTOS
+    )
+endif()
+
+if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs)
+    mcux_add_library(
+        LIBS
+            libs/libZPSGP.a
+            libs/libZPSIPAN.a
+            libs/libZPSAPL.a
+            libs/libZPSMAC_Mini_SOC.a
+            libs/libZPSNWK.a
+            libs/libZPSTSV.a
+    )
+endif()
+
+if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs_r23)
+    mcux_add_library(
+        LIBS
+            libs/libZPSGP.a
+            libs/libZPSIPAN.a
+            libs/libZPSAPL_R23.a
+            libs/libZPSMAC_Mini_SOC.a
+            libs/libZPSNWK_R23.a
+            libs/libZPSTSV.a
+    )
+endif()
+
+if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs)
+    mcux_add_library(
+        LIBS
+            libs/libZPSGP_ZED.a
+            libs/libZPSIPAN_ZED.a
+            libs/libZPSAPL.a
+            libs/libZPSMAC_Mini_SOC.a
+            libs/libZPSNWK_ZED.a
+            libs/libZPSTSV.a
+    )
+endif()
+
+if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs_r23)
+    mcux_add_library(
+        LIBS
+            libs/libZPSGP_ZED.a
+            libs/libZPSIPAN_ZED.a
+            libs/libZPSAPL_R23.a
+            libs/libZPSMAC_Mini_SOC.a
+            libs/libZPSNWK_ZED_R23.a
+            libs/libZPSTSV.a
+    )
+endif()

@@ -1,0 +1,48 @@
+# BDB configuration
+
+# Copyright 2024 NXP
+# SPDX-License-Identifier: BSD-3-Clause
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_common
+    bool "Base Device initialization support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_nwksteering
+    bool "Base Device network steering support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_nwkformation
+    bool "Base Device network formation support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_findbind_initiator
+    bool "Base Device find and bind initiator support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_findbind_target
+    bool "Base Device find and bind target support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_outofband
+    bool "Base Device Out-Of-Band commissioning support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.router
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_touchlink_initiator_ed
+    bool
+config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_touchlink_initiator_router
+    bool
+config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_touchlink_initiator_target
+    bool
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_transport_keydecider
+    bool "Base Device transport key decider support"
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator
+

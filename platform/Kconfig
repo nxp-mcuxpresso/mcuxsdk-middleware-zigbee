@@ -1,0 +1,81 @@
+# platform configuration
+
+# Copyright 2024 NXP
+# SPDX-License-Identifier: BSD-3-Clause
+
+menuconfig MCUX_COMPONENT_middleware.wireless.zigbee.platform
+    bool "Zigbee Connectivity platform"
+    default MCUX_COMPONENT_middleware.wireless.framework.platform
+    depends on MCUX_HW_DEVICE_MCXW716C || MCUX_HW_DEVICE_MCXW716A \
+        || MCUX_HW_DEVICE_KW45B41Z52 || MCUX_HW_DEVICE_KW45B41Z53 \
+        || MCUX_HW_DEVICE_KW45B41Z82 || MCUX_HW_DEVICE_KW45B41Z83 \
+        || MCUX_HW_DEVICE_K32W1480 \
+        || MCUX_HW_DEVICE_RW612 || MCUX_HW_DEVICE_RW610 \
+        || MCUX_HW_DEVICE_KW47B42ZB7 || MCUX_HW_DEVICE_MCXW727C
+
+if MCUX_COMPONENT_middleware.wireless.zigbee.platform
+
+choice
+    prompt "Connectivity platform selection"
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.platform.kw45_k32w1_mcxw71
+    bool "KW45x, K32W1x, MCXW71x families"
+    depends on  MCUX_HW_DEVICE_MCXW716C || MCUX_HW_DEVICE_MCXW716A ||       \
+                MCUX_HW_DEVICE_KW45B41Z52 || MCUX_HW_DEVICE_KW45B41Z53 ||   \
+                MCUX_HW_DEVICE_KW45B41Z82 || MCUX_HW_DEVICE_KW45B41Z83  ||  \
+                MCUX_HW_DEVICE_K32W1480
+    help
+        Zigbee platform specific file for KW45x, K32W1x, MCXW71x families
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.platform.kw47_mcxw72
+    bool "KW47x, MCXW72x families"
+    depends on MCUX_HW_DEVICE_KW47B42ZB7 || MCUX_HW_DEVICE_MCXW727C
+    help
+        Zigbee platform specific file for KW47x, MCXW72x families
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x
+    bool "RW61x platform"
+    select MCUX_COMPONENT_middleware.wireless.framework.platform.zb
+    select MCUX_COMPONENT_middleware.wireless.framework.rng
+    select MCUX_COMPONENT_middleware.wireless.framework.seclib
+    select MCUX_COMPONENT_middleware.wireless.framework.pdm
+    select MCUX_COMPONENT_middleware.wireless.framework.pdum
+    select MCUX_COMPONENT_middleware.wireless.framework.lowpower
+    select MCUX_COMPONENT_component.button
+    select MCUX_COMPONENT_component.led
+    select MCUX_COMPONENT_component.timer_manager
+    select MCUX_COMPONENT_component.power_manager_framework
+    select MCUX_COMPONENT_component.osa
+    select NVS
+    select NVS_LOOKUP_CACHE
+    select gPlatformMonolithicApp_d
+    depends on MCUX_HW_DEVICE_RW612 || MCUX_HW_DEVICE_RW610
+    help
+        Zigbee platform specific file for RW61x families
+
+endchoice
+endif
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs
+    bool
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.platform.kw45_k32w1_mcxw71 || \
+            MCUX_COMPONENT_middleware.wireless.framework.platform.kw47_mcxw72 || \
+            MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs_r23
+    bool
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.platform.kw45_k32w1_mcxw71 || \
+            MCUX_COMPONENT_middleware.wireless.framework.platform.kw47_mcxw72 || \
+            MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs
+    bool
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.platform.kw45_k32w1_mcxw71 || \
+            MCUX_COMPONENT_middleware.wireless.framework.platform.kw47_mcxw72 || \
+            MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs_r23
+    bool
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.platform.kw45_k32w1_mcxw71 || \
+            MCUX_COMPONENT_middleware.wireless.framework.platform.kw47_mcxw72 || \
+            MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x
