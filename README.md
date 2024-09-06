@@ -111,13 +111,13 @@ This will create a binary folder `build/` at the root of the Zigbee repository.
 
 Once the project is configured, it can be built with a simple command:
 ```bash
-cmake --build build/
+cmake --build build/<preset name>
 ```
 This command will build the default build profile. Usually, `Debug` and `MinSizeRel` configurations are built at the same time.
 
 To build a specific configuration, run the following command:
 ```bash
-cmake --build build/ --config <config>
+cmake --build build/<preset name> --config <config>
 ```
 
 Once the build is complete, The binaries will be located in `build/<configuration>/bin`.

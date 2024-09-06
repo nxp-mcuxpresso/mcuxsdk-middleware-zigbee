@@ -146,3 +146,24 @@ static uint32_t u32GetBaudRateDefineFromValue(uint32_t u32BaudValue)
 
     return baud_defines[min_dif_index];
 }
+
+void zbPlatConsoleDeInit(void)
+{
+    struct termios term;
+    bool ret = false;
+
+    /* Obtain terminal attributes */
+    if (tcgetattr(STDIN_FILENO, &term))
+    {
+        DBG_vPrintf(TRACE_CONSOLE, "Failed to retrieve terminal attributes\r\n");
+    }
+    else
+    {
+        /* Re-enable character echo and canonical input processing */
+        term.c_lflag |= (ECHO | ICANON);
+        if (tcsetattr(STDIN_FILENO, TCSANOW, &term))
+        {
+            DBG_vPrintf(TRACE_CONSOLE, "Failed to set terminal attributes\r\n");
+        }
+    }
+}

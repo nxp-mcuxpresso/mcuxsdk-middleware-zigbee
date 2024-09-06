@@ -1,5 +1,5 @@
 # Copyright 2024 NXP
-# All rights reserved.
+#
 # SPDX-License-Identifier: BSD-3-Clause
 
 cmake_policy(SET CMP0079 NEW)
@@ -19,6 +19,7 @@ if(NOT NCP_HOST_MBEDTLS_PATH)
     # Build mbedtls from SDK middleware by default
     set(NCP_HOST_MBEDTLS_PATH ${NXP_SDK_BASE}/middleware/mbedtls)
 endif()
+set(NCP_HOST_MBEDTLS_INCLUDE ${NCP_HOST_MBEDTLS_PATH}/include)
 
 set(ENABLE_TESTING OFF CACHE BOOL "Disable mbedtls test" FORCE)
 set(ENABLE_PROGRAMS OFF CACHE BOOL "Disable mbetls program" FORCE)
@@ -26,7 +27,7 @@ set(ENABLE_PROGRAMS OFF CACHE BOOL "Disable mbetls program" FORCE)
 string(REPLACE "-Wconversion" "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 string(REPLACE "-Wconversion" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
-set(MBEDTLS_TARGET_PREFIX ncp-host-)
+set(MBEDTLS_TARGET_PREFIX ncphost-)
 set(mbedtls_target    "${MBEDTLS_TARGET_PREFIX}mbedtls")
 set(mbedx509_target   "${MBEDTLS_TARGET_PREFIX}mbedx509")
 set(mbedcrypto_target "${MBEDTLS_TARGET_PREFIX}mbedcrypto")

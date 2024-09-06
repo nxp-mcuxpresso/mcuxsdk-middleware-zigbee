@@ -15,7 +15,7 @@
 #ifdef CRYPTO_ECDH_P256
 #include "SecLib_ecp256.h"
 #elif defined (CRYPTO_ECDH_CURVE25519)
-#include "SecLib_???.h"
+#include "mbedtls/ecdh.h"
 #endif
 #pragma GCC diagnostic pop
 
@@ -76,6 +76,15 @@ WEAK void RNG_GetRandomNo(uint32_t *pRandomNo)
 }
 #endif
 
+int16_t zbPlatRngGetPseudoRandom(uint8_t* pOut, uint8_t outBytes, uint8_t* pSeed)
+{
+#if defined(FWK_RNG_DEPRECATED_API)
+    return RNG_GetPseudoRandomNo(pOut, outBytes, pSeed);
+#else
+    return RNG_GetPseudoRandomData(pOut, outBytes, pSeed);
+#endif
+}
+
 void zbPlatCryptoAesHmacMmo(uint8_t *pu8Data, int iDataLen, void *key, void *hash)
 {
     return AESSW_vHMAC_MMO(pu8Data, iDataLen, (AESSW_Block_u *)key, (AESSW_Block_u *)hash);
@@ -102,7 +111,7 @@ void zbPlatCryptoAes128EcbEncrypt(const uint8_t* pu8Input, uint32_t u32InputLen,
     return AES_128_ECB_Encrypt(pu8Input, u32InputLen, pu8Key, pu8Output);
 }
 
-void zbPlatCryptoAesDecrypt(const uint8_t* pu8Input, const uint8_t* pu8Key, uint8_t* pu8Output)
+void zbPlatCryptoAes128EcbDecrypt(const uint8_t* pu8Input, const uint8_t* pu8Key, uint8_t* pu8Output)
 {
     return AES_128_Decrypt(pu8Input, pu8Key, pu8Output);
 }
@@ -115,7 +124,9 @@ void zbPlatCryptoAesCcmStar(bool_t bEncrypt, uint8_t u8M, uint8_t  u8AuthLen,
             pu8AuthData, pu8Input, pu8ChecksumData, pbChecksumVerify);
 }
 
-bool_t zbPlatCryptoEcdhGenerateKeys(CRYPTO_ecdhPublicKey_t *psPublicKey, CRYPTO_ecdhPrivateKey_t *psSecretKey)
+bool_t zbPlatCryptoEcdhGenerateKeys(CRYPTO_ecdhPublicKey_t *psPublicKey,
+                                    CRYPTO_ecdhPrivateKey_t *psSecretKey,
+                                    const uint8_t* pu8BasePointG)
 {
 #ifdef CRYPTO_ECDH_P256
     if (gSecSuccess_c == ECDH_P256_GenerateKeys((ecdhPublicKey_t *)psPublicKey,
@@ -123,18 +134,33 @@ bool_t zbPlatCryptoEcdhGenerateKeys(CRYPTO_ecdhPublicKey_t *psPublicKey, CRYPTO_
     {
         return TRUE;
     }
+#elif defined(CRYPTO_ECDH_CURVE25519)
 #endif
     return FALSE;
 }
 
-bool_t zbPlatCryptoEcdhComputeDhKey(CRYPTO_ecdhPrivateKey_t *psSecretKey, CRYPTO_ecdhPublicKey_t *psPeerPublicKey, CRYPTO_ecdhDhKey_t *psOutEcdhKey)
+bool_t zbPlatCryptoEcdhComputeDhKey(CRYPTO_ecdhPrivateKey_t *psSecretKey,
+                                    CRYPTO_ecdhPublicKey_t *psPeerPublicKey,
+                                    CRYPTO_ecdhDhKey_t *psOutEcdhKey,
+                                    const uint8_t* pu8BasePointG)
 {
 #ifdef CRYPTO_ECDH_P256
     if (gSecSuccess_c == ECDH_P256_ComputeDhKey((ecdhPrivateKey_t *)psSecretKey,
-        (ecdhPublicKey_t *)psPeerPublicKey, (ecdhDhKey_t *)psOutEcdhKey, FALSE))
+        (ecdhPublicKey_t *)psPeerPublicKey, (ecdhDhKey_t *)psOutEcdhKey))
     {
         return TRUE;
     }
+#elif defined(CRYPTO_ECDH_CURVE25519)
 #endif
     return FALSE;
+}
+
+fpZbRngPrng_t zbPlatRngGetPrngFunc(void)
+{
+    return (fpZbRngPrng_t)RNG_GetPrngFunc();
+}
+
+void* zbPlatRngGetPrngContext(void)
+{
+    return RNG_GetPrngContext();
 }

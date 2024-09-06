@@ -1,7 +1,3 @@
-# Copyright 2024 NXP
-#
-# SPDX-License-Identifier: BSD-3-Clause
-
 set(CONFIG_ZB_USE_FREERTOS ON)
 set(CONFIG_ZB_FREERTOS_CONFIG "${APPLICATION_SOURCE_DIR}/src/freertos/FreeRTOSConfig.h" CACHE STRING "")
 set(CONFIG_ZB_TRACE_APP ON CACHE BOOL "Enable TRACE_APP logs")

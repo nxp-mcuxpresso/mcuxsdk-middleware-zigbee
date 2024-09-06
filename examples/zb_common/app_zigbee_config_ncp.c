@@ -13,6 +13,7 @@
 #include "ZTimer.h"
 #include "zps_apl_af.h"
 #include "pdum_gen.h"
+#include "PDM.h"
 #include "app_zcl_task.h"
 #include "app_common_ncp.h"
 #include "serial_link_ctrl.h"
@@ -174,6 +175,19 @@ PUBLIC ZPS_teStatus APP_eZbModuleInitialise(void)
         APP_vNcpHostResetZigBeeModule();
         /* wait for Zigbee module to stabilize after Reset */
         vWaitForJNReady(JN_READY_TIME_MS);
+    } 
+    else 
+    {
+        bool bCoproFactoryNew = ZPS_bIsCoprocessorNewModule();
+        /* Handle mismatch between host and coprocessor state */
+        if (eNodeState == E_RUNNING && bCoproFactoryNew == TRUE)
+        {
+            DBG_vPrintf((bool_t)TRACE_APP_INIT, "Host state is %d, coprocessor module is new.\r\n", eNodeState);
+            DBG_vPrintf((bool_t)TRACE_APP_INIT, "Erasing Persistent Data on Host.\r\n");
+            PDM_vDeleteAllDataRecords();
+            DBG_vPrintf((bool_t)TRACE_APP_INIT, "Resetting Host.\r\n");
+            APP_vNcpHostReset();
+        }
     }
     return eStatus;
 }

@@ -19,7 +19,7 @@
             "displayName": "Base config",
             "description": "Base configuration using armgcc toolchain file and Ninja",
             "generator": "Ninja Multi-Config",
-            "binaryDir": "$env{NXP_ZB_BASE}/build",
+            "binaryDir": "$env{NXP_ZB_BASE}/build/${presetName}",
             "environment": {
                 "NXP_ZB_BASE": "${sourceDir}/../../../.."
             },

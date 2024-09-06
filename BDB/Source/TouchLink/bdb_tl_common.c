@@ -319,7 +319,7 @@ PUBLIC uint8 BDB_eTlDecryptKey( uint8* au8InData,
     sTransportKey.u32register3 = u32Reverse(sTransportKey.u32register3);
 #endif
 
-    zbPlatCryptoAesDecrypt((uint8*)au8InData, (uint8*)&sTransportKey, (uint8*)au8OutData);
+    zbPlatCryptoAes128EcbDecrypt((uint8*)au8InData, (uint8*)&sTransportKey, (uint8*)au8OutData);
 
 #ifdef SHOW_KEY
     int i;

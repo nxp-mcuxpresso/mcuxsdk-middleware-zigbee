@@ -267,7 +267,7 @@ void zbPlatCryptoAes128EcbEncrypt(const uint8_t* pu8Input, uint32_t u32InputLen,
     return AES_128_ECB_Encrypt(pu8Input, u32InputLen, pu8Key, pu8Output);
 }
 
-void zbPlatCryptoAesDecrypt(const uint8_t* pu8Input, const uint8_t* pu8Key, uint8_t* pu8Output)
+void zbPlatCryptoAes128EcbDecrypt(const uint8_t* pu8Input, const uint8_t* pu8Key, uint8_t* pu8Output)
 {
     /* NOT IMPLEMENTED */
     return;

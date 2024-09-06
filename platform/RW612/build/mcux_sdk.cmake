@@ -1,7 +1,3 @@
-# Copyright 2024 NXP
-#
-# SPDX-License-Identifier: BSD-3-Clause
-
 set(MCUX_SDK_PROJECT_NAME "zb_platform")
 set(MCUX_DEVICE "RW612")
 set(CONFIG_CORE "cm33")

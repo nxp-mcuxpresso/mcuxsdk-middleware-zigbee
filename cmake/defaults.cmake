@@ -1,7 +1,3 @@
-# Copyright 2024 NXP
-#
-# SPDX-License-Identifier: BSD-3-Clause
-
 set(CONFIG_ZB_BDB ON CACHE BOOL "Build BDB sources as part of the application target")
 set(CONFIG_ZB_ZCL ON CACHE BOOL "Build ZCIF and ZCL sources as part of the application target")
 set(CONFIG_ZB_DEVICE_TYPE "ZCR" CACHE STRING "Zigbee device type. Set to ZED to select an End Device")

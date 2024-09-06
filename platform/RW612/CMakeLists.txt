@@ -1,7 +1,3 @@
-# Copyright 2024 NXP
-#
-# SPDX-License-Identifier: BSD-3-Clause
-
 set(CONFIG_JENNIC_CHIP_FAMILY "JN518x")
 set(CONFIG_JENNIC_CHIP "JN5189")
 set(CONFIG_JENNIC_STACK "MAC")
@@ -197,7 +193,7 @@ if(CONFIG_SOC_SERIES_RW6XX_REVISION_A1)
     set(signed_binary_name rw61x_sb_combo_a1.bin)
     set(raw_binary_name rw61xn_combo_raw_cpu2_ble_15_4_combo_a1.bin)
 else()
-    set(signed_binary_name rw61x_sb_combo_a2.bin)
+    set(signed_binary_name rw61x_sb_ble_15d4_combo_a2.bin)
     set(raw_binary_name rw61xn_raw_cpu2_ble_zb_combo.bin)
 endif()
 set(signed_binary ${fw_bin_dir}/${signed_binary_name})
@@ -214,3 +210,8 @@ endif()
 
 message(STATUS "Generate include of binary blob: ${binary}")
 generate_inc_file_for_target(zb_platform ${binary} ${output_include})
+
+target_compile_definitions(zb_platform PUBLIC
+    BLE_FW_ADDRESS=0
+    WIFI_FW_ADDRESS=0
+)

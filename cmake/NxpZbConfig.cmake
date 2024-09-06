@@ -1,7 +1,3 @@
-# Copyright 2024 NXP
-#
-# SPDX-License-Identifier: BSD-3-Clause
-
 cmake_minimum_required(VERSION 3.24)
 
 set(ENV_NXP_ZB_BASE $ENV{NXP_ZB_BASE})

@@ -71,7 +71,7 @@ PRIVATE ZPS_teStatus eZdpSimpleDescReq(bool_t bIsExtAddr,
                                        ZPS_tuAddress uDstAddr,
                                        ZPS_tsAplZdpSimpleDescReq *psZdpSimpleDescReq,
                                        uint8* pu8Seq);
-PRIVATE ZPS_teStatus eZdpActiveEndpointReq(uint16 u16Addr, uint8* pu8Seq);
+PRIVATE ZPS_teStatus eZdpActiveEndpointReq(ZPS_tuAddress uDstAddr, uint16 u16TargetAddr, uint8* pu8Seq);
 PRIVATE ZPS_teStatus eZdpMatchDescReq(uint16 u16Addr, uint16 u16profile,
         uint16 u16NwkAoI, uint8 u8InputCount, uint16* pu16InputList,
         uint8 u8OutputCount, uint16* pu16OutputList, uint8* pu8Seq);
@@ -282,33 +282,17 @@ PUBLIC void vProcessIncomingSerialCommands(void)
 
     case (E_SL_MSG_SET_CHANNELMASK):
         {
-            uint8 u8PDMStatus;
-            uint16 u16len;
             uint32 u32Value = ZNC_RTN_U32( au8LinkRxBuffer, 0);
-            if(MAC_ENUM_SUCCESS == ZPS_eMacValidateChannelMask(u32Value))
+            uint8 u8ChanMaskValidStatus = ZPS_eMacValidateChannelMask(u32Value);
+            if(MAC_ENUM_SUCCESS == u8ChanMaskValidStatus)
             {
                 u8Status = ZPS_eAplAibSetApsChannelMask(u32Value);
             }
-            if (E_MIFT_SUCCESS == u8Status)
+            else
             {
-                if( PDM_bDoesDataExist(PDM_ID_APP_CHAN_MASK_LIST, &u16len))
-                {
-                    /* This is a valid channel Mask, update the Persisted Channel Mask List */
-                    u8PDMStatus = PDM_eSaveRecordData( PDM_ID_APP_CHAN_MASK_LIST, (void*)g_u32ChannelMaskList, sizeof(g_u32ChannelMaskList));
-                    if(PDM_E_STATUS_OK != u8PDMStatus)
-                    {
-                        DBG_vPrintf(TRUE, "\n PDM_ID_APP_CHAN_MASK_LIST ERROR: 0x%02x\n", u8PDMStatus);
-                        vSendPdmStatusToHost(E_SL_PDM_CMD_SAVE, u8PDMStatus);
-                        vAppHandlePDMError();
-                    }
-                }
-                else {
-                    /* Handle error, record should exist, send to host and call handle pdm error */
-                    DBG_vPrintf(TRUE, "\n PDM_eSaveRecordData couldn't find PDM_ID_APP_CHAN_MASK_LIST record\n");
-                    vSendPdmStatusToHost(E_SL_PDM_CMD_SAVE, PDM_E_STATUS_NOT_SAVED);
-                    vAppHandlePDMError();
-                }
+                u8Status = u8ChanMaskValidStatus;
             }
+
             DBG_vPrintf(TRACE_APP, "\nChannel Mask 0x%08x, u8Status: %d channelMaskList = 0x%08x \n", u32Value, u8Status, g_u32ChannelMaskList[0]);
         }
         break;
@@ -1625,6 +1609,32 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
+    case (E_SL_MSG_GET_FRAGMENTATION_SUPPORT):
+    {
+        bool_t bFragSup = ZPS_bAplDoesDeviceSupportFragmentation(ZPS_pvAplZdoGetAplHandle());
+
+        /* Copy fragmentation support for sending over serial */
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  bFragSup, u8TxLength );
+
+        u8Status = ZPS_E_SUCCESS;
+        break;
+    }
+
+    case (E_SL_MSG_GET_MAX_PAYLOAD_SIZE):
+    {
+        bool_t u8MaxPayloadSize;
+        uint16_t u16Addr;
+        
+        u16Addr = ZNC_RTN_U16( au8LinkRxBuffer, 0 );
+        u8MaxPayloadSize = ZPS_u8AplGetMaxPayloadSize(ZPS_pvAplZdoGetAplHandle(), u16Addr);
+
+        /* Copy max payload size for sending over serial */
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  u8MaxPayloadSize, u8TxLength );
+
+        u8Status = ZPS_E_SUCCESS;
+        break;
+    }
+
     case (E_SL_MSG_SET_SECURITY): 
     {
         ZPS_vAplSecSetInitialSecurityState(au8LinkRxBuffer[0],
@@ -1789,8 +1799,27 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
 
     case (E_SL_MSG_ACTIVE_ENDPOINT_REQUEST): {
-        u16TargetAddress = ZNC_RTN_U16( au8LinkRxBuffer, 0 );
-        u8Status = eZdpActiveEndpointReq(u16TargetAddress, &u8ApsTSN);
+        uint16 u16TargetAddr, u16Index = 0;
+        ZPS_tuAddress uDstAddr;
+        bool_t bIsExtAddress;
+
+        /* copy bIsExtAddress */
+        bIsExtAddress = ZNC_RTN_U8_OFFSET(au8LinkRxBuffer, u16Index, u16Index);
+
+        if(bIsExtAddress)
+        {   /* copy u64IEEEAddress */
+            uDstAddr.u64Addr = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        }
+        else
+        {
+            /* copy u16ShortAddress */
+            uDstAddr.u16Addr = ZNC_RTN_U16_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        }
+
+        /* copy target address */
+        u16TargetAddr = ZNC_RTN_U16_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+
+        u8Status = eZdpActiveEndpointReq(uDstAddr, u16TargetAddr, &u8ApsTSN);
     }
         break;
     case (E_SL_MSG_IS_DEVICE_KEY_PRESENT): {
@@ -2317,6 +2346,15 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     }
     break;
 
+    case E_SL_MSG_SET_TC_LOCKDOWN_OVERRIDE:
+    {
+        uint8_t u8RemoteOverride = au8LinkRxBuffer[0];
+        bool_t bDisableAuthentications = au8LinkRxBuffer[1];
+
+        ZPS_vSetTCLockDownOverride(ZPS_pvAplZdoGetAplHandle(),u8RemoteOverride,bDisableAuthentications);
+    }
+    break; 
+    
     case E_SL_MSG_GET_SIMPLE_DESCRIPTOR:
     {
         ZPS_tsAplAfSimpleDescriptor sSimpleDescriptor;
@@ -2626,78 +2664,6 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
-    case E_SL_MSG_SET_MIT_CHANMASK_LIST:
-    {
-        uint32 u32ChanMask;
-        uint8 u8Index;
-        uint16 u16len;
-        uint8 u8PDMStatus;
-        uint16 u16Offset = 0;
-        uint8 u8InvalidChanMaskCount = 0u;
-        zps_tsAplAfMMServerContext * s_sMMserver =  ZPS_u8MacIFTGetMultiMaskServer();
-        uint8 u8LenChanMaskList = (s_sMMserver)->u8ChanMaskListCount;
-        for (u8Index = 0u; u8Index < u8LenChanMaskList ; u8Index++)
-        {
-            /* Read the mask sequentially */
-            u32ChanMask = ZNC_RTN_U32_OFFSET( au8LinkRxBuffer, u16Offset, u16Offset );
-
-            DBG_vPrintf(TRACE_APP, "E_SL_MSG_SET_MIT_CHANMASK_LIST: = 0x%08x\n", u32ChanMask);
-            /* write it to the channel mask list */
-            if(MAC_ENUM_SUCCESS == ZPS_eMacValidateChannelMask(u32ChanMask))
-            {
-                u8Status = ZPS_eAplAibSetApsChannelMask((uint32) u32ChanMask);
-            }
-            else
-            {
-                u8InvalidChanMaskCount++;
-                /* Keep count of number of invalid channel masks */
-            }
-        }
-        /* Persist the updated Channel Mask List */
-        if( PDM_bDoesDataExist(PDM_ID_APP_CHAN_MASK_LIST, &u16len))
-        {
-            u8PDMStatus = PDM_eSaveRecordData( PDM_ID_APP_CHAN_MASK_LIST, (void*)g_u32ChannelMaskList, sizeof(g_u32ChannelMaskList));
-            if(PDM_E_STATUS_OK != u8PDMStatus)
-            {
-                DBG_vPrintf(TRUE, "\n PDM_ID_APP_CHAN_MASK_LIST ERROR: 0x%02x\n", u8PDMStatus);
-                vSendPdmStatusToHost(E_SL_PDM_CMD_SAVE, u8PDMStatus);
-                vAppHandlePDMError();
-            }
-        }
-        else {
-            /* Handle error, record should exist, send to host and call handle pdm error */
-            DBG_vPrintf(TRUE, "\n PDM_eSaveRecordData couldn't find PDM_ID_APP_CHAN_MASK_LIST record\n");
-            vSendPdmStatusToHost(E_SL_PDM_CMD_SAVE, PDM_E_STATUS_NOT_SAVED);
-            vAppHandlePDMError();
-        }
-
-        /* Send the u8InvalidChanMaskCount in response */
-        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  u8InvalidChanMaskCount, u8TxLength );
-
-        break;
-    }
-
-    case E_SL_MSG_GET_MIT_CHANMASK_LIST:
-    {
-        uint32 u32ChanMask;
-        uint8 u8ChanInd;
-        zps_tsAplAfMMServerContext * s_sMMserver =  ZPS_u8MacIFTGetMultiMaskServer();
-        uint8 u8LenChanMaskList = (s_sMMserver)->u8ChanMaskListCount;
-
-        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  u8LenChanMaskList, u8TxLength );
-
-        DBG_vPrintf(TRACE_APP, "u8LenChanMaskList = 0x%02x\n", au8values[4u]);
-        for (u8ChanInd = 0u; u8ChanInd < u8LenChanMaskList; u8ChanInd++)
-        {
-            /* Read the mask sequentially from ChannelMask List */
-            u32ChanMask = (ZPS_psMacIFTGetTable())->pu32ChannelMaskList[u8ChanInd];
-            /* Write Channel Mask into the buffer */
-            ZNC_BUF_U32_UPD( &au8values[u8TxLength],  u32ChanMask, u8TxLength );
-
-            DBG_vPrintf(TRACE_APP, "ChannelMask = 0x%08x\n", u32ChanMask);
-        }
-        break;
-    }
 #ifndef  MAC_TYPE_SOC
     case E_SL_MSG_CHANGE_SUB_GHZ_CHANNEL:
     {
@@ -3026,6 +2992,16 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         {
             u8Status = sNlmeSyncCfm.uParam.sCfmEdScan.u8Status;
         }
+        break;
+    }
+
+    case (E_SL_MSG_IS_COPROCESSOR_NEW_MODULE):
+    {
+        bool_t bCoproFactoryNew = (sNcpDeviceDesc.eState == FACTORY_NEW);
+
+        /* Copy factory new state for sending over serial */
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  bCoproFactoryNew, u8TxLength );
+
         break;
     }
 
@@ -4291,7 +4267,7 @@ PRIVATE ZPS_teStatus eZdpSimpleDescReq(bool_t bIsExtAddr, ZPS_tuAddress uDstAddr
  * ZPS_teStatus
  *
  ****************************************************************************/
-PRIVATE ZPS_teStatus eZdpActiveEndpointReq(uint16 u16Addr, uint8* pu8SeqNum) {
+PRIVATE ZPS_teStatus eZdpActiveEndpointReq(ZPS_tuAddress uDstAddr, uint16 u16TargetAddr, uint8* pu8SeqNum) {
     PDUM_thAPduInstance hAPduInst;
 
     hAPduInst = PDUM_hAPduAllocateAPduInstance(apduZCL);
@@ -4299,12 +4275,7 @@ PRIVATE ZPS_teStatus eZdpActiveEndpointReq(uint16 u16Addr, uint8* pu8SeqNum) {
     if (PDUM_INVALID_HANDLE != hAPduInst)
     {
         ZPS_tsAplZdpActiveEpReq sActiveEpReq;
-        ZPS_tuAddress uDstAddr;
-
-        /* always send to node of interest rather than a cache */
-        uDstAddr.u16Addr = u16Addr;
-
-        sActiveEpReq.u16NwkAddrOfInterest = u16Addr;
+        sActiveEpReq.u16NwkAddrOfInterest = u16TargetAddr;
         return ZPS_eAplZdpActiveEpRequest(hAPduInst, uDstAddr, FALSE,
                 pu8SeqNum, &sActiveEpReq);
     }

@@ -1179,6 +1179,7 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_SET_NWK_STATE_ACTIVE:
                 case (uint16)E_SL_MSG_SET_DEPTH:
                 case (uint16)E_SL_MSG_ADD_REPLACE_INSTALL_CODES:
+                case (uint16)E_SL_MSG_SET_TC_LOCKDOWN_OVERRIDE:
                 {
                     /* no extra data; just status seq no & type */
                     u16ReadIdx = SL_MSG_RSP_START_IDX;
@@ -1315,6 +1316,9 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_GET_CLUSTER_DISCOVERY_STATE:
                 case (uint16)E_SL_MSG_GET_USE_INSECURE_JOIN:
                 case (uint16)E_SL_MSG_GET_APS_SEQ_NUM:
+                case (uint16)E_SL_MSG_GET_FRAGMENTATION_SUPPORT:
+                case (uint16)E_SL_MSG_GET_MAX_PAYLOAD_SIZE:
+                case (uint16)E_SL_MSG_IS_COPROCESSOR_NEW_MODULE:
                 {
                     u16ReadIdx = SL_MSG_RSP_START_IDX;
                     if(NULL != pu8Temp)
@@ -1379,8 +1383,11 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                         psEntry->u32OutgoingFrameCounter += ((uint32)*(pu8RxBuffer+u16ReadIdx++)) << 16U;
                         psEntry->u32OutgoingFrameCounter += ((uint32)*(pu8RxBuffer+u16ReadIdx++)) << 8U;
                         psEntry->u32OutgoingFrameCounter += ((uint32)*(pu8RxBuffer+u16ReadIdx++));
-                    }
 
+                        /* pu32IncomingFrameCounter and  u8BitMapSecLevl (in total 5 bytes) are received in 
+                        the payload but not used, so increase read index by their size to avoid mismatch warning */
+                        u16ReadIdx += 5;
+                    }
                     break;
                 }
                 case (uint16)E_SL_MSG_GET_DEFAULT_TC_APS_LINK_KEY:

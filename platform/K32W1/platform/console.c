@@ -38,3 +38,7 @@ void zbPlatConsoleSetBaudRate(uint32_t baud)
 {
 	zbPlatUartSetBaudRate(baud);
 }
+
+void zbPlatConsoleDeInit(void)
+{
+}

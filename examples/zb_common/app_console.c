@@ -136,6 +136,24 @@ void APP_vConsoleSetBaudRate(uint32_t baud)
     zbPlatConsoleSetBaudRate(baud);
 }
 
+/****************************************************************************
+ *
+ * NAME: App_vConsoleDeinitialise
+ *
+ * DESCRIPTION:
+ * Performs the necessary cleanup so that the console can be reused after
+ * restart.
+ * PARAMETERS: None
+ *
+ * RETURNS:
+ *  None.
+ *
+ ****************************************************************************/
+void APP_vConsoleDeinitialise(void)
+{
+    zbPlatConsoleDeInit();
+}
+
 /****************************************************************************/
 /***        END OF FILE                                                   ***/
 /****************************************************************************/

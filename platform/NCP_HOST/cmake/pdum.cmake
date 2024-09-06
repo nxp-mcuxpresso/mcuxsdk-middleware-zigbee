@@ -4,27 +4,25 @@
 
 cmake_minimum_required(VERSION 3.13)  # CMake version check
 
-set(pdum_target "pdum_static" CACHE STRING "Name of pdum target")
+set(NCPHOST_JENNIC_CHIP_FAMILY "JN518x")
+set(NCPHOST_JENNIC_CHIP "JN5189")
+set(NCPHOST_JENNIC_STACK "MAC")
+set(NCPHOST_JENNIC_MAC "MiniMac")
 
-# Source files to create PDUM library
-set(PDUM_SOURCES
+# Add library target
+add_library(ncphost-PDUM
     ${NXP_ZB_BASE}/platform/NCP_HOST/framework/PDUM/Source/pdum.c
     ${NXP_ZB_BASE}/platform/NCP_HOST/framework/PDUM/Source/pdum_apl.c
     ${NXP_ZB_BASE}/platform/NCP_HOST/framework/PDUM/Source/pdum_dbg.c
     ${NXP_ZB_BASE}/platform/NCP_HOST/framework/PDUM/Source/pdum_nwk.c
 )
- 
-# Add library target
-add_library(${pdum_target} STATIC ${PDUM_SOURCES})
-set_target_properties(${pdum_target} PROPERTIES OUTPUT_NAME pdum)
-
-set_target_properties(${pdum_target}
+set_target_properties(ncphost-PDUM
   PROPERTIES
   ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/pdum/lib"
 )
 
 if ("${MACHINE_TYPE}" STREQUAL "imx8")
-    target_compile_options(${pdum_target} PRIVATE
+    target_compile_options(ncphost-PDUM PRIVATE
         -Wno-implicit-function-declaration
         -Wno-format
         -Wno-incompatible-pointer-types
@@ -32,31 +30,30 @@ if ("${MACHINE_TYPE}" STREQUAL "imx8")
         -Wno-int-conversion
     )
 else()
-    target_compile_options(${pdum_target} PRIVATE
+    target_compile_options(ncphost-PDUM PRIVATE
         -Wno-format
         -m32
     )
-    target_link_options(${pdum_target} PUBLIC -m32)
+    target_link_options(ncphost-PDUM PUBLIC -m32)
 endif()
 
-target_include_directories(${pdum_target} PUBLIC
-    ${NXP_ZB_BASE}/platform
-    ${NXP_ZB_BASE}/platform/NCP_HOST/framework/Common
-    ${NXP_ZB_BASE}/platform/NCP_HOST/framework/PDUM/Include
+target_compile_definitions(ncphost-PDUM
+    PRIVATE
+        JENNIC_CHIP=${NCPHOST_JENNIC_CHIP}
+        JENNIC_CHIP_${NCPHOST_JENNIC_CHIP}
+        JENNIC_CHIP_NAME=_${NCPHOST_JENNIC_CHIP}
+        JENNIC_CHIP_FAMILY=${NCPHOST_JENNIC_CHIP_FAMILY}
+        JENNIC_CHIP_FAMILY_${NCPHOST_JENNIC_CHIP_FAMILY}
+        JENNIC_CHIP_FAMILY_NAME=_${NCPHOST_JENNIC_CHIP_FAMILY}
+        ${NCPHOST_JENNIC_CHIP}=5189
+        ${NCPHOST_JENNIC_CHIP_FAMILY}=5189
+        JENNIC_STACK_${NCPHOST_JENNIC_STACK}
+        JENNIC_MAC_${NCPHOST_JENNIC_MAC}
 )
-target_compile_definitions(${pdum_target} PRIVATE
-    JENNIC_CHIP=JN5189
-    JENNIC_CHIP_JN5189
-    JENNIC_CHIP_NAME=_JN5189
-    JENNIC_CHIP_FAMILY=JN518x
-    JENNIC_CHIP_FAMILY_JN518x
-    JENNIC_CHIP_FAMILY_NAME=_JN518x
-    JN5189=5189
-    JN518x=5189
-    JENNIC_STACK_MAC
-    JENNIC_MAC_MiniMac
-    CPU_K32W1480VFTA
-    K32W1
-    SERIAL_PORT_TYPE_UART=1
-    LITTLE_ENDIAN_PROCESSOR
+
+target_include_directories(ncphost-PDUM
+    PUBLIC
+        ${NXP_ZB_BASE}/platform
+        ${NXP_ZB_BASE}/platform/NCP_HOST/framework/Common
+        ${NXP_ZB_BASE}/platform/NCP_HOST/framework/PDUM/Include
 )

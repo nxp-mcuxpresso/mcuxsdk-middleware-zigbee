@@ -17,7 +17,8 @@
 
 #include "board_comp.h"
 
-#if defined(BOARD_RGB_LED_COUNT) && (BOARD_RGB_LED_COUNT == 1)
+#if (defined(BOARD_RGB_LED_COUNT) && (BOARD_RGB_LED_COUNT > 0)) \
+    && (defined(gAppLedCnt_c) && (gAppLedCnt_c > 0))
 #include "fsl_component_led.h"
 #endif
 
@@ -27,7 +28,8 @@
 
 static uint8_t app_state_leds = 0U;
 
-#if defined(BOARD_RGB_LED_COUNT) && (BOARD_RGB_LED_COUNT > 0)
+#if (defined(BOARD_RGB_LED_COUNT) && (BOARD_RGB_LED_COUNT > 0)) \
+    && (defined(gAppLedCnt_c) && (gAppLedCnt_c > 0))
 static LED_HANDLE_DEFINE(ledHandle);
 #endif
 
@@ -39,7 +41,8 @@ bool zbPlatLedInit(uint8_t num_leds)
 {
     (void)num_leds;
 
-#if defined(BOARD_RGB_LED_COUNT) && (BOARD_RGB_LED_COUNT > 0)
+#if (defined(BOARD_RGB_LED_COUNT) && (BOARD_RGB_LED_COUNT > 0)) \
+    && (defined(gAppLedCnt_c) && (gAppLedCnt_c > 0))
     BOARD_InitRgbLed(ledHandle);
     LED_SetColor(ledHandle, LED_MAKE_COLOR(0, 0, 0));
     LED_TurnOnOff(ledHandle, 1);
@@ -54,7 +57,8 @@ void zbPlatLedSetState(uint8_t led, uint8_t state)
     app_state_leds &= ~(1 << led);
     app_state_leds |= ((state ? 1 : 0) << led);
 
-#if defined(BOARD_RGB_LED_COUNT) && (BOARD_RGB_LED_COUNT > 0)
+#if (defined(BOARD_RGB_LED_COUNT) && (BOARD_RGB_LED_COUNT > 0)) \
+    && (defined(gAppLedCnt_c) && (gAppLedCnt_c > 0))
     bool red = ((app_state_leds & 1) != 0);
     bool green = ((app_state_leds & (1 << 1)) != 0);
     bool blue = ((app_state_leds & (1 << 2)) != 0);

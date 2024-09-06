@@ -30,10 +30,10 @@ static int ncp_fd = 0;
 bool zbPlatUartInit(void *device)
 {
     ncp_fd = open((char *)device, O_RDWR | O_NOCTTY | O_NONBLOCK | O_CLOEXEC);
-    if (!ncp_fd)
+    if (ncp_fd < 0)
     {
-        DBG_vPrintf(TRACE_UART, "Failed to open device %s\r\n", (char *)device);
-        return false;
+        DBG_vPrintf(TRUE, "Failed to open device %s: %s\r\n", (char *)device, strerror(errno));
+        assert(0);
     }
     return true;
 }

@@ -3,23 +3,12 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 cmake_minimum_required(VERSION 3.13)  # CMake version check
-project(zb_coord_linux)               # Create project
 
-set(TOOLCHAIN_DIR $ENV{ARMGCC_DIR})
-if (NOT TOOLCHAIN_DIR)
-    message(STATUS "***ARMGCC_DIR is not set, assume toolchain bins are in your PATH***")
-    set(TOOLCHAIN_BIN_DIR "")
-else()
-    message(STATUS "ARMGCC_DIR: " ${TOOLCHAIN_DIR})
-    set(TOOLCHAIN_BIN_DIR ${TOOLCHAIN_DIR}/bin/)
-endif()
+set(MBEDTLS_MIN_VERSION "2.28" CACHE STRING "")
+message(STATUS "Setting mbedtls minimum required version: ${MBEDTLS_MIN_VERSION}")
 
-if ("${MACHINE}" STREQUAL "imx8")
-    message(WARNING "Cross-compiling for imx8")
-    set(CMAKE_C_COMPILER ${TOOLCHAIN_BIN_DIR}arm-linux-gnueabihf-gcc CACHE INTERNAL "C compiler")
-    set(MACHINE_TYPE imx8 CACHE INTERNAL "imx8")
-else()
-    message(WARNING "Compiling for x86")
+if("${CONFIG_ZB_SINGLE_CHANNEL}" STREQUAL "")
+    set(CONFIG_ZB_SINGLE_CHANNEL "13" CACHE STRING "Force the channel to be used.")
 endif()
 
 if ("${NXP_SDK_BASE}" STREQUAL "")
@@ -46,57 +35,48 @@ elseif(EXISTS ${NXP_SDK_BASE}/SW-Content-Register.txt)
 else()
     set(NXP_SDK_TYPE "NONE")
 endif()
-
 message(STATUS "Using Zigbee root path " ${NXP_ZB_BASE})
+
+# Use toolchain file
+if ("${MACHINE}" STREQUAL "imx8")
+    include(${NXP_ZB_BASE}/platform/NCP_HOST/cmake/toolchains/arm-linux-gnueabihf.cmake)
+    message(WARNING "Cross-compiling for imx8")
+    set(MACHINE_TYPE imx8 CACHE INTERNAL "imx8")
+else()
+    include(${NXP_ZB_BASE}/platform/NCP_HOST/cmake/toolchains/x86_64-linux-gnu.cmake)
+    message(WARNING "Compiling for x86")
+endif()
+enable_language(C CXX ASM)
+
+# Function for mbedtls validation
+include(${NXP_ZB_BASE}/platform/NCP_HOST/cmake/utils.cmake)
+
+project(zb_coord_linux)               # Create project
 
 set(ENV_MBEDTLS_ORIGIN $ENV{MBEDTLS_ORIGIN})
 if("${ENV_MBEDTLS_ORIGIN}" STREQUAL "")
-    if((NXP_SDK_TYPE STREQUAL "GITHUB") OR (NXP_SDK_TYPE STREQUAL "INTERNAL") OR (NXP_SDK_TYPE STREQUAL "PACKAGE"))
-        message(STATUS "Using mbedtls from SDK")
-        set(MBEDTLS_ORIGIN "SDK")
-        set(MBEDTLS_INCLUDE ${NXP_SDK_BASE}/middleware/mbedtls/include/)
+    if ("${NXP_SDK_TYPE}" STREQUAL "NONE")
+        use_mbedtls_as_package()
     else()
-        set(ENV_MbedTLS_DIR $ENV{MbedTLS_DIR})
-
-        find_package(MbedTLS)
-        if(MbedTLS_FOUND)
-            message(STATUS "Using preinstalled MbedTLS package " ${MbedTLS_DIR})
-            set(MBEDTLS_LIB_NAME MbedTLS::mbedcrypto)
+        set(MBEDTLS_VALID "YES")
+        check_mbedtls_is_valid(MBEDTLS_VALID)
+        if ("${MBEDTLS_VALID}" STREQUAL "YES")
+            set(MBEDTLS_ORIGIN "SDK")
         else()
-            if("$ENV{MbedTLS_DIR}" STREQUAL "")
-                message(FATAL_ERROR "Please set MbedTLS_DIR with mbedtls installation path")
-            endif()
-            message(FATAL_ERROR "Unable to find mbedtls package")
+            message(FATAL_ERROR "")
         endif()
-
-        set(MBEDTLS_ORIGIN "SYSTEM")
     endif()
 elseif("${ENV_MBEDTLS_ORIGIN}" STREQUAL "SDK")
     message(STATUS "Using mbedtls from SDK")
     set(MBEDTLS_ORIGIN "SDK")
-    set(MBEDTLS_INCLUDE ${NXP_SDK_BASE}/middleware/mbedtls/include/)
 elseif("${ENV_MBEDTLS_ORIGIN}" STREQUAL "GIT")
     message(STATUS "Using mbedtls from GIT")
     set(MBEDTLS_ORIGIN "GIT")
-    set(MBEDTLS_INCLUDE )
 elseif("${ENV_MBEDTLS_ORIGIN}" STREQUAL "SYSTEM")
-    set(ENV_MbedTLS_DIR $ENV{MbedTLS_DIR})
-
-    find_package(MbedTLS)
-    if(MbedTLS_FOUND)
-        message(STATUS "Using preinstalled MbedTLS package " ${MbedTLS_DIR})
-        set(MBEDTLS_LIB_NAME MbedTLS::mbedcrypto)
-    else()
-        if("$ENV{MbedTLS_DIR}" STREQUAL "")
-            message(FATAL_ERROR "Please set MbedTLS_DIR with mbedtls installation path")
-        endif()
-        message(FATAL_ERROR "Unable to find mbedtls package")
-    endif()
-
-    set(MBEDTLS_ORIGIN "SYSTEM")
-
+    use_mbedtls_as_package()
 else()
-    message(FATAL_ERROR "Valid option for MBEDTLS_ORIGIN options are: SDK,GIT,SYSTEM")
+    message(STATUS "Valid options for environment variable MBEDTLS_ORIGIN options are: SDK,GIT,SYSTEM")
+    message(FATAL_ERROR "Usage example: `export MBEDTLS_ORIGIN=SDK`, `export MBEDTLS_ORIGIN=GIT` OR `export MBEDTLS_ORIGIN=SYSTEM`")
 endif()
 
 set(PDUM_LIB_PATH ${PROJECT_BINARY_DIR}/pdum/lib/libpdum.a)
@@ -275,7 +255,7 @@ set(NXP_NCP_HOST_COORDINATOR_SOURCES
 include("${NXP_ZB_BASE}/platform/NCP_HOST/cmake/pdum.cmake")
 
 # Build mbedtls library
-if(MBEDTLS_ORIGIN STREQUAL "SDK")
+if (MBEDTLS_ORIGIN STREQUAL "SDK")
     include("${NXP_ZB_BASE}/platform/NCP_HOST/cmake/mbedtls_sdk.cmake")
 elseif(MBEDTLS_ORIGIN STREQUAL "GIT")
     include("${NXP_ZB_BASE}/platform/NCP_HOST/cmake/mbedtls_git.cmake")
@@ -298,19 +278,16 @@ else()
         -g3
         -ggdb
         -m32
-        -Wno-incompatible-pointer-types
-        -Wno-discarded-qualifiers
     )
 
     target_link_options(zb_coord_linux PUBLIC -m32)
 endif()
 
-
 target_include_directories(zb_coord_linux
     PUBLIC
     ${NXP_NCP_HOST_COORDINATOR_INCLUDES}
     ${thirdparty_inc_public}
-    ${MBEDTLS_INCLUDE}
+    ${NCP_HOST_MBEDTLS_INCLUDE}
 )
 
 target_compile_options(zb_coord_linux
@@ -325,34 +302,13 @@ target_compile_definitions(zb_coord_linux
         DEBUG_ZQUEUE=1
         TRACE_REMOTE_ECHO=1
         DEBUG_BDB=1
-        SINGLE_CHANNEL=13
+        SINGLE_CHANNEL=${CONFIG_ZB_SINGLE_CHANNEL}
         TRACE_APP=1
         LITTLE_ENDIAN_PROCESSOR=1
         SERIAL_BAUD_RATE=B1000000
         ${CRYPTO_USE_MBEDTLS}
 )
 
-if(MBEDTLS_ORIGIN STREQUAL "SDK")
-    #Make sure mbedtls is built before executable
-    add_dependencies(zb_coord_linux ${mbedtls_target})
-
-    set(MBEDTLS_LIB_PATH ${PROJECT_BINARY_DIR}/mbedtls/library/libmbedcrypto.a)
-    set(MBEDTLS_LIB_NAME mbedcrypto)
-
-    add_library(mbedcrypto STATIC IMPORTED)
-    set_target_properties(mbedcrypto PROPERTIES IMPORTED_LOCATION ${MBEDTLS_LIB_PATH})
-endif()
-
-if(MBEDTLS_ORIGIN STREQUAL "GIT")
-    #Make sure mbedtls is built before executable
-    add_dependencies(zb_coord_linux ${mbedtls_target})
-
-    set(MBEDTLS_LIB_NAME ${PROJECT_BINARY_DIR}/mbedtls/library/libmbedcrypto.a)
-endif()
-
-add_library(pdum STATIC IMPORTED)
-set_target_properties(pdum PROPERTIES IMPORTED_LOCATION ${PDUM_LIB_PATH})
-
-target_link_libraries(zb_coord_linux rt pthread m pdum ${MBEDTLS_LIB_NAME})
+target_link_libraries(zb_coord_linux rt pthread m ncphost-PDUM ncphost-mbedcrypto)
 
 

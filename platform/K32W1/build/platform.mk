@@ -75,6 +75,7 @@ APPSRC += fsl_wuu.c
 APPSRC += fsl_crc.c
 APPSRC += fsl_wdog32.c
 APPSRC += fsl_debug_console.c
+APPSRC += fsl_trdc.c
 
 # Security
 APPSRC += SecLib_sss.c
@@ -215,6 +216,7 @@ INCFLAGS += -I$(DEVICE_SP_DRIVERS)/crc
 INCFLAGS += -I$(DEVICE_SP_DRIVERS)/ccm32k
 INCFLAGS += -I$(DEVICE_SP_DRIVERS)/lpadc
 INCFLAGS += -I$(DEVICE_SP_DRIVERS)/wdog32
+INCFLAGS += -I$(DEVICE_SP_DRIVERS)/trdc
 INCFLAGS += -I$(DEVICE_SP_DRIVERS_KW45)
 
 # Utilities
@@ -292,6 +294,7 @@ ZIGBEE_BASE_SRC = $(ZIGBEE_COMMON_SRC)\
     :$(DEVICE_SP_DRIVERS)/crc\
     :$(DEVICE_SP_DRIVERS)/wdog32\
     :$(DEVICE_SP_DRIVERS)/ccm32k\
+    :$(DEVICE_SP_DRIVERS)/trdc\
     :$(DEVICE_SP_DRIVERS_KW45)\
     :$(DEVICE_SP_UTILITIES)\
     :$(DEVICE_SP_UTILITIES)/misc_utilities\

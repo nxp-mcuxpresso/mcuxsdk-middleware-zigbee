@@ -5,7 +5,7 @@
     <definition extID="RW612"/>
     <definition extID="armgcc"/>
   </externalDefinitions>
-  <ksdk id="MCUXpressoSDK216000_middleware_nxp_zigbee_RW612_manifest_v3_14" name="MCUXpressoSDK216000_middleware_nxp_zigbee_RW612_manifest_v3_14" version="2.16.000" revision="2.16.000"/>
+  <ksdk id="MCUXpressoSDK216100_middleware_nxp_zigbee_RW612_manifest_v3_14" name="MCUXpressoSDK216100_middleware_nxp_zigbee_RW612_manifest_v3_14" version="2.16.100" revision="2.16.100"/>
   <components>
     <component id="middleware.wireless.zigbee.cmake.RW612" name="Middleware wireless zigbee cmake infrastructure" brief="middleware wireless zigbee cmake infrastructure" version="1.0.0" full_name="wireless zigbee cmake infrastructure" category="Zigbee Stack Class/Zigbee Stack Group" user_visible="false" type="middleware" package_base_path=".././" project_base_path="zigbee">
       <dependencies>
@@ -2520,6 +2520,11 @@
         <files mask="mbedtls_git.cmake"/>
         <files mask="mbedtls_sdk.cmake"/>
         <files mask="pdum.cmake"/>
+        <files mask="utils.cmake"/>
+      </source>
+      <source relative_path="../NCP_HOST/cmake/toolchains" project_relative_path="cmake/toolchains" type="script">
+        <files mask="arm-linux-gnueabihf.cmake"/>
+        <files mask="x86_64-linux-gnu.cmake"/>
       </source>
       <source relative_path="../NCP_HOST/framework/Common" project_relative_path="framework/Common" type="c_include">
         <files mask="EmbeddedTypes.h"/>
