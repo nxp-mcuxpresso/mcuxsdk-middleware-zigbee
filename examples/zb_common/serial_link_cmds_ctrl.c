@@ -490,6 +490,7 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
     case (uint16)E_SL_MSG_NWK_ROUTE_DISCOVERY:
     case (uint16)E_SL_MSG_PANID_CNFL_INDICATION:
     case (uint16)E_SL_MSG_TC_STATUS:
+    case (uint16)E_SL_MSG_ZDO_BIND_EVENT:
 
         if (u16PktType == (uint16)E_SL_MSG_NETWORK_JOINED_FORMED)
         {
@@ -1119,6 +1120,34 @@ PUBLIC void vSL_HandleNwkEvent(
         psStackEvent->uEvent.sNwkRouteDiscoveryConfirmEvent.u8Status = *(pu8Msg+u16Len++);
         /* Update NWK Route Discovery Event NWK status */
         psStackEvent->uEvent.sNwkRouteDiscoveryConfirmEvent.u8NwkStatus = *(pu8Msg+u16Len++);
+    }
+    else if(u16PktType == (uint16)E_SL_MSG_ZDO_BIND_EVENT)
+    {
+        /* Update Event type */
+        psStackEvent->eType = ZPS_EVENT_ZDO_BIND;
+
+        /* Copy destination address mode */
+        uint8 u8DstAddrMode = *(pu8Msg+u16Len++);
+        psStackEvent->uEvent.sZdoBindEvent.u8DstAddrMode = u8DstAddrMode;
+
+        /* Copy destination address */
+        if(ZPS_E_ADDR_MODE_IEEE == u8DstAddrMode)
+        {
+            psStackEvent->uEvent.sZdoBindEvent.uDstAddr.u64Addr = u64SL_ConvBiToU64(pu8Msg+u16Len);
+            u16Len += sizeof(uint64);
+        }
+        else
+        {
+            psStackEvent->uEvent.sZdoBindEvent.uDstAddr.u16Addr = ((uint16)*(pu8Msg+u16Len++))  << 8U;
+            psStackEvent->uEvent.sZdoBindEvent.uDstAddr.u16Addr += *(pu8Msg+u16Len++);
+        }
+
+        /* Copy source endpoint */
+        psStackEvent->uEvent.sZdoBindEvent.u8SrcEp = *(pu8Msg+u16Len++);
+
+        /* Copy desination endpoint */
+        psStackEvent->uEvent.sZdoBindEvent.u8DstEp = *(pu8Msg+u16Len++);
+
     }
     else if (u16PktType == (uint16)E_SL_MSG_ZPS_ERROR )
     {

@@ -529,7 +529,8 @@ typedef enum
     E_SL_MSG_JOIN_NETWORK                           =   0x9098U,
     E_SL_MSG_FIND_KEY_DESCRIPTOR                    =   0x9099U,
     E_SL_MSG_FIND_BIND_ENTRY_FOR_CLUSTER_ID         =   0x909AU,
-    E_SL_MSG_TC_STATUS                              =   0x909BU
+    E_SL_MSG_TC_STATUS                              =   0x909BU,
+    E_SL_MSG_ZDO_BIND_EVENT                         =   0x909CU
 
 } teSL_MsgType;
 typedef enum

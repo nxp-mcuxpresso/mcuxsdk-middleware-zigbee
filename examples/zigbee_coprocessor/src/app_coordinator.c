@@ -722,6 +722,35 @@ PUBLIC void APP_ZpsEventTask(void)
         }
         break;
 
+        case ZPS_EVENT_ZDO_BIND:
+        {
+            uint8 u8DstAddrMode = sStackEvent.uEvent.sZdoBindEvent.u8DstAddrMode;
+
+            /* Put address mode first so SerialLink payload can be properly parsed on the other side */
+
+            /* Copy destination address mode */
+            ZNC_BUF_U8_UPD( &au8StatusBuffer[u16Length], sStackEvent.uEvent.sZdoBindEvent.u8DstAddrMode , u16Length );
+
+            /* Copy destination address */
+            if(ZPS_E_ADDR_MODE_IEEE == u8DstAddrMode)
+            {
+                ZNC_BUF_U64_UPD( &au8StatusBuffer[u16Length], sStackEvent.uEvent.sZdoBindEvent.uDstAddr.u64Addr , u16Length );
+            }
+            else
+            {
+                ZNC_BUF_U16_UPD( &au8StatusBuffer[u16Length], sStackEvent.uEvent.sZdoBindEvent.uDstAddr.u16Addr , u16Length );
+            }
+
+            /* Copy source endpoint */
+            ZNC_BUF_U8_UPD( &au8StatusBuffer[u16Length], sStackEvent.uEvent.sZdoBindEvent.u8SrcEp , u16Length );
+
+            /* Copy destination endpoint */
+            ZNC_BUF_U8_UPD( &au8StatusBuffer[u16Length], sStackEvent.uEvent.sZdoBindEvent.u8DstEp , u16Length );
+
+            vSL_WriteMessage(E_SL_MSG_ZDO_BIND_EVENT, u16Length, NULL, au8StatusBuffer);
+        }
+        break;
+        
         default:
             DBG_vPrintf(TRACE_EVENT_HANDLER, "Unhandled Zps stack event %d", sStackEvent.eType);
             break;
