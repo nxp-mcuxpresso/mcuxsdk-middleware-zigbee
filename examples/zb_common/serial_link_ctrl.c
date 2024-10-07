@@ -1732,6 +1732,7 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_ZPS_DEFAULT_STACK:
                 case (uint16)E_SL_MSG_ZPS_SET_KEYS:
                 case (uint16)E_SL_MSG_ZPS_SAVE_ALL_RECORDS:
+                case (uint16)E_SL_MSG_NWK_NIB_CLEAR_TABLES:
                     if(NULL != pvData)
                     {
                         *(uint8*)pvData = *(pu8RxBuffer+SL_MSG_TSN_IDX);

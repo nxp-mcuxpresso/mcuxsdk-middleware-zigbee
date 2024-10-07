@@ -1753,6 +1753,12 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
+    case (E_SL_MSG_NWK_NIB_CLEAR_TABLES):
+    {
+        ZPS_vNwkNibClearTables(ZPS_pvAplZdoGetNwkHandle());
+        break;
+    }
+    
     case (E_SL_MSG_SET_SECURITY): 
     {
         ZPS_vAplSecSetInitialSecurityState(au8LinkRxBuffer[0],
