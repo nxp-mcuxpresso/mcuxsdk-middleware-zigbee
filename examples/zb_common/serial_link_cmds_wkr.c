@@ -830,6 +830,12 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
+    case E_SL_MSG_SET_IGNORE_PROFILE_CHECK:
+    {
+        zps_vSetIgnoreProfileCheck();
+        break;
+    }
+
     case E_SL_MSG_SET_NWK_ADDR:
     {
         uint16 u16NWKAddr = ZNC_RTN_U16(au8LinkRxBuffer, 0);
