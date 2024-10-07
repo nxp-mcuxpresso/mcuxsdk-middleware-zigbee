@@ -8749,6 +8749,11 @@ PUBLIC bool zps_bAplAibFindBindTableEntryForClusterId( void *pvApl, uint16 u16Cl
     return bEntryFound;
 }
 
+PUBLIC void zps_vSetIgnoreProfileCheck(void)
+{
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_SET_IGNORE_PROFILE_CHECK, 0U, NULL, NULL);
+}
+
 PUBLIC void ZPS_vNwkNibClearTables (void *pvNwk)
 {
     (void)u8SL_WriteMessage((uint16)E_SL_MSG_NWK_NIB_CLEAR_TABLES, 0U, NULL, NULL);

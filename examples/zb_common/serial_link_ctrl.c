@@ -1735,6 +1735,7 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_NWK_NIB_CLEAR_TABLES:
                 case (uint16)E_SL_MSG_NWK_CLEAR_MAT_SET:
                 case (uint16)E_SL_MSG_RESET_DATA_STRUCTURES:
+                case (uint16)E_SL_MSG_SET_IGNORE_PROFILE_CHECK:
                     if(NULL != pvData)
                     {
                         *(uint8*)pvData = *(pu8RxBuffer+SL_MSG_TSN_IDX);

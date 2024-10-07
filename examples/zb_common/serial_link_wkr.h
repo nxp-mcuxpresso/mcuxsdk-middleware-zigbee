@@ -533,7 +533,8 @@ typedef enum
     E_SL_MSG_ZDO_BIND_EVENT						    =   0x909CU,
     E_SL_MSG_NWK_NIB_CLEAR_TABLES                   =   0x909DU,
     E_SL_MSG_NWK_CLEAR_MAT_SET                      =   0x909EU,
-    E_SL_MSG_RESET_DATA_STRUCTURES                  =   0x909FU
+    E_SL_MSG_RESET_DATA_STRUCTURES                  =   0x909FU,
+    E_SL_MSG_SET_IGNORE_PROFILE_CHECK               =   0x90A0U
 
 } teSL_MsgType;
 typedef enum
