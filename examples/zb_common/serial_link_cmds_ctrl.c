@@ -8753,6 +8753,11 @@ PUBLIC void ZPS_vNwkNibClearTables (void *pvNwk)
 {
     (void)u8SL_WriteMessage((uint16)E_SL_MSG_NWK_NIB_CLEAR_TABLES, 0U, NULL, NULL);
 }
+
+PUBLIC void zps_vNwkSecClearMatSet(void *psNwk)
+{
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_NWK_CLEAR_MAT_SET, 0U, NULL, NULL);
+}
 /****************************************************************************/
 /***        END OF FILE                                                   ***/
 /****************************************************************************/
