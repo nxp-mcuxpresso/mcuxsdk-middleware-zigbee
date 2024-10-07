@@ -31,7 +31,6 @@
 #include "PDM_IDs.h"
 #include "app_crypto.h"
 #include "zps_nwk_sap.h"
-
 #include <version.h>
 
 /****************************************************************************/
@@ -119,7 +118,7 @@ PRIVATE uint8 u8Set2G4ChannelFromMask(uint32 u32ChannelMask);
 //#endif
 
 extern void * zps_psNwkMcpsMgrAllocateReqDescr(void *pvNwk);
-
+extern void zps_vNwkSecClearMatSet(void *psNwk );
 PUBLIC void vAppHandlePDMError(void);
 PUBLIC void vSendPdmStatusToHost(teSL_PdmCmdType eCmdType, uint8 u8PDMStatus);
 PRIVATE uint16 u16SearchKeyTableByIeeeAddress(uint64 u64IEEEAddress);
@@ -1758,7 +1757,13 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         ZPS_vNwkNibClearTables(ZPS_pvAplZdoGetNwkHandle());
         break;
     }
-    
+
+    case (E_SL_MSG_NWK_CLEAR_MAT_SET):
+    {
+        zps_vNwkSecClearMatSet(ZPS_pvAplZdoGetNwkHandle());
+        break;
+    }
+
     case (E_SL_MSG_SET_SECURITY): 
     {
         ZPS_vAplSecSetInitialSecurityState(au8LinkRxBuffer[0],

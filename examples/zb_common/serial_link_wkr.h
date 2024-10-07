@@ -531,7 +531,8 @@ typedef enum
     E_SL_MSG_FIND_BIND_ENTRY_FOR_CLUSTER_ID         =   0x909AU,
     E_SL_MSG_TC_STATUS                              =   0x909BU,
     E_SL_MSG_ZDO_BIND_EVENT						    =   0x909CU,
-    E_SL_MSG_NWK_NIB_CLEAR_TABLES                   =   0x909DU
+    E_SL_MSG_NWK_NIB_CLEAR_TABLES                   =   0x909DU,
+    E_SL_MSG_NWK_CLEAR_MAT_SET                      =   0x909EU
 
 } teSL_MsgType;
 typedef enum
