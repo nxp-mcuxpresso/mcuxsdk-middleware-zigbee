@@ -507,7 +507,8 @@ typedef enum
     E_SL_MSG_NWK_CLEAR_MAT_SET                      =   0x909EU,
     E_SL_MSG_RESET_DATA_STRUCTURES                  =   0x909FU,
     E_SL_MSG_SET_IGNORE_PROFILE_CHECK               =   0x90A0U,
-    E_SL_MSG_REGISTER_INTERPAN_FILTER               =   0x90A1U
+    E_SL_MSG_REGISTER_INTERPAN_FILTER               =   0x90A1U,
+    E_SL_MSG_MAC_SET_TX_BUFFERS                     =   0x90A2U
 } teSL_MsgType;
 
 

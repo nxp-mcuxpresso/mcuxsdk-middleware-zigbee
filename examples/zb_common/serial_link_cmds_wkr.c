@@ -860,6 +860,19 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
+    case E_SL_MSG_MAC_SET_TX_BUFFERS:
+    {
+        uint8 u8MaxTxBuffers = au8LinkRxBuffer[0];
+        uint32 u32Ret;
+
+        u32Ret = ZPS_u32MacSetTxBuffers (u8MaxTxBuffers);
+        u8Status = ZPS_E_SUCCESS;
+
+        /* Copy u32Ret for sending over serial */
+        ZNC_BUF_U32_UPD( &au8values[u8TxLength],  u32Ret, u8TxLength );
+        break;
+    }
+
     case E_SL_MSG_GET_EXT_PANID:
     {
         uint64 u64ExtPanId = ZPS_u64AplZdoGetNetworkExtendedPanId();
