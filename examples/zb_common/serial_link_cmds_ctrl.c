@@ -17,6 +17,7 @@
 #include "jendefs.h"
 #include "app_zcl_task.h"
 #include "app_common.h"
+#include "app_main.h"
 #include "serial_link_ctrl.h"
 #include "serial_link_cmds_ctrl.h"
 #include <string.h>
@@ -8752,6 +8753,28 @@ PUBLIC bool zps_bAplAibFindBindTableEntryForClusterId( void *pvApl, uint16 u16Cl
 PUBLIC void zps_vSetIgnoreProfileCheck(void)
 {
     (void)u8SL_WriteMessage((uint16)E_SL_MSG_SET_IGNORE_PROFILE_CHECK, 0U, NULL, NULL);
+}
+
+PUBLIC void ZPS_vAplZdoRegisterInterPanFilter(void* fnPtr)
+{
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
+    uint16 u16TxLength = 0x00U;
+
+    uint8 u8Endpoint = ROUTER_ONOFFLIGHT_ENDPOINT;
+    uint16 u16ProfileId = ZLL_PROFILE_ID;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy u8Endpoint */
+    *pu8TxBuffer++ = u8Endpoint;
+    u16TxLength += sizeof(uint8);
+
+    /* Copy u16ProfileId */
+    *pu8TxBuffer++ = (uint8)(u16ProfileId >> 8U);
+    *pu8TxBuffer++ = (uint8)(u16ProfileId);
+    u16TxLength += sizeof(uint16);
+
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_REGISTER_INTERPAN_FILTER, u16TxLength, au8TxSerialBuffer, NULL);
 }
 
 PUBLIC void ZPS_vNwkNibClearTables (void *pvNwk)
