@@ -1649,6 +1649,7 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_GET_NWK_OUTGOING_FRAME_COUNT:
                 case (uint16)E_SL_MSG_SERIAL_LINK_GET_STATUS_FLAGS:
                 case (uint16)E_SL_MSG_GET_GROUP_TABLE_SIZE:
+                case (uint16)E_SL_MSG_MAC_SET_TX_BUFFERS:
                     if(NULL != pu8Temp)
                     {
                         *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+3);

@@ -8786,6 +8786,23 @@ PUBLIC void zps_vNwkSecClearMatSet(void *psNwk)
 {
     (void)u8SL_WriteMessage((uint16)E_SL_MSG_NWK_CLEAR_MAT_SET, 0U, NULL, NULL);
 }
+
+PUBLIC uint32 ZPS_u32MacSetTxBuffers (uint8 u8MaxTxBuffers)
+{
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
+    uint16 u16TxLength = 0x00U;
+    uint32 u32Ret = 0;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy u8MaxTxBuffers */
+    *pu8TxBuffer++ = u8MaxTxBuffers;
+    u16TxLength += sizeof(uint8);
+
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_MAC_SET_TX_BUFFERS, u16TxLength, au8TxSerialBuffer, &u32Ret);
+
+    return u32Ret;
+}
 /****************************************************************************/
 /***        END OF FILE                                                   ***/
 /****************************************************************************/
