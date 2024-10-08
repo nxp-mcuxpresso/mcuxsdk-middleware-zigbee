@@ -138,6 +138,7 @@ PUBLIC bool_t vNfTcCallback (uint16 u16ShortAddress,
                              uint8 u8Status,
                              uint16 u16MacId);
 PUBLIC void vResetDataStructures (void);
+PRIVATE bool bAllowInterPanEp(uint8 u8Ep, uint16 u16ProfileId);
 /****************************************************************************/
 /***        Exported Variables                                            ***/
 /****************************************************************************/
@@ -156,6 +157,8 @@ extern uint32_t u32OverwrittenRXMessage;
 /****************************************************************************/
 PRIVATE BDB_tsTrspKeyDeciderEntry s_TrspKeyDeciderTableStorage[BDB_TRSP_KEY_DECIDER_TABLE_SIZE];
 PRIVATE BDB_tsTrspKeyDeciderTable s_TrspKeyDeciderTable = {s_TrspKeyDeciderTableStorage, 0, 0};
+PRIVATE uint8 u8IpanFilterEndpoint;
+PRIVATE uint16 u16IpanFilterProfileId;
 /****************************************************************************/
 /***        Exported Functions                                            ***/
 /****************************************************************************/
@@ -840,6 +843,20 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     {
         uint16 u16NWKAddr = ZNC_RTN_U16(au8LinkRxBuffer, 0);
         ZPS_vNwkNibSetNwkAddr( ZPS_pvNwkGetHandle(), u16NWKAddr);
+        break;
+    }
+
+    case E_SL_MSG_REGISTER_INTERPAN_FILTER:
+    {
+        uint16 u16Index = 0;
+
+        /* Set values for the interpan filter callback */
+        u8IpanFilterEndpoint = ZNC_RTN_U8_OFFSET(au8LinkRxBuffer, u16Index, u16Index);
+        u16IpanFilterProfileId = ZNC_RTN_U16_OFFSET( au8LinkRxBuffer, u16Index, u16Index);
+
+        /* Register interpan filter callback */
+        ZPS_vAplZdoRegisterInterPanFilter( bAllowInterPanEp);
+        
         break;
     }
 
@@ -5749,6 +5766,32 @@ PUBLIC void vResetDataStructures(void)
     ZPS_vSaveAllZpsRecords();
 }
 
+/****************************************************************************
+ *
+ * NAME: bAllowInterPanEp
+ *
+ * DESCRIPTION:
+ * Allows the application to decide which end point receives inter pan messages.
+ * Returns true to allow reception, False otherwise
+ *
+ *
+ * PARAMETERS:      Name                        RW  Usage
+ *                  u8Ep                The endpoint receiving the interpan
+ *                  u16ProfileId        The corresponding profile ID
+ * RETURNS:
+ *  bool
+ *
+ ****************************************************************************/
+
+PRIVATE bool bAllowInterPanEp(uint8 u8Ep, uint16 u16ProfileId) {
+
+    if ( (u8Ep == u8IpanFilterEndpoint) &&
+          ( u16ProfileId == u16IpanFilterProfileId))
+    {
+        return TRUE;
+    }
+    return FALSE;
+}
 /****************************************************************************/
 /***        END OF FILE                                                   ***/
 /****************************************************************************/
