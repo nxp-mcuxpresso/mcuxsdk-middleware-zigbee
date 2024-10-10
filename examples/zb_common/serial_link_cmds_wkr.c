@@ -137,12 +137,12 @@ PUBLIC bool_t vNfTcCallback (uint16 u16ShortAddress,
                              uint64 u64ParentAddress,
                              uint8 u8Status,
                              uint16 u16MacId);
-
+PUBLIC void vResetDataStructures (void);
 /****************************************************************************/
 /***        Exported Variables                                            ***/
 /****************************************************************************/
 uint32_t u32StatusFlags;
-
+uint32_t u32OldFrameCtr;
 PUBLIC uint8 u8LastMsgLqi =0; /* last message received Lqi. */
 PUBLIC uint8 u8TempExtendedError = 0;
 PUBLIC tsNwkStats sNwkStats;
@@ -821,6 +821,12 @@ PUBLIC void vProcessIncomingSerialCommands(void)
 
         /* Copy u16NWKAddr for sending over serial */
         ZNC_BUF_U16_UPD( &au8values[u8TxLength],  u16NWKAddr, u8TxLength );
+        break;
+    }
+
+    case E_SL_MSG_RESET_DATA_STRUCTURES:
+    {
+        vResetDataStructures();
         break;
     }
 
@@ -5685,6 +5691,56 @@ PRIVATE bool_t doSendTransportKey(uint64 u64DeviceAddress)
         default:
             return TRUE;
     }
+}
+
+/****************************************************************************
+ *
+ * NAME: vResetDataStructures
+ *
+ * DESCRIPTION:
+ * Resets persisted data structures to factory new state
+ *
+ * RETURNS:
+ * void
+ *
+ ****************************************************************************/
+PUBLIC void vResetDataStructures(void)
+{
+
+    void * pvNwk = ZPS_pvAplZdoGetNwkHandle();
+    ZPS_tsNwkNib *psNib = ZPS_psNwkNibGetHandle( pvNwk);
+    int i;
+
+    u32OldFrameCtr = psNib->sPersist.u32OutFC;
+
+    ZPS_vNwkNibClearTables(pvNwk);
+    (*(ZPS_tsNwkNibInitialValues *)psNib) = *(psNib->sTbl.psNibDefault);
+
+   /* Clear Security Material Set - will set all 64bit addresses to ZPS_NWK_NULL_EXT_ADDR */
+    zps_vNwkSecClearMatSet(pvNwk);
+
+    /* Set default values in Material Set Table */
+    for (i = 0; i < psNib->sTblSize.u8SecMatSet; i++)
+    {
+        psNib->sTbl.psSecMatSet[i].u8KeyType = ZPS_NWK_SEC_KEY_INVALID_KEY;
+    }
+    psNib->sPersist.u64ExtPanId = ZPS_NWK_NULL_EXT_PAN_ID; /* needs a default value? */
+    psNib->sPersist.u16NwkAddr = 0xffff;
+    psNib->sPersist.u8ActiveKeySeqNumber = 0xff;
+#if (JENNIC_CHIP_FAMILY != JN518x)
+    psNib->sTbl.u32OutFC = u32OldFrameCtr;
+#else
+    psNib->sPersist.u32OutFC = u32OldFrameCtr;
+#endif
+
+    ZPS_vSetKeys();
+
+    /* set the aps use pan id */
+    ZPS_eAplAibSetApsUseExtendedPanId( 0 );
+    ZPS_eAplAibSetApsTrustCenterAddress( 0 );
+
+    sNcpDeviceDesc.eNodeState = E_STARTUP;
+    ZPS_vSaveAllZpsRecords();
 }
 
 /****************************************************************************/
