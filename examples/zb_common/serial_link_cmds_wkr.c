@@ -1766,6 +1766,36 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
+    case (E_SL_MSG_SEARCH_EXT_PANID):
+    {
+        bool_t bRetVal = TRUE;
+        uint16_t u16PanId, u16Index = 0x00;
+        uint64_t u64ExtPanId;
+        
+        /* copy u64ExtPanId */
+        u64ExtPanId = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+
+        /* copy u16PanId */
+        u16PanId = ZNC_RTN_U16_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        
+        int i;
+        ZPS_tsNwkNib *psNib = ZPS_psNwkNibGetHandle(ZPS_pvAplZdoGetNwkHandle());
+        for (i = 0; i < psNib->sTblSize.u8NtDisc; i++)
+        {
+            if ((psNib->sTbl.psNtDisc[i].u64ExtPanId == u64ExtPanId)
+                    || (psNib->sTbl.psNtDisc[i].u16PanId == u16PanId))
+            {
+                bRetVal = FALSE;
+            }
+        }
+
+        /* Copy bRetVal for sending over serial */
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  bRetVal, u8TxLength );
+
+        u8Status = ZPS_E_SUCCESS;
+        break;
+    }
+
     case (E_SL_MSG_GET_NUMBER_OF_NWK_DESCRIPTORS):
     {
         uint8 u8NumberOfNetworks = 0;
