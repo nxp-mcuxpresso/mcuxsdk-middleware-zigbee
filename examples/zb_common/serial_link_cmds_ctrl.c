@@ -8237,9 +8237,9 @@ PUBLIC uint64 ZPS_u64NwkNibFindExtAddr(void *pvNwk, uint16 u16NwkAddr)
  ********************************************************************************/
 PUBLIC bool eSL_SearchExtendedPanId(uint64 u64ExtPanId, uint16 u16PanId)
 {
-#if 0
     uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer, u8Status;
     uint16 u16TxLength = 0x00U;
+    bool bRetVal = TRUE;
 
     pu8TxBuffer = au8TxSerialBuffer;
 
@@ -8252,13 +8252,8 @@ PUBLIC bool eSL_SearchExtendedPanId(uint64 u64ExtPanId, uint16 u16PanId)
     pu8TxBuffer[u16TxLength++] = (uint8)u16PanId;
 
     /* Send over serial */
-    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_SEARCH_EXT_PANID, u16TxLength, au8TxSerialBuffer, NULL);
-    return (bool)u8Status;
-#else
-    bool ret = TRUE;
-    DBG_vPrintf(TRUE, "%s not yet implemented, returning %d\n", __func__, ret);
-    return ret;
-#endif
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_SEARCH_EXT_PANID, u16TxLength, au8TxSerialBuffer, &bRetVal);
+    return bRetVal;
 }
 
 PUBLIC ZPS_tsAplApsKeyDescriptorEntry** ZPS_psAplDefaultDistributedAPSLinkKey(void)
