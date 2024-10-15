@@ -1334,6 +1334,7 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_GET_NUMBER_OF_NWK_DESCRIPTORS:
                 case (uint16)E_SL_MSG_FIND_BIND_ENTRY_FOR_CLUSTER_ID:
                 case (uint16)E_SL_MSG_SEARCH_EXT_PANID:
+                case (uint16)E_SL_MSG_FORM_DISTRIBUTED_NETWORK:
                 {
                     u16ReadIdx = SL_MSG_RSP_START_IDX;
                     if(NULL != pu8Temp)
