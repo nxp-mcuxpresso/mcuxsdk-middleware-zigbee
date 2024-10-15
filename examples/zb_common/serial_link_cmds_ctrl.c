@@ -7805,8 +7805,67 @@ PUBLIC ZPS_teStatus zps_eAplFormDistributedNetworkRouter(
     ZPS_tsAftsStartParamsDistributed *psStartParms,
     bool_t bSendDevice)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return 0;
+    uint8 au8TxSerialBuffer[40];
+    uint8 *pu8TxBuffer;
+    uint8 u8Status,i;
+    uint16 u16TxLength = 0x00U;
+    bool bRandomKey = (psStartParms->pu8NwkKey == NULL)? TRUE: FALSE;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* copy psStartParms->u64ExtPanId */
+    vSL_ConvU64ToBi(psStartParms->u64ExtPanId, pu8TxBuffer);
+    u16TxLength += sizeof(uint64);
+    pu8TxBuffer += sizeof(uint64);
+
+    /* if pu8NwkKey is not null, send key, else send 0 (random key) */ 
+    if(bRandomKey == FALSE)
+    {
+        (void)ZBmemcpy(pu8TxBuffer, psStartParms->pu8NwkKey, ZPS_SEC_KEY_LENGTH);
+    }
+    else
+    {
+        (void)ZBmemset(pu8TxBuffer, 0x0U, ZPS_SEC_KEY_LENGTH);
+    }
+    u16TxLength += ZPS_SEC_KEY_LENGTH;
+    pu8TxBuffer += ZPS_SEC_KEY_LENGTH;
+
+    /* copy psStartParms->u16PanId */ 
+    *pu8TxBuffer++ = (uint8)(psStartParms->u16PanId >> 8U);
+    *pu8TxBuffer++ = (uint8)(psStartParms->u16PanId);
+    u16TxLength += sizeof(uint16);
+
+    /* copy psStartParms->u16NwkAddr */ 
+    *pu8TxBuffer++ = (uint8)(psStartParms->u16NwkAddr >> 8U);
+    *pu8TxBuffer++ = (uint8)(psStartParms->u16NwkAddr);
+    u16TxLength += sizeof(uint16);
+
+    /* copy psStartParms->u8KeyIndex */ 
+    *pu8TxBuffer = psStartParms->u8KeyIndex;
+    u16TxLength += sizeof(uint8);
+    pu8TxBuffer += sizeof(uint8);
+
+    /* copy psStartParms->u8LogicalChannel */ 
+    *pu8TxBuffer = psStartParms->u8LogicalChannel;
+    u16TxLength += sizeof(uint8);
+    pu8TxBuffer += sizeof(uint8);
+
+    /* copy psStartParms->u8NwkupdateId */ 
+    *pu8TxBuffer = psStartParms->u8NwkupdateId;
+    u16TxLength += sizeof(uint8);
+    pu8TxBuffer += sizeof(uint8);
+
+    /* copy bSendDevice */
+    *pu8TxBuffer = bSendDevice;
+    u16TxLength += sizeof(uint8);
+    pu8TxBuffer += sizeof(uint8);
+
+    /* Set Long Response Timeout Period */
+    vSL_SetLongResponsePeriod();
+    
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_FORM_DISTRIBUTED_NETWORK, u16TxLength, au8TxSerialBuffer, NULL);
+
+    return u8Status;
 }
 
 PUBLIC ZPS_teStatus zps_eAplZdoBind(    void   *pvApl,

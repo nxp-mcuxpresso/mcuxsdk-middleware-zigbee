@@ -509,7 +509,8 @@ typedef enum
     E_SL_MSG_SET_IGNORE_PROFILE_CHECK               =   0x90A0U,
     E_SL_MSG_REGISTER_INTERPAN_FILTER               =   0x90A1U,
     E_SL_MSG_MAC_SET_TX_BUFFERS                     =   0x90A2U,
-    E_SL_MSG_SEARCH_EXT_PANID                       =   0x90A3U
+    E_SL_MSG_SEARCH_EXT_PANID                       =   0x90A3U,
+    E_SL_MSG_FORM_DISTRIBUTED_NETWORK               =   0x90A4U
 } teSL_MsgType;
 
 

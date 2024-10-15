@@ -662,6 +662,44 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     }
     break;
 
+    case E_SL_MSG_FORM_DISTRIBUTED_NETWORK:
+    {
+        uint16 u16Index = 0x00;
+        ZPS_tsAftsStartParamsDistributed sNwkParams;
+        uint8 u8NWKKey[ZPS_SEC_KEY_LENGTH];
+        uint8 i;
+        bool bSendDevice, bRandomKey = TRUE;
+
+        /* Rebuild parameter structure from payload */
+        sNwkParams.u64ExtPanId = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+
+        memcpy(u8NWKKey, &au8LinkRxBuffer[u16Index], ZPS_SEC_KEY_LENGTH);
+        u16Index += ZPS_SEC_KEY_LENGTH;
+
+        for(i = 0; i < ZPS_SEC_KEY_LENGTH; i++)
+        {
+            if(u8NWKKey[i] !=0)
+            {
+                bRandomKey = FALSE;
+            }
+        }
+
+        /* key address is NULL when a random key is used */
+        sNwkParams.pu8NwkKey = (bRandomKey)? NULL: u8NWKKey;
+        sNwkParams.u16PanId = ZNC_RTN_U16_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkParams.u16NwkAddr = ZNC_RTN_U16_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkParams.u8KeyIndex = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkParams.u8LogicalChannel = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkParams.u8NwkupdateId = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        bSendDevice = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+
+        sNcpDeviceDesc.eState = NOT_FACTORY_NEW;
+        sNcpDeviceDesc.eNodeState = E_RUNNING;
+        ZPS_eAplFormDistributedNetworkRouter(&sNwkParams, bSendDevice);
+
+        break;
+    }
+
     case E_SL_MSG_ADD_REPLACE_LINK_KEY:
     {
         uint64 u64IEEEAddr;
