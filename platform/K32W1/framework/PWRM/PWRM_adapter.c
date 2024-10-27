@@ -156,6 +156,7 @@ void PWR_vColdStart(void)
 {
     /* Init and set constraint to DeepSleep */
     PWR_ReturnStatus_t status = PWR_Success;
+    (void)status;
 
     PWR_Init();
 
