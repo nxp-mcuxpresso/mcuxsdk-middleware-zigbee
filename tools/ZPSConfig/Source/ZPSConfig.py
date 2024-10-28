@@ -1919,7 +1919,7 @@ PUBLIC void vZdoServersInit(void);
                 (outputParams, outputParamTypes) = zdoServers[server.tag]
 
                 # get context size of server from symbol in library
-                contextSize = getAplServerContextSize(server.tag, objdump, options.zigbeeAplLibFSP, options.endian)
+                contextSize = getAplServerContextSize(server.tag, objdump, zigbeeAplLibFSP, options.endian)
 
                 Cfile.write("PRIVATE uint8 s_s%sContext[%d] __attribute__ ((aligned (4)));\n" % (server.tag, contextSize))
                 if(server.tag == "BindRequestServer"):
@@ -2348,7 +2348,7 @@ PUBLIC void vZdoServersInit(void);
 
     # get the size of the context area directly from the network layer library file.
     # The size is placed in a const variable in the section '.libobjsize'
-    nwkContextSize = getLibObjSize(objdump, options.zigbeeNwkLibFSP, options.endian)
+    nwkContextSize = getLibObjSize(objdump, zigbeeNwkLibFSP, options.endian)
 
     Cfile.write("PRIVATE uint8                   s_sNwkContext[%d] __attribute__ ((aligned (4)));\n" % (nwkContextSize) )
     Cfile.write("PRIVATE ZPS_tsNwkDiscNtEntry    s_asNwkNtDisc[%d];\n" % (int(configNode.get("DiscoveryNeighbourTableSize"), 0)))
@@ -3197,20 +3197,25 @@ if options.OptionalFeatures:
     print(OptionalFeatures)
     sys.exit(0)
 
-if not os.path.exists(options.zigbeeNwkLibFSP):
-    print("ERROR: unable to locate Zigbee target library file '%s'.\n" % options.zigbeeNwkLibFSP)
+
+zigbeeNwkLibFSP = os.path.realpath(options.zigbeeNwkLibFSP)
+zigbeeAplLibFSP = os.path.realpath(options.zigbeeAplLibFSP)
+
+if not os.path.exists(zigbeeNwkLibFSP):
+    print("ERROR: unable to locate Zigbee target library file '%s'.\n" % zigbeeNwkLibFSP)
     sys.exit(4)
 
-if not os.path.exists(options.zigbeeAplLibFSP):
-    print("ERROR: unable to locate Zigbee target library file '%s'.\n" % options.zigbeeAplLibFSP)
+if not os.path.exists(zigbeeAplLibFSP):
+    print("ERROR: unable to locate Zigbee target library file '%s'.\n" % zigbeeAplLibFSP)
     sys.exit(5)
-if None == re.search('_R23', options.zigbeeAplLibFSP):
-    print("R22 mode for APL library file '%s'.\n" % options.zigbeeAplLibFSP)
+
+if None == re.search('_R23', zigbeeAplLibFSP):
+    print("R22 mode for APL library file '%s'.\n" % zigbeeAplLibFSP)
 else:
-    print("R23 mode for APL library file '%s'.\n" % options.zigbeeAplLibFSP)
+    print("R23 mode for APL library file '%s'.\n" % zigbeeAplLibFSP)
     R23_UPDATES = 1
 
-if None != re.search('_WWAH', options.zigbeeAplLibFSP):
+if None != re.search('_WWAH', zigbeeAplLibFSP):
     WWAH_SUPPORT = 1
 
 if None != options.outputDir and (not os.path.exists(options.outputDir)):
