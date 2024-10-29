@@ -21,7 +21,6 @@
 #include "zps_gen.h"
 #include "pdum_gen.h"
 #include "app_coordinator.h"
-#include "app_ota_server.h"
 #include "app_leds.h"
 #include "app.h"
 
