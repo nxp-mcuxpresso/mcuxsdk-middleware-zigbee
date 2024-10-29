@@ -66,5 +66,14 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.zcif_hf)
     mcux_add_include(
         INCLUDES Include
     )
+
+    mcux_add_source(
+         SOURCES
+                Include/zcl.h
+                Include/dlist.h
+                Include/zcl_customcommand.h
+                Include/zcl_heap.h
+                Include/zcl_internal_library_options.h
+    )
 endif()
 
