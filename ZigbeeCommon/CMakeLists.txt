@@ -36,6 +36,12 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.core_common)
                 Include/portmacro_JN518x.h
                 Include/tlv.h
     )
+    mcux_add_source(
+        SOURCES
+                Include/portmacro.h
+        COMPONENTS component.osa_bm
+    )
+
     mcux_add_include(
         INCLUDES Include
                  ../ZPSAPL/Include
