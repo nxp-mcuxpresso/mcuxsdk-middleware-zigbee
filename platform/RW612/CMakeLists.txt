@@ -83,6 +83,10 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs_r23)
             libs/libZPSNWK_R23.a
             libs/libZPSTSV.a
     )
+    mcux_add_macro(
+        R23_UPDATES=1
+        PDM_BUFFER_SIZE=2048
+    )
 endif()
 
 if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs)
