@@ -5,7 +5,7 @@ Version: 1.0.16b
 Outgoing License: LA_OPT_Online_Code_Hosting
 License File: LICENSE.txt
 Type of Content: object code, source code, header files
-Description and comments: ZigBee 3.0 protocol stack for K32W148 platform
+Description and comments: ZigBee 3.0 protocol stack
 Release Location: https://github.com/nxp-mcuxpresso/mcux-sdk-middleware-zigbee
 URL: None
 Origin: 
