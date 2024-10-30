@@ -349,6 +349,7 @@ PUBLIC ZPS_tsAplApsKeyDescriptorEntry** zps_psAplDefaultTrustCenterAPSLinkKey(vo
 PUBLIC uint32 zps_u32AplAibGetGroupTableSize(void *pvApl);
 PUBLIC uint16 zps_u16AplAibGetGroupTableEntryGroupId(void *pvApl, uint32 u32Index);
 PUBLIC uint8 zps_u8AplAibGetGroupTableEntryEndpoint(void *pvApl, uint32 u32Index, uint8 u8ByteOffset);
+PUBLIC bool zps_bAplAibFindBindTableEntryForClusterId( void *pvApl, uint16 u16ClusterId );
 
 #ifdef R23_UPDATES
 PUBLIC ZPS_teStatus zps_eAplAibAddChallengeReqEntry(void* pvApl, uint64 u64Addr, uint64 u64ChallengeValue);
@@ -524,6 +525,12 @@ ZPS_AIB_INLINE PUBLIC uint8 ZPS_u8AplAibGetGroupTableEntryEndpoint(uint32 u32Ind
 ZPS_AIB_INLINE PUBLIC uint8 ZPS_u8AplAibGetGroupTableEntryEndpoint(uint32 u32Index, uint8 u8ByteOffset)
 {
     return zps_u8AplAibGetGroupTableEntryEndpoint(ZPS_pvAplZdoGetAplHandle(), u32Index, u8ByteOffset);
+}
+
+ZPS_AIB_INLINE PUBLIC bool ZPS_bAplAibFindBindTableEntryForClusterId(uint16 u16ClusterId) ALWAYS_INLINE;
+ZPS_AIB_INLINE PUBLIC bool ZPS_bAplAibFindBindTableEntryForClusterId(uint16 u16ClusterId)
+{
+    return zps_bAplAibFindBindTableEntryForClusterId(ZPS_pvAplZdoGetAplHandle(), u16ClusterId);
 }
 /****************************************************************************/
 /****************************************************************************/
