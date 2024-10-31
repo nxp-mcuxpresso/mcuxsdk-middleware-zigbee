@@ -24,7 +24,8 @@
 #include "app_ota_server.h"
 #include "serial_link_ctrl.h"
 #include "serial_link_cmds_ctrl.h"
-
+/* Needed for calloc/malloc */
+#include <stdlib.h>
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
