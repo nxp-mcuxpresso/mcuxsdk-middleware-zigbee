@@ -959,7 +959,7 @@ PUBLIC void APP_vProcessZCLMessage(uintptr_t uiMsg)
             if (bValidEp)
             {
                 if (u8EndPoint == COORDINATOR_ZDO_ENDPOINT) {
-                    vAppHandleZdoEvents(&sStackEvent);
+                    vAppHandleZdoEvents((BDB_tsZpsAfEvent*)&sStackEvent);
                 } else {
                     vLockZCLMutex();
                     /* post to the ZCL as Event */

@@ -256,7 +256,7 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
         *pu8RxBuffer = SL_MSG_TYPE_OL_RESETED;
         /* post a message to ESI (App) task */
 
-        APP_vPostToAppQueue (&pu8Msg);
+        APP_vPostToAppQueue ((void*)&pu8Msg);
     }
     break;
     case (uint16)E_SL_MSG_EVENT_OL_REALIGN:
@@ -381,7 +381,7 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
         /* Update 1st byte that will indicates the new node parent indication */
         *pu8RxBuffer = SL_MSG_TYPE_NODE_PARENT;
         /* post message to the App Task queue */
-        APP_vPostToAppQueue(&pu8Msg);
+        APP_vPostToAppQueue((void*)&pu8Msg);
         break;
 
     case (uint16)E_SL_MSG_JEN_OS_ERROR:
@@ -418,7 +418,7 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
         *pu8RxBuffer = SL_MSG_TYPE_ZDP_MSG;
         /* post message to the App Task queue */
 
-        APP_vPostToAppQueue(&pu8Msg);
+        APP_vPostToAppQueue((void*)&pu8Msg);
         break;
     case (uint16)E_SL_MSG_DATA_INDICATION:
     case (uint16)E_SL_MSG_DATA_ACK:
@@ -437,7 +437,7 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
         APP_vPostToZclQueue(pu8Msg);
 
         /* post to App queue for diagnostic stack */
-        APP_vPostToAppQueue(&pu8Msg);
+        APP_vPostToAppQueue((void*)&pu8Msg);
         break;
 
     case (uint16)E_SL_MSG_INTERPAN_DATA_INDICATION:
@@ -492,7 +492,7 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
         /* Update 1st byte that will indicates the Network indication */
         *pu8RxBuffer = SL_MSG_TYPE_NWK;
         /* post message to the App Task queue */
-        APP_vPostToAppQueue(&pu8Msg);
+        APP_vPostToAppQueue((void*)&pu8Msg);
         break;
 
     default:
@@ -7213,7 +7213,7 @@ PUBLIC uint32_t* zps_pu32AplAibGetApsChannelMask(void *pvApl, uint8_t *u8Channel
         u32ApsChannelMask[i++] = u32SL_ConvBiToU32(au8Mask+u8Index);
         u8Index += sizeof(uint32);
     }
-    return &u32ApsChannelMask;
+    return (uint32*)&u32ApsChannelMask;
 }
 
 /********************************************************************************
