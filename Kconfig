@@ -52,7 +52,6 @@ menuconfig MCUX_COMPONENT_middleware.wireless.zigbee
             if MCUX_COMPONENT_middleware.wireless.zigbee.coordinator
                 choice Feature
                 bool "Feature selection"
-                default ZB_COORD_R22_REVISION
                     config ZB_COORD_R22_REVISION
                         bool "Zigbee PRO 2017 (R22) selected"
                         select MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs
