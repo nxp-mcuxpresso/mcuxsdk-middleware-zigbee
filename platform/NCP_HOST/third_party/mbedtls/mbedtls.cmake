@@ -2,14 +2,15 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
+cmake_minimum_required(VERSION 3.30)  # CMake version check
+
 cmake_policy(SET CMP0079 NEW)
 
 include(FetchContent)
-set(FETCHCONTENT_QUIET off)
 
 set(MBEDTLS_LOCATION ${NXP_ZB_BASE}/platform/NCP_HOST/third_party/mbedtls)
 set(FETCHCONTENT_BASE_DIR ${MBEDTLS_LOCATION})
-string(CONCAT MBEDTLS_GIT_VERSION "mbedtls-" ${MBEDTLS_MIN_VERSION} ".0")
+string(CONCAT MBEDTLS_GIT_VERSION "mbedtls-" ${CONFIG_MBEDTLS_VERSION} ".0")
 
 FetchContent_Declare(mbedtls_local
     GIT_REPOSITORY "https://github.com/Mbed-TLS/mbedtls.git"
@@ -22,9 +23,9 @@ FetchContent_GetProperties(
     POPULATED mbedtls_local_POPULATED
 )
 
-if(NOT ${mbedtls_local_POPULATED})
+if(NOT mbedtls_local_POPULATED)
     message(STATUS "Populate mbedtls repository")
-    FetchContent_Populate(mbedtls_local)
+    FetchContent_MakeAvailable(mbedtls_local)
 endif()
 
 if(NOT TARGET mbedtls_local_mbedtls)
@@ -40,8 +41,7 @@ if(NOT TARGET mbedtls_local_mbedtls)
     if(NOT NCP_HOST_MBEDTLS_PATH)
         set(NCP_HOST_MBEDTLS_PATH ${MBEDTLS_LOCATION}/repo)
     endif()
-
-    set(NCP_HOST_MBEDTLS_INCLUDE ${NCP_HOST_MBEDTLS_PATH}/include)
+    set(NCP_HOST_MBEDTLS_INCLUDE ${NCP_HOST_MBEDTLS_PATH}/include CACHE PATH "MBEDTLS Include Path")
 
     set(ENABLE_TESTING OFF CACHE BOOL "Disable mbedtls test" FORCE)
     set(ENABLE_PROGRAMS OFF CACHE BOOL "Disable mbetls program" FORCE)
@@ -70,8 +70,8 @@ if(NOT TARGET mbedtls_local_mbedtls)
                 -Wno-unused-const-variable
                 -Wno-memset-elt-size
                 -Wno-int-conversion
-        )
-        if (NOT "${MACHINE_TYPE}" STREQUAL "imx8")
+            )
+        if (CONFIG_ZB_TARGET_32B)
             target_compile_options(${mbedcrypto_target}
                 PRIVATE
                     -m32
