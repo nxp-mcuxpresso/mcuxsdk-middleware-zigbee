@@ -60,17 +60,19 @@ if(${CMAKE_C_COMPILER_ID} MATCHES "GNU")
             -Wno-int-conversion
         )
     if (NOT "${MACHINE_TYPE}" STREQUAL "imx8")
-        target_compile_options(${mbedcrypto_target}
-            PRIVATE
-                -m32
-        )
-        target_compile_options(${mbedtls_target}
-            PRIVATE
-                -m32
-        )
-        target_compile_options(${mbedx509_target}
-            PRIVATE
-                -m32
-        )
+        if (CONFIG_ZB_TARGET_32B)
+            target_compile_options(${mbedcrypto_target}
+                PRIVATE
+                    -m32
+            )
+            target_compile_options(${mbedtls_target}
+                PRIVATE
+                    -m32
+            )
+            target_compile_options(${mbedx509_target}
+                PRIVATE
+                    -m32
+            )
+        endif()
     endif()
 endif()

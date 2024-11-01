@@ -2,12 +2,12 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required(VERSION 3.13)  # CMake version check
+cmake_minimum_required(VERSION 3.30)  # CMake version check
 
-set(NCPHOST_JENNIC_CHIP_FAMILY "JN518x")
-set(NCPHOST_JENNIC_CHIP "JN5189")
-set(NCPHOST_JENNIC_STACK "MAC")
-set(NCPHOST_JENNIC_MAC "MiniMac")
+set(JENNIC_CHIP_FAMILY "JN518x")
+set(JENNIC_CHIP "JN5189")
+set(JENNIC_STACK "MAC")
+set(JENNIC_MAC "MiniMac")
 
 # Add library target
 add_library(ncphost-PDUM
@@ -32,23 +32,27 @@ if ("${MACHINE_TYPE}" STREQUAL "imx8")
 else()
     target_compile_options(ncphost-PDUM PRIVATE
         -Wno-format
-        -m32
     )
-    target_link_options(ncphost-PDUM PUBLIC -m32)
+    if (CONFIG_ZB_TARGET_32B)
+        target_compile_options(ncphost-PDUM PRIVATE
+             -m32
+        )
+        target_link_options(ncphost-PDUM PUBLIC -m32)
+    endif()
 endif()
 
 target_compile_definitions(ncphost-PDUM
     PRIVATE
-        JENNIC_CHIP=${NCPHOST_JENNIC_CHIP}
-        JENNIC_CHIP_${NCPHOST_JENNIC_CHIP}
-        JENNIC_CHIP_NAME=_${NCPHOST_JENNIC_CHIP}
-        JENNIC_CHIP_FAMILY=${NCPHOST_JENNIC_CHIP_FAMILY}
-        JENNIC_CHIP_FAMILY_${NCPHOST_JENNIC_CHIP_FAMILY}
-        JENNIC_CHIP_FAMILY_NAME=_${NCPHOST_JENNIC_CHIP_FAMILY}
-        ${NCPHOST_JENNIC_CHIP}=5189
-        ${NCPHOST_JENNIC_CHIP_FAMILY}=5189
-        JENNIC_STACK_${NCPHOST_JENNIC_STACK}
-        JENNIC_MAC_${NCPHOST_JENNIC_MAC}
+        JENNIC_CHIP=${JENNIC_CHIP}
+        JENNIC_CHIP_${JENNIC_CHIP}
+        JENNIC_CHIP_NAME=_${JENNIC_CHIP}
+        JENNIC_CHIP_FAMILY=${JENNIC_CHIP_FAMILY}
+        JENNIC_CHIP_FAMILY_${JENNIC_CHIP_FAMILY}
+        JENNIC_CHIP_FAMILY_NAME=_${JENNIC_CHIP_FAMILY}
+        ${JENNIC_CHIP}=5189
+        ${JENNIC_CHIP_FAMILY}=5189
+        JENNIC_STACK_${JENNIC_STACK}
+        JENNIC_MAC_${JENNIC_MAC}
 )
 
 target_include_directories(ncphost-PDUM
