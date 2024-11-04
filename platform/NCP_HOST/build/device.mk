@@ -54,7 +54,7 @@ INCFLAGS += -I$(ZIGBEE_BASE_DIR)/platform/NCP_HOST/misc
 ###############################################################################
 # Compiler options
 ###############################################################################
-
+CFLAGS += -ffunction-sections
 ifeq ($(MACHINE),IMX8)
 # Compiling for IMX8
 CROSS_COMPILE ?= arm-linux-gnueabihf-gcc
