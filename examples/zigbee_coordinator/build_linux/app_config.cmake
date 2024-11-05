@@ -1,3 +1,7 @@
+# Copyright 2024 NXP
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 set(CONFIG_ZB_TRACE_APP ON CACHE BOOL "Enable TRACE_APP logs")
 set(CONFIG_ZB_TRACE_ZCL ON CACHE BOOL "Enable TRACE_ZCL logs")
 set(CONFIG_ZB_DEBUG_APP ON CACHE BOOL "Enable App debug information")
