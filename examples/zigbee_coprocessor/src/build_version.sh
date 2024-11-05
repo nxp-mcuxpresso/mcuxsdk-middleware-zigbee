@@ -41,7 +41,7 @@ fi
 if [ "$SDK_RELEASE" = "1" ]; then
     file=$NXP_SDK_ROOT/SW-Content-Register.txt;
     #Get SDK version number
-    sdk_version=`grep "Release Version" $file | cut -d ":" -f 2 | sed 's/[\. ]//g'`;
+    sdk_version=`grep "Release Version" $file | cut -d ":" -f 2 | sed 's/[-\.a-zA-Z ]//g'`;
 
     #Get Zigbee version number
     start=`grep -n "Zigbee" $file | cut -d: -f 1`;
