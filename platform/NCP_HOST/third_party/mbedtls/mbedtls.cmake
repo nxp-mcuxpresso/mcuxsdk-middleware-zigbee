@@ -71,19 +71,22 @@ if(NOT TARGET mbedtls_local_mbedtls)
                 -Wno-memset-elt-size
                 -Wno-int-conversion
             )
-        if (CONFIG_ZB_TARGET_32B)
-            target_compile_options(${mbedcrypto_target}
-                PRIVATE
-                    -m32
-            )
-            target_compile_options(${mbedtls_target}
-                PRIVATE
-                    -m32
-            )
-            target_compile_options(${mbedx509_target}
-                PRIVATE
-                    -m32
-            )
+
+        if (NOT "${MACHINE_TYPE}" STREQUAL "imx8")
+            if (CONFIG_ZB_TARGET_32B)
+                target_compile_options(${mbedcrypto_target}
+                    PRIVATE
+                        -m32
+                )
+                target_compile_options(${mbedtls_target}
+                    PRIVATE
+                        -m32
+                )
+                target_compile_options(${mbedx509_target}
+                    PRIVATE
+                        -m32
+                )
+            endif()
         endif()
     endif()
 endif()
