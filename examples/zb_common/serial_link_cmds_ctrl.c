@@ -22,10 +22,11 @@
 #include <string.h>
 #include "dbg.h"
 #include "zps_apl_zdo.h"
+#include "bdb_api.h"
 #if (BDB_SET_DEFAULT_TC_POLICY == TRUE)
 #include "bdb_tkd.h"
 #endif
-#include "bdb_api.h"
+
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
