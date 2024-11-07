@@ -480,7 +480,6 @@ static void vAppHandleZdoEvents( BDB_tsZpsAfEvent *psZpsAfEvent)
                 DBG_vPrintf(TRACE_APP, "LEAVE IND -> For Us No Rejoin\r\n");
 #ifndef KPI_MODE_APP
                 APP_vFactoryResetRecords();
-                MICRO_DISABLE_INTERRUPTS();
 #endif
             }
             break;
@@ -493,19 +492,12 @@ static void vAppHandleZdoEvents( BDB_tsZpsAfEvent *psZpsAfEvent)
                 (psAfEvent->uEvent.sNwkLeaveConfirmEvent.u64ExtAddr == 0UL))
             {
                 DBG_vPrintf(TRACE_APP, "Leave -> Reset Data Structures\r\n");
-#ifndef NCP_HOST
 #if defined(KPI_MODE_APP)
                 sBDB.sAttrib.bbdbNodeIsOnANetwork = FALSE;
                 sNcpDeviceDesc.eNodeState = E_STARTUP;
                 PDM_eSaveRecordData(PDM_ID_APP_ROUTER,&sNcpDeviceDesc,sizeof(tsNcpDeviceDesc));
 #else
                 APP_vFactoryResetRecords();
-                MICRO_DISABLE_INTERRUPTS();
-#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES) && !defined(RW612_SERIES)
-                vMMAC_Disable();
-#endif
-                RESET_SystemReset();
-#endif
 #endif
             }
             break;
