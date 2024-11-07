@@ -13,11 +13,6 @@ else()
     #not implemented for now
 endif()
 
-if ((${CMAKE_C_COMPILER} MATCHES ".*arm-linux-gnueabihf-gcc") OR 
-    (${CMAKE_C_COMPILER} MATCHES ".*aarch64-linux-gnu"))
-    set(MACHINE_TYPE "imx8" CACHE STRING "Machine type imx8")
-endif()
-
 # Include NCP Coordinator configuration
 include(app_config.cmake)
 
@@ -27,6 +22,10 @@ endif()
 
 if(NOT DEFINED CONFIG_ZB_SINGLE_CHANNEL)
     set(CONFIG_ZB_SINGLE_CHANNEL "13" CACHE STRING "Force the channel to be used.")
+endif()
+
+if(NOT DEFINED MACHINE_TYPE)
+    set(MACHINE_TYPE "x86" CACHE STRING "Machine type x86")
 endif()
 
 # Include NCP Host configuration
