@@ -6,9 +6,6 @@
 set(TOOLCHAIN_DIR $ENV{ARMGCC_DIR})
 string(REGEX REPLACE "\\\\" "/" TOOLCHAIN_DIR "${TOOLCHAIN_DIR}")
 
-# 32 bit support enabled
-set(CONFIG_ZB_TARGET_32B $ENV{CONFIG_ZB_TARGET_32B})
-
 if(NOT TOOLCHAIN_DIR)
     message(STATUS "***ARMGCC_DIR is not set, assume toolchain bins are in your PATH***")
     set(TOOLCHAIN_BIN_DIR "")
@@ -31,10 +28,20 @@ set(CMAKE_STATIC_LIBRARY_SUFFIX ".a")
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 
+set(MACHINE_TYPE "imx8" CACHE STRING "Machine type imx8")
+
 if (CONFIG_ZB_TARGET_32B)
-    set(TOOLCHAIN_PREFIX "arm-linux-gnueabihf")
+    if (TOOLCHAIN_NAME)
+        set(TOOLCHAIN_PREFIX ${TOOLCHAIN_NAME})
+    else()
+        set(TOOLCHAIN_PREFIX "arm-none-linux-gnueabihf")
+    endif()
 else()
-    set(TOOLCHAIN_PREFIX "aarch64-linux-gnu")
+    if (TOOLCHAIN_NAME)
+        set(TOOLCHAIN_PREFIX ${TOOLCHAIN_NAME})
+    else()
+        set(TOOLCHAIN_PREFIX "aarch64-none-linux-gnu")
+    endif()
 endif()
 
 set(CMAKE_C_COMPILER ${TOOLCHAIN_BIN_DIR}${TOOLCHAIN_PREFIX}-gcc)
