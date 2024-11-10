@@ -225,6 +225,7 @@ typedef struct
     bool_t bFramePending;
 #ifdef R23_UPDATES
     uint8  u8KeyIndex;
+    bool_t bByRelay;
 #endif
 } ZPS_tsAfDataIndEvent;
 
