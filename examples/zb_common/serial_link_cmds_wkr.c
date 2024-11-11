@@ -3019,7 +3019,7 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     {
         uint8 u8DeviceType = au8LinkRxBuffer[0];
         zps_vSetZdoDeviceType(ZPS_pvAplZdoGetAplHandle(),u8DeviceType);
-        sNcpDeviceDesc.u8DeviceType = ZPS_ZDO_DEVICE_ROUTER;
+        sNcpDeviceDesc.u8DeviceType = u8DeviceType;
 
         break;
     }
@@ -3028,11 +3028,21 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     {
         ZPS_teNwkDeviceType eNwkDeviceType = (ZPS_teNwkDeviceType) au8LinkRxBuffer[0];
         ZPS_vNwkSetDeviceType(ZPS_pvAplZdoGetNwkHandle(), eNwkDeviceType);
-        sNcpDeviceDesc.u8DeviceType = ZPS_ZDO_DEVICE_ROUTER;
-
+        if (eNwkDeviceType == ZPS_NWK_DT_COORDINATOR)
+        {
+            sNcpDeviceDesc.u8DeviceType = ZPS_ZDO_DEVICE_COORD;
+        }
+        else if (eNwkDeviceType == ZPS_NWK_DT_ROUTER)
+        {
+            sNcpDeviceDesc.u8DeviceType = ZPS_ZDO_DEVICE_ROUTER;
+        }
+        else
+        {
+            u8Status = E_SL_MSG_STATUS_INCORRECT_PARAMETERS;
+        }
         break;
     }
-        
+
     case E_SL_MSG_GET_NWK_INTERFACE_REQ:
     {
         uint8 u8InterfaceIndex;
