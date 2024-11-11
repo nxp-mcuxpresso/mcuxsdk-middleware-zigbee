@@ -1,7 +1,7 @@
 
 # 1. General description
 
-<p>The purpose of this demo is to demonstrate the capabilities of the K32W1480 SoC when used as a Zigbee NCP together with a Zigbee Coordinator application running on the iMX8 (or x86) platform under Linux. </p>
+<p>The purpose of this demo is to demonstrate the capabilities of the K32W1480/K32W061 SoC when used as a Zigbee NCP together with a Zigbee Coordinator application running on the iMX8 (or x86) platform under Linux. </p>
 
 <p>The demo showcases how to connect a Zigbee End Device to the network formed by the Zigbee Coordinator and toggle the RGB LED available on the device. </p>
 
@@ -18,7 +18,7 @@
 ## 2.1. iMX8 board configuration 
 
 <p>Ensure that SW801 on the IMX8 EVK board is configured for SD card boot.
-For more information see the following starting guide for IMX8M EVK board: https://www.nxp.com/document/guide/getting-started-with-the-i-mx-8m-plus-evk:GS-iMX-8M-Plus-EVK. </p>
+For more information see the following starting guide for iMX8M EVK board: https://www.nxp.com/document/guide/getting-started-with-the-i-mx-8m-plus-evk:GS-iMX-8M-Plus-EVK. </p>
 
 ## 2.2. Zigbee NCP coprocessor board configuration
 
@@ -44,38 +44,50 @@ DK6-UG-3127-Production-Flash-Programmer.pdf document.</p>
 
 # 3. Building
 
-<p>The building process has small differences depending on the host (iMX8 or x86) on which the Zigbee Coordinator application is running on. For the x86 platform it allows 
-for user configurable options in terms of MCUXPRESSO SDK package and Mbedtls package. The Mbedtls package is required for the encryption/decryption capabilities needed to 
-obtain a secured Serial Link.</p>
+<p>The building process has small differences depending on the host (iMX8 or x86) on which the Zigbee Coordinator application is running on. The user has also the option to cross-compile the Coordinator application under x86 Linux distribution</p>
+
+### Environment Setup
+
+The NCP Host offers toolchain files that can be used to compile and cross compile the applications. They are available at ZIGBEE_BASE/platform/NCP_HOST/cmake/toolchains and should be provided to cmake `-DCMAKE_TOOLCHAIN_FILE` command line argument:
+-   `x86_64-linux-gnu.cmake` - toolchain file for x86 compile
+-   `arm-linux` - toolchain file for imx8 cross-compile
+
+The armgcc toolchain was obtained from official Arm GNU Toolchain website and by default the toolchain file relies on this particular configuration. User can change through environment variables and cmake arguments the default behavior. 
+-   `ARMGCC_DIR` - path to installed toolchain
+-   `TOOLCHAIN_NAME` - toolchain name
+
+The Mbedtls package is required for the encryption/decryption capabilities needed to obtain a secured Serial Link. There are three options to obtain the mbedlts library, options configurable through cmake command line arguments:
+-   `CONFIG_MBEDTLS_SOURCE=SDK` - Mbedtls package is obtained from MCUXPRESSO SDK 
+-   `CONFIG_MBEDTLS_SOURCE=GIT` - Mbedtls package is retrieved from git official repository
+-   `CONFIG_MBEDTLS_SOURCE=SYSTEM` - Mbedtls package is used as a preinstalled package
+
+
+Examples for cross-compile:
+-   `cmake .. -DCMAKE_TOOLCHAIN_FILE=$PWD/../../../../platform/NCP_HOST/cmake/toolchains/arm-linux.cmake -DCONFIG_MBEDTLS_SOURCE=SYSTEM` - Cross-compile for imx8 with mbedtls as a preinstalled package. The toolchain file provided detects that machine type is imx8
+-   `cmake .. -DCMAKE_TOOLCHAIN_FILE=$PWD/../../../../platform/NCP_HOST/cmake/toolchains/arm-linux.cmake -DTOOLCHAIN_NAME=aarch64-linux-gnu` - Cross-compile for imx8 with toolchain available for Ubuntu 22.04
+
 
 ## 3.1. iMX8 platform 
 
-<p>Create a directory `out` under the `build_linux` directory and issue the cmake command with the `MACHINE=imx8` option. The mbedtls package is preinstalled in the provided 
+<p>Create a directory `out` under the `build_linux` directory and issue the cmake command with the `MACHINE_TYPE=imx8` option. The mbedtls package is preinstalled in the provided 
 Board Support Package (BSP).</p>
 
-<p>The user has the option to cross-compile the Coordinator application under x86 Linux distribution. The toolchain to be used should be provided through the `ARMGCC_DIR` 
-environment variable.</p>
 
 ```
->$ cd out ; cmake .. -DMACHINE=imx8 
--- The C compiler identification is GNU 11.4.0
--- The CXX compiler identification is GNU 11.4.0
+>$ cd out ; cmake .. -DMACHINE_TYPE=imx8 
+-- The C compiler identification is GNU 13.2.1
+-- The CXX compiler identification is GNU GNU 13.2.1
 -- Detecting C compiler ABI info
 -- Detecting C compiler ABI info - done
--- Check for working C compiler: /usr/bin/cc - skipped
+-- Check for working C compiler: /usr/bin/aarch64-none-linux-gnu-gcc - skipped
 -- Detecting C compile features
 -- Detecting C compile features - done
 -- Detecting CXX compiler ABI info
 -- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Check for working CXX compiler: /usr/bin/aarch64-none-linux-gnu-c++ - skipped
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
--- Using Zigbee root path /home/zb-linux-coord/zigbee/
--- Using preinstalled MbedTLS package
-CMake Warning at CMakeLists.txt:277 (message):
-  Compiling for x86
-
-
+-- Using preinstalled MbedTLS package /usr/local/mbedtls/cmake
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/zb-linux-coord/zigbee/examples/zigbee_coordinator/build_linux/out 
@@ -104,14 +116,6 @@ Issue the command `make` to execute the newly generated Makefile.
 <p>The Zigbee Coordinator demo application was compiled and verified on a x86 Linux distribution (Ubuntu 22.04.2 LTS). The CMakeFile of the application determines as a prebuild step
 if the application was provided as part of a MCUXPRESSO SDK package or as standalone Zigbee module. Depending on the SDK package existence, the Mbedtls can be used either from within the SDK package, as a preinstalled package or it can be obtained from official git repository (version 2.28.0). </p>
 
-### Environment Setup
-
-For the x86 platform, the user can provide a MCUXPRESSO SDK path and a method to obtain the Mbedtls package through environment variables:
--   `export NXP_SDK_BASE=/home/mcu-sdk-2.0/` - example on how to provide MCUXPRESSO SDK path
--   `export MBEDTLS_ORIGIN=SDK` - Mbedtls package is obtained from MCUXPRESSO SDK 
--   `export MBEDTLS_ORIGIN=GIT` - Mbedtls package is retrieved from git official repository
--   `export MBEDTLS_ORIGIN=SYSTEM` - Mbedtls package is used as a preinstalled package
-
 ### MCUXPRESSO SDK package
 
 <p>Create a directory `out` under the `build_linux` directory and issue the cmake command. The output will showcase the MCUXPRESSO SDK location and the mbedtls usage from within the SDK package.</p>
@@ -130,18 +134,12 @@ For the x86 platform, the user can provide a MCUXPRESSO SDK path and a method to
 -- Check for working CXX compiler: /usr/bin/c++ - skipped
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
--- Found MCUXPRESSO SDK internal
+-- Found MCUXPRESSO SDK
 -- Using SDK root path /home/mcu-sdk-2.0
--- Using Zigbee root path /home/mcu-sdk-2.0/middleware/wireless/zigbee
--- Using mbedtls from SDK
 -- Build mbedtls from SDK source code
-CMake Warning at CMakeLists.txt:277 (message):
-  Compiling for x86
-
-
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/mcu-sdk-2.0/middleware/wireless/zigbee/examples/zigbee_coordinator/build_linux/out 
+-- Build files have been written to: /home/mcu-sdk-3.0/middleware/wireless/zigbee/examples/zigbee_coordinator/build_linux/out 
 ```
 
 Issue the command `make` to execute the newly generated Makefile.
@@ -183,9 +181,11 @@ Create a directory `out` under the `build_linux` directory and issue the cmake c
 -- Check for working CXX compiler: /usr/bin/c++ - skipped
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
--- Using Zigbee root path /home/zb-linux-coord/zigbee/
--- Using mbedtls from GIT
--- Clone mbedtls repository
+-- Populate mbedtls repository
+Cloning into 'repo'...
+HEAD is now at 8b3f26a5ac Merge pull request #868 from ARMmbed/mbedtls-2.28.0rc0-pr
+...
+
 -- Found Python3: /usr/bin/python3.10 (found version "3.10.12") found components: Interpreter
 -- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS
 -- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS - Success
@@ -251,9 +251,7 @@ eOTA_NewImageLoaded status = 1
 [2] Pkt Type 0010 Set New Max Response Time 2
 [212] New max process gap 210
 [226] Pkt Type 0012 Set New Max Response Time 13
-zps_eAplZdoGetDeviceType - hardwired coord
 [1178] Recovered Application State 0 On Network 0
-zps_eAplZdoGetDeviceType - hardwired coord
 >
 ```
 
@@ -262,8 +260,6 @@ zps_eAplZdoGetDeviceType - hardwired coord
 ```
 [3259] Form
 [3259] APP-EVT: Event 8, NodeState=0
-zps_eAplZdoGetDeviceType - hardwired coord
-zps_eAplZdoGetDeviceType - hardwired coord
 [3267] BDB: Forming Centralized Nwk
 [3285] Pkt Type 0024 Set New Max Response Time 18
 [3285] APP-EVT: Request Nwk Formation 00
