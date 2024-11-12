@@ -5,6 +5,7 @@
 - [Software requirements](#software-requirements)
 - [Hardware requirements](#hardware-requirements)
   - [RD-RW612-BGA](#rd-rw612-bga)
+  - [FRDM-RW612](#frdm-rw612)
 - [Examples](#examples)
   - [Loading the examples](#loading-the-examples)
 - [Over The Air Upgrade (OTA)](#over-the-air-upgrade-ota)
@@ -20,10 +21,8 @@ platform. It will provide software and hardware requirements and supported featu
 
 # Software requirements
 
-The RW612 platform is only supported in the CMake build system provided in the zigbee repo. For more details on how to
-use and build the examples for this platform using CMake, refer to the top level [README.md](../../../README.md).
-
-The latest MCUXPresso GitHub SDK version supported for this platform is [TODO]()
+The RW612 platform supports only the GitHub MCUXPresso SDK build system using CMake and Kconfig. For more details on
+how to use and build the examples for this platform, refer to the top level [README.md](../../../README.md).
 
 To flash the demo examples executables, you'll need [J-Link](https://www.segger.com/downloads/jlink).
 
@@ -31,10 +30,15 @@ To flash the demo examples executables, you'll need [J-Link](https://www.segger.
 
 Currently, the Zigbee examples on RW612 are supported on the following boards:
 - RD-RW612-BGA
+- FRDM-RW612
 
 ## RD-RW612-BGA
 
 ![RD-RW612-BGA](RD-RW612-BGA.png)
+
+## FRDM-RW612
+
+![FRDM-RW612](FRDM-RW612.png)
 
 # Examples
 
@@ -45,7 +49,7 @@ Here are a list of the examples supported on RW612 platform:
 
 ## Loading the examples
 
-1. Plug the RD-RW612-BGA board to the USB port (use the MCU-Link port on the board)
+1. Plug the board to the USB port (use the MCU-Link port on the board)
 2. Run the following command:
 ```bash
 JLinkExe -device RW612 -if SWD -speed 4000 -autoconnect 1
