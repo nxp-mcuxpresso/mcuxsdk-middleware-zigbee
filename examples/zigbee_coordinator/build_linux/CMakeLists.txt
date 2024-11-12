@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required(VERSION 3.30)  # CMake version check
+cmake_minimum_required(VERSION 3.28)  # CMake version check
 project(zb_coord_linux)               # Create project
 
 if ("${NXP_SDK_BASE}" STREQUAL "")
@@ -65,7 +65,6 @@ add_executable(zb_coord_linux ${COORDINATOR_SOURCES})
 if ("${MACHINE_TYPE}" STREQUAL "imx8")
      target_compile_options(zb_coord_linux PRIVATE
         -Wno-implicit-function-declaration
-        -Wno-format
         -Wno-incompatible-pointer-types
         -Wno-discarded-qualifiers
         -Wno-int-conversion
