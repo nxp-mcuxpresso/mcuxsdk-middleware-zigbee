@@ -5,7 +5,7 @@
 # Needed external symbols (provided by app config cmake file)
 # NXP_ZB_BASE       - Path to Zigbee repo
 
-cmake_minimum_required(VERSION 3.30)  # CMake version check
+cmake_minimum_required(VERSION 3.28)  # CMake version check
 
 # Determine whether the SDK used is the github repo, a package or the internal repo
 get_filename_component(NXP_SDK_BASE_ABS ${NXP_ZB_BASE}/../../.. ABSOLUTE)

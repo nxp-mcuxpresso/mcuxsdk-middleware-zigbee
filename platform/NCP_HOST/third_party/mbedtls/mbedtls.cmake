@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required(VERSION 3.30)  # CMake version check
+cmake_minimum_required(VERSION 3.28)  # CMake version check
 
 cmake_policy(SET CMP0079 NEW)
 

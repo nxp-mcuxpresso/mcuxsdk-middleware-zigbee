@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required(VERSION 3.30)  # CMake version check
+cmake_minimum_required(VERSION 3.28)  # CMake version check
 
 set(JENNIC_CHIP_FAMILY "JN518x")
 set(JENNIC_CHIP "JN5189")
@@ -24,7 +24,6 @@ set_target_properties(ncphost-PDUM
 if ("${MACHINE_TYPE}" STREQUAL "imx8")
     target_compile_options(ncphost-PDUM PRIVATE
         -Wno-implicit-function-declaration
-        -Wno-format
         -Wno-incompatible-pointer-types
         -Wno-discarded-qualifiers
         -Wno-int-conversion
