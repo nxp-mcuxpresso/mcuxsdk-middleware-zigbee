@@ -71,7 +71,7 @@ if(CONFIG_MCUX_COMPONENT_component.osa_bm)
 
 elseif(CONFIG_MCUX_COMPONENT_component.osa_free_rtos)
     mcux_add_configuration(CC "-DFSL_RTOS_FREE_RTOS")
-    mcux_add_configuration(CC "-DZIGBEE_EVENT_IMPL")
+#    mcux_add_configuration(CC "-DZIGBEE_EVENT_IMPL")
     mcux_add_configuration(CC "-DSDK_OS_FREE_RTOS")
     mcux_add_configuration(CC "-DgMainThreadStackSize_c=5120")
     mcux_add_configuration(CC "-DgTotalHeapSize_c=12288")
