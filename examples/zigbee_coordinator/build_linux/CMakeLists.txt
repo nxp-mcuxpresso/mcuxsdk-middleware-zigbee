@@ -21,7 +21,7 @@ if(NOT DEFINED CONFIG_ZB_TARGET_32B)
 endif()
 
 if(NOT DEFINED CONFIG_ZB_SINGLE_CHANNEL)
-    set(CONFIG_ZB_SINGLE_CHANNEL "13" CACHE STRING "Force the channel to be used.")
+    set(CONFIG_ZB_SINGLE_CHANNEL "12" CACHE STRING "Force the channel to be used.")
 endif()
 
 if(NOT DEFINED MACHINE_TYPE)
