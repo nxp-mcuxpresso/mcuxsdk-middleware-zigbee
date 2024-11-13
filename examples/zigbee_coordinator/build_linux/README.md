@@ -102,7 +102,7 @@ Issue the command `make` to execute the newly generated Makefile.
 [  2%] Building C object CMakeFiles/pdum_static.dir/home/zb-linux-coord/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_dbg.c.o
 [  3%] Building C object CMakeFiles/pdum_static.dir/home/zb-linux-coord/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_nwk.c.o
 [  4%] Linking C static library pdum/lib/libpdum.a
-[  4%] Built target pdum_static
+[  4%] Built target ncphost-PDUM
 [  5%] Building C object CMakeFiles/zb_coord_linux.dir/home/zb-linux-coord/zigbee/examples/zigbee_coordinator/zigbee/examples/zigbee_coordinator/src/linux/pdum_gen_glue.c.o
 [  6%] Building C object CMakeFiles/zb_coord_linux.dir/home/zb-linux-coord/zigbee/examples/zigbee_coordinator/zigbee/examples/zigbee_coordinator/src/app_coordinator_ncp.c.o
 . . .
@@ -135,7 +135,7 @@ if the application was provided as part of a MCUXPRESSO SDK package or as standa
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
 -- Found MCUXPRESSO SDK
--- Using SDK root path /home/mcu-sdk-2.0
+-- Using SDK root path /home/mcu-sdk-3.0
 -- Build mbedtls from SDK source code
 -- Configuring done
 -- Generating done
@@ -152,13 +152,63 @@ Issue the command `make` to execute the newly generated Makefile.
 [  2%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_dbg.c.o
 [  2%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_nwk.c.o
 [  3%] Linking C static library pdum/lib/libpdum.a
-[  3%] Built target pdum_static
+[  3%] Built target ncphost-PDUM
 [  3%] Building C object mbedtls/library/CMakeFiles/ncp-host-mbedcrypto.dir/aes.c.o
 . . .
 [ 99%] Building C object CMakeFiles/zb_coord_linux.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee//examples/zigbee_coordinator/zigbee/ZCL/Clusters/OTA/Source/OTA.c.o
 [100%] Linking C executable zb_coord_linux
 [100%] Built target zb_coord_linux
 ```
+
+The following error might appear, which indicates that the SDK Mbedtls version is too old: 
+
+```
+-- SDK MBEDTLS version is below 2.28, use CONFIG_MBEDTLS_SOURCE as GIT or SYSTEM instead
+CMake Error at /home/mcu-sdk-2.0/middleware/wireless/zigbee/platform/NCP_HOST/cmake/NxpZbNcpHostConfig.cmake:46 (message):
+Call Stack (most recent call first):
+  CMakeLists.txt:32 (include)
+```
+
+If so, switch the Mbedtls origin to GIT instead, by building with the following commands:
+
+```
+>$ cd out ; cmake -DCONFIG_MBEDTLS_SOURCE=GIT ..
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found MCUXPRESSO SDK internal
+-- Using SDK root path /home/mcu-sdk-2.0
+-- Populate mbedtls repository
+Cloning into 'repo'...
+HEAD is now at 8b3f26a5ac Merge pull request #868 from ARMmbed/mbedtls-2.28.0rc0-pr
+...
+
+-- Found Python3: /usr/bin/python3.10 (found version "3.10.12") found components: Interpreter
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS - Success
+-- Looking for pthread.h
+-- Looking for pthread.h - found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/zb-linux-coord/zigbee/examples/zigbee_coordinator/build_linux/out 
+```
+
+Then issue the command `make` as usual to execute the newly generated Makefile.
+
 
 ### Standalone Zigbee module
 
@@ -211,7 +261,7 @@ Issue the command `make` to execute the newly generated Makefile.
 [  2%] Building C object CMakeFiles/pdum_static.dir/home/zb-linux-coord/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_dbg.c.o
 [  3%] Building C object CMakeFiles/pdum_static.dir/home/zb-linux-coord/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_nwk.c.o
 [  4%] Linking C static library pdum/lib/libpdum.a
-[  4%] Built target pdum_static
+[  4%] Built target ncphost-PDUM
 [  5%] Building C object CMakeFiles/zb_coord_linux.dir/home/zb-linux-coord/zigbee/examples/zigbee_coordinator/zigbee/examples/zigbee_coordinator/src/linux/pdum_gen_glue.c.o
 [  6%] Building C object CMakeFiles/zb_coord_linux.dir/home/zb-linux-coord/zigbee/examples/zigbee_coordinator/zigbee/examples/zigbee_coordinator/src/app_coordinator_ncp.c.o
 . . .
@@ -245,8 +295,7 @@ Example to start the Zigbee NCP Coordinator:
 [0] ZQ: Initialised a queue: Handle=565f3700 Length=20 ItemSize=4
 [0] ZQ: Initialised a queue: Handle=565f3728 Length=38 ItemSize=4
 [0] serial Link initialised
-[0]
-eOTA_NewImageLoaded status = 1
+[0] eOTA_NewImageLoaded status = 1
 [2] New max process gap 1
 [2] Pkt Type 0010 Set New Max Response Time 2
 [212] New max process gap 210
