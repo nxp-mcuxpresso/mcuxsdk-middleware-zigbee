@@ -267,7 +267,7 @@ eOTA_NewImageLoaded status = 1
 [3805] BDB: APP_vGenCallback [0 4]
 ZPS_vSetTCLockDownOverride
 [3805] APP-BDB: NwkFormation Success
-[3805] APP-ZDO: Network started Channel = 13
+[3805] APP-ZDO: Network started Channel = 12
 ```
 
 ## 4.3. Steer the network
