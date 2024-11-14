@@ -1,17 +1,25 @@
 
 # 1. General description
 
-<p>The purpose of this demo is to demonstrate the capabilities of the K32W1480/K32W061 SoC when used as a Zigbee NCP together with a Zigbee Router application running on the iMX8 (or x86) platform under Linux. </p>
+<p>The purpose of this demo is to demonstrate the capabilities of the NXP Wireless SoC when used as a Zigbee NCP together with a Zigbee Router application running on the iMX8 (or x86) platform under Linux. </p>
 
 <p>The demo showcases how to connect the Zigbee NCP Router to the network formed by a Zigbee Coordinator and toggle the OnOff cluster available on the device. </p>
 
 <p>A step-by-step guide to the hardware and software configurations are provided, as well as the steps needed to be executed in order to get the boards up and running.</p>
 
+List of supported NXP Wireless SoC to act as coprocessor:
+
+* K32W148
+
+* MCXW71
+
+* K32W061
+
 # 2. Required Hardware
 
 * 1 x iMX8M-EVK board running Linux - Host 
 
-* 1 x K32W148-EVK board or 1 x K32W061 DK6 board – Zigbee NCP coprocessor
+* 1 x K32W148-EVK board or 1 x K32W061 DK6 board or 1 x FRDM-MCXW71 board – Zigbee NCP coprocessor
 
 * 1 x K32W148-EVK board or 1 x K32W061 DK6 board - Zigbee Coordinator
 
@@ -22,26 +30,27 @@ For more information see the following starting guide for iMX8M EVK board: https
 
 ## 2.2. Zigbee NCP coprocessor board configuration
 
-<p>The Zigbee NCP coprocessor can be either a K32W148-EVK board or a K32W061 DK6 board. After the board is properly configured it should be connected to the iMX8M board using a 
+<p>The Zigbee NCP coprocessor can be either of the SoCs listed in the supported platforms. After the board is properly configured it should be connected to the iMX8M board using a 
 standard micro USB cable that will be also used for power delivery to the board.</p>
 
-### 2.2.1 K32W148 board configuration
+### 2.2.1 K32W148 EVK/FRDM-MCXW71 board configuration
 
 <p>For the detailed board configuration, see the “Getting Started with MCUXpresso SDK for K32W148-EVK.pdf” guide, part of the K32W148 SDK. </p>
 <p>Ensure that the debug firmware on the board is J-Link. If this is not the case, follow the steps in chapter 7 of the aforementioned document to update the firmware accordingly.</p>
-<p>The board should be updated with the binary image `k32w148evk_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the K32W148 SDK.</p>
+<p>The board should be updated with the binary image `k32w148evk_zigbee_coprocessor_bm.axf`/`frdmmcxw71_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the K32W148/FRDMMCXW71 SDK.</p>
 
-### 2.2.2 K32W061 board configuration
+### 2.2.2 K32W061 DK6 board configuration
 
 <p>For the detailed board configuration, see the “Getting Started with MCUXpresso SDK for K32W061.pdf” guide, part of the K32W061 SDK. </p>
 <p>Ensure that the debug firmware on the board is DK6 Flash Programmer. For additional information, please you the aforementioned document together with the 
 DK6-UG-3127-Production-Flash-Programmer.pdf document.</p>
 <p>The board should be updated with the binary image `k32w061dk6_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the K32W061 SDK.</p>
 
-## 2.3. K32W061/K32W148 board configuration (Coordinator)
+## 2.3. K32W061 DK6/ K32W148 EVK/ FRDM-MCXW71 board configuration (Coordinator)
 
-<p>For the detailed K32W061 board configuration see the “Getting Started with MCUXpresso SDK for K32W061.pdf” guide, part of the K32W061 SDK.</p>
-<p>For the detailed K32W148 board configuration, see the “Getting Started with MCUXpresso SDK for K32W148-EVK.pdf” guide, part of the K32W148 SDK. </p>
+<p>For the detailed K32W061 DK6 board configuration see the “Getting Started with MCUXpresso SDK for K32W061.pdf” guide, part of the K32W061 SDK.</p>
+<p>For the detailed K32W148 EVK board configuration, see the “Getting Started with MCUXpresso SDK for K32W148-EVK.pdf” guide, part of the K32W148 SDK. </p>
+<p>For the detailed FRDM-MCXW71 board configuration, see the “Getting Started with MCUXpresso SDK for FRDM-MCXW71.pdf” guide, part of the FRDMMCXW71 SDK. </p>
 
 # 3. Building
 
