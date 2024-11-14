@@ -37,6 +37,8 @@
 #define TRACE_APP_INIT FALSE
 #endif
 
+#define GREEN_POWER_ENDPOINT 242
+
 /****************************************************************************/
 /***        Type Definitions                                              ***/
 /****************************************************************************/
@@ -50,21 +52,16 @@ static void vAppSendIdentifyStop(uint16_t u16Address, uint8_t u8Endpoint);
 static void vAppSendRemoteBindRequest(uint16_t u16DstAddr, uint16_t u16ClusterId, uint8_t u8DstEp);
 static void APP_vBdbInit(void);
 
-PUBLIC void vApp_ProcessMessage(uintptr_t uiMsg);
-PUBLIC void vApp_ProcessMessageVal(uintptr_t uiMsg);
-PUBLIC void APP_vHandleNwkStackEvents(ZPS_tsAfEvent *psStackEvent);
 /****************************************************************************/
 /***        Exported Variables                                            ***/
 /****************************************************************************/
 tsNcpDeviceDesc sNcpDeviceDesc = {FACTORY_NEW, E_STARTUP, ZPS_ZDO_DEVICE_COORD};
+const uint8_t gUseRtos_c = 1;
+
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
 extern bool_t bZCLQueueFull;
-
-const uint8_t gUseRtos_c = 1;
-
-#define GREEN_POWER_ENDPOINT 242
 
 /****************************************************************************/
 /***        Global Variables                                              ***/
@@ -74,6 +71,10 @@ PUBLIC uint16 u16appPrintBufferTimeInSec = 300U;
 /****************************************************************************/
 /***        Exported Functions                                            ***/
 /****************************************************************************/
+PUBLIC void vApp_ProcessMessage(uintptr_t uiMsg);
+PUBLIC void vApp_ProcessMessageVal(uintptr_t uiMsg);
+PUBLIC void APP_vHandleNwkStackEvents(ZPS_tsAfEvent *psStackEvent);
+
 /****************************************************************************
  *
  * NAME:        pvZCL_HeapAlloc
@@ -116,11 +117,13 @@ void *pvZCL_HeapAlloc(void *pvPointer, uint32 u32BytesNeeded, bool_t bClear)
  ****************************************************************************/
 void APP_vInitialiseCoordinator(void)
 {
+    uint16_t u16ByteRead;
+
     /* Restore any application data previously saved to flash */
     sNcpDeviceDesc.eState       = FACTORY_NEW;
     sNcpDeviceDesc.eNodeState   = E_STARTUP;
     sNcpDeviceDesc.u8DeviceType = ZPS_ZDO_DEVICE_COORD;
-    uint16_t u16ByteRead;
+
     PDM_eReadDataFromRecord(PDM_ID_APP_COORD,
                             &sNcpDeviceDesc,
                             sizeof(sNcpDeviceDesc),
@@ -157,7 +160,8 @@ void APP_vBdbCallback(BDB_tsBdbEvent *psBdbEvent)
         case BDB_EVENT_NONE:
             break;
 
-        case BDB_EVENT_ZPSAF: // Use with BDB_tsZpsAfEvent
+        case BDB_EVENT_ZPSAF:
+            /* Use with BDB_tsZpsAfEvent */
             vAppHandleAfEvent(&psBdbEvent->uEventData.sZpsAfEvent);
             break;
 
@@ -783,13 +787,6 @@ PUBLIC void vApp_ProcessMessage(uintptr_t uiMsg)
         /* Process the serial buffer */
         vSL_HandleApduEvent((uint8 *)uiMsg, &tempPDUM_thAPduInstance, &sStackEvent);
 
-        /* APS data indication, ACK, and confirm available for App for diagnostic pro stack */
-        if ((sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_DATA_ACK) ||
-            (sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_DATA_INDICATION))
-        {
-            // vHandleNwkDataEvents(&sStackEvent);
-        }
-
         /* Delete APDU before returning */
         if (tempPDUM_thAPduInstance != PDUM_INVALID_HANDLE)
         {
@@ -798,17 +795,11 @@ PUBLIC void vApp_ProcessMessage(uintptr_t uiMsg)
     }
     else if (*((uint8 *)uiMsg) == (uint32)APP_MSG_TYPE_USER_CMD)
     {
-        // vPREPARSE_SubstHook(((uint8*)u32Msg + 1));
         DBG_vPrintf(TRUE, "Got APP_MSG_TYPE_USER_CMD\n");
     }
     else if (*((uint8 *)uiMsg) == (uint32)APP_MSG_TYPE_USER_CMD_TX)
     {
-        // vProcess_UserCmdTx();
         DBG_vPrintf(TRUE, "Got APP_MSG_TYPE_USER_CMD_TX\n");
-    }
-    else if (*((uint8 *)uiMsg) == (uint32)APP_MSG_TYPE_PERMIT_JOIN_CHANGED)
-    {
-        // APP_vHandlePermitJoinChangedHook();
     }
     else if (*((uint8 *)uiMsg) == SL_MSG_TYPE_NODE_PARENT)
     {
@@ -854,7 +845,6 @@ PUBLIC void vApp_ProcessMessageVal(uintptr_t uiMsg)
     else if (uiMsg == SL_MSG_STACK_STARTED_RUNNING)
     {
         DBG_vPrintf((bool_t)TRUE, "ZdoStartStack In Running State (JN has restarted)\n");
-        // vApp_ReProvisionJN();
     }
     else if (uiMsg == SL_MSG_TYPE_EXCEPTION)
     {
@@ -900,10 +890,10 @@ PUBLIC void APP_vProcessZCLMessage(uintptr_t uiMsg)
     {
         sCallBackEvent.eEventType = E_ZCL_CBET_TIMER;
         vLockZCLMutex();
-        // vZCL_SetUTCTimeWoSyncSet(APP_u32GetTime() - 1U);
+
         vZCL_EventHandler(&sCallBackEvent);
         vUnlockZCLMutex();
-        // vApp_HandleZclTimerEvent();
+
 #ifdef APP_ENABLE_PRINT_BUFFERS
         if (u16appPrintBufferTimeInSec > 0)
         {
@@ -996,12 +986,8 @@ PUBLIC void APP_vProcessZCLMessage(uintptr_t uiMsg)
         if ((sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_INTERPAN_DATA_INDICATION) ||
             (sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_INTERPAN_DATA_CONFIRM))
         {
-            /* Hook to handle raw GB spec inter pan messages and drop InterPan CBKE unless in correct state */
-            // if ((bool_t)TRUE == bPassInterPanToZcl(&sStackEvent))
-            {
-                /* post to the ZCL as Event */
-                vZCL_EventHandler(&sCallBackEvent);
-            }
+            /* post to the ZCL as Event */
+            vZCL_EventHandler(&sCallBackEvent);
         }
         if (myPDUM_thAPduInstance != PDUM_INVALID_HANDLE)
         {
@@ -1012,8 +998,6 @@ PUBLIC void APP_vProcessZCLMessage(uintptr_t uiMsg)
     {
         /*nodefault action required */
     }
-
-    // APP_vDirtyTimerHandler(uiMsg);
 }
 
 /****************************************************************************/
