@@ -4,7 +4,6 @@
 * SPDX-License-Identifier: BSD-3-Clause
 */
 
-
 /****************************************************************************/
 /***        Include files                                                 ***/
 /****************************************************************************/
@@ -38,6 +37,8 @@
 #define TRACE_APP_INIT FALSE
 #endif
 
+#define GREEN_POWER_ENDPOINT 242
+
 /****************************************************************************/
 /***        Type Definitions                                              ***/
 /****************************************************************************/
@@ -45,27 +46,22 @@
 /****************************************************************************/
 /***        Local Function Prototypes                                     ***/
 /****************************************************************************/
-static void vAppHandleAfEvent( BDB_tsZpsAfEvent *psZpsAfEvent);
+static void vAppHandleAfEvent(BDB_tsZpsAfEvent *psZpsAfEvent);
 static void vAppSendOnOff(void);
-static void vAppSendIdentifyStop( uint16_t u16Address, uint8_t u8Endpoint);
+static void vAppSendIdentifyStop(uint16_t u16Address, uint8_t u8Endpoint);
 static void vAppSendRemoteBindRequest(uint16_t u16DstAddr, uint16_t u16ClusterId, uint8_t u8DstEp);
 static void APP_vBdbInit(void);
 
-PUBLIC void vApp_ProcessMessage(uintptr_t uiMsg);
-PUBLIC void vApp_ProcessMessageVal(uintptr_t uiMsg);
-PUBLIC void APP_vHandleNwkStackEvents(ZPS_tsAfEvent *psStackEvent);
 /****************************************************************************/
 /***        Exported Variables                                            ***/
 /****************************************************************************/
 tsNcpDeviceDesc sNcpDeviceDesc = {FACTORY_NEW, E_STARTUP, ZPS_ZDO_DEVICE_COORD};
+const uint8_t gUseRtos_c = 1;
+
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
 extern bool_t bZCLQueueFull;
-
-const uint8_t gUseRtos_c = 1;
-
-#define GREEN_POWER_ENDPOINT                   242
 
 /****************************************************************************/
 /***        Global Variables                                              ***/
@@ -75,6 +71,10 @@ PUBLIC uint16 u16appPrintBufferTimeInSec = 300U;
 /****************************************************************************/
 /***        Exported Functions                                            ***/
 /****************************************************************************/
+PUBLIC void vApp_ProcessMessage(uintptr_t uiMsg);
+PUBLIC void vApp_ProcessMessageVal(uintptr_t uiMsg);
+PUBLIC void APP_vHandleNwkStackEvents(ZPS_tsAfEvent *psStackEvent);
+
 /****************************************************************************
  *
  * NAME:        pvZCL_HeapAlloc
@@ -92,17 +92,16 @@ PUBLIC uint16 u16appPrintBufferTimeInSec = 300U;
  * allocation, it is cleared on request.
  *
  ****************************************************************************/
-void* pvZCL_HeapAlloc(void *pvPointer, uint32 u32BytesNeeded, bool_t bClear)
+void *pvZCL_HeapAlloc(void *pvPointer, uint32 u32BytesNeeded, bool_t bClear)
 {
-        if (bClear)
-        {
-                return calloc(1, u32BytesNeeded);
-        }
-        else
-        {
-                return malloc(u32BytesNeeded);
-        }
-
+    if (bClear)
+    {
+        return calloc(1, u32BytesNeeded);
+    }
+    else
+    {
+        return malloc(u32BytesNeeded);
+    }
 }
 
 /****************************************************************************
@@ -118,11 +117,13 @@ void* pvZCL_HeapAlloc(void *pvPointer, uint32 u32BytesNeeded, bool_t bClear)
  ****************************************************************************/
 void APP_vInitialiseCoordinator(void)
 {
-    /* Restore any application data previously saved to flash */
-    sNcpDeviceDesc.eState = FACTORY_NEW;
-    sNcpDeviceDesc.eNodeState = E_STARTUP;
-    sNcpDeviceDesc.u8DeviceType = ZPS_ZDO_DEVICE_COORD;
     uint16_t u16ByteRead;
+
+    /* Restore any application data previously saved to flash */
+    sNcpDeviceDesc.eState       = FACTORY_NEW;
+    sNcpDeviceDesc.eNodeState   = E_STARTUP;
+    sNcpDeviceDesc.u8DeviceType = ZPS_ZDO_DEVICE_COORD;
+
     PDM_eReadDataFromRecord(PDM_ID_APP_COORD,
                             &sNcpDeviceDesc,
                             sizeof(sNcpDeviceDesc),
@@ -135,8 +136,8 @@ void APP_vInitialiseCoordinator(void)
      */
     APP_eZbModuleInitialise();
     APP_vBdbInit();
-    DBG_vPrintf(TRACE_APP, "Recovered Application State %d On Network %d\r\n",
-            sNcpDeviceDesc.eNodeState, sBDB.sAttrib.bbdbNodeIsOnANetwork);
+    DBG_vPrintf(TRACE_APP, "Recovered Application State %d On Network %d\r\n", 
+                sNcpDeviceDesc.eNodeState, sBDB.sAttrib.bbdbNodeIsOnANetwork);
 }
 
 /****************************************************************************
@@ -154,12 +155,13 @@ void APP_vBdbCallback(BDB_tsBdbEvent *psBdbEvent)
 {
     static uint8_t u8NoQueryCount;
 
-    switch(psBdbEvent->eEventType)
+    switch (psBdbEvent->eEventType)
     {
         case BDB_EVENT_NONE:
             break;
 
-        case BDB_EVENT_ZPSAF:                // Use with BDB_tsZpsAfEvent
+        case BDB_EVENT_ZPSAF:
+            /* Use with BDB_tsZpsAfEvent */
             vAppHandleAfEvent(&psBdbEvent->uEventData.sZpsAfEvent);
             break;
 
@@ -167,7 +169,7 @@ void APP_vBdbCallback(BDB_tsBdbEvent *psBdbEvent)
             break;
 
         case BDB_EVENT_NWK_FORMATION_SUCCESS:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: NwkFormation Success \r\n");
+            DBG_vPrintf(TRACE_APP, "APP-BDB: NwkFormation Success \r\n");
             sNcpDeviceDesc.eNodeState = E_RUNNING;
             PDM_eSaveRecordData(PDM_ID_APP_COORD,
                                 &sNcpDeviceDesc,
@@ -175,86 +177,85 @@ void APP_vBdbCallback(BDB_tsBdbEvent *psBdbEvent)
             break;
 
         case BDB_EVENT_NWK_STEERING_SUCCESS:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: NwkSteering Success\r\n");
+            DBG_vPrintf(TRACE_APP, "APP-BDB: NwkSteering Success\r\n");
             break;
 
         case BDB_EVENT_NWK_FORMATION_FAILURE:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: Network Formation Failure\r\n");
+            DBG_vPrintf(TRACE_APP, "APP-BDB: Network Formation Failure\r\n");
             break;
 
         case BDB_EVENT_FB_HANDLE_SIMPLE_DESC_RESP_OF_TARGET:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: F&B Simple Desc response From %04x Profle %04x Device %04x Ep %d Version %d\r\n",
-                    psBdbEvent->uEventData.psFindAndBindEvent->u16TargetAddress,
-                    psBdbEvent->uEventData.psFindAndBindEvent->u16ProfileId,
-                    psBdbEvent->uEventData.psFindAndBindEvent->u16DeviceId,
-                    psBdbEvent->uEventData.psFindAndBindEvent->u8TargetEp,
-                    psBdbEvent->uEventData.psFindAndBindEvent->u8DeviceVersion);
+            DBG_vPrintf(TRACE_APP,
+                        "APP-BDB: F&B Simple Desc response From %04x Profle %04x Device %04x Ep %d Version %d\r\n",
+                        psBdbEvent->uEventData.psFindAndBindEvent->u16TargetAddress,
+                        psBdbEvent->uEventData.psFindAndBindEvent->u16ProfileId,
+                        psBdbEvent->uEventData.psFindAndBindEvent->u16DeviceId,
+                        psBdbEvent->uEventData.psFindAndBindEvent->u8TargetEp,
+                        psBdbEvent->uEventData.psFindAndBindEvent->u8DeviceVersion);
             break;
 
         case BDB_EVENT_FB_CHECK_BEFORE_BINDING_CLUSTER_FOR_TARGET:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: Check For Binding Cluster %04x\r\n",
+            DBG_vPrintf(TRACE_APP, "APP-BDB: Check For Binding Cluster %04x\r\n",
                         psBdbEvent->uEventData.psFindAndBindEvent->uEvent.u16ClusterId);
             break;
         case BDB_EVENT_FB_CLUSTER_BIND_CREATED_FOR_TARGET:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: Bind Created for cluster %04x\r\n",
-                    psBdbEvent->uEventData.psFindAndBindEvent->uEvent.u16ClusterId);
-            vAppSendRemoteBindRequest( psBdbEvent->uEventData.psFindAndBindEvent->u16TargetAddress,
-                                       psBdbEvent->uEventData.psFindAndBindEvent->uEvent.u16ClusterId,
-                                       psBdbEvent->uEventData.psFindAndBindEvent->u8TargetEp);
+            DBG_vPrintf(TRACE_APP, "APP-BDB: Bind Created for cluster %04x\r\n",
+                        psBdbEvent->uEventData.psFindAndBindEvent->uEvent.u16ClusterId);
+            vAppSendRemoteBindRequest(psBdbEvent->uEventData.psFindAndBindEvent->u16TargetAddress,
+                                      psBdbEvent->uEventData.psFindAndBindEvent->uEvent.u16ClusterId,
+                                      psBdbEvent->uEventData.psFindAndBindEvent->u8TargetEp);
             break;
 
         case BDB_EVENT_FB_BIND_CREATED_FOR_TARGET:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: Bind Created for target EndPt %d\r\n",
-                    psBdbEvent->uEventData.psFindAndBindEvent->u8TargetEp);
-            vAppSendIdentifyStop( psBdbEvent->uEventData.psFindAndBindEvent->u16TargetAddress,
-                                  psBdbEvent->uEventData.psFindAndBindEvent->u8TargetEp);
+            DBG_vPrintf(TRACE_APP, "APP-BDB: Bind Created for target EndPt %d\r\n",
+                        psBdbEvent->uEventData.psFindAndBindEvent->u8TargetEp);
+            vAppSendIdentifyStop(psBdbEvent->uEventData.psFindAndBindEvent->u16TargetAddress,
+                                 psBdbEvent->uEventData.psFindAndBindEvent->u8TargetEp);
 
             break;
 
         case BDB_EVENT_FB_GROUP_ADDED_TO_TARGET:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: Group Added with ID %04x\r\n",
-                    psBdbEvent->uEventData.psFindAndBindEvent->uEvent.u16GroupId);
+            DBG_vPrintf(TRACE_APP, "APP-BDB: Group Added with ID %04x\r\n",
+                        psBdbEvent->uEventData.psFindAndBindEvent->uEvent.u16GroupId);
             u8NoQueryCount = 0;
             break;
 
         case BDB_EVENT_FB_ERR_BINDING_FAILED:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: Binding Failed\r\n");
+            DBG_vPrintf(TRACE_APP, "APP-BDB: Binding Failed\r\n");
             break;
 
         case BDB_EVENT_FB_ERR_BINDING_TABLE_FULL:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: Binding Table Full\r\n");
+            DBG_vPrintf(TRACE_APP, "APP-BDB: Binding Table Full\r\n");
             break;
 
         case BDB_EVENT_FB_ERR_GROUPING_FAILED:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: Grouping Failed\r\n");
+            DBG_vPrintf(TRACE_APP, "APP-BDB: Grouping Failed\r\n");
             break;
 
         case BDB_EVENT_FB_NO_QUERY_RESPONSE:
 
-            if(u8NoQueryCount >= 2)
+            if (u8NoQueryCount >= 2)
             {
                 u8NoQueryCount = 0;
                 BDB_vFbExitAsInitiator();
-                DBG_vPrintf(TRACE_APP,"APP-BDB: No Identify Query Response Stopping F&B\r\n");
+                DBG_vPrintf(TRACE_APP, "APP-BDB: No Identify Query Response Stopping F&B\r\n");
             }
             else
             {
                 u8NoQueryCount++;
-                DBG_vPrintf(TRACE_APP,"APP-BDB: No Identify Query Response\r\n");
+                DBG_vPrintf(TRACE_APP, "APP-BDB: No Identify Query Response\r\n");
             }
             break;
 
         case BDB_EVENT_FB_TIMEOUT:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: F&B Timeout\r\n");
+            DBG_vPrintf(TRACE_APP, "APP-BDB: F&B Timeout\r\n");
             break;
 
-
         default:
-            DBG_vPrintf(TRACE_APP,"APP-BDB: Unhandled %d\r\n", psBdbEvent->eEventType);
+            DBG_vPrintf(TRACE_APP, "APP-BDB: Unhandled %d\r\n", psBdbEvent->eEventType);
             break;
     }
 }
-
 
 /****************************************************************************
  *
@@ -277,39 +278,37 @@ void APP_taskCoordinator(void)
     {
         DBG_vPrintf(TRACE_APP, "APP-EVT: Event %d, NodeState=%d\r\n", sAppEvent.eType, sNcpDeviceDesc.eNodeState);
 
-        switch(sAppEvent.eType)
+        switch (sAppEvent.eType)
         {
-                case APP_E_EVENT_SERIAL_TOGGLE:
-                    DBG_vPrintf(TRACE_APP, "APP-EVT: Send Toggle Cmd\r\n");
-                    vAppSendOnOff();
-                    break;
+            case APP_E_EVENT_SERIAL_TOGGLE:
+                DBG_vPrintf(TRACE_APP, "APP-EVT: Send Toggle Cmd\r\n");
+                vAppSendOnOff();
+                break;
 
-                case APP_E_EVENT_SERIAL_NWK_STEER:
-                    eStatus = BDB_eNsStartNwkSteering();
-                    DBG_vPrintf(TRACE_APP, "APP-EVT: Request Nwk Steering %02x\r\n", eStatus);
-                    break;
+            case APP_E_EVENT_SERIAL_NWK_STEER:
+                eStatus = BDB_eNsStartNwkSteering();
+                DBG_vPrintf(TRACE_APP, "APP-EVT: Request Nwk Steering %02x\r\n", eStatus);
+                break;
 
-                case APP_E_EVENT_SERIAL_FIND_BIND_START:
-                    eStatus = BDB_eFbTriggerAsInitiator(COORDINATOR_APPLICATION_ENDPOINT);
-                    DBG_vPrintf(TRACE_APP, "APP-EVT: Find and Bind initiate %02x\r\n", eStatus);
-                    break;
+            case APP_E_EVENT_SERIAL_FIND_BIND_START:
+                eStatus = BDB_eFbTriggerAsInitiator(COORDINATOR_APPLICATION_ENDPOINT);
+                DBG_vPrintf(TRACE_APP, "APP-EVT: Find and Bind initiate %02x\r\n", eStatus);
+                break;
 
-                case APP_E_EVENT_SERIAL_FORM_NETWORK:
-                    /* Not already on a network ? */
-                    if (FALSE == sBDB.sAttrib.bbdbNodeIsOnANetwork)
-                    {
-                        eStatus = BDB_eNfStartNwkFormation();
-                        DBG_vPrintf(TRACE_APP, "APP-EVT: Request Nwk Formation %02x\r\n", eStatus);
-                    }
-                    break;
+            case APP_E_EVENT_SERIAL_FORM_NETWORK:
+                /* Not already on a network ? */
+                if (FALSE == sBDB.sAttrib.bbdbNodeIsOnANetwork)
+                {
+                    eStatus = BDB_eNfStartNwkFormation();
+                    DBG_vPrintf(TRACE_APP, "APP-EVT: Request Nwk Formation %02x\r\n", eStatus);
+                }
+                break;
 
-                default:
-                    break;
+            default:
+                break;
         }
-
     }
 }
-
 
 /****************************************************************************
  *
@@ -322,28 +321,28 @@ void APP_taskCoordinator(void)
  * void
  *
  ****************************************************************************/
-static void vAppHandleAfEvent( BDB_tsZpsAfEvent *psZpsAfEvent)
+static void vAppHandleAfEvent(BDB_tsZpsAfEvent *psZpsAfEvent)
 {
     if (psZpsAfEvent->u8EndPoint == COORDINATOR_APPLICATION_ENDPOINT)
     {
         if ((psZpsAfEvent->sStackEvent.eType == ZPS_EVENT_APS_DATA_INDICATION) ||
             (psZpsAfEvent->sStackEvent.eType == ZPS_EVENT_APS_INTERPAN_DATA_INDICATION))
         {
-            APP_ZCL_vEventHandler( &psZpsAfEvent->sStackEvent);
-         }
+            APP_ZCL_vEventHandler(&psZpsAfEvent->sStackEvent);
+        }
     }
     else if (psZpsAfEvent->u8EndPoint == COORDINATOR_ZDO_ENDPOINT)
     {
-        vAppHandleZdoEvents( psZpsAfEvent);
+        vAppHandleZdoEvents(psZpsAfEvent);
     }
-    else if ((psZpsAfEvent->u8EndPoint == GREEN_POWER_ENDPOINT) ||  (psZpsAfEvent->sStackEvent.eType == ZPS_EVENT_APS_ZGP_DATA_CONFIRM))
+    else if ((psZpsAfEvent->u8EndPoint == GREEN_POWER_ENDPOINT) ||
+             (psZpsAfEvent->sStackEvent.eType == ZPS_EVENT_APS_ZGP_DATA_CONFIRM))
     {
         if ((psZpsAfEvent->sStackEvent.eType == ZPS_EVENT_APS_DATA_INDICATION) ||
-            (psZpsAfEvent->sStackEvent.eType == ZPS_EVENT_APS_ZGP_DATA_INDICATION)||
+            (psZpsAfEvent->sStackEvent.eType == ZPS_EVENT_APS_ZGP_DATA_INDICATION) ||
             (psZpsAfEvent->sStackEvent.eType == ZPS_EVENT_APS_ZGP_DATA_CONFIRM))
         {
-
-            APP_ZCL_vEventHandler( &psZpsAfEvent->sStackEvent);
+            APP_ZCL_vEventHandler(&psZpsAfEvent->sStackEvent);
         }
     }
 
@@ -352,7 +351,7 @@ static void vAppHandleAfEvent( BDB_tsZpsAfEvent *psZpsAfEvent)
     {
         PDUM_eAPduFreeAPduInstance(psZpsAfEvent->sStackEvent.uEvent.sApsDataIndEvent.hAPduInst);
     }
-    else if ( psZpsAfEvent->sStackEvent.eType == ZPS_EVENT_APS_INTERPAN_DATA_INDICATION )
+    else if (psZpsAfEvent->sStackEvent.eType == ZPS_EVENT_APS_INTERPAN_DATA_INDICATION)
     {
         PDUM_eAPduFreeAPduInstance(psZpsAfEvent->sStackEvent.uEvent.sApsInterPanDataIndEvent.hAPduInst);
     }
@@ -372,20 +371,19 @@ static void vAppHandleAfEvent( BDB_tsZpsAfEvent *psZpsAfEvent)
  * void
  *
  ****************************************************************************/
-void vAppHandleZdoEvents( BDB_tsZpsAfEvent *psZpsAfEvent)
+void vAppHandleZdoEvents(BDB_tsZpsAfEvent *psZpsAfEvent)
 {
     ZPS_tsAfEvent *psAfEvent = &(psZpsAfEvent->sStackEvent);
 
-    switch(psAfEvent->eType)
+    switch (psAfEvent->eType)
     {
         case ZPS_EVENT_APS_DATA_INDICATION:
-            DBG_vPrintf(TRACE_APP, "APP-ZDO: Data Indication Status %02x from %04x Src Ep %d Dst Ep %d Profile %04x Cluster %04x\r\n",
-                    psAfEvent->uEvent.sApsDataIndEvent.eStatus,
-                    psAfEvent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr,
-                    psAfEvent->uEvent.sApsDataIndEvent.u8SrcEndpoint,
-                    psAfEvent->uEvent.sApsDataIndEvent.u8DstEndpoint,
-                    psAfEvent->uEvent.sApsDataIndEvent.u16ProfileId,
-                    psAfEvent->uEvent.sApsDataIndEvent.u16ClusterId);
+            DBG_vPrintf(
+                TRACE_APP,
+                "APP-ZDO: Data Indication Status %02x from %04x Src Ep %d Dst Ep %d Profile %04x Cluster %04x\r\n",
+                psAfEvent->uEvent.sApsDataIndEvent.eStatus, psAfEvent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr,
+                psAfEvent->uEvent.sApsDataIndEvent.u8SrcEndpoint, psAfEvent->uEvent.sApsDataIndEvent.u8DstEndpoint,
+                psAfEvent->uEvent.sApsDataIndEvent.u16ProfileId, psAfEvent->uEvent.sApsDataIndEvent.u16ClusterId);
             break;
 
         case ZPS_EVENT_APS_DATA_CONFIRM:
@@ -405,24 +403,24 @@ void vAppHandleZdoEvents( BDB_tsZpsAfEvent *psZpsAfEvent)
 
         case ZPS_EVENT_NWK_NEW_NODE_HAS_JOINED:
             DBG_vPrintf(TRACE_APP, "APP-ZDO: New Node %04x Has Joined\r\n",
-                    psAfEvent->uEvent.sNwkJoinIndicationEvent.u16NwkAddr);
+                        psAfEvent->uEvent.sNwkJoinIndicationEvent.u16NwkAddr);
             break;
 
         case ZPS_EVENT_NWK_DISCOVERY_COMPLETE:
             DBG_vPrintf(TRACE_APP, "APP-ZDO: Discovery Complete %02x\r\n",
-                    psAfEvent->uEvent.sNwkDiscoveryEvent.eStatus);
+                        psAfEvent->uEvent.sNwkDiscoveryEvent.eStatus);
             break;
 
         case ZPS_EVENT_NWK_LEAVE_INDICATION:
             DBG_vPrintf(TRACE_APP, "APP-ZDO: Leave Indication %016llx Rejoin %d\r\n",
-                    psAfEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr,
-                    psAfEvent->uEvent.sNwkLeaveIndicationEvent.u8Rejoin);
+                        psAfEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr,
+                        psAfEvent->uEvent.sNwkLeaveIndicationEvent.u8Rejoin);
             break;
 
         case ZPS_EVENT_NWK_STATUS_INDICATION:
             DBG_vPrintf(TRACE_APP, "APP-ZDO: Network status Indication %02x addr %04x\r\n",
-                    psAfEvent->uEvent.sNwkStatusIndicationEvent.u8Status,
-                    psAfEvent->uEvent.sNwkStatusIndicationEvent.u16NwkAddr);
+                        psAfEvent->uEvent.sNwkStatusIndicationEvent.u8Status,
+                        psAfEvent->uEvent.sNwkStatusIndicationEvent.u16NwkAddr);
             break;
 
         case ZPS_EVENT_NWK_ROUTE_DISCOVERY_CONFIRM:
@@ -431,7 +429,7 @@ void vAppHandleZdoEvents( BDB_tsZpsAfEvent *psZpsAfEvent)
 
         case ZPS_EVENT_NWK_ED_SCAN:
             DBG_vPrintf(TRACE_APP, "APP-ZDO: Energy Detect Scan %02x\r\n",
-                    psAfEvent->uEvent.sNwkEdScanConfirmEvent.u8Status);
+                        psAfEvent->uEvent.sNwkEdScanConfirmEvent.u8Status);
             break;
         case ZPS_EVENT_ZDO_BIND:
             DBG_vPrintf(TRACE_APP, "APP-ZDO: Zdo Bind event\r\n");
@@ -464,8 +462,6 @@ void vAppHandleZdoEvents( BDB_tsZpsAfEvent *psZpsAfEvent)
     }
 }
 
-
-
 /****************************************************************************
  *
  * NAME: vAppSendOnOff
@@ -479,24 +475,23 @@ void vAppHandleZdoEvents( BDB_tsZpsAfEvent *psZpsAfEvent)
  ****************************************************************************/
 static void vAppSendOnOff(void)
 {
-    tsZCL_Address   sDestinationAddress;
+    tsZCL_Address sDestinationAddress;
     uint8_t u8seqNo;
     teZCL_Status eStatus;
 
     sDestinationAddress.eAddressMode = E_ZCL_AM_BOUND_NON_BLOCKING;
 
-    eStatus = eCLD_OnOffCommandSend( APP_u8GetDeviceEndpoint(),      // Src Endpoint
-                             0,                                             // Dest Endpoint (bound so do not care)
-                             &sDestinationAddress,
-                             &u8seqNo,
-                             E_CLD_ONOFF_CMD_TOGGLE);
+    eStatus = eCLD_OnOffCommandSend(APP_u8GetDeviceEndpoint(), // Src Endpoint
+                                    0,                         // Dest Endpoint (bound so do not care)
+                                    &sDestinationAddress,
+                                    &u8seqNo,
+                                    E_CLD_ONOFF_CMD_TOGGLE);
 
     if (eStatus != E_ZCL_SUCCESS)
     {
-        DBG_vPrintf(TRACE_APP, "Send Toggle Failed x%02x Last error %02x\r\n",
-                        eStatus, eZCL_GetLastZpsError());
+        DBG_vPrintf(TRACE_APP, "Send Toggle Failed x%02x Last error %02x\r\n", 
+                    eStatus, eZCL_GetLastZpsError());
     }
-
 }
 
 /****************************************************************************
@@ -510,17 +505,18 @@ static void vAppSendOnOff(void)
  * void
  *
  ****************************************************************************/
-static void vAppSendIdentifyStop( uint16_t u16Address, uint8_t u8Endpoint)
+static void vAppSendIdentifyStop(uint16_t u16Address, uint8_t u8Endpoint)
 {
     uint8_t u8Seq;
     tsZCL_Address sAddress;
     tsCLD_Identify_IdentifyRequestPayload sPayload;
 
-    sPayload.u16IdentifyTime = 0;
-    sAddress.eAddressMode = E_ZCL_AM_SHORT_NO_ACK;
+    sPayload.u16IdentifyTime                = 0;
+    sAddress.eAddressMode                   = E_ZCL_AM_SHORT_NO_ACK;
     sAddress.uAddress.u16DestinationAddress = u16Address;
+
     eCLD_IdentifyCommandIdentifyRequestSend(
-    		APP_u8GetDeviceEndpoint(),
+            APP_u8GetDeviceEndpoint(),
                             u8Endpoint,
                             &sAddress,
                             &u8Seq,
@@ -553,19 +549,18 @@ static void vAppSendRemoteBindRequest(uint16_t u16DstAddr, uint16_t u16ClusterId
         uint8_t u8SeqNumber;
         sAplZdpBindUnbindReq.u64SrcAddress = ZPS_u64AplZdoLookupIeeeAddr(u16DstAddr);
         sAplZdpBindUnbindReq.u8SrcEndpoint = APP_u8GetDeviceEndpoint();
-        sAplZdpBindUnbindReq.u16ClusterId = u16ClusterId;
-
+        sAplZdpBindUnbindReq.u16ClusterId  = u16ClusterId;
 
         sAplZdpBindUnbindReq.u8DstAddrMode = E_ZCL_AM_IEEE;
-        sAplZdpBindUnbindReq.uAddressField.sExtended.u64DstAddress = ZPS_u64NwkNibGetExtAddr(ZPS_pvAplZdoGetNwkHandle() );
+        sAplZdpBindUnbindReq.uAddressField.sExtended.u64DstAddress =
+            ZPS_u64NwkNibGetExtAddr(ZPS_pvAplZdoGetNwkHandle());
         sAplZdpBindUnbindReq.uAddressField.sExtended.u8DstEndPoint = u8DstEp;
 
         DBG_vPrintf(TRACE_APP, "Remote Bind Dst addr %04x, Ieee Dst Addr %016llx Ieee Src %016llx\r\n",
-                uDstAddr.u16Addr,
-                sAplZdpBindUnbindReq.uAddressField.sExtended.u64DstAddress,
-                sAplZdpBindUnbindReq.u64SrcAddress);
+                    uDstAddr.u16Addr, sAplZdpBindUnbindReq.uAddressField.sExtended.u64DstAddress,
+                    sAplZdpBindUnbindReq.u64SrcAddress);
 
-        eStatus = ZPS_eAplZdpBindUnbindRequest(hAPduInst,
+       eStatus = ZPS_eAplZdpBindUnbindRequest(hAPduInst,
                                                uDstAddr,
                                                FALSE,
                                                &u8SeqNumber,
@@ -625,11 +620,11 @@ static void APP_vBdbInit(void)
 {
     BDB_tsInitArgs sInitArgs;
 
-    sBDB.sAttrib.bbdbNodeIsOnANetwork = ((sNcpDeviceDesc.eNodeState >= E_RUNNING)?(TRUE):(FALSE));
-    sInitArgs.hBdbEventsMsgQ = &APP_msgBdbEvents;
+    sBDB.sAttrib.bbdbNodeIsOnANetwork = ((sNcpDeviceDesc.eNodeState >= E_RUNNING) ? (TRUE) : (FALSE));
+    sInitArgs.hBdbEventsMsgQ          = &APP_msgBdbEvents;
 
     BDB_vInit(&sInitArgs);
-    sBDB.sAttrib.u32bdbPrimaryChannelSet = BDB_PRIMARY_CHANNEL_SET;
+    sBDB.sAttrib.u32bdbPrimaryChannelSet   = BDB_PRIMARY_CHANNEL_SET;
     sBDB.sAttrib.u32bdbSecondaryChannelSet = BDB_SECONDARY_CHANNEL_SET;
 }
 
@@ -660,11 +655,10 @@ uint8 APP_eGetNodeDeviceType(void)
  * teNodeState
  *
  ****************************************************************************/
-teNodeState APP_eGetCurrentApplicationState (void)
+teNodeState APP_eGetCurrentApplicationState(void)
 {
     return sNcpDeviceDesc.eNodeState;
 }
-
 
 /****************************************************************************
  *
@@ -678,27 +672,27 @@ teNodeState APP_eGetCurrentApplicationState (void)
  * RETURNS: uint8_t
  *
  ****************************************************************************/
-uint8_t APP_u8GetDeviceEndpoint( void)
+uint8_t APP_u8GetDeviceEndpoint(void)
 {
     return COORDINATOR_APPLICATION_ENDPOINT;
 }
 
 /********************************************************************************
-  *
-  * @fn PRIVATE void APP_vNcpMainTask
-  *
-  */
- /**
-  *
-  * @param p_arg void *
-  *
-  * @brief Main State Machine for local Node
-  *
-  * @return void
-  *
-  * @note
-  *
-  * imported description
+ *
+ * @fn PRIVATE void APP_vNcpMainTask
+ *
+ */
+/**
+ *
+ * @param p_arg void *
+ *
+ * @brief Main State Machine for local Node
+ *
+ * @return void
+ *
+ * @note
+ *
+ * imported description
  ********************************************************************************/
 void APP_vNcpMainTask(void)
 {
@@ -709,7 +703,7 @@ void APP_vNcpMainTask(void)
     (void)vSL_CheckAndHandleSerialMsg();
 
     /* handle zcl messages  */
-    pBT = ZQ_bQueueReceive((void *)&zclQueueHandle, (void*)&uiMsg);
+    pBT = ZQ_bQueueReceive((void *)&zclQueueHandle, (void *)&uiMsg);
 
     if (bZCLQueueFull == (bool_t)TRUE)
     {
@@ -717,67 +711,67 @@ void APP_vNcpMainTask(void)
         bZCLQueueFull = (bool_t)FALSE;
     }
 
-    if(pBT == TRUE)
+    if (pBT == TRUE)
     {
         APP_vProcessZCLMessage(uiMsg);
     }
     /* handle application messages */
-    pBT = ZQ_bQueueReceive((void *)&appQueueHandle, (void*)&uiMsg);
+    pBT = ZQ_bQueueReceive((void *)&appQueueHandle, (void *)&uiMsg);
 
-    if(pBT == TRUE)
+    if (pBT == TRUE)
     {
-            if ((uiMsg & QUEUE_MSG_BY_VALUE) == QUEUE_MSG_BY_VALUE )
-            {
-                uintptr_t uiLocalMsg =  uiMsg & (~QUEUE_MSG_BY_VALUE);
-                vApp_ProcessMessageVal(uiLocalMsg);
-            }
-            else
-            {
-                vApp_ProcessMessage(uiMsg);
-            }
+        if ((uiMsg & QUEUE_MSG_BY_VALUE) == QUEUE_MSG_BY_VALUE)
+        {
+            uintptr_t uiLocalMsg = uiMsg & (~QUEUE_MSG_BY_VALUE);
+            vApp_ProcessMessageVal(uiLocalMsg);
+        }
+        else
+        {
+            vApp_ProcessMessage(uiMsg);
+        }
     }
 }
 
 /********************************************************************************
-  *
-  * @fn PUBLIC void vApp_ProcessMessage
-  *
-  */
- /**
-  *
-  * @param uiMsg uintptr_t
-  *
-  * @brief
-  *
-  * @return void
-  *
-  * @note
-  *
-  * imported description
+ *
+ * @fn PUBLIC void vApp_ProcessMessage
+ *
+ */
+/**
+ *
+ * @param uiMsg uintptr_t
+ *
+ * @brief
+ *
+ * @return void
+ *
+ * @note
+ *
+ * imported description
  ********************************************************************************/
 PUBLIC void vApp_ProcessMessage(uintptr_t uiMsg)
 {
     ZPS_tsAfEvent sStackEvent;
-    PDUM_thAPduInstance         myPDUM_thAPduInstance = PDUM_INVALID_HANDLE;
+    PDUM_thAPduInstance myPDUM_thAPduInstance = PDUM_INVALID_HANDLE;
 
-    if((SL_MSG_TYPE_NWK == *((uint8*)uiMsg)) || (SL_MSG_TYPE_ZDP_MSG == *((uint8*)uiMsg) ))
+    if ((SL_MSG_TYPE_NWK == *((uint8 *)uiMsg)) || (SL_MSG_TYPE_ZDP_MSG == *((uint8 *)uiMsg)))
     {
         ZPS_tsAfZdpEvent sApsZdpEvent;
-        uint8 u8MsgType =  *(uint8*)uiMsg;
+        uint8 u8MsgType = *(uint8 *)uiMsg;
         (void)ZBmemset(&sStackEvent, 0x00, sizeof(ZPS_tsAfEvent));
         (void)ZBmemset(&sApsZdpEvent, 0x00, sizeof(sApsZdpEvent));
-        if(SL_MSG_TYPE_NWK == u8MsgType)
+        if (SL_MSG_TYPE_NWK == u8MsgType)
         {
-            vSL_HandleNwkEvent((uint8*)uiMsg, &sStackEvent, &sApsZdpEvent);
+            vSL_HandleNwkEvent((uint8 *)uiMsg, &sStackEvent, &sApsZdpEvent);
         }
         else
         {
-            vSL_HandleZDPMsgEvent((uint8*)uiMsg, &myPDUM_thAPduInstance, &sStackEvent, &sApsZdpEvent);
+            vSL_HandleZDPMsgEvent((uint8 *)uiMsg, &myPDUM_thAPduInstance, &sStackEvent, &sApsZdpEvent);
         }
 
         /* Handle Nwk stack events */
         APP_vHandleNwkStackEvents(&sStackEvent);
-        if(SL_MSG_TYPE_ZDP_MSG == u8MsgType)
+        if (SL_MSG_TYPE_ZDP_MSG == u8MsgType)
         {
             /* Delete APDU allocated */
             if (myPDUM_thAPduInstance != PDUM_INVALID_HANDLE)
@@ -786,18 +780,12 @@ PUBLIC void vApp_ProcessMessage(uintptr_t uiMsg)
             }
         }
     }
-    else if(*((uint8*)uiMsg) == SL_MSG_TYPE_APDU)
+    else if (*((uint8 *)uiMsg) == SL_MSG_TYPE_APDU)
     {
         (void)ZBmemset(&sStackEvent, 0x00, sizeof(ZPS_tsAfEvent));
         PDUM_thAPduInstance tempPDUM_thAPduInstance = PDUM_INVALID_HANDLE;
         /* Process the serial buffer */
-        vSL_HandleApduEvent((uint8*)uiMsg, &tempPDUM_thAPduInstance, &sStackEvent);
-
-        /* APS data indication, ACK, and confirm available for App for diagnostic pro stack */
-        if((sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_DATA_ACK) || (sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_DATA_INDICATION))
-        {
-            //vHandleNwkDataEvents(&sStackEvent);
-        }
+        vSL_HandleApduEvent((uint8 *)uiMsg, &tempPDUM_thAPduInstance, &sStackEvent);
 
         /* Delete APDU before returning */
         if (tempPDUM_thAPduInstance != PDUM_INVALID_HANDLE)
@@ -805,54 +793,48 @@ PUBLIC void vApp_ProcessMessage(uintptr_t uiMsg)
             (void)PDUM_eAPduFreeAPduInstance(tempPDUM_thAPduInstance);
         }
     }
-    else if(*((uint8*)uiMsg) == (uint32)APP_MSG_TYPE_USER_CMD)
+    else if (*((uint8 *)uiMsg) == (uint32)APP_MSG_TYPE_USER_CMD)
     {
-        //vPREPARSE_SubstHook(((uint8*)u32Msg + 1));
         DBG_vPrintf(TRUE, "Got APP_MSG_TYPE_USER_CMD\n");
     }
-    else if(*((uint8*)uiMsg) == (uint32)APP_MSG_TYPE_USER_CMD_TX)
+    else if (*((uint8 *)uiMsg) == (uint32)APP_MSG_TYPE_USER_CMD_TX)
     {
-        //vProcess_UserCmdTx();
         DBG_vPrintf(TRUE, "Got APP_MSG_TYPE_USER_CMD_TX\n");
     }
-    else if(*((uint8*)uiMsg) == (uint32)APP_MSG_TYPE_PERMIT_JOIN_CHANGED)
-    {
-        //APP_vHandlePermitJoinChangedHook();
-    }
-    else if(*((uint8*)uiMsg) == SL_MSG_TYPE_NODE_PARENT)
+    else if (*((uint8 *)uiMsg) == SL_MSG_TYPE_NODE_PARENT)
     {
         uint16 u16ShortAddress, u16ID;
         uint64 u64LongAddress, u64ParentAddress;
         uint8 u8Status;
-        vSL_HandleNodeParentIndication((uint8*)uiMsg, &u16ShortAddress, &u64LongAddress, &u64ParentAddress, &u8Status, &u16ID);
-        DBG_vPrintf((bool_t)1, "Update Msg short 0x%04x 0x%016llx parent 0x%016llx, Status %d ID %d\n",
-                u16ShortAddress, u64LongAddress, u64ParentAddress, u8Status, u16ID );
+        vSL_HandleNodeParentIndication((uint8 *)uiMsg, &u16ShortAddress, &u64LongAddress, &u64ParentAddress, &u8Status, &u16ID);
+        DBG_vPrintf((bool_t)1, "Update Msg short 0x%04x 0x%016llx parent 0x%016llx, Status %d ID %d\n", u16ShortAddress,
+                    u64LongAddress, u64ParentAddress, u8Status, u16ID);
     }
 }
 
 /********************************************************************************
-  *
-  * @fn PUBLIC void vApp_ProcessMessageVal
-  *
-  */
- /**
-  *
-  * @param uiMsg uintptr_t
-  *
-  * @brief process message received as value, not pointer
-  *
-  * @return PUBLIC void
-  *
-  * @note
-  *
+ *
+ * @fn PUBLIC void vApp_ProcessMessageVal
+ *
+ */
+/**
+ *
+ * @param uiMsg uintptr_t
+ *
+ * @brief process message received as value, not pointer
+ *
+ * @return PUBLIC void
+ *
+ * @note
+ *
  ********************************************************************************/
 PUBLIC void vApp_ProcessMessageVal(uintptr_t uiMsg)
 {
-    PDUM_thAPduInstance         myPDUM_thAPduInstance;
+    PDUM_thAPduInstance myPDUM_thAPduInstance;
 
     (void)ZBmemset(&myPDUM_thAPduInstance, 0, sizeof(myPDUM_thAPduInstance));
 
-    if(uiMsg == SL_MSG_TYPE_JN_RESETED)
+    if (uiMsg == SL_MSG_TYPE_JN_RESETED)
     {
         DBG_vPrintf((bool_t)TRUE, "SL_MSG_TYPE_JN_RESETED\n");
         vWaitForJNReady(JN_READY_TIME_MS);
@@ -860,16 +842,16 @@ PUBLIC void vApp_ProcessMessageVal(uintptr_t uiMsg)
         (void)vConfigureCoprocessorUartAckTimeout(JN_UART_ACK_TIMEOUT);
 #endif
     }
-    else if(uiMsg == SL_MSG_STACK_STARTED_RUNNING)
+    else if (uiMsg == SL_MSG_STACK_STARTED_RUNNING)
     {
         DBG_vPrintf((bool_t)TRUE, "ZdoStartStack In Running State (JN has restarted)\n");
-        //vApp_ReProvisionJN();
     }
-    else if(uiMsg == SL_MSG_TYPE_EXCEPTION)
+    else if (uiMsg == SL_MSG_TYPE_EXCEPTION)
     {
         /* When an exception occurs, the JN is supposed to reset itself after printed the stack dump
-         * - If not for an unknown reason, the next message the LPC is going to send will not have no response from the JN
-         *   Therefore, after 4 attempts, the LPC is going to automatically reset the JN which will place it in the correct state
+         * - If not for an unknown reason, the next message the LPC is going to send will not have no response from the
+         * JN Therefore, after 4 attempts, the LPC is going to automatically reset the JN which will place it in the
+         * correct state
          * - If so, the JN will be in the correct state and the next LPC message will be processed as expected
          * We still need to change the SL timeout value to be extended, to allow the JN to send the stack dump.
          * The vSL_SetStandardResponsePeriod is called upon the reception of E_SL_MSG_EVENT_RESET
@@ -880,43 +862,43 @@ PUBLIC void vApp_ProcessMessageVal(uintptr_t uiMsg)
 }
 
 /********************************************************************************
-  *
-  * @fn PUBLIC void APP_vProcessZCLMessage
-  *
-  */
- /**
-  *
-  * @param uiMsg uintptr_t
-  *
-  * @brief process ZCL messages
-  *
-  * @return void
-  *
-  * @note
-  *
-  * imported description
+ *
+ * @fn PUBLIC void APP_vProcessZCLMessage
+ *
+ */
+/**
+ *
+ * @param uiMsg uintptr_t
+ *
+ * @brief process ZCL messages
+ *
+ * @return void
+ *
+ * @note
+ *
+ * imported description
  ********************************************************************************/
 PUBLIC void APP_vProcessZCLMessage(uintptr_t uiMsg)
 {
-    tsZCL_CallBackEvent  sCallBackEvent;
+    tsZCL_CallBackEvent sCallBackEvent;
     ZPS_tsAfEvent sStackEvent;
 #ifdef APP_ENABLE_PRINT_BUFFERS
     static uint16 u16appPrintBufferTimeInSecCount = 0U;
 #endif
 
-    if(*((uint8*)uiMsg) == (uint32)APP_MSG_TYPE_ZCL_TIMER)
+    if (*((uint8 *)uiMsg) == (uint32)APP_MSG_TYPE_ZCL_TIMER)
     {
-
         sCallBackEvent.eEventType = E_ZCL_CBET_TIMER;
         vLockZCLMutex();
-        //vZCL_SetUTCTimeWoSyncSet(APP_u32GetTime() - 1U);
+
         vZCL_EventHandler(&sCallBackEvent);
         vUnlockZCLMutex();
-        //vApp_HandleZclTimerEvent();
+
 #ifdef APP_ENABLE_PRINT_BUFFERS
-        if(u16appPrintBufferTimeInSec>0){
+        if (u16appPrintBufferTimeInSec > 0)
+        {
             u16appPrintBufferTimeInSecCount++;
-            if(u16appPrintBufferTimeInSecCount == u16appPrintBufferTimeInSec)
+            if (u16appPrintBufferTimeInSecCount == u16appPrintBufferTimeInSec)
             {
                 u16appPrintBufferTimeInSecCount = 0U;
                 vSL_PrintRxBufferPool(TRUE);
@@ -925,7 +907,7 @@ PUBLIC void APP_vProcessZCLMessage(uintptr_t uiMsg)
         }
 #endif
     }
-    else if(*((uint8*)uiMsg) == SL_MSG_TYPE_APDU)
+    else if (*((uint8 *)uiMsg) == SL_MSG_TYPE_APDU)
     {
         PDUM_thAPduInstance myPDUM_thAPduInstance = PDUM_INVALID_HANDLE;
         uint8 u8EndPoint;
@@ -933,16 +915,15 @@ PUBLIC void APP_vProcessZCLMessage(uintptr_t uiMsg)
         /* clear StackEvent */
         (void)ZBmemset(&sStackEvent, 0x00, sizeof(ZPS_tsAfEvent));
         sCallBackEvent.eEventType = E_ZCL_CBET_ZIGBEE_EVENT;
-        sCallBackEvent.pZPSevent = &sStackEvent;
+        sCallBackEvent.pZPSevent  = &sStackEvent;
 
         /* Process the serial buffer */
-        vSL_HandleApduEvent((uint8*)uiMsg,&myPDUM_thAPduInstance, &sStackEvent);
-
+        vSL_HandleApduEvent((uint8 *)uiMsg, &myPDUM_thAPduInstance, &sStackEvent);
 
         /* Before pushing the event to ZCL, construct the serial
          * payload as per stack event structure */
-        if((sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_DATA_INDICATION) ||
-           (sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_DATA_ACK))
+        if ((sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_DATA_INDICATION) ||
+            (sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_DATA_ACK))
         {
             bool bValidEp = (bool)TRUE;
             if (sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_DATA_INDICATION)
@@ -958,9 +939,12 @@ PUBLIC void APP_vProcessZCLMessage(uintptr_t uiMsg)
 
             if (bValidEp)
             {
-                if (u8EndPoint == COORDINATOR_ZDO_ENDPOINT) {
-                    vAppHandleZdoEvents((BDB_tsZpsAfEvent*)&sStackEvent);
-                } else {
+                if (u8EndPoint == COORDINATOR_ZDO_ENDPOINT)
+                {
+                    vAppHandleZdoEvents((BDB_tsZpsAfEvent *)&sStackEvent);
+                }
+                else
+                {
                     vLockZCLMutex();
                     /* post to the ZCL as Event */
                     vZCL_EventHandler(&sCallBackEvent);
@@ -969,45 +953,41 @@ PUBLIC void APP_vProcessZCLMessage(uintptr_t uiMsg)
             }
             else
             {
-                if (sStackEvent.eType ==(ZPS_teAfEventType)ZPS_EVENT_APS_DATA_INDICATION)
+                if (sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_DATA_INDICATION)
                 {
                     DBG_vPrintf((bool_t)TRUE, "Data Indication for unsupported end point %d\n",
-                          sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
+                                sStackEvent.uEvent.sApsDataIndEvent.u8DstEndpoint);
                 }
                 else
                 {
                     DBG_vPrintf((bool_t)TRUE, "Data Ack for unspported end point %d\n",
-                          sStackEvent.uEvent.sApsDataAckEvent.u8DstEndpoint);
+                                sStackEvent.uEvent.sApsDataAckEvent.u8DstEndpoint);
                 }
             }
-         }
+        }
         if (myPDUM_thAPduInstance != PDUM_INVALID_HANDLE)
         {
             (void)PDUM_eAPduFreeAPduInstance(myPDUM_thAPduInstance);
         }
     }
-    else if(*((uint8*)uiMsg) == SL_MSG_TYPE_INTERPAN)
+    else if (*((uint8 *)uiMsg) == SL_MSG_TYPE_INTERPAN)
     {
         PDUM_thAPduInstance myPDUM_thAPduInstance = PDUM_INVALID_HANDLE;
         /* clear StackEvent */
         (void)ZBmemset(&sStackEvent, 0x00, sizeof(ZPS_tsAfEvent));
         sCallBackEvent.eEventType = E_ZCL_CBET_ZIGBEE_EVENT;
-        sCallBackEvent.pZPSevent = &sStackEvent;
+        sCallBackEvent.pZPSevent  = &sStackEvent;
 
         /* Process the serial buffer */
-        vSL_HandleInterpanEvent((uint8*)uiMsg, &myPDUM_thAPduInstance, &sStackEvent);
+        vSL_HandleInterpanEvent((uint8 *)uiMsg, &myPDUM_thAPduInstance, &sStackEvent);
 
         /* Before pushing the event to ZCL, construct the serial payload as per
          * stack event structure */
-        if((sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_INTERPAN_DATA_INDICATION)||
-                (sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_INTERPAN_DATA_CONFIRM))
+        if ((sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_INTERPAN_DATA_INDICATION) ||
+            (sStackEvent.eType == (ZPS_teAfEventType)ZPS_EVENT_APS_INTERPAN_DATA_CONFIRM))
         {
-            /* Hook to handle raw GB spec inter pan messages and drop InterPan CBKE unless in correct state */
-            //if ((bool_t)TRUE == bPassInterPanToZcl(&sStackEvent))
-            {
-                /* post to the ZCL as Event */
-                vZCL_EventHandler(&sCallBackEvent);
-            }
+            /* post to the ZCL as Event */
+            vZCL_EventHandler(&sCallBackEvent);
         }
         if (myPDUM_thAPduInstance != PDUM_INVALID_HANDLE)
         {
@@ -1018,8 +998,6 @@ PUBLIC void APP_vProcessZCLMessage(uintptr_t uiMsg)
     {
         /*nodefault action required */
     }
-
-    //APP_vDirtyTimerHandler(uiMsg);
 }
 
 /****************************************************************************/

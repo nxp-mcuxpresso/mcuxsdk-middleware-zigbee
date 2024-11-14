@@ -19,30 +19,31 @@
 /****************************************************************************/
 /* Node 'coordinator' */
 /* Endpoints */
-#define COORDINATOR_ZDO_ENDPOINT    (0)
-#define COORDINATOR_APPLICATION_ENDPOINT    (1)
-#define ROUTER_APPLICATION_ENDPOINT    (1)
+#define COORDINATOR_ZDO_ENDPOINT (0)
+#define COORDINATOR_APPLICATION_ENDPOINT (1)
+#define ROUTER_APPLICATION_ENDPOINT (1)
+#define ROUTER_ONOFFLIGHT_ENDPOINT (1)
 
-#define ERR_FATAL_NON_RECOVERABLE   1U
-#define ERR_FATAL_REBOOT            2U
-#define ERR_FATAL_ZIGBEE_RESTART    3U
-#define ERR_NON_FATAL               4U
-#define ERR_NON_FATAL_DEBUG         5U
-#define MAX_NO_OF_TIME_REQ          5U
-#define MAX_NO_OF_RETRY_REQ          5U
+#define ERR_FATAL_NON_RECOVERABLE 1U
+#define ERR_FATAL_REBOOT 2U
+#define ERR_FATAL_ZIGBEE_RESTART 3U
+#define ERR_NON_FATAL 4U
+#define ERR_NON_FATAL_DEBUG 5U
+#define MAX_NO_OF_TIME_REQ 5U
+#define MAX_NO_OF_RETRY_REQ 5U
 
 /*  The apdu payload is directly copied to UART from aps buffer*/
-#define MAX_PACKET_TX_SIZE  (1000)
+#define MAX_PACKET_TX_SIZE (1000)
 
 #ifndef APDU_PAYLOAD_SIZE
-#define APDU_PAYLOAD_SIZE    1600U
+#define APDU_PAYLOAD_SIZE 1600U
 #endif
 
-#define ZBmemcpy(a,b,c)	memcpy((a), (b), (c))
+#define ZBmemcpy(a, b, c) memcpy((a), (b), (c))
 #define ZBmemset(a, b, c) memset((a), (b), (c))
 
 /* How long to wait (max) until the JN is ready to accept commands*/
-#define JN_READY_TIME_MS               2000U
+#define JN_READY_TIME_MS 2000U
 
 #ifndef TRACE_APP_INIT
 #define TRACE_APP_INIT FALSE
@@ -86,40 +87,41 @@ typedef struct
     uint64 u64TcAddress;
     zps_tsPersistNeighboursTable sActvNtEntry;
     ZPS_tsNwkSecMaterialSet asSecMatSet[2];
-    uint32  u32OutgoingFrameCounter;
-    uint8   u8KeyType;
+    uint32 u32OutgoingFrameCounter;
+    uint8 u8KeyType;
 } ZPS_tsAfRestorePointStructLocal;
 
 typedef struct
 {
     uint32 u32PollTimeInterval;
     uint32 u32TimeToNextPoll;
-    uint8  u8PollsInSet;
+    uint8 u8PollsInSet;
     uint8 u8PollsRemaining;
     uint8 u8PollTimerStatus;
-}tsJNPollState;
+} tsJNPollState;
 
 typedef struct
 {
-    uint8   au8Key[ZPS_SEC_KEY_LENGTH];
-    uint64  u64Address;
-    uint32  u32InFrameCtr;
-    uint32  u32OutFrameCtr;
-    uint8   u8Permissions;
+    uint8 au8Key[ZPS_SEC_KEY_LENGTH];
+    uint64 u64Address;
+    uint32 u32InFrameCtr;
+    uint32 u32OutFrameCtr;
+    uint8 u8Permissions;
 } tsReprovissionData;
 
-typedef enum {
-    JN_NOT_READY = 0U,
-    JN_READY = 1U,
+typedef enum
+{
+    JN_NOT_READY   = 0U,
+    JN_READY       = 1U,
     JN_PROVISIONED = 2U
 } teJNState;
 
-typedef struct 
+typedef struct
 {
     teState eState;
     teNodeState eNodeState;
     uint8 u8DeviceType;
-}tsNcpDeviceDesc;
+} tsNcpDeviceDesc;
 
 /****************************************************************************/
 /***        Exported Functions                                            ***/
@@ -127,11 +129,11 @@ typedef struct
 PUBLIC void APP_vProcessZCLMessage(uintptr_t uiMsg);
 PUBLIC ZPS_teStatus APP_eZbModuleInitialise(void);
 PUBLIC void APP_vPostToZclQueue(uint8 *pvMessage);
-PUBLIC void APP_vPostToAppQueue (uint8 *pvMsg);
-PUBLIC void APP_vPostToAppQueueWord (uint8 u8MsgType);
+PUBLIC void APP_vPostToAppQueue(uint8 *pvMsg);
+PUBLIC void APP_vPostToAppQueueWord(uint8 u8MsgType);
 
 PUBLIC void APP_vNcpHostReset();
-PUBLIC void APP_vVerifyFatalTest (bool_t bIsOk, const char *strErr, uint32 u32ErrorLevel, int16 s16Line);
+PUBLIC void APP_vVerifyFatalTest(bool_t bIsOk, const char *strErr, uint32 u32ErrorLevel, int16 s16Line);
 
 PUBLIC uint16 u16Read16Nbo(uint8 *pu8Payload);
 
@@ -142,7 +144,6 @@ uint8 APP_eGetNodeDeviceType(void);
 /****************************************************************************/
 /***        External Variables                                            ***/
 /****************************************************************************/
-
 
 /****************************************************************************/
 /****************************************************************************/
