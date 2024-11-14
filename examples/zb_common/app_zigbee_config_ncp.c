@@ -115,8 +115,8 @@ PUBLIC ZPS_teStatus APP_eZbModuleInitialise(void)
     uint32 u32SDKVersion              = 0U;
 
     DBG_vPrintf((bool_t)TRACE_APP_INIT, "Zigbee Module initialization\r\n");
-
     DBG_vPrintf((bool_t)TRACE_APP_INIT, "Reading Zigbee Module Version Number\r\n");
+
     uint32 u32Count = 0U;
     while (u32Count < MAX_HOST_TO_COPROCESSOR_COMMS_ATTEMPS)
     {
@@ -157,6 +157,7 @@ PUBLIC ZPS_teStatus APP_eZbModuleInitialise(void)
     if (sNcpDeviceDesc.eNodeState == E_STARTUP)
     {
         DBG_vPrintf((bool_t)TRACE_APP_INIT, "Erasing Persistent Data on Zigbee Module\n");
+
         eStatus = u8ErasePersistentData();
         if (eStatus == (ZPS_teStatus)E_ZCL_SUCCESS)
         {
@@ -167,6 +168,7 @@ PUBLIC ZPS_teStatus APP_eZbModuleInitialise(void)
             DBG_vPrintf((bool_t)TRUE, "Error: Erasing Persistent Data on Zigbee Module 0x%x\r\n", eStatus);
             return eStatus;
         }
+
         /* wait for Zigbee module to stabilize after PDM erase */
         vSetJNState(JN_NOT_READY);
         vWaitForJNReady(JN_READY_TIME_MS);
@@ -334,10 +336,7 @@ PUBLIC void vFlushAppQueue(void)
 PUBLIC void APP_vHandleNwkStackEvents(ZPS_tsAfEvent *psStackEvent)
 {
     /* check ZPS Event Type */
-    if (psStackEvent->eType == (ZPS_teAfEventType)(ZPS_EVENT_NWK_NEW_NODE_HAS_JOINED))
-    {
-    }
-    else if (psStackEvent->eType == ZPS_EVENT_NWK_STARTED)
+    if (psStackEvent->eType == ZPS_EVENT_NWK_STARTED)
     {
         sNcpDeviceDesc.eNodeState = E_RUNNING;
         sNcpDeviceDesc.eState     = NOT_FACTORY_NEW;
@@ -371,7 +370,6 @@ PUBLIC void APP_vHandleNwkStackEvents(ZPS_tsAfEvent *psStackEvent)
             {
                 DBG_vPrintf((bool_t)1, "%016llx Leaving with rejoin\n",
                             psStackEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr);
-                /* do nothing there are coming back */
             }
             else
             {
@@ -379,7 +377,6 @@ PUBLIC void APP_vHandleNwkStackEvents(ZPS_tsAfEvent *psStackEvent)
                             psStackEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr);
 
                 DBG_vPrintf((bool_t)1, "Call APP_eCleanUpZclState\n");
-                //(void)APP_eCleanUpZclState(psStackEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr);
             }
         }
     }
@@ -416,14 +413,7 @@ PUBLIC void APP_vHandleNwkStackEvents(ZPS_tsAfEvent *psStackEvent)
             }
         }
     }
-    else if (psStackEvent->eType == (ZPS_teAfEventType)(ZPS_EVENT_ERROR))
-    {
-        /* no default action required */
-    }
-    else
-    {
-        /* No action required */
-    }
+
     /* Invoke the BDB to handle the event */
     APP_vGenCallback(COORDINATOR_ZDO_ENDPOINT, psStackEvent);
 }
