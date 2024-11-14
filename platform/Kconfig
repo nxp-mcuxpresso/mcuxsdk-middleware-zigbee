@@ -78,3 +78,7 @@ config MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs_r23
     depends on MCUX_COMPONENT_middleware.wireless.zigbee.platform.kw45_k32w1_mcxw71 || \
             MCUX_COMPONENT_middleware.wireless.framework.platform.kw47_mcxw72 || \
             MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x
+
+config CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform_ncp_host
+    bool
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.platform.kw45_k32w1_mcxw71
