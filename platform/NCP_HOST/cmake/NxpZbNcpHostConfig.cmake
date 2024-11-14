@@ -215,3 +215,9 @@ if (CONFIG_ZB_OTA_SUPPORT)
             ${NXP_ZB_BASE}/ZCL/Clusters/OTA/Source/OTA.c
     )
 endif()
+
+# Additional compile options on non-application sources
+set_property(SOURCE ${ZB_NCP_HOST_SOURCES} APPEND PROPERTY COMPILE_OPTIONS -Wno-int-to-pointer-cast)
+set_property(SOURCE ${ZB_NCP_HOST_SOURCES} APPEND PROPERTY COMPILE_OPTIONS -Wno-pointer-to-int-cast)
+set_property(SOURCE ${ZB_NCP_HOST_SOURCES} APPEND PROPERTY COMPILE_OPTIONS -Wno-format)
+set_property(SOURCE ${ZB_NCP_HOST_SOURCES} APPEND PROPERTY COMPILE_OPTIONS -Wno-stringop-overread)

@@ -1161,7 +1161,7 @@ PUBLIC void vSL_HandleNwkEvent(
         if (psStackEvent->uEvent.sAfErrorEvent.eError == ZPS_ERROR_OS_MESSAGE_QUEUE_OVERRUN)
         {
             /* Update the OS Error Message */
-            psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage = (void *)u32SL_ConvBiToU32(pu8Msg+u16Len);
+            psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage = (void *)(uintptr_t)u32SL_ConvBiToU32(pu8Msg+u16Len);
             u16Len += (uint16)sizeof(uint32);
             u8TempStatus = (uint8)JN_ERROR_OS_MESSAGE_QUEUE_OVERRUN;
         }
@@ -1198,7 +1198,7 @@ PUBLIC void vSL_HandleNwkEvent(
             /* Update Event Error Data Source Endpoint */
             psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorApdu.u8SrcEndpoint = *(pu8Msg+u16Len++);
             /* Update Event Error Data APDU */
-            psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorApdu.hAPdu = (PDUM_thAPdu)u32SL_ConvBiToU32(pu8Msg+u16Len);
+            psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorApdu.hAPdu = (PDUM_thAPdu)(uintptr_t)u32SL_ConvBiToU32(pu8Msg+u16Len);
             u16Len += sizeof(uint32);
             /* Update Event Error Data Data Size */
             psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorApdu.u16DataSize = ((uint16)*(pu8Msg+u16Len++)) << 8U;
@@ -4443,11 +4443,11 @@ union
         upBuf.pu8 = au8Response;
         u32Outgoing = *upBuf.pu32;
         u32Incoming = *(upBuf.pu32 + 1);   /* points to au8Response[4] */
-        DBG_vPrintf((bool_t)TRUE, "Device %016llx has Out FC %08x and In FC %08x\n", u64Address, u32Outgoing, u32Incoming);
+        DBG_vPrintf((bool_t)TRUE, "Device %016lx has Out FC %08x and In FC %08x\n", u64Address, u32Outgoing, u32Incoming);
     }
     else
     {
-        DBG_vPrintf((bool_t)TRUE, "Device %016llx not found\n", u64Address);
+        DBG_vPrintf((bool_t)TRUE, "Device %016lx not found\n", u64Address);
     }
     return u8Status;
 }
