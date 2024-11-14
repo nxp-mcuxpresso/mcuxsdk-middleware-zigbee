@@ -6,6 +6,7 @@
 config MCUX_COMPONENT_middleware.wireless.zigbee.examples_common
     bool
     select MCUX_COMPONENT_middleware.wireless.zigbee.freertos_common if  MCUX_COMPONENT_middleware.freertos-kernel
+    select MCUX_COMPONENT_middleware.freertos-kernel.extension if MCUX_COMPONENT_middleware.freertos-kernel
     depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
