@@ -1162,7 +1162,7 @@ PUBLIC void vSL_HandleNwkEvent(
         if (psStackEvent->uEvent.sAfErrorEvent.eError == ZPS_ERROR_OS_MESSAGE_QUEUE_OVERRUN)
         {
             /* Update the OS Error Message */
-            psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage = (void *)u32SL_ConvBiToU32(pu8Msg+u16Len);
+            psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage = (void *)(uintptr_t)u32SL_ConvBiToU32(pu8Msg+u16Len);
             u16Len += (uint16)sizeof(uint32);
             u8TempStatus = (uint8)JN_ERROR_OS_MESSAGE_QUEUE_OVERRUN;
         }
@@ -1199,7 +1199,7 @@ PUBLIC void vSL_HandleNwkEvent(
             /* Update Event Error Data Source Endpoint */
             psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorApdu.u8SrcEndpoint = *(pu8Msg+u16Len++);
             /* Update Event Error Data APDU */
-            psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorApdu.hAPdu = (PDUM_thAPdu)u32SL_ConvBiToU32(pu8Msg+u16Len);
+            psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorApdu.hAPdu = (PDUM_thAPdu)(uintptr_t)u32SL_ConvBiToU32(pu8Msg+u16Len);
             u16Len += sizeof(uint32);
             /* Update Event Error Data Data Size */
             psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorApdu.u16DataSize = ((uint16)*(pu8Msg+u16Len++)) << 8U;
