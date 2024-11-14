@@ -135,11 +135,11 @@ if the application was provided as part of a MCUXPRESSO SDK package or as standa
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
 -- Found MCUXPRESSO SDK
--- Using SDK root path /home/mcu-sdk-3.0
+-- Using SDK root path /home/mcu-sdk
 -- Build mbedtls from SDK source code
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/mcu-sdk-3.0/middleware/wireless/zigbee/examples/zigbee_coordinator/build_linux/out 
+-- Build files have been written to: /home/mcu-sdk/middleware/wireless/zigbee/examples/zigbee_coordinator/build_linux/out 
 ```
 
 Issue the command `make` to execute the newly generated Makefile.
@@ -147,15 +147,15 @@ Issue the command `make` to execute the newly generated Makefile.
 ```
 >[b06830_local@fsr-ub1864-125 out]$ make 
 
-[  1%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum.c.o
-[  1%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_apl.c.o
-[  2%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_dbg.c.o
-[  2%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_nwk.c.o
+[  1%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum.c.o
+[  1%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_apl.c.o
+[  2%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_dbg.c.o
+[  2%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_nwk.c.o
 [  3%] Linking C static library pdum/lib/libpdum.a
 [  3%] Built target ncphost-PDUM
 [  3%] Building C object mbedtls/library/CMakeFiles/ncp-host-mbedcrypto.dir/aes.c.o
 . . .
-[ 99%] Building C object CMakeFiles/zb_coord_linux.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee//examples/zigbee_coordinator/zigbee/ZCL/Clusters/OTA/Source/OTA.c.o
+[ 99%] Building C object CMakeFiles/zb_coord_linux.dir/home/mcu-sdk/middleware/wireless/zigbee//examples/zigbee_coordinator/zigbee/ZCL/Clusters/OTA/Source/OTA.c.o
 [100%] Linking C executable zb_coord_linux
 [100%] Built target zb_coord_linux
 ```
@@ -164,7 +164,7 @@ The following error might appear, which indicates that the SDK Mbedtls version i
 
 ```
 -- SDK MBEDTLS version is below 2.28, use CONFIG_MBEDTLS_SOURCE as GIT or SYSTEM instead
-CMake Error at /home/mcu-sdk-2.0/middleware/wireless/zigbee/platform/NCP_HOST/cmake/NxpZbNcpHostConfig.cmake:46 (message):
+CMake Error at /home/mcu-sdk/middleware/wireless/zigbee/platform/NCP_HOST/cmake/NxpZbNcpHostConfig.cmake:46 (message):
 Call Stack (most recent call first):
   CMakeLists.txt:32 (include)
 ```
@@ -186,7 +186,7 @@ If so, switch the Mbedtls origin to GIT instead, by building with the following 
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
 -- Found MCUXPRESSO SDK internal
--- Using SDK root path /home/mcu-sdk-2.0
+-- Using SDK root path /home/mcu-sdk
 -- Populate mbedtls repository
 Cloning into 'repo'...
 HEAD is now at 8b3f26a5ac Merge pull request #868 from ARMmbed/mbedtls-2.28.0rc0-pr
