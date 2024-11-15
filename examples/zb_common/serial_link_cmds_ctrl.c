@@ -4444,11 +4444,11 @@ union
         upBuf.pu8 = au8Response;
         u32Outgoing = *upBuf.pu32;
         u32Incoming = *(upBuf.pu32 + 1);   /* points to au8Response[4] */
-        DBG_vPrintf((bool_t)TRUE, "Device %016llx has Out FC %08x and In FC %08x\n", u64Address, u32Outgoing, u32Incoming);
+        DBG_vPrintf((bool_t)TRUE, "Device %016lx has Out FC %08x and In FC %08x\n", u64Address, u32Outgoing, u32Incoming);
     }
     else
     {
-        DBG_vPrintf((bool_t)TRUE, "Device %016llx not found\n", u64Address);
+        DBG_vPrintf((bool_t)TRUE, "Device %016lx not found\n", u64Address);
     }
     return u8Status;
 }

@@ -387,11 +387,11 @@ static void vAppHandleZdoEvents(BDB_tsZpsAfEvent *psZpsAfEvent)
             break;
 
         case ZPS_EVENT_NWK_LEAVE_INDICATION:
-            DBG_vPrintf(TRACE_APP, "APP-ZDO: Leave Indication %016llx Rejoin %d\r\n",
-                        psAfEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr,
-                        psAfEvent->uEvent.sNwkLeaveIndicationEvent.u8Rejoin);
-            if ((psAfEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr == 0UL) &&
-                (psAfEvent->uEvent.sNwkLeaveIndicationEvent.u8Rejoin == 0))
+            DBG_vPrintf(TRACE_APP, "APP-ZDO: Leave Indication %016lx Rejoin %d\r\n",
+                    psAfEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr,
+                    psAfEvent->uEvent.sNwkLeaveIndicationEvent.u8Rejoin);
+            if ( (psAfEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr == 0UL) &&
+                 (psAfEvent->uEvent.sNwkLeaveIndicationEvent.u8Rejoin == 0) )
             {
                 /* We are asked to Leave without rejoin */
                 DBG_vPrintf(TRACE_APP, "LEAVE IND -> For Us No Rejoin\r\n");
@@ -400,9 +400,9 @@ static void vAppHandleZdoEvents(BDB_tsZpsAfEvent *psZpsAfEvent)
             break;
 
         case ZPS_EVENT_NWK_LEAVE_CONFIRM:
-            DBG_vPrintf(TRACE_APP, "APP-ZDO: Leave Confirm status %02x Addr %016llx\r\n",
-                        psAfEvent->uEvent.sNwkLeaveConfirmEvent.eStatus,
-                        psAfEvent->uEvent.sNwkLeaveConfirmEvent.u64ExtAddr);
+            DBG_vPrintf(TRACE_APP, "APP-ZDO: Leave Confirm status %02x Addr %016lx\r\n",
+                    psAfEvent->uEvent.sNwkLeaveConfirmEvent.eStatus,
+                    psAfEvent->uEvent.sNwkLeaveConfirmEvent.u64ExtAddr);
             if ((psAfEvent->uEvent.sNwkLeaveConfirmEvent.eStatus == ZPS_E_SUCCESS) &&
                 (psAfEvent->uEvent.sNwkLeaveConfirmEvent.u64ExtAddr == 0UL))
             {
@@ -434,7 +434,7 @@ static void vAppHandleZdoEvents(BDB_tsZpsAfEvent *psZpsAfEvent)
             break;
 
         case ZPS_EVENT_ZDO_LINK_KEY:
-            DBG_vPrintf(TRACE_APP, "APP-ZDO: Zdo Link Key Event Type %d Addr %016llx\r\n",
+            DBG_vPrintf(TRACE_APP, "APP-ZDO: Zdo Link Key Event Type %d Addr %016lx\r\n",
                         psAfEvent->uEvent.sZdoLinkKeyEvent.u8KeyType,
                         psAfEvent->uEvent.sZdoLinkKeyEvent.u64IeeeLinkAddr);
             break;
@@ -553,11 +553,9 @@ PRIVATE void vPrintAPSTable(void)
     {
         ZPS_tsAplApsKeyDescriptorEntry tsAplApsKeyDescriptorEntry = ZPS_tsAplAibGetDeviceKeyPairTableEntry(i);
 
-        DBG_vPrintf(
-            TRUE, "%d MAC: %016llx Key: ", i,
-            ZPS_u64NwkNibGetMappedIeeeAddr(ZPS_pvAplZdoGetNwkHandle(), tsAplApsKeyDescriptorEntry.u16ExtAddrLkup));
-
-        for (j = 0; j < ZPS_SEC_KEY_LENGTH; j++)
+        DBG_vPrintf(TRUE, "%d MAC: %016lx Key: ", i, ZPS_u64NwkNibGetMappedIeeeAddr(ZPS_pvAplZdoGetNwkHandle(),tsAplApsKeyDescriptorEntry.u16ExtAddrLkup));
+       
+        for(j=0; j<ZPS_SEC_KEY_LENGTH;j++)
         {
             DBG_vPrintf(TRUE, "%02x ", tsAplApsKeyDescriptorEntry.au8LinkKey[j]);
         }
@@ -727,10 +725,9 @@ PUBLIC void vApp_ProcessMessage(uintptr_t uiMsg)
         uint16 u16ShortAddress, u16ID;
         uint64 u64LongAddress, u64ParentAddress;
         uint8 u8Status;
-        vSL_HandleNodeParentIndication((uint8 *)uiMsg, &u16ShortAddress, &u64LongAddress, &u64ParentAddress, &u8Status,
-                                       &u16ID);
-        DBG_vPrintf((bool_t)1, "Update Msg short 0x%04x 0x%016llx parent 0x%016llx, Status %d ID %d\n", u16ShortAddress,
-                    u64LongAddress, u64ParentAddress, u8Status, u16ID);
+        vSL_HandleNodeParentIndication((uint8*)uiMsg, &u16ShortAddress, &u64LongAddress, &u64ParentAddress, &u8Status, &u16ID);
+        DBG_vPrintf((bool_t)1, "Update Msg short 0x%04x 0x%016lx parent 0x%016lx, Status %d ID %d\n",
+                u16ShortAddress, u64LongAddress, u64ParentAddress, u8Status, u16ID );
     }
 }
 

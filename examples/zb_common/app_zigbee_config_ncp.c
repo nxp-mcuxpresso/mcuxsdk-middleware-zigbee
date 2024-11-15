@@ -348,7 +348,7 @@ PUBLIC void APP_vHandleNwkStackEvents(ZPS_tsAfEvent *psStackEvent)
     }
     else if (psStackEvent->eType == (ZPS_teAfEventType)(ZPS_EVENT_NWK_LEAVE_INDICATION))
     {
-        DBG_vPrintf((bool_t)1, "LEAVE_INDICATION Addr %016llx Rejoin %02x\n",
+            DBG_vPrintf((bool_t)1, "LEAVE_INDICATION Addr %016lx Rejoin %02x\n",
                     psStackEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr,
                     psStackEvent->uEvent.sNwkLeaveIndicationEvent.u8Rejoin);
         if (psStackEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr == 0U)
@@ -368,12 +368,12 @@ PUBLIC void APP_vHandleNwkStackEvents(ZPS_tsAfEvent *psStackEvent)
             /* some other device has left */
             if ((psStackEvent->uEvent.sNwkLeaveIndicationEvent.u8Rejoin != 0U))
             {
-                DBG_vPrintf((bool_t)1, "%016llx Leaving with rejoin\n",
+                DBG_vPrintf((bool_t)1, "%016lx Leaving with rejoin\n",
                             psStackEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr);
             }
             else
             {
-                DBG_vPrintf((bool_t)1, "%016llx are Leaving WITHOUT rejoin\n",
+                DBG_vPrintf((bool_t)1, "%016lx are Leaving WITHOUT rejoin\n",
                             psStackEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr);
 
                 DBG_vPrintf((bool_t)1, "Call APP_eCleanUpZclState\n");
@@ -382,10 +382,10 @@ PUBLIC void APP_vHandleNwkStackEvents(ZPS_tsAfEvent *psStackEvent)
     }
     else if (psStackEvent->eType == (ZPS_teAfEventType)(ZPS_EVENT_NWK_LEAVE_CONFIRM))
     {
-        DBG_vPrintf((bool_t)TRUE, "Nwk Evt: LEAVE_CONFIRM status %02x Addr %016llx Rejoin %d\r\n",
-                    psStackEvent->uEvent.sNwkLeaveConfirmEvent.eStatus,
-                    psStackEvent->uEvent.sNwkLeaveConfirmEvent.u64ExtAddr,
-                    psStackEvent->uEvent.sNwkLeaveConfirmEvent.bRejoin);
+        DBG_vPrintf((bool_t)TRUE, "Nwk Evt: LEAVE_CONFIRM status %02x Addr %016lx Rejoin %d\r\n",
+                psStackEvent->uEvent.sNwkLeaveConfirmEvent.eStatus,
+                psStackEvent->uEvent.sNwkLeaveConfirmEvent.u64ExtAddr,
+                psStackEvent->uEvent.sNwkLeaveConfirmEvent.bRejoin );
         if (psStackEvent->uEvent.sNwkLeaveConfirmEvent.u64ExtAddr == 0U)
         {
             /* leave confirm for this device */
@@ -403,12 +403,12 @@ PUBLIC void APP_vHandleNwkStackEvents(ZPS_tsAfEvent *psStackEvent)
             /* leave comfirm for some other device */
             if (psStackEvent->uEvent.sNwkLeaveConfirmEvent.bRejoin == (bool_t)TRUE)
             {
-                DBG_vPrintf((bool_t)1, "We asked %016llx to Leave with Rejoin\n",
+                DBG_vPrintf((bool_t)1, "We asked %016lx to Leave with Rejoin\n",
                             psStackEvent->uEvent.sNwkLeaveConfirmEvent.u64ExtAddr);
             }
             else
             {
-                DBG_vPrintf((bool_t)1, "We asked %016llx to Leave WITHOUT Rejoin\n",
+                DBG_vPrintf((bool_t)1, "We asked %016lx to Leave WITHOUT Rejoin\n",
                             psStackEvent->uEvent.sNwkLeaveConfirmEvent.u64ExtAddr);
             }
         }

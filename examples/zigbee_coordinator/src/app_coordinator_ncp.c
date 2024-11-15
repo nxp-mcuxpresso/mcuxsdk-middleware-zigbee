@@ -412,9 +412,9 @@ void vAppHandleZdoEvents(BDB_tsZpsAfEvent *psZpsAfEvent)
             break;
 
         case ZPS_EVENT_NWK_LEAVE_INDICATION:
-            DBG_vPrintf(TRACE_APP, "APP-ZDO: Leave Indication %016llx Rejoin %d\r\n",
-                        psAfEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr,
-                        psAfEvent->uEvent.sNwkLeaveIndicationEvent.u8Rejoin);
+            DBG_vPrintf(TRACE_APP, "APP-ZDO: Leave Indication %016lx Rejoin %d\r\n",
+                    psAfEvent->uEvent.sNwkLeaveIndicationEvent.u64ExtAddr,
+                    psAfEvent->uEvent.sNwkLeaveIndicationEvent.u8Rejoin);
             break;
 
         case ZPS_EVENT_NWK_STATUS_INDICATION:
@@ -440,7 +440,7 @@ void vAppHandleZdoEvents(BDB_tsZpsAfEvent *psZpsAfEvent)
             break;
 
         case ZPS_EVENT_ZDO_LINK_KEY:
-            DBG_vPrintf(TRACE_APP, "APP-ZDO: Zdo Link Key Event Type %d Addr %016llx\r\n",
+            DBG_vPrintf(TRACE_APP, "APP-ZDO: Zdo Link Key Event Type %d Addr %016lx\r\n",
                         psAfEvent->uEvent.sZdoLinkKeyEvent.u8KeyType,
                         psAfEvent->uEvent.sZdoLinkKeyEvent.u64IeeeLinkAddr);
             break;
@@ -556,9 +556,10 @@ static void vAppSendRemoteBindRequest(uint16_t u16DstAddr, uint16_t u16ClusterId
             ZPS_u64NwkNibGetExtAddr(ZPS_pvAplZdoGetNwkHandle());
         sAplZdpBindUnbindReq.uAddressField.sExtended.u8DstEndPoint = u8DstEp;
 
-        DBG_vPrintf(TRACE_APP, "Remote Bind Dst addr %04x, Ieee Dst Addr %016llx Ieee Src %016llx\r\n",
-                    uDstAddr.u16Addr, sAplZdpBindUnbindReq.uAddressField.sExtended.u64DstAddress,
-                    sAplZdpBindUnbindReq.u64SrcAddress);
+        DBG_vPrintf(TRACE_APP, "Remote Bind Dst addr %04x, Ieee Dst Addr %016lx Ieee Src %016lx\r\n",
+                uDstAddr.u16Addr,
+                sAplZdpBindUnbindReq.uAddressField.sExtended.u64DstAddress,
+                sAplZdpBindUnbindReq.u64SrcAddress);
 
        eStatus = ZPS_eAplZdpBindUnbindRequest(hAPduInst,
                                                uDstAddr,
@@ -806,9 +807,9 @@ PUBLIC void vApp_ProcessMessage(uintptr_t uiMsg)
         uint16 u16ShortAddress, u16ID;
         uint64 u64LongAddress, u64ParentAddress;
         uint8 u8Status;
-        vSL_HandleNodeParentIndication((uint8 *)uiMsg, &u16ShortAddress, &u64LongAddress, &u64ParentAddress, &u8Status, &u16ID);
-        DBG_vPrintf((bool_t)1, "Update Msg short 0x%04x 0x%016llx parent 0x%016llx, Status %d ID %d\n", u16ShortAddress,
-                    u64LongAddress, u64ParentAddress, u8Status, u16ID);
+        vSL_HandleNodeParentIndication((uint8*)uiMsg, &u16ShortAddress, &u64LongAddress, &u64ParentAddress, &u8Status, &u16ID);
+        DBG_vPrintf((bool_t)1, "Update Msg short 0x%04x 0x%016lx parent 0x%016lx, Status %d ID %d\n",
+                u16ShortAddress, u64LongAddress, u64ParentAddress, u8Status, u16ID );
     }
 }
 
