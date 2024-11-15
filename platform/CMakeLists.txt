@@ -17,6 +17,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform_ncp_host)
                 NCP_HOST/cmake/mbedtls_git.cmake
                 NCP_HOST/cmake/pdum.cmake
                 NCP_HOST/cmake/utils.cmake
+                NCP_HOST/cmake/NxpZbNcpHostConfig.cmake
                 NCP_HOST/cmake/toolchains/arm-linux-gnueabihf.cmake
                 NCP_HOST/cmake/toolchains/x86_64-linux-gnu.cmake
                 NCP_HOST/framework/Common/app.h
