@@ -349,7 +349,7 @@ static void APP_ZCL_cbEndpointCallback(tsZCL_CallBackEvent *psEvent)
             if(psEvent->psClusterInstance != NULL)
             {
                 tsZCL_AttributeReportingConfigurationRecord    *psAttributeReportingRecord = &psEvent->uMessage.sAttributeReportingConfigurationRecord;
-                DBG_vPrintf(TRACE_ZCL,"Individual Configure Report Cluster %d Attrib %d Type %d Min %d Max %d IntV %d Direcct %d Change %d\r\n",
+                DBG_vPrintf(TRACE_ZCL,"Individual Configure Report Cluster %d Attrib %d Type %d Min %d Max %d IntV %d Direcct %d Change time %d date %d UTC time %d \r\n",
                         psEvent->psClusterInstance->psClusterDefinition->u16ClusterEnum,
                         psAttributeReportingRecord->u16AttributeEnum,
                         psAttributeReportingRecord->eAttributeDataType,
@@ -357,7 +357,9 @@ static void APP_ZCL_cbEndpointCallback(tsZCL_CallBackEvent *psEvent)
                         psAttributeReportingRecord->u16MaximumReportingInterval,
                         psAttributeReportingRecord->u16TimeoutPeriodField,
                         psAttributeReportingRecord->u8DirectionIsReceived,
-                        psAttributeReportingRecord->uAttributeReportableChange);
+                        psAttributeReportingRecord->uAttributeReportableChange.ztimeReportableChange,
+                        psAttributeReportingRecord->uAttributeReportableChange.zdateReportableChange,
+                        psAttributeReportingRecord->uAttributeReportableChange.zutctimeReportableChange);
 
                 if (E_ZCL_SUCCESS == psEvent->eZCL_Status)
                 {
