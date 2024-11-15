@@ -33,3 +33,9 @@ config MCUX_COMPONENT_middleware.wireless.zigbee.freertos_common
 
 config MCUX_COMPONENT_middleware.wireless.zigbee.ncp_host
     bool
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.ncp_host_examples
+    bool
+
+config MCUX_COMPONENT_middleware.wireless.zigbee.ncp_host_examples_collaterals
+    bool

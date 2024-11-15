@@ -45,7 +45,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.examples_common_ota_server)
     )
 endif()
 
-if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.ncp_host)
+if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.ncp_host_examples_collaterals)
     mcux_add_source(
         SOURCES zb_common/app_common_ncp.h
                 zb_common/app_zigbee_config_ncp.c
@@ -54,7 +54,9 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.ncp_host)
                 zb_common/serial_link_ctrl_linux.c
                 zb_common/serial_link_ctrl.c
                 zb_common/serial_link_ctrl.h
-                ../ZigbeeCommon/source/port_linux.c
+                zb_common/linux/**
+                ../ZigbeeCommon/Source/port_linux.c
+                ../ZigbeeCommon/Include/portmacro_linux.h
     )
 endif()
 
@@ -64,5 +66,45 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.serial_link_wkr)
                 zb_common/serial_link_cmds_wkr.h
                 zb_common/serial_link_wkr.c
                 zb_common/serial_link_wkr.h
+    )
+endif()
+
+if (CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.ncp_host_examples)
+    mcux_add_source(
+        SOURCES zigbee_coordinator/src/linux/**
+                zigbee_coordinator/build_linux/**
+                zigbee_coordinator/src/app_main.c
+                zigbee_coordinator/src/app_main.h
+                zigbee_coordinator/src/app_coordinator_ncp.c
+                zigbee_coordinator/src/app_coordinator.h
+                zigbee_coordinator/src/app_serial_commands.c
+                zigbee_coordinator/src/app_serial_commands.h
+                zigbee_coordinator/src/app_start.c
+                zigbee_coordinator/src/app_zcl_task.c
+                zigbee_coordinator/src/app_zcl_task.h
+                zigbee_coordinator/src/bdb_options.h
+                zigbee_coordinator/src/pdum_gen.h
+                zigbee_coordinator/src/zcl_options.h
+                zigbee_coordinator/src/zigbee_config.h
+                zigbee_coordinator/src/zps_gen.h
+                zigbee_coordinator/src/app_main.c
+                zigbee_router/src/linux/**
+                zigbee_router/build_linux/**
+                zigbee_router/src/app_router_node_ncp.c
+                zigbee_router/src/app_main.c
+                zigbee_router/src/app_main.h
+                zigbee_router/src/app_reporting.c
+                zigbee_router/src/app_reporting.h
+                zigbee_router/src/app_router_node.h
+                zigbee_router/src/app_serial_commands.c
+                zigbee_router/src/app_serial_commands.h
+                zigbee_router/src/app_start.c
+                zigbee_router/src/app_zcl_task.c
+                zigbee_router/src/app_zcl_task.h
+                zigbee_router/src/bdb_options.h
+                zigbee_router/src/pdum_gen.h
+                zigbee_router/src/zcl_options.h
+                zigbee_router/src/zigbee_config.h
+                zigbee_router/src/zps_gen.h
     )
 endif()
