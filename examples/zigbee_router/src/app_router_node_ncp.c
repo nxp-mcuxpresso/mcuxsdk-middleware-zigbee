@@ -202,7 +202,7 @@ void APP_vBdbCallback(BDB_tsBdbEvent *psBdbEvent)
 
         case BDB_EVENT_NO_NETWORK:
             DBG_vPrintf(TRACE_APP, "APP: BDB No Networks\r\n");
-            break;
+            /* No break, go to next case */
 
         case BDB_EVENT_REJOIN_FAILURE:
             if (BDB_bIsBaseIdle())
