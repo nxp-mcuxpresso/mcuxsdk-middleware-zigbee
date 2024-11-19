@@ -1782,10 +1782,7 @@ PUBLIC void vZdoServersInit(void);
         # fill in rest of table with blank addresses (all Fs in IEEE addr used to indicate this)
         if num_pck < (keyPairTableSize + 3):
             for pck in range(num_pck, (keyPairTableSize + 3)):
-                if R23_UPDATES:
-                    Cfile.write("    { 0, 0xFFFF, { }, 0 , 0},\n")
-                else:
-                    Cfile.write("    { 0, 0xFFFF, { }, 0 },\n")
+                Cfile.write("    { 0, 0xFFFF, { }, 0 },\n")
 
         Cfile.write("};\n")
         Cfile.write("ZPS_tsAplApsKeyDescriptorEntry  *psAplDefaultDistributedAPSLinkKey = &s_keyPairTableStorage[%d];\n" % (keyPairTableSize+1))

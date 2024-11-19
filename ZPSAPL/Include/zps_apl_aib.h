@@ -209,7 +209,11 @@ typedef struct
     uint8  u8BitMapSecLevl;
 #ifdef R23_UPDATES
     uint8 u8FeaturesCapabilities;
-    uint8 u8InitialJoinAuth;
+    struct
+    {
+        uint8 u8InitialJoinAuth: 3;
+        uint8 bInitialJoinDone : 1;
+    };
     uint8 u8PostJoinKeyUpdateMethod;
     uint8 u8KeyNegotiationMethod;
     uint8 u8PresharedSecretType;
