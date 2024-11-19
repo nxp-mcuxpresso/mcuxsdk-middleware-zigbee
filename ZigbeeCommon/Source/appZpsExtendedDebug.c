@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020-2023 NXP
+ * Copyright 2020-2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -273,6 +273,13 @@ PUBLIC void vDisplayAPSTable(void)
 #ifdef R23_UPDATES
         DBG_vPrintf(TRACE_ZBP_UTILS, "Features   : x%x\n", tsAplAib->psAplDeviceKeyPairTable->psAplApsKeyDescriptorEntry[i].u8FeaturesCapabilities);
         DBG_vPrintf(TRACE_ZBP_UTILS, "Verified FC: %d\n", tsAplAib->pbVerifiedFrameCounter[i]);
+        DBG_vPrintf(TRACE_ZBP_UTILS, "Passphra %02d: ", tsAplAib->psAplDeviceKeyPairTable->psAplApsKeyDescriptorEntry[i].u8PassphraseLen);
+
+        for(j=0; j<16;j++)
+        {
+            DBG_vPrintf(TRACE_ZBP_UTILS, "%02x, ", tsAplAib->psAplDeviceKeyPairTable->psAplApsKeyDescriptorEntry[i].au8Passphrase[j]);
+        }
+        DBG_vPrintf(TRACE_ZBP_UTILS, "\r\n");
 #endif
     }
 }
