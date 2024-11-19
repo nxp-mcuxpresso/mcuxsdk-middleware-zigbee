@@ -104,11 +104,13 @@ PUBLIC void ZQ_vQueueCreate ( tszQueue*       psQueueHandle,
 #endif
         psQueueHandle->u32ItemSize =  u32ItemSize;
 #else
+#if defined(NCP_HOST)
         if (pu8StartQueue == NULL)
         {
             psQueueHandle->pvHead = malloc(u32ItemSize * u32QueueLength);
         }
         else
+#endif
         {
             psQueueHandle->pvHead =  pu8StartQueue;
         }
