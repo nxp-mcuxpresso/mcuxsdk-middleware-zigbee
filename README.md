@@ -70,20 +70,20 @@ west build -b <board> -p auto <path to the application>
 
 As an example, to build the coordinator application of frdmrw612 board:
 ```bash
-west build -b frdmrw612 -p auto <sdk root>/examples/src/wireless_examples/zigbee/coordinator/freertos
+west build -b frdmrw612 -p auto <sdk root>/examples/wireless_examples/zigbee/coordinator/freertos
 ```
 
 ## Current examples supported
 
 You'll find below the list of NXP Zigbee examples supported with CMake.
 
-All these examples are located with the other SDK examples, in `<sdk_root>/examples/src`.
+All these examples are located with the other SDK examples, in `<sdk_root>/examples`.
 
 | Name | Source folder | Description | Supported boards |
 | - | - | - | - |
-| `coordinator` | `<sdk_root>/examples/src/wireless_examples/zigbee/coordinator/<os>` | See [README](./examples/zigbee_coordinator/README.md) | `frdmrw612` `rdrw612bga` `frdmmcxw71` `frdmmcxw72` |
-| `router` | `<sdk_root>/examples/src/wireless_examples/zigbee/router/<os>` | See [README](./examples/zigbee_router/README.md) | `frdmrw612` `rdrw612bga` `frdmmcxw71` `frdmmcxw72` |
-| `ed_rx_on` | `<sdk_root>/examples/src/wireless_examples/zigbee/ed_rx_on/<os>` | See [README](./examples/zigbee_ed_rx_on/README.md) | `frdmrw612` `rdrw612bga` `frdmmcxw71` `frdmmcxw72` |
-| `ed_rx_off` | `<sdk_root>/examples/src/wireless_examples/zigbee/ed_rx_off/<os>` | - | `frdmmcxw71` `frdmmcxw72` |
+| `coordinator` | `<sdk_root>/examples/wireless_examples/zigbee/coordinator/<os>` | See [README](./examples/zigbee_coordinator/README.md) | `frdmrw612` `rdrw612bga` `frdmmcxw71` `frdmmcxw72` |
+| `router` | `<sdk_root>/examples/wireless_examples/zigbee/router/<os>` | See [README](./examples/zigbee_router/README.md) | `frdmrw612` `rdrw612bga` `frdmmcxw71` `frdmmcxw72` |
+| `ed_rx_on` | `<sdk_root>/examples/wireless_examples/zigbee/ed_rx_on/<os>` | See [README](./examples/zigbee_ed_rx_on/README.md) | `frdmrw612` `rdrw612bga` `frdmmcxw71` `frdmmcxw72` |
+| `ed_rx_off` | `<sdk_root>/examples/wireless_examples/zigbee/ed_rx_off/<os>` | - | `frdmmcxw71` `frdmmcxw72` |
 
 >Note: frdmrw612 and rdrw612bga boards only supports FreeRTOS, not baremetal.
