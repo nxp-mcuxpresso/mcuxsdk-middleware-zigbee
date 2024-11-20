@@ -119,7 +119,7 @@ Speed>
 Device "RW612" selected.
 ...
 Cortex-M33 identified.
-J-Link>loadbin zb_app_v2.ota.bin 0x083ff000
+J-Link>loadbin zigbee_router_freertos_v2.ota.bin 0x083ff000
 ```
 
 ## OTA Client
@@ -133,24 +133,16 @@ them. This Reduces the flash wear and allows for a faster reboot after an upgrad
 
 When building the Router example (which supports OTA Client cluster), it will create binaries with different versions
 ```
-zb_app_v1.signed.confirmed.bin
-zb_app_v1_full.bin
-zb_app_v2.ota.bin
-zb_app_v2.signed.bin
-zb_app_v3.ota.bin
-zb_app_v3.signed.bin
+zigbee_router_freertos_v1.signed.confirmed.bin
+zigbee_router_freertos_v2.ota.bin
+zigbee_router_freertos_v2.signed.bin
+zigbee_router_freertos_v3.ota.bin
+zigbee_router_freertos_v3.signed.bin
 ```
-
-`mcuboot.bin`: this is the output of the MCUBoot build, it contains only mcuboot.
-
-`zb_app_v1_full.bin`: this binary is a complete binary containing the MCUBoot image `mcuboot.bin` and the Zigbee
-application image `zb_app_v1.signed.confirmed.bin`. We recommend using this binary as it will flash both MCUBoot and
-the Zigbee confirmed image in a single procedure.
 
 `.signed.confirmed`: this binary has been signed and set as confirmed with MCUBoot imgtool. This means this
 image is considered permanent immediately by MCUBoot. We generate this binary only on the V1 image because it
-represents the first image version running on the device. This image shall be flashed in the first partition, but note
-this is already present in `zb_app_v1_full.bin`.
+represents the first image version running on the device.
 
 `.signed.bin`: this binary has been signed with MCUBoot imgtool, it contains the MCUBoot header in front of the original
 raw binary.
@@ -166,10 +158,12 @@ To perform an OTA upgrade procedure, we'll use the Coordinator example as an OTA
 OTA client. The client will boot from a V1 image, and the server will hold a V2 or V3 image.
 
 1. Build the Coordinator example and flash it to one board
-2. Build the Router example and flash the `zb_app_v1_full.bin` binary at the address `0x18000000` to a second board
-3. Refer to the [OTA Server](#ota-server) section to flash the `zb_app_v2.ota.bin` at the correct address
-4. Reset both boards and make sure to factory reset both boards to start from a clean state
-5. The Router should show something similar to the following output:
+2. Build the mcuboot example from `<sdk_root>/examples/ota_examples/mcuboot_opensource`
+3. Flash the mcuboot binary to board that will be the OTA client
+4. Build the Router example and flash the `zigbee_router_freertos_v1.signed.confirmed.bin` binary at the address `0x18020000`
+5. Refer to the [OTA Server](#ota-server) section to flash the `zigbee_router_freertos_v2.ota.bin` at the correct address on the Coordinator
+6. Reset both boards and make sure to factory reset both boards to start from a clean state
+7. The Router should show something similar to the following output:
 ```
 hello sbl.
 Disabling flash remapping function
@@ -279,7 +273,7 @@ Booting the secondary slot - flash remapping is enabled
 In these logs, we can see MCUBoot detects both v1 and v2 images and chooses to boot from the v2 image. On RW612, we
 support the flash remapping which allows to directly execute from the secondary slot without having to swap the images.
 
-To upgrade to v3 image, you can shutdown the Coordinator, flash the `zb_app_v3.ota.bin` to the Coordinator storage
+To upgrade to v3 image, you can shutdown the Coordinator, flash the `zigbee_router_freertos_v3.ota.bin` to the Coordinator storage
 and reboot it. The Router will query the next image and detect the v3 image is available. The OTA procedure will start
 the same way. At the end, MCUBoot will detect the v3 in the primary slot and boot from it.
 ```
