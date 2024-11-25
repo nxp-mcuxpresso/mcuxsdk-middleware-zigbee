@@ -14,12 +14,13 @@
 #     else if .gitignore is found
 #         then NXP_SDK_ROOT points to a cloned repository
 
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 if [ -z "$NXP_SDK_ROOT" ]; then
-    NXP_SDK_ROOT="../../../../../../../"
+    NXP_SDK_ROOT=$SCRIPT_DIR/../../../../../../
 fi
 
 if [ -z "$VERSION_FILE" ]; then
-    VERSION_FILE="../../src/version.h"
+    VERSION_FILE=$SCRIPT_DIR/version.h
 fi
 
 if [ -f $NXP_SDK_ROOT/.gitmodules -o -f $NXP_SDK_ROOT/west.yml ]; then
