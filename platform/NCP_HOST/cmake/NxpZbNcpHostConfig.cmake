@@ -76,6 +76,7 @@ set(ZB_NCP_HOST_INCLUDES
 
     # Zigbee module specific includes
     ${NXP_ZB_BASE}/examples/zb_common
+    ${NXP_ZB_BASE}/examples/zb_common/linux
     ${NXP_ZB_BASE}/ZigbeeCommon/Include
     ${NXP_ZB_BASE}/BDB/Include
     ${NXP_ZB_BASE}/BDB/Source/Common
