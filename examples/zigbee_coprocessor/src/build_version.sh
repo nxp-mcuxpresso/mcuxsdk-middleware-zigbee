@@ -45,7 +45,7 @@ if [ "$SDK_RELEASE" = "1" ]; then
     sdk_version=`grep "Release Version" $file | cut -d ":" -f 2 | sed 's/[-\.a-zA-Z ]//g'`;
 
     #Get Zigbee version number
-    start=`grep -n "Zigbee" $file | cut -d: -f 1`;
+    start=`grep -ni "ZigBee 3.0 stack" $file | cut -d: -f 1`;
     zigbee_version=`sed -n ''"$start"','"$(($start+5))"'p' $file | grep "Version" | cut -d ":" -f 2 | sed 's/[\. ]//g'`;
 
     if [ "$zigbee_version" = "NA" ]; then
