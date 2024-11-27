@@ -47,10 +47,7 @@ endif()
 
 if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.ncp_host_examples_collaterals)
     mcux_add_source(
-        SOURCES zb_common/linux/linux_glue.h
-                zb_common/linux/pdum_gen.h
-                zb_common/linux/pdum_gen_glue.c
-                zb_common/app_common_ncp.h
+        SOURCES zb_common/app_common_ncp.h
                 zb_common/app_zigbee_config_ncp.c
                 zb_common/serial_link_cmds_ctrl.c
                 zb_common/serial_link_cmds_ctrl.h
@@ -60,18 +57,6 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.ncp_host_examples_collateral
                 zb_common/linux/**
                 ../ZigbeeCommon/Source/port_linux.c
                 ../ZigbeeCommon/Include/portmacro_linux.h
-    )
-
-    mcux_add_source(
-        SOURCES zigbee_coordinator/build_linux/app_config.cmake
-                zigbee_coordinator/build_linux/CMakeLists.txt
-                zigbee_coordinator/build_linux/README.md
-    )
-
-    mcux_add_source(
-        SOURCES zigbee_router/build_linux/app_config.cmake
-                zigbee_router/build_linux/CMakeLists.txt
-                zigbee_router/build_linux/README.md
     )
 endif()
 
