@@ -791,7 +791,6 @@ typedef struct {
 } ZPS_tsAplZdpSecurityStartKeyUpdateReq;
 
 typedef struct {
-    uint64 u64RelayAddr;
     uint64 u64PartnerAddr;
     CRYPTO_ecdhPublicKey_t  *psPublicKey;
     CRYPTO_ecdhPrivateKey_t *psSecretKey;
@@ -1262,7 +1261,7 @@ typedef struct {
 } ZPS_tsAplZdpSecurityChallengeRsp;
 
 typedef struct {
-    uint64                 u64RelayAddr;
+    uint64                 u64PartnerAddr;
     uint8                  u8OverallStatus;
 } ZPS_tsAplZdpSecurityStartKeyUpdateRsp;
 
