@@ -160,6 +160,8 @@ tuTlvManufacturerSpecific *g_pTlv1 = (tuTlvManufacturerSpecific *)&au8Storage_Tl
 //TLV_MANUFACTURERSPECIFIC_PTR(const static, g_p, Tlv2, 0x3412);
 TLV_MANUFACTURERSPECIFIC_PTR( , g_p, Tlv2, 0x3412);
 
+TLV_MANUFACTURERSPECIFIC_EX_PTR( , g_p, Tlv3, 0x3412, 9, 'T', 'L', 'V', 'S', ' ', 'D', 'A', 'T', 'A');
+
 tuRouterInfo g_Tlv4 = {
         .u8Tag = ZPS_TLV_G_ROUTERINFO, .u8Len = sizeof(tuRouterInfo) - 1 - ZPS_TLV_HDR_SIZE,
         0xAABB
@@ -167,8 +169,10 @@ tuRouterInfo g_Tlv4 = {
 TLV_MANUFACTURERSPECIFIC_EX_PTR( , g_p, Tlv5, 0xFFFE, 8, 0, 0, 0, 0, 0, 0, 0, 0);
 TLV_USERDEFINED_PTR( , g_p, Tlv6, 60, 6, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
 
-uint8 au8TestTlvs[sizeof(au8Storage_Tlv1) + sizeof(au8Storage_Tlv2) + sizeof(g_Tlv4)];
-uint8 au8JoinTlvs[sizeof(au8Storage_Tlv1) + sizeof(au8Storage_Tlv2) + sizeof(g_sJoinerTlvs)];
+uint8 au8TestTlvs[sizeof(au8Storage_Tlv1) + sizeof(au8Storage_Tlv2) +
+                  sizeof(au8Storage_Tlv3) + sizeof(g_Tlv4)];
+uint8 au8JoinTlvs[sizeof(au8Storage_Tlv1) + sizeof(au8Storage_Tlv2) +
+                  sizeof(au8Storage_Tlv3) + sizeof(g_sJoinerTlvs)];
 
 uint8 au8TestTlvs1[sizeof(au8Storage_Tlv5) + sizeof(au8Storage_Tlv6)];
 
@@ -235,10 +239,10 @@ void APP_vInitialiseRouter(void)
 
 #ifdef R23_UPDATES
     ZPS_vTlvBuildSequence(4, sizeof(au8JoinTlvs), au8JoinTlvs,
-            g_pTlv1, g_pTlv2, &g_sJoinerTlvs);
+            g_pTlv1, g_pTlv2, g_pTlv3, &g_sJoinerTlvs);
     ZPS_vTlvBuildSequence(4, sizeof(au8TestTlvs), au8TestTlvs,
-            g_pTlv1, g_pTlv2, &g_Tlv4);
-    ZPS_vAplAfSetAdditionalTlvs(au8JoinTlvs, sizeof(au8JoinTlvs));
+            g_pTlv1, g_pTlv2, g_pTlv3, &g_Tlv4);
+    ZPS_vAplAfSetAdditionalTlvs(au8TestTlvs, sizeof(au8TestTlvs));
 #endif
 
     /* Initialise ZBPro stack */
