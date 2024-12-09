@@ -88,7 +88,11 @@ extern void vAppMain(void);
  * Never
  *
  ****************************************************************************/
+#ifndef CONFIG_COEX_ENABLE_ZIGBEE
 void main_task (uint32_t parameter)
+#else
+void zigbee_main()
+#endif
 {
 
     /* e.g. osaEventFlags_t ev; */

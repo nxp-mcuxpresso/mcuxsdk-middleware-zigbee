@@ -62,9 +62,6 @@ typedef struct
 /****************************************************************************/
 static void vProcessRxChar(uint8_t u8Char);
 
-static void vProcessCommand(char *tmp);
-static void vPrintUnkownCommand(char *token);
-
 /****************************************************************************/
 /***        Exported Variables                                            ***/
 /****************************************************************************/
@@ -176,7 +173,7 @@ static void vProcessRxChar(uint8_t u8Char)
  * RETURNS:
  * None
  ****************************************************************************/
-static void vProcessCommand(char *tmp)
+void vProcessCommand(char *tmp)
 {
     uint8_t *token = NULL;
 
@@ -280,7 +277,7 @@ static void vProcessCommand(char *tmp)
  * RETURNS:
  * None
  ****************************************************************************/
-static void vPrintUnkownCommand(char *token)
+void vPrintUnkownCommand(char *token)
 {
     DBG_vPrintf(1, "Unkown serial command %s\r\n", token);
     DBG_vPrintf(1,"Commands Supported \r\n");

@@ -155,7 +155,11 @@ void APP_vNcpMainTask(void);
  *
  ****************************************************************************/
 #ifndef NCP_HOST
+#ifndef CONFIG_COEX_ENABLE_ZIGBEE
 void main_task (uint32_t parameter)
+#else
+void zigbee_main()
+#endif
 {
 #if defined(FSL_RTOS_FREE_RTOS) && DEBUG_STACK_DEPTH
 	UBaseType_t uxHighWaterMark;
@@ -319,7 +323,7 @@ int main(int argc, char * argv[])
             DBG_vPrintf(TRUE, "MAIN\n");
 
             bNcpHostTaskIsRunning = TRUE;
-            
+
             vAppMain();
 
             while (bNcpHostTaskIsRunning)
@@ -394,7 +398,7 @@ int main(int argc, char * argv[])
                  {
                     DBG_vPrintf(TRACE_APP, "NCP Host Task with pid %d encounterd a segmentation fault \n", ncpHostPid);
                  }
-                 
+
                  bAppIsRunning = false;
             }
          }
