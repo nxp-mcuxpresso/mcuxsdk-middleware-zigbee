@@ -27,6 +27,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x)
             platform/glue.c
             platform/wdog.c
             platform/leds.c
+            platform/zb_cmsis_nvic_virtual.h
     )
     mcux_add_include(
         INCLUDES
@@ -34,6 +35,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x)
             ../common/framework/Common
             ../common/framework/PWRM/Include
             ../common/framework/SecLib
+            platform
     )
     mcux_add_macro(
         JENNIC_CHIP=JN5189
@@ -58,6 +60,8 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x)
         IMU_TASK_PRIORITY=1
         MCUXPRESSO_SDK
         FSL_RTOS_FREE_RTOS
+        CMSIS_NVIC_VIRTUAL
+        CMSIS_NVIC_VIRTUAL_HEADER_FILE=\\\"zb_cmsis_nvic_virtual.h\\\"
     )
 endif()
 
