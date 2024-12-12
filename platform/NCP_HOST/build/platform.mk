@@ -36,6 +36,7 @@ INCFLAGS += -I$(ZIGBEE_BASE_DIR)/platform/NCP_HOST/framework/PDM/Interface
 INCFLAGS += -I$(FRAMEWORK_BASE_DIR)/Common
 INCFLAGS += -I$(FRAMEWORK_BASE_DIR)/boards/k32w1_ncp_host
 INCFLAGS += -I$(FRAMEWORK_BASE_DIR)/OtaSupport/Interface
+INCFLAGS += -I$(FRAMEWORK_BASE_DIR)/OSAbstraction/Interface/
 
 ZIGBEE_BASE_SRC = $(ZIGBEE_COMMON_SRC)\
     :$(ZIGBEE_BASE_DIR)/platform/$(ZIGBEE_PLAT)/framework/PDM/Source/Posix\
