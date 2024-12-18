@@ -175,6 +175,7 @@ if (CONFIG_ZB_ZCL_CLUSTER_GREENPOWER)
     mcux_add_include(
         BASE_PATH ${NXP_ZB_BASE}
         INCLUDES ZCL/Clusters/GreenPower/Include/
+                 ZCL/Clusters/GreenPower/Source/
                  ZCL/Devices/ZGP/Include
     )
     mcux_add_macro(CLD_GREENPOWER)
