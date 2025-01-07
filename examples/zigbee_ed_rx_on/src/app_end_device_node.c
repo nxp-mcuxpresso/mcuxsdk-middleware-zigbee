@@ -343,7 +343,7 @@ void APP_taskEndDevicNode(void)
                     break;
             }
         }
-#ifdef APP_END_DEVICE_NODE_CLI
+#if defined(APP_END_DEVICE_NODE_CLI) || defined(CONFIG_COEX_ENABLE_ZIGBEE)
         else if(sAppEvent.eType == APP_E_EVENT_SERIAL_FIND_BIND_START)
         {
             APP_StartFindAndBind();
