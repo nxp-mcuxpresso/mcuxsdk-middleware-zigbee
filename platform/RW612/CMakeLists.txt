@@ -13,7 +13,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x)
             ../common/framework/Common/MicroSpecific_arm_sdk2.h
             ../common/framework/Common/MicroSpecific_JN518x.h
             ../common/framework/Common/MicroSpecific.h
-            ../common/framework/PDM/PDM_adapter_nvs.c
+            ../common/framework/PDM/PDM_adapter_settings.c
             ../common/framework/PWRM/PWRM_adapter.c
             ../common/framework/PWRM/Include/pwrm.h
             ../common/framework/SecLib/aessw_ccm.h
