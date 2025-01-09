@@ -38,7 +38,6 @@ mcux_add_include(
              ZCL/Clusters/General/Source
              ZCL/Devices/ZHA/Generic/Include
 )
-mcux_add_macro(ZCL_CLUSTER_GENERAL)
 
 # Feature Specific Includes and Sources
 if (CONFIG_ZB_ZCL_CLUSTER_MEASUREMENT_AND_SENSING)
