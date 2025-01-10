@@ -484,6 +484,52 @@ void APP_taskRouter(void)
             APP_StartFindAndBind();
         }
 #endif
+        else if(sAppEvent.eType == APP_E_EVENT_POR_FACTORY_RESET)
+        {
+            uint8_t u8Status;
+
+            u8Status = ZPS_eAplZdoLeaveNetwork(0, FALSE, FALSE);
+            if (ZPS_E_SUCCESS !=  u8Status )
+            {
+                /* Leave failed,so just reset everything */
+                DBG_vPrintf(TRACE_APP,"Leave failed status %x Deleting the PDM\r\n", u8Status);
+                APP_vFactoryResetRecords();
+#ifndef NCP_HOST
+                MICRO_DISABLE_INTERRUPTS();
+// TODO: Making SW reset abstracted
+#if IS_NOT_MCXW_SERIES_OR_RW_SERIES
+                vMMAC_Disable();
+                RESET_SystemReset();
+#else
+                NVIC_SystemReset();
+#endif
+#endif
+            }
+            else
+            {
+                DBG_vPrintf(TRACE_APP, "RESET: Sent Leave\r\n");
+            }
+        }
+        else if(sAppEvent.eType == APP_E_EVENT_POR_PDM_RESET)
+        {
+#ifndef NCP_HOST
+            MICRO_DISABLE_INTERRUPTS();
+            RESET_SystemReset();
+#else
+            DBG_vPrintf(TRUE, "Resetting Coprocessor...");
+            vSL_SetLongResponsePeriod();
+            APP_vNcpHostResetZigBeeModule();
+
+            /* wait for coprocessor to be ready */
+            vSetJNState(JN_NOT_READY);
+            vWaitForJNReady(JN_READY_TIME_MS);
+            vSL_SetStandardResponsePeriod();
+
+            /* handle NCP HOST side */
+            DBG_vPrintf(TRUE, "Resetting Host...");
+            APP_vNcpHostReset();
+#endif
+        }
     }
 }
 

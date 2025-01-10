@@ -211,31 +211,12 @@ void vProcessCommand(char *tmp)
     else if (0 == stricmp((char*)token, "factory reset"))
     {
         DBG_vPrintf(TRACE_SERIAL, "Factory reset\r\n");
-        APP_vFactoryResetRecords();
-#ifndef NCP_HOST
-        MICRO_DISABLE_INTERRUPTS();
-        RESET_SystemReset();
-#endif
+        sButtonEvent.eType = APP_E_EVENT_POR_FACTORY_RESET;
     }
     else if (0 == stricmp((char*)token, "soft reset"))
     {
-#ifndef NCP_HOST
-        MICRO_DISABLE_INTERRUPTS();
-        RESET_SystemReset();
-#else
-        DBG_vPrintf(TRUE, "Resetting Coprocessor...");
-        vSL_SetLongResponsePeriod();
-        APP_vNcpHostResetZigBeeModule();
-
-        /* wait for coprocessor to be ready */
-        vSetJNState(JN_NOT_READY);
-        vWaitForJNReady(JN_READY_TIME_MS);
-        vSL_SetStandardResponsePeriod();
-
-        /* handle NCP HOST side */
-        DBG_vPrintf(TRUE, "Resetting Host...");
-        APP_vNcpHostReset();
-#endif
+        DBG_vPrintf(TRACE_SERIAL, "soft reset\r\n");
+        sButtonEvent.eType = APP_E_EVENT_POR_PDM_RESET;
     }
 
 #if defined(FSL_RTOS_FREE_RTOS) && DEBUG_STACK_DEPTH

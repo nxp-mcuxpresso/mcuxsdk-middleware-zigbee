@@ -189,36 +189,13 @@ void vProcessCommand(char *tmp)
     }
     else if (0 == stricmp((char*)token, "factory reset"))
     {
-        uint8_t u8Status;
-
         DBG_vPrintf(TRACE_SERIAL, "Factory reset\r\n");
-
-        u8Status = ZPS_eAplZdoLeaveNetwork(0, FALSE, FALSE);
-        if (ZPS_E_SUCCESS !=  u8Status )
-        {
-            /* Leave failed,so just reset everything */
-            DBG_vPrintf(TRACE_APP,"Leave failed status %x Deleting the PDM\r\n", u8Status);
-            APP_vFactoryResetRecords();
-            MICRO_DISABLE_INTERRUPTS();
-// TODO: Making SW reset abstracted
-#if IS_NOT_MCXW_SERIES_OR_RW_SERIES_OR_NCP
-            vMMAC_Disable();
-            RESET_SystemReset();
-#else
-            NVIC_SystemReset();
-#endif
-        }
-        else
-        {
-            DBG_vPrintf(TRACE_APP, "RESET: Sent Leave\r\n");
-        }
+        sButtonEvent.eType = APP_E_EVENT_POR_FACTORY_RESET;
     }
     else if (0 == stricmp((char*)token, "soft reset"))
     {
-#ifndef NCP_HOST
-        MICRO_DISABLE_INTERRUPTS();
-        RESET_SystemReset();
-#endif
+        DBG_vPrintf(TRACE_SERIAL, "soft reset\r\n");
+        sButtonEvent.eType = APP_E_EVENT_POR_PDM_RESET;
     }
 
 #if defined(FSL_RTOS_FREE_RTOS) && DEBUG_STACK_DEPTH

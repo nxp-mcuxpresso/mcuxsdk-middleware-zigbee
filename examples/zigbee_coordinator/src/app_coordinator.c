@@ -25,6 +25,9 @@
 #include "app_ota_server.h"
 #include "app_leds.h"
 #include "app.h"
+#ifndef NCP_HOST
+#include "MicroSpecific.h"
+#endif
 
 
 /****************************************************************************/
@@ -445,7 +448,32 @@ void APP_taskCoordinator(void)
                         DBG_vPrintf(TRACE_APP, "APP-EVT: Request Nwk Formation %02x\r\n", eStatus);
                     }
                     break;
+                case APP_E_EVENT_POR_FACTORY_RESET:
+                    APP_vFactoryResetRecords();
+#ifndef NCP_HOST
+                    MICRO_DISABLE_INTERRUPTS();
+                    RESET_SystemReset();
+#endif
+                    break;
+                case APP_E_EVENT_POR_PDM_RESET:
+#ifndef NCP_HOST
+                    MICRO_DISABLE_INTERRUPTS();
+                    RESET_SystemReset();
+#else
+                    DBG_vPrintf(TRUE, "Resetting Coprocessor...");
+                    vSL_SetLongResponsePeriod();
+                    APP_vNcpHostResetZigBeeModule();
 
+                    /* wait for coprocessor to be ready */
+                    vSetJNState(JN_NOT_READY);
+                    vWaitForJNReady(JN_READY_TIME_MS);
+                    vSL_SetStandardResponsePeriod();
+
+                    /* handle NCP HOST side */
+                    DBG_vPrintf(TRUE, "Resetting Host...");
+                    APP_vNcpHostReset();
+#endif
+                    break;
                 default:
                     break;
         }
