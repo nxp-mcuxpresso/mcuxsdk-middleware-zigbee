@@ -1,5 +1,5 @@
 /*
-* Copyright 2019, 2023 NXP
+* Copyright 2019,2023,2025 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -177,14 +177,14 @@ typedef struct {
 /* Out Of Band Commissioning */
 #define ZB_OOB_KEY_SIZE 16
 
-struct dev_info
+PACKED_STRUCT dev_info
 {
     uint64_t addr;
     uint8_t instCode[ZB_OOB_KEY_SIZE];
     uint16_t crc;
 };
 
-struct oob_info {
+PACKED_STRUCT oob_info {
     uint8_t key[ZB_OOB_KEY_SIZE];
     uint64_t tcAddress;
     uint64_t panId;
@@ -193,7 +193,7 @@ struct oob_info {
     uint8_t channel;
 };
 
-struct oob_info_enc {
+PACKED_STRUCT oob_info_enc {
     struct oob_info info;
     uint32_t mic;
 };
