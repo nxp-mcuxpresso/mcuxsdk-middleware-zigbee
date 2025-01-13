@@ -49,7 +49,6 @@ if (CONFIG_ZB_ZCL_CLUSTER_MEASUREMENT_AND_SENSING)
         BASE_PATH ${NXP_ZB_BASE}
         INCLUDES ZCL/Clusters/MeasurementAndSensing/Include/
     )
-    mcux_add_macro(ZCL_CLUSTER_MEASUREMENT_AND_SENSING)
 endif()
 
 if (CONFIG_ZB_ZCL_CLUSTER_LIGHTING)
@@ -63,7 +62,6 @@ if (CONFIG_ZB_ZCL_CLUSTER_LIGHTING)
         INCLUDES ZCL/Clusters/Lighting/Include/
                  ZCL/Devices/ZLO/Include
     )
-    mcux_add_macro(ZCL_CLUSTER_LIGHTING)
 endif()
 
 if (CONFIG_ZB_ZCL_CLUSTER_HVAC)
@@ -77,7 +75,6 @@ if (CONFIG_ZB_ZCL_CLUSTER_HVAC)
         INCLUDES ZCL/Clusters/HVAC/Include/
                  ZCL/Devices/ZHA/HVAC/Include
     )
-    mcux_add_macro(ZCL_CLUSTER_HVAC)
 endif()
 
 if (CONFIG_ZB_ZCL_CLUSTER_CLOSURE)
@@ -91,7 +88,6 @@ if (CONFIG_ZB_ZCL_CLUSTER_CLOSURE)
         INCLUDES ZCL/Clusters/Closures/Include/
                  ZCL/Devices/ZHA/Closures/Include
     )
-    mcux_add_macro(ZCL_CLUSTER_CLOSURE)
 endif()
 
 if (CONFIG_ZB_ZCL_CLUSTER_SECURITY_AND_SAFETY)
@@ -105,7 +101,6 @@ if (CONFIG_ZB_ZCL_CLUSTER_SECURITY_AND_SAFETY)
         INCLUDES ZCL/Clusters/SecurityAndSafety/Include/
                  ZCL/Devices/ZHA/SecurityAndSafety/Include
     )
-    mcux_add_macro(ZCL_CLUSTER_SECURITY_AND_SAFETY)
 endif()
 
 if (CONFIG_ZB_ZCL_CLUSTER_SMART_ENERGY)
@@ -119,7 +114,6 @@ if (CONFIG_ZB_ZCL_CLUSTER_SMART_ENERGY)
         INCLUDES ZCL/Clusters/SmartEnergy/Include/
                  ZCL/Devices/ZHA/SmartEnergy/Include
     )
-    mcux_add_macro(ZCL_CLUSTER_SMART_ENERGY)
 endif()
 
 if (CONFIG_ZB_ZCL_CLUSTER_OTA)
@@ -131,7 +125,6 @@ if (CONFIG_ZB_ZCL_CLUSTER_OTA)
         BASE_PATH ${NXP_ZB_BASE}
         INCLUDES ZCL/Clusters/OTA/Include/
     )
-    mcux_add_macro(OTA_NO_CERTIFICATE)
 endif()
 
 if (CONFIG_ZB_ZCL_CLUSTER_COMMISSIONING)
@@ -143,7 +136,6 @@ if (CONFIG_ZB_ZCL_CLUSTER_COMMISSIONING)
         BASE_PATH ${NXP_ZB_BASE}
         INCLUDES ZCL/Clusters/Commissioning/Include/
     )
-    mcux_add_macro(ZCL_CLUSTER_COMMISSIONING)
 else()
     mcux_add_include(
         BASE_PATH ${NXP_ZB_BASE}
@@ -162,7 +154,6 @@ if (CONFIG_ZB_ZCL_CLUSTER_APPLIANCE_MANAGEMENT)
         INCLUDES ZCL/Clusters/ApplianceManagement/Include/
                  ZCL/Devices/ZHA/ApplianceManagement/Include
     )
-    mcux_add_macro(ZCL_CLUSTER_APPLIANCE_MANAGEMENT)
 endif()
 
 if (CONFIG_ZB_ZCL_CLUSTER_GREENPOWER)
@@ -177,7 +168,6 @@ if (CONFIG_ZB_ZCL_CLUSTER_GREENPOWER)
                  ZCL/Clusters/GreenPower/Source/
                  ZCL/Devices/ZGP/Include
     )
-    mcux_add_macro(CLD_GREENPOWER)
 endif()
 
 # Add include paths as clusters are not independent for now
