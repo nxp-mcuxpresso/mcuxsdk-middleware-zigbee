@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020-2024 NXP
+ * Copyright 2020-2025 NXP
  *
  * NXP Confidential. 
  * 
@@ -742,6 +742,7 @@ typedef struct
     uint8  u8ConcentratorDiscoveryTime;                     /**< nwkConcentratorDiscoveryTime */
     uint8  u8SequenceNumber;                                /**< nwkSequenceNumber */
     uint8  u8LinkStatusLastError;                           /**< Last known status of a scheduled Link Status */
+    uint8  u8DisallowNewJoinersAfterJoin;                   /**< Disallows new joiners after joining */
     uint32 u32LinkStatusLastTimestamp;                      /**< Last timestamp of a successful TXed Link Status */
     uint16 u16ManagerAddr;                                  /**< nwkManagerAddr */
     uint16 u16VsFixedAlcAddr;                               /**< Vendor specific - fixed allocated address */
@@ -1025,6 +1026,9 @@ PUBLIC void ZPS_vNwkUpdateRxBytesForNeighbor ( void         *pvNwk,
                                                uint16       u16NwkAddress,
                                                uint32       u32ByteCount );
 
+PUBLIC void ZPS_vNwkNibSetDisallowNewJoinersAfterJoin(void *pvNwk, uint8 u8DisallowNewJoinersAfterJoin);
+
+PUBLIC bool_t ZPS_vNwkNibGetDisallowNewJoinersAfterJoin(void *pvNwk);
 
 #define ZPS_MIB_IEEE_LIST_SIZE	16
 typedef struct
