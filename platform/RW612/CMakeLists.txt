@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
+mcux_set_list(RW61x_FAMILY "RW610 RW612")
+
 if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x)
     mcux_add_source(
         SOURCES
@@ -74,6 +76,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs)
             libs/libZPSMAC_Mini_SOC.a
             libs/libZPSNWK.a
             libs/libZPSTSV.a
+        DEVICE_IDS ${RW61x_FAMILY}
     )
 endif()
 
@@ -86,6 +89,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs_r23)
             libs/libZPSMAC_Mini_SOC.a
             libs/libZPSNWK_R23.a
             libs/libZPSTSV.a
+        DEVICE_IDS ${RW61x_FAMILY}
     )
     mcux_add_macro(
         R23_UPDATES=1
@@ -102,6 +106,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs)
             libs/libZPSMAC_Mini_SOC.a
             libs/libZPSNWK_ZED.a
             libs/libZPSTSV.a
+        DEVICE_IDS ${RW61x_FAMILY}
     )
 endif()
 
@@ -114,5 +119,6 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs_r23)
             libs/libZPSMAC_Mini_SOC.a
             libs/libZPSNWK_ZED_R23.a
             libs/libZPSTSV.a
+        DEVICE_IDS ${RW61x_FAMILY}
     )
 endif()

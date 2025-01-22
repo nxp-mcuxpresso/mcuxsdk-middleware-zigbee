@@ -3,6 +3,10 @@
 
 mcux_set_variable(JENNIC_CHIP_FAMILY_NAME "_JN518x")
 mcux_set_variable(JENNIC_CHIP_FAMILY "JN518x")
+mcux_set_list(KW45_FAMILY "KW45B41Z52xxxA KW45B41Z53xxxA  KW45B41Z82xxxA  KW45B41Z83xxxA  K32W1480xxxA")
+mcux_set_list(MCXW71_FAMILY "MCXW716CxxxA MCXW716AxxxA")
+mcux_set_list(KW47_FAMILY "KW47B42Z83xxxA KW47B42Z96xxxA KW47B42Z97xxxA KW47B42ZB2xxxA KW47B42ZB3xxxA KW47B42ZB6xxxA KW47B42ZB7xxxA KW47Z42082xxxA KW47Z42092xxxA KW47Z420B2xxxA KW47Z420B3xxxA")
+mcux_set_list(MCXW72_FAMILY "MCXW727CxxxA")
 
 if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.kw45_k32w1_mcxw71)
     mcux_add_source(
@@ -94,6 +98,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs)
              libs/libZPSMAC_Mini_SOC.a
              libs/libZPSNWK.a
              libs/libZPSTSV.a
+        DEVICE_IDS ${KW45_FAMILY} ${KW47_FAMILY} ${MCXW71_FAMILY} ${MCXW72_FAMILY}
     )
 endif()
 
@@ -105,6 +110,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs_r23)
              libs/libZPSMAC_Mini_SOC.a
              libs/libZPSNWK_R23.a
              libs/libZPSTSV.a
+        DEVICE_IDS ${KW45_FAMILY} ${KW47_FAMILY} ${MCXW71_FAMILY} ${MCXW72_FAMILY}
     )
     mcux_add_macro(
         R23_UPDATES=1
@@ -120,6 +126,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs)
              libs/libZPSMAC_Mini_SOC.a
              libs/libZPSNWK_ZED.a
              libs/libZPSTSV.a
+        DEVICE_IDS ${KW45_FAMILY} ${KW47_FAMILY} ${MCXW71_FAMILY} ${MCXW72_FAMILY}
     )
 endif()
 
@@ -131,6 +138,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.zed_libs_r23)
              libs/libZPSMAC_Mini_SOC.a
              libs/libZPSNWK_ZED_R23.a
              libs/libZPSTSV.a
+        DEVICE_IDS ${KW45_FAMILY} ${KW47_FAMILY} ${MCXW71_FAMILY} ${MCXW72_FAMILY}
     )
     mcux_add_macro(
         R23_UPDATES=1
