@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020, 2022-2024 NXP
+ * Copyright 2020, 2022-2025 NXP
  *
  * NXP Confidential. 
  * 
@@ -365,7 +365,7 @@ PUBLIC ZPS_teStatus zps_eAplAibSetKeyNegotiationOptions(void *pvApl, uint8 u8Met
 PUBLIC ZPS_teStatus zps_eAplAibSetDeviceApsDlkPassphrase(void *pvApl, uint64 u64IeeeAddress, uint8 *pu8Passphrase, uint8 u8Len);
 #endif
 #if defined(R23_UPDATES) || defined(WWAH_SUPPORT)
-PUBLIC bool_t zps_bIsClusterReqWithApsKey(void *pvApl, uint8 u8Endpoint, uint16 u16ClusterId, ZPS_tuAddress uAddr, bool_t bExt);
+PUBLIC bool_t zps_bIsClusterReqWithApsKey(void *pvApl, uint8 u8Endpoint, uint16 u16ClusterId, ZPS_tuAddress uAddr, bool_t bExt, ZPS_tsAplApsKeyDescriptorEntry *psKey, uint8 *pu8TargetDstKeyType);
 #endif
 #ifdef WWAH_SUPPORT
 PUBLIC void ZPS_vAplExtdedAibSetWWAH ( uint8 u8BitmaskSet );
