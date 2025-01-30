@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020, 2022-2024 NXP
+ * Copyright 2020, 2022-2025 NXP
  *
  * NXP Confidential. 
  * 
@@ -214,7 +214,10 @@ typedef struct
     uint32 u32RxTime;
     uint16 u16ProfileId;
     uint16 u16ClusterId;
-    uint8  u8DstAddrMode;
+    struct {
+    uint8  u8DstAddrMode: 7;
+    uint8  u8ApsAckMode:  1; /* 1: if APS ACK was requested */
+    };
     uint8  u8DstEndpoint;
     uint8  u8SrcAddrMode;
     uint8  u8SrcEndpoint;
