@@ -709,7 +709,8 @@ def main():
             ARM_TOOLCHAIN_PATH = os.path.normpath(args.CompilerTools) + '/bin/'
 
     # Temprary file to populate the various sections
-    temp_elf_file = tempfile.NamedTemporaryFile(delete=False).name
+    temp_elf_file_orig = tempfile.NamedTemporaryFile(delete=False)
+    temp_elf_file = temp_elf_file_orig.name
     logger.debug(f'Using temp file {temp_elf_file} to populate sections, input AXF file will not modify.')
 
     # Copy INPUT file to temp one
@@ -854,10 +855,12 @@ def main():
 
         if signed_file_input != None:
             logger.debug(f'Cleanup temp file: {ota_file_temp.name}')
+            ota_file_temp.close()
             os.unlink(ota_file_temp.name)
 
     # Clean temp files
     logger.debug(f'Cleanup temp file: {temp_elf_file}')
+    temp_elf_file_orig.close()
     os.unlink(temp_elf_file)
 
 if __name__ == '__main__':
