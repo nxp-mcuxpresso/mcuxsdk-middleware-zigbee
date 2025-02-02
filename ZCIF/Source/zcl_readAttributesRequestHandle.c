@@ -88,9 +88,9 @@ PUBLIC   void vZCL_HandleAttributesReadRequest(
     uint16 u16inputOffset, u16outputOffset;
 
 	tsZCL_HeaderParams sZCL_HeaderParams;
+    bool_t bDisableAPSACK = psZCL_Common->bDisableAPSACK;
 
-
-    uint8 u8errorCode;
+    uint8 u8errorCode = E_ZCL_SUCCESS;
 
     uint16 u16AttributeId;
 
@@ -129,20 +129,45 @@ PUBLIC   void vZCL_HandleAttributesReadRequest(
     u16inputOffset = u16ZCL_ReadCommandHeader(pZPSevent->uEvent.sApsDataIndEvent.hAPduInst,
                                               &sZCL_HeaderParams);
 
+    /* payload investigation */
+    u16payloadSize = PDUM_u16APduInstanceGetPayloadSize(pZPSevent->uEvent.sApsDataIndEvent.hAPduInst);
+    /* size sanity check */
+    if ((u16payloadSize < u16inputOffset) || ((u16payloadSize - u16inputOffset) % 2))
+    {
+        u8errorCode = E_ZCL_CMDS_MALFORMED_COMMAND;
+    }
+
+    /* allow the device to update the attributes - express stylee */
+    sZCL_CallBackEvent.pZPSevent = pZPSevent;
+    /* ReadAttribReq mode is: pZPSevent->uEvent.sApsDataIndEvent.u8ApsAckMode */
+    sZCL_CallBackEvent.u8TransactionSequenceNumber = sZCL_HeaderParams.u8TransactionSequenceNumber;
+    sZCL_CallBackEvent.u8EndPoint = pZPSevent->uEvent.sApsDataIndEvent.u8DstEndpoint;
+    sZCL_CallBackEvent.eEventType = E_ZCL_CBET_READ_REQUEST;
+    sZCL_CallBackEvent.psClusterInstance = psClusterInstance;
+    sZCL_CallBackEvent.eZCL_Status = u8errorCode;
+    sZCL_CallBackEvent.bOverrideDisableApsAck = psZCL_Common->bDisableAPSACK;
+    sZCL_CallBackEvent.bOverrideDisableDefaultResponse = psZCL_EndPointDefinition->bDisableDefaultResponse;
+
+    /* call user unless null cluster instance (as no atts will be read in that
+     * case and the user may attempt to access the cluster without checking and
+     * get an exception)
+     */
+    if (psClusterInstance != NULL)
+    {
+        psZCL_EndPointDefinition->pCallBackFunctions(&sZCL_CallBackEvent);
+    }
+
     // modify and write back
     u16outputOffset = u16ZCL_WriteCommandHeader(myPDUM_thAPduInstance,
                                            sZCL_HeaderParams.eFrameType,
                                            sZCL_HeaderParams.bManufacturerSpecific,
                                            sZCL_HeaderParams.u16ManufacturerCode,
                                            !sZCL_HeaderParams.bDirection,
-                                           psZCL_EndPointDefinition->bDisableDefaultResponse,
+                                           sZCL_CallBackEvent.bOverrideDisableDefaultResponse,
                                            sZCL_HeaderParams.u8TransactionSequenceNumber,
                                            E_ZCL_READ_ATTRIBUTES_RESPONSE);
 
-    // payload investigation
-    u16payloadSize = PDUM_u16APduInstanceGetPayloadSize(pZPSevent->uEvent.sApsDataIndEvent.hAPduInst);
-    // size sanity check
-    if((u16payloadSize < u16inputOffset) || ((u16payloadSize - u16inputOffset)%2))
+    if (u8errorCode != E_ZCL_SUCCESS)
     {
         // send response if possible/required
         eZCL_SendDefaultResponse(pZPSevent, E_ZCL_CMDS_MALFORMED_COMMAND);
@@ -154,24 +179,15 @@ PUBLIC   void vZCL_HandleAttributesReadRequest(
     // number of attributes in request
     u8NumberAttributesInRequest = (u16payloadSize - u16inputOffset)/2;
 
+    psZCL_Common->bDisableAPSACK = sZCL_CallBackEvent.bOverrideDisableApsAck;
+
     // size of outgoing buffer
     u16responseBufferSize = u16ZCL_GetTxPayloadSize(pZPSevent->uEvent.sApsDataIndEvent.uSrcAddress.u16Addr);
+
+    /* Restore */
+    psZCL_Common->bDisableAPSACK = bDisableAPSACK;
+
     // read attributes from the device
-
-    // allow the device to update the attributes - express stylee
-    sZCL_CallBackEvent.pZPSevent = pZPSevent;
-    sZCL_CallBackEvent.u8TransactionSequenceNumber = sZCL_HeaderParams.u8TransactionSequenceNumber;
-    sZCL_CallBackEvent.u8EndPoint = pZPSevent->uEvent.sApsDataIndEvent.u8DstEndpoint;
-    sZCL_CallBackEvent.eEventType = E_ZCL_CBET_READ_REQUEST;
-    sZCL_CallBackEvent.psClusterInstance = psClusterInstance;
-    sZCL_CallBackEvent.eZCL_Status = E_ZCL_SUCCESS;
-
-    // call user unless null cluster instance (as no atts will be read in that case and the user may attempt to access the cluster without checking and get an exception)
-    if (psClusterInstance != NULL)
-    {
-        psZCL_EndPointDefinition->pCallBackFunctions(&sZCL_CallBackEvent);
-    }
-
 
     // parse the incoming message, read each attribute from the device and write into the outgoing buffer
     i = 0;
@@ -275,6 +291,13 @@ PUBLIC   void vZCL_HandleAttributesReadRequest(
 
     // build address structure
     eZCL_BuildTransmitAddressStructure(pZPSevent, &sZCL_Address);
+
+    if (sZCL_CallBackEvent.bOverrideDisableApsAck &&
+        sZCL_Address.eAddressMode == E_ZCL_AM_SHORT)
+    {
+        sZCL_Address.eAddressMode = E_ZCL_AM_SHORT_NO_ACK;
+    }
+
     // transmit request
     eZCL_TransmitDataRequest(myPDUM_thAPduInstance,
                                 u16outputOffset,

@@ -307,8 +307,9 @@ PRIVATE void vZCL_BuildFrameControlField(
  ****************************************************************************/
 PUBLIC uint16 u16ZCL_GetTxPayloadSize(uint16 u16DestAddr)
 {
-        /* If fragmentation is supported APDU should be taken as reference */
-    if(ZPS_bAplDoesDeviceSupportFragmentation(ZPS_pvAplZdoGetAplHandle()))
+    /* If fragmentation is supported APDU should be taken as reference */
+    if (!psZCL_Common->bDisableAPSACK &&
+        ZPS_bAplDoesDeviceSupportFragmentation(ZPS_pvAplZdoGetAplHandle()))
     {
         return(PDUM_u16APduGetSize(psZCL_Common->hZCL_APdu));
     }

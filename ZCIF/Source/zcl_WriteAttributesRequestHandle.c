@@ -146,6 +146,20 @@ PUBLIC   void vZCL_HandleAttributesWriteRequest(
     u16inputOffset = u16ZCL_ReadCommandHeader(pZPSevent->uEvent.sApsDataIndEvent.hAPduInst,
                              &sZCL_HeaderParams);
 
+    /* fill in non-attribute specific values in callback event structure */
+    sZCL_CallBackEvent.u8EndPoint = pZPSevent->uEvent.sApsDataIndEvent.u8DstEndpoint;
+    sZCL_CallBackEvent.psClusterInstance = psClusterInstance;
+    sZCL_CallBackEvent.pZPSevent = pZPSevent;
+    sZCL_CallBackEvent.eZCL_Status = E_ZCL_SUCCESS;
+    sZCL_CallBackEvent.eEventType = E_ZCL_CBET_WRITE_ATTRIBUTES_START_RESPONSE;
+    sZCL_CallBackEvent.bOverrideDisableApsAck = psZCL_Common->bDisableAPSACK;
+    sZCL_CallBackEvent.bOverrideDisableDefaultResponse = psZCL_EndPointDefinition->bDisableDefaultResponse;
+
+    if (psClusterInstance != NULL)
+    {
+        psZCL_EndPointDefinition->pCallBackFunctions(&sZCL_CallBackEvent);
+    }
+
     if (!bNoResponse)
     {
         // modify and write back
@@ -154,19 +168,14 @@ PUBLIC   void vZCL_HandleAttributesWriteRequest(
             sZCL_HeaderParams.bManufacturerSpecific,
             sZCL_HeaderParams.u16ManufacturerCode,
             !sZCL_HeaderParams.bDirection,
-            psZCL_EndPointDefinition->bDisableDefaultResponse,
+            sZCL_CallBackEvent.bOverrideDisableDefaultResponse,
             sZCL_HeaderParams.u8TransactionSequenceNumber,
             E_ZCL_WRITE_ATTRIBUTES_RESPONSE);
-
 
         // size of outgoing buffer
        // u16responseBufferSize = PDUM_u16APduGetSize(psZCL_Common->hZCL_APdu);
     }
-    // fill in non-attribute specific values in callback event structure
-    sZCL_CallBackEvent.u8EndPoint = pZPSevent->uEvent.sApsDataIndEvent.u8DstEndpoint;
-    sZCL_CallBackEvent.psClusterInstance = psClusterInstance;
-    sZCL_CallBackEvent.pZPSevent = pZPSevent;
-    sZCL_CallBackEvent.eZCL_Status = E_ZCL_SUCCESS;
+
     // Lock if doing an undivided write
 #ifndef COOPERATIVE
     if (bIsUndivided)
@@ -437,6 +446,13 @@ PUBLIC   void vZCL_HandleAttributesWriteRequest(
         {
             // build address structure
             eZCL_BuildTransmitAddressStructure(pZPSevent, &sZCL_Address);
+
+            if (sZCL_CallBackEvent.bOverrideDisableApsAck &&
+                sZCL_Address.eAddressMode == E_ZCL_AM_SHORT)
+            {
+                sZCL_Address.eAddressMode = E_ZCL_AM_SHORT_NO_ACK;
+            }
+
             // transmit response
             eZCL_TransmitDataRequest(myPDUM_thAPduInstance,
                 u16outputOffset,

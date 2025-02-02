@@ -324,6 +324,7 @@ typedef enum
    E_ZCL_CBET_WRITE_INDIVIDUAL_ATTRIBUTE,   // write received, called for each attribute
    E_ZCL_CBET_WRITE_ATTRIBUTES,              // write received, called once for each message after all atts updated
    E_ZCL_CBET_WRITE_INDIVIDUAL_ATTRIBUTE_RESPONSE, // Write attributes response received - only called for atts with write error
+   E_ZCL_CBET_WRITE_ATTRIBUTES_START_RESPONSE, // Write attributes response received - called once per message at the start
    E_ZCL_CBET_WRITE_ATTRIBUTES_RESPONSE,      // Write attributes response received - called once per message
    E_ZCL_CBET_CHECK_ATTRIBUTE_RANGE,          // Write attributes requests the application to check the range of the attribute
    E_ZCL_CBET_REPORT_TIMEOUT,
@@ -792,6 +793,10 @@ typedef struct
    uint8                                    u8TransactionSequenceNumber;
    uint8                                    u8EndPoint;
    teZCL_Status                             eZCL_Status;
+   struct {
+       uint8 bOverrideDisableApsAck: 1;
+       uint8 bOverrideDisableDefaultResponse: 1;
+   };
 
    union {
        tsZCL_IndividualAttributesResponse   sIndividualAttributeResponse;  // Read Att Response and Write Att per att CB.
