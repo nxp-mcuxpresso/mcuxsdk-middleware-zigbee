@@ -446,8 +446,8 @@ def validateConfiguration(nodeName):
 
     #check if an old .zpscfg is used. Active_EP_req is deprecated in R23
     if R23_UPDATES:
-        findDeprecatedCluster = foundNode.find("./Endpoints/InputClusters[@Cluster='Active_EP_req']")
-        if findDeprecatedCluster != None:
+        findNewCluster = foundNode.find("./Endpoints/InputClusters[@Cluster='Sec_Challenge_req']")
+        if findNewCluster == None:
             print("WARNING: R22 ZPSCONFIG IS RUNNING WITH R23 LIBS")
             print("ENSURE THAT THE NEXT SERVICES ARE ACTIVATED IN ZDO SERVER OR UPDATE THE ZPSCONFIG SCRIPT: %s" % R23_M_ZDOServices)
         else:
