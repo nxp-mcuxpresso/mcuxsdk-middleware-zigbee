@@ -1664,18 +1664,10 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_GET_VERSION:
                     if((u8Status != (uint8)E_SL_MSG_STATUS_BUSY) && (NULL != pu8Temp))
                     {
-                        *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+3);
-                        *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+2);
-                        *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+1);
-                        *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX);
                         *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+4);
                         *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+5);
                         *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+7);
                         *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+6);
-                        *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+11);
-                        *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+10);
-                        *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+9);
-                        *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+8);
                     }
                     else
                     {

@@ -31,7 +31,6 @@
 #include "PDM_IDs.h"
 #include "app_crypto.h"
 #include "zps_nwk_sap.h"
-#include <version.h>
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -287,18 +286,10 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     break;
     case (E_SL_MSG_GET_VERSION):
     {
-        /* Version is Zigbee component version: SDK package or SHA commit */
-        uint32 u32Version = ZIGBEE_VERSION;
-        uint32 u32SDKVersion = SDK_VERSION;
-
-        ZNC_BUF_U32_UPD( &au8values[u8TxLength],  u32Version, u8TxLength );
-
         /* For now we do not support Zigbee device type, MAC type and options */
         ZNC_BUF_U8_UPD(  &au8values[u8TxLength],  0, u8TxLength );
         ZNC_BUF_U8_UPD(  &au8values[u8TxLength],  0, u8TxLength );
         ZNC_BUF_U16_UPD( &au8values[u8TxLength],  0, u8TxLength );
-
-        ZNC_BUF_U32_UPD( &au8values[u8TxLength],  u32SDKVersion, u8TxLength );
 
         u16ReturnMsgType = E_SL_MSG_STATUS_SHORT_MSG;
     }
