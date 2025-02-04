@@ -103,6 +103,7 @@ static void activity_tm_cb(void *param)
 
     status = TM_Close(psWake->tmr);
     assert(kStatus_TimerSuccess == status);
+    (void)status;
 
     psWake->prCallbackfn();
 }
@@ -120,6 +121,7 @@ PWRM_teStatus PWR_eScheduleActivity(pwrm_tsWakeTimerEvent *psWake, uint32 u32Tim
 
     status = TM_Start(psWake->tmr, kTimerModeSingleShot, u32TimeMs);
     assert(kStatus_TimerSuccess == status);
+    (void)status;
 
     return PWRM_E_OK;
 }
@@ -160,6 +162,7 @@ void PWR_vColdStart(void)
 
     status = PWR_SetLowPowerModeConstraint(PWR_DeepSleep);
     assert(status == PWR_Success);
+    (void)status;
 
     /* Register PWR Callbacks */
     vAppRegisterPWRCallbacks();
