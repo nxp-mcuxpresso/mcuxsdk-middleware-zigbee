@@ -146,6 +146,7 @@ void APP_ZigbeeMutexLock(void)
 
     status = OSA_MutexLock(app_zb_mutex, osaWaitForever_c);
     assert(status == KOSA_StatusSuccess);
+    (void)status;
 }
 
 /****************************************************************************
@@ -165,6 +166,7 @@ void APP_ZigbeeMutexUnlock(void)
 
     status = OSA_MutexUnlock(app_zb_mutex);
     assert(status == KOSA_StatusSuccess);
+    (void)status;
 }
 
 /****************************************************************************
@@ -226,7 +228,7 @@ static void zigbee_task(void *argument)
     /* Initialize zigbee stack, ressources (timers, queue's etc) and app */
     vAppMain();
 
-    /* 
+    /*
      * BLE fails to initialize before Zigbee.
      * zigbeeReady is used as a workaround to hang the BLE init execution until zigbee is ready.
      * wireless_uart task will start BLE/Wireless_uart initialization after that.
