@@ -178,10 +178,21 @@ void vAppPreSleep(void)
      APP_vSetLed(APP_E_LEDS_LED_2, APP_E_LED_OFF);
 #endif
 
+#if IS_JN518x_SERIES
+    /* Check VBAT voltage before going to sleep and set DCDC voltage
+    according for K32W041A/AM variants */
+    BOARD_CheckPowerDownDcdcVoltage();
+#endif
 }
 
 void vAppWakeup(void)
 {
+#if IS_JN518x_SERIES
+    /* Check VBAT voltage after wakeup and set DCDC voltage
+    according for K32W041A/AM variants */
+    BOARD_CheckWakeUpDcdcVoltage();
+#endif
+
 #if IS_NOT_MCXW7x_SERIES
     /* If the power status is OK and RAM held while sleeping
      * restore the MAC settings
