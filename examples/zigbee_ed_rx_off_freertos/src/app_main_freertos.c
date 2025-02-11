@@ -85,6 +85,7 @@ OSA_SEMAPHORE_HANDLE_DEFINE(APP_semaphoreHandle);
 OSA_MUTEX_HANDLE_DEFINE(zb_task_lock);
 
 PWR_tsWakeTimerEvent sZTimer;
+#define WAKEUP_TIMER_VALUE_MS 10
 
 /****************************************************************************/
 /***        Exported Functions                                            ***/
@@ -140,7 +141,7 @@ void main_task (uint32_t parameter)
         (void)OSA_TaskCreate(ZPS_taskHandle, OSA_TASK(ZPS_task), NULL);
 
         memset( &sZTimer, 0x0, sizeof(PWR_tsWakeTimerEvent));
-        PWR_eScheduleActivity(&sZTimer, 250, vWakeCallBackZtimer);
+        PWR_eScheduleActivity(&sZTimer, WAKEUP_TIMER_VALUE_MS, vWakeCallBackZtimer);
         initialized = TRUE;
     }
     APP_task();
@@ -151,7 +152,7 @@ void vWakeCallBackZtimer(void)
 {
     zbTaskletsSignalApp();
     memset( &sZTimer, 0x0, sizeof(PWR_tsWakeTimerEvent));
-    PWR_eScheduleActivity(&sZTimer, 250, vWakeCallBackZtimer);
+    PWR_eScheduleActivity(&sZTimer, WAKEUP_TIMER_VALUE_MS, vWakeCallBackZtimer);
 }
 
 void APP_task()
