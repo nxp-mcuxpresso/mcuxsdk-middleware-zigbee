@@ -736,12 +736,22 @@ static void vDeletePDMOnButtonPress(uint8_t u8ButtonID)
         u8Status = ZPS_eAplZdoLeaveNetwork(0, FALSE,FALSE);
         if (ZPS_E_SUCCESS !=  u8Status )
         {
-            /* Leave failed,so just reset everything */
-            DBG_vPrintf(TRACE_APP,"Leave failed status %x Deleting the PDM\r\n", u8Status);
-            APP_vFactoryResetRecords();
-            MICRO_DISABLE_INTERRUPTS();
-            RESET_SystemReset();
-        } else { DBG_vPrintf(TRACE_APP, "RESET: Sent Leave\r\n"); }
+            DBG_vPrintf(TRACE_APP, "RESET: Leave FAILED status %x Deleting the PDM\r\n", u8Status);
+        }
+        else
+        {
+            DBG_vPrintf(TRACE_APP, "RESET: Leave SUCCESS status %x Deleting the PDM\r\n", u8Status);
+        }
+        /* Factory reset was requested */
+        APP_vFactoryResetRecords();
+        MICRO_DISABLE_INTERRUPTS();
+// TODO: Making SW reset abstracted
+#if IS_NOT_MCXW_SERIES_OR_RW_SERIES_OR_NCP
+        vMMAC_Disable();
+        RESET_SystemReset();
+#else
+        NVIC_SystemReset();
+#endif
     }
 }
 #endif /* !defined(K32W2ARD_ITPS) */
