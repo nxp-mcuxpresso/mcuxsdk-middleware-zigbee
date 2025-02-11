@@ -64,6 +64,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.rw61x)
         FSL_RTOS_FREE_RTOS
         CMSIS_NVIC_VIRTUAL
         CMSIS_NVIC_VIRTUAL_HEADER_FILE=\\\"zb_cmsis_nvic_virtual.h\\\"
+        MBEDTLS_USER_CONFIG_FILE=\\\"SecLib_mbedtls_config.h\\\"
     )
 endif()
 
