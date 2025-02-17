@@ -1,5 +1,5 @@
 /*
-* Copyright 2019, 2024 NXP
+* Copyright 2019, 2024-2025 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -68,6 +68,7 @@ uint8_t  u8TimerPoll;
 uint8_t  u8TimerScan;
 uint8_t  u8TimerFb;
 #endif
+bool_t initialized = FALSE;
 /* queue handles */
 tszQueue APP_msgAppEvents;
 /****************************************************************************/
@@ -75,7 +76,6 @@ tszQueue APP_msgAppEvents;
 /****************************************************************************/
 static ZTIMER_tsTimer asTimers[APP_ZTIMER_STORAGE + ZIGBEE_TIMER_STORAGE];
 extern const uint8_t gUseRtos_c;
-static uint8_t initialized = FALSE;
 static OSA_TASK_DEFINE(ZPS_task, gMainThreadPriority_c, 1, gMainThreadStackSize_c, 0);
 
 OSA_TASK_HANDLE_DEFINE(ZPS_taskHandle);
@@ -200,12 +200,19 @@ void ZPS_task()
 
 void zbTaskletsSignalZps()
 {
-    OSA_SemaphorePost((osa_semaphore_handle_t)ZPS_semaphoreHandle);
+    if (initialized)
+    {
+        OSA_SemaphorePost((osa_semaphore_handle_t)ZPS_semaphoreHandle);
+    }
 }
 
 void zbTaskletsSignalApp()
 {
-    OSA_SemaphorePost((osa_semaphore_handle_t)APP_semaphoreHandle);
+    if (initialized)
+    {
+        OSA_SemaphorePost((osa_semaphore_handle_t)APP_semaphoreHandle);
+
+    }
 }
 
 #ifdef FSL_RTOS_FREE_RTOS

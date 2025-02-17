@@ -1,5 +1,5 @@
 /*
-* Copyright 2019, 2024 NXP
+* Copyright 2019, 2024-2025 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -94,7 +94,7 @@ void APP_cbLntTimerTick(void *pvParam)
     BDB_eNsStartNwkSteering();
 }
 #endif
-
+bool_t initialized = FALSE;
 /* queue handles */
 tszQueue APP_msgAppEvents;
 uint32_t u32Togglems;
@@ -141,7 +141,6 @@ void main_task (uint32_t parameter)
 #endif
 
     /* e.g. osaEventFlags_t ev; */
-    static uint8_t initialized = FALSE;
 
     if(!initialized)
     {
@@ -237,12 +236,19 @@ void ZPS_task()
 
 void zbTaskletsSignalZps()
 {
-    OSA_SemaphorePost((osa_semaphore_handle_t)ZPS_semaphoreHandle);
+    if (initialized)
+    {
+        OSA_SemaphorePost((osa_semaphore_handle_t)ZPS_semaphoreHandle);
+    }
 }
 
 void zbTaskletsSignalApp()
 {
-    OSA_SemaphorePost((osa_semaphore_handle_t)APP_semaphoreHandle);
+    if (initialized)
+    {
+        OSA_SemaphorePost((osa_semaphore_handle_t)APP_semaphoreHandle);
+
+    }
 }
 /****************************************************************************
  *

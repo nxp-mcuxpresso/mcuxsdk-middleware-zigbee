@@ -1,5 +1,5 @@
 /*
-* Copyright 2019, 2023-2024 NXP
+* Copyright 2019, 2023-2025 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -110,6 +110,7 @@ uint32_t u32Togglems;
 extern tszQueue appQueueHandle;
 extern tszQueue zclQueueHandle;
 #endif
+bool_t initialized = FALSE;
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
@@ -160,12 +161,10 @@ void main_task (uint32_t parameter)
 #endif
 
     /* e.g. osaEventFlags_t ev; */
-    static uint8_t initialized = FALSE;
 
     if(!initialized)
     {
         /* place initialization code here... */
-        initialized = TRUE;
 #if IS_NOT_MCXW_SERIES_OR_RW_SERIES
         TMR_Init();
 #else
@@ -201,6 +200,7 @@ void main_task (uint32_t parameter)
 
         memset( &sZTimer, 0x0, sizeof(PWR_tsWakeTimerEvent));
         PWR_eScheduleActivity(&sZTimer, WAKEUP_TIMER_VALUE_MS, vWakeCallBackZtimer);
+        initialized = TRUE;
     }
     APP_task();
 }
@@ -251,12 +251,19 @@ void ZPS_task()
 
 void zbTaskletsSignalZps()
 {
-    OSA_SemaphorePost((osa_semaphore_handle_t)ZPS_semaphoreHandle);
+    if (initialized)
+    {
+        OSA_SemaphorePost((osa_semaphore_handle_t)ZPS_semaphoreHandle);
+    }
 }
 
 void zbTaskletsSignalApp()
 {
-    OSA_SemaphorePost((osa_semaphore_handle_t)APP_semaphoreHandle);
+    if (initialized)
+    {
+        OSA_SemaphorePost((osa_semaphore_handle_t)APP_semaphoreHandle);
+
+    }
 }
 
 #else

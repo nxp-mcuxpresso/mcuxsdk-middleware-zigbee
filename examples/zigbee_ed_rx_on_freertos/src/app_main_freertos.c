@@ -1,5 +1,5 @@
 /*
-* Copyright 2019, 2023-2024 NXP
+* Copyright 2019, 2023-2025 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -74,6 +74,7 @@ uint8_t  u8TimerPoll;
 /* queue handles */
 tszQueue APP_msgAppEvents;
 uint32_t u32Togglems;
+bool_t initialized = FALSE;
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
@@ -113,12 +114,10 @@ void main_task (uint32_t parameter)
 {
 
     /* e.g. osaEventFlags_t ev; */
-    static uint8_t initialized = FALSE;
 
     if(!initialized)
     {
         /* place initialization code here... */
-        initialized = TRUE;
 #if IS_NOT_MCXW_SERIES_OR_RW_SERIES
         TMR_Init();
 #else
@@ -203,12 +202,19 @@ void ZPS_task()
 
 void zbTaskletsSignalZps()
 {
-    OSA_SemaphorePost((osa_semaphore_handle_t)ZPS_semaphoreHandle);
+    if (initialized)
+    {
+        OSA_SemaphorePost((osa_semaphore_handle_t)ZPS_semaphoreHandle);
+    }
 }
 
 void zbTaskletsSignalApp()
 {
-    OSA_SemaphorePost((osa_semaphore_handle_t)APP_semaphoreHandle);
+    if (initialized)
+    {
+        OSA_SemaphorePost((osa_semaphore_handle_t)APP_semaphoreHandle);
+
+    }
 }
 
 /****************************************************************************
