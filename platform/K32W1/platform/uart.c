@@ -1,5 +1,5 @@
 /*
-* Copyright 2023-2024 NXP
+* Copyright 2023-2025 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -127,9 +127,6 @@ void LPUART1_IRQHandler(void)
     if ((0U != ((uint32_t)kLPUART_IdleLineFlag & status)) &&
         (0U != ((uint32_t)kLPUART_IdleLineInterruptEnable & enabledInterrupts)))
     {
-#ifdef ZIGBEE_EVENT_IMPL
-        zbTaskletsSignalApp();
-#endif
         (void)LPUART_ClearStatusFlags(lpuart_base[BOARD_UART_INSTANCE], kLPUART_IdleLineFlag);
 
         uint32_t edmaCount = EDMA_GetRemainingMajorLoopCount(LPUART_DMA_BASEADDR, LPUART_RX_DMA_CHANNEL);
@@ -143,6 +140,13 @@ void LPUART1_IRQHandler(void)
         receivedBytes = RING_BUFFER_SIZE - edmaCount;
         receivedBytes += (RING_BUFFER_SIZE * dmaRxTransfers) - ringBufferIndex;
 
+#ifdef ZIGBEE_EVENT_IMPL
+        for (int i = 0; i < receivedBytes; i++)
+        {
+            zbTaskletsSignalApp();
+        }
+#endif
+        
         /* Data has been overriden in the circular buffer */
         if (receivedBytes > RING_BUFFER_SIZE)
         {
