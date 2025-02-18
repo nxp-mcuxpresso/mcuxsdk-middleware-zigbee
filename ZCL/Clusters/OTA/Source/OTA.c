@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020, 2024 NXP
+ * Copyright 2020, 2024-2025 NXP
  *
  * NXP Confidential.
  *
@@ -624,12 +624,6 @@ PUBLIC  teZCL_Status eOtaFindCluster(
                                 tsOTA_Common                  **ppsOTACustomDataStructure,
                                 bool_t                          bIsServer)
 {
-
-    if(u8SourceEndPointId > u8ZCL_GetNumberOfEndpointsRegistered())
-    {
-        return(E_ZCL_ERR_EP_RANGE);
-    }
-
     // check EP is registered and cluster is present in the send device
     if(eZCL_SearchForEPentry(u8SourceEndPointId, ppsEndPointDefinition) != E_ZCL_SUCCESS)
     {
@@ -1033,11 +1027,12 @@ PUBLIC  void vOtaTimerClickCallback(tsZCL_CallBackEvent *psCallBackEvent)
     u8NumberOfendpoints = u8ZCL_GetNumberOfEndpointsRegistered();
 
     // find price clusters on each EP - if any
-    for(i=1; i<(u8NumberOfendpoints+1); i++)
+    for(i = 0; i < u8NumberOfendpoints; i++)
     {
+        uint8 u8EndPointNumber = u8ZCL_GetEPIdFromIndex(i);
         // deliver time to any EP-server/client
-        eOtaTimeUpdate(i, TRUE, psCallBackEvent);
-        eOtaTimeUpdate(i, FALSE, psCallBackEvent);
+        eOtaTimeUpdate(u8EndPointNumber, TRUE, psCallBackEvent);
+        eOtaTimeUpdate(u8EndPointNumber, FALSE, psCallBackEvent);
     }
 #endif
 }
