@@ -1,9 +1,7 @@
 /*
-* Copyright 2023-2024 NXP
-* All rights reserved.
-*
-* SPDX-License-Identifier: BSD-3-Clause
-*/
+ * Copyright 2023-2025 NXP
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
 #ifdef DEBUG_SERIAL_LINK
 #define DEBUG_SL            TRUE
