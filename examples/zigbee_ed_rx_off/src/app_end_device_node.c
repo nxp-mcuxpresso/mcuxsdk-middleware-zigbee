@@ -1,9 +1,8 @@
 /*
-* Copyright 2019-2024 NXP
-* All rights reserved.
-*
-* SPDX-License-Identifier: BSD-3-Clause
-*/
+ * Copyright 2019-2025 NXP
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #include "app.h"
 #include "bdb_api.h"
 #include "app_common.h"
