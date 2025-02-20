@@ -160,22 +160,22 @@ void vAppPreSleep(void)
     /* If the power mode is with RAM held do the following
      * else not required as the entry point will init everything*/
 #ifdef CLD_OTA
-     vSetOTAPersistedDatForMinRetention();
+    vSetOTAPersistedDatForMinRetention();
 #endif
-     /* sleep memory held */
-     vAppApiSaveMacSettings();
-     /* Disable debug */
-     DbgConsole_Deinit();
+    /* sleep memory held */
+    vAppApiSaveMacSettings();
+    /* Disable debug */
+    DbgConsole_Deinit();
 #else
-     /* Save LED state before deinit */
-     led_states = APP_u8GetLedStates();
+    /* Save LED state before deinit */
+    led_states = APP_u8GetLedStates();
 
-     /*
-      * Since we want the lowest current in LP, turn off the LEDs and
-      * restore them at wake-up.
-      */
-     APP_vSetLed(APP_E_LEDS_LED_1, APP_E_LED_OFF);
-     APP_vSetLed(APP_E_LEDS_LED_2, APP_E_LED_OFF);
+    /*
+     * Since we want the lowest current in LP, turn off the LEDs and
+     * restore them at wake-up.
+     */
+    APP_vSetLed(APP_E_LEDS_LED_1, APP_E_LED_OFF);
+    APP_vSetLed(APP_E_LEDS_LED_2, APP_E_LED_OFF);
 #endif
 
 #if IS_JN518x_SERIES
