@@ -287,16 +287,18 @@ static int wireless_uart_read(struct bt_conn *conn, bt_gatt_wu_read_response_t r
                 OSA_ENTER_CRITICAL();
                 buffer = &g_WirelessUartState.peerCentral[index].wait4SendingBuffer[0];
                 length = g_WirelessUartState.peerCentral[index].wait4SendingLength;
+                OSA_EXIT_CRITICAL();
                 if ((NULL != response))
                 {
                     ret = response(param, buffer, length);
                     if (ret >= 0)
                     {
+                        OSA_ENTER_CRITICAL();
                         g_WirelessUartState.peerCentral[index].wait4SendingLength -= ret;
                         g_WirelessUartState.peerCentral[index].wait4SendingBuffer += ret;
+                        OSA_EXIT_CRITICAL();
                     }
                 }
-                OSA_EXIT_CRITICAL();
             }
             break;
         }
