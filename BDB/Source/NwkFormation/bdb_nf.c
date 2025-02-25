@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * Copyright 2020, 2023 NXP
+ * Copyright 2020, 2023-2024 NXP
  *
  * NXP Confidential. 
  * 
@@ -39,6 +39,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "zps_apl_af.h"
+#if (BDB_SET_DEFAULT_TC_POLICY == TRUE)
+#include "bdb_tkd.h"
+#endif
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -524,6 +527,7 @@ PRIVATE bool_t bNfSearchDiscNt(uint64 u64EpId, uint16 u16PanId)
     return eSL_SearchExtendedPanId(u64EpId, u16PanId);
 #endif
 }
+
 #if (BDB_SET_DEFAULT_TC_POLICY == TRUE)
 /****************************************************************************
  *
@@ -551,10 +555,7 @@ PRIVATE bool_t vNfTcCallback (uint16 u16ShortAddress,
     uint32 u32KeyTblSize                         = psAib->psAplDeviceKeyPairTable->u16SizeOfKeyDescriptorTable;
     ZPS_tsAplApsKeyDescriptorEntry *psKeyTbl     = psAib->psAplDeviceKeyPairTable->psAplApsKeyDescriptorEntry;
     uint32 i;
-#if (BDB_JOIN_USES_INSTALL_CODE_KEY == TRUE)
-    ZPS_teDevicePermissions    eDevicePermissions;
-    ZPS_teStatus    eStatus;
-#endif
+
     /* we are only interested in insecure join , all other joins we should
      * use the normal key which is the TC key if negotiated else it is
      * the global or install code.
@@ -574,10 +575,8 @@ PRIVATE bool_t vNfTcCallback (uint16 u16ShortAddress,
             }
         }
     }
-    /* Always return TRUE otherwise the transport key won't go out
-     * if permissions table is used and if you don't want authenticate devices
-     * it is mandatory to send FALSE*/
-     return TRUE;
+    /* Return TRUE or FALSE according to the transport key decider table */
+     return doSendTransportKey(u64DeviceAddress);
 }
 #endif
 #endif

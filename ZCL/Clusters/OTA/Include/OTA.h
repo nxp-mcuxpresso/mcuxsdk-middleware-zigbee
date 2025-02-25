@@ -89,7 +89,7 @@ extern "C" {
 #endif
 
 /* TODO OTA: These defines should be extracted in platform dependent code*/
-#if defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
+#if IS_MCXW_SERIES_OR_RW_SERIES
 #define K32W1480_OTA_HDR_SIZE (80)
 #define K32W1480_OTA_NONCE_SIZE (16)
 #define K32W1480_OTA_LNKKEY_SIZE (16)

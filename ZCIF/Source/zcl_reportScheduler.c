@@ -447,19 +447,7 @@ PRIVATE bool_t bReportableDifferenceTimerFired(
 /****************************************************************************/
 PRIVATE bool_t bIsClusterBound( uint16 u16ClusterId )
 {
-    uint32   j = 0;
-
-    ZPS_tsAplAib * psAplAib  = ZPS_psAplAibGetAib();
-
-    for( j = 0 ; j < psAplAib->psAplApsmeAibBindingTable->psAplApsmeBindingTable[0].u32SizeOfBindingTable ; j++ )
-    {
-        if ( u16ClusterId == psAplAib->psAplApsmeAibBindingTable->psAplApsmeBindingTable[0].pvAplApsmeBindingTableEntryForSpSrcAddr[j].u16ClusterId )
-        {
-            return TRUE;
-        }
-    }
-    return FALSE;
-
+    return ZPS_bAplAibFindBindTableEntryForClusterId(u16ClusterId);
 }
 /****************************************************************************/
 /***        Exported Functions                                            ***/

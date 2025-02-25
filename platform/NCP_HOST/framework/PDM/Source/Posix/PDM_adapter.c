@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 NXP
+ * Copyright 2023-2024 NXP
  *
  * SPDX-License-Identifier:    BSD-3-Clause
  */
@@ -432,7 +432,7 @@ exit:
 bool_t PDM_bDoesDataExist(uint16_t id, uint16_t *len)
 {
     bool ret;
-    int idx = 0;
+    uint16 idx = 0;
 
     ret = pdm_rcrd_search(id, len, &idx);
 

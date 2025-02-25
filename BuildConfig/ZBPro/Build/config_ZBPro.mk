@@ -80,7 +80,7 @@ SDK_BASE_DIR        ?=  ../../../../../..
 # SDK2_BASE_DIR is used in K32W0 builds
 SDK2_BASE_DIR        ?= $(SDK_BASE_DIR)
 
-ZIGBEE_BASE_DIR      ?= $(SDK_BASE_DIR)/middleware/wireless/zigbee
+ZIGBEE_BASE_DIR      ?= $(SDK_BASE_DIR)/middleware/wireless/zigbee_private
 ZIGBEE_COMMON_SRC    ?= $(ZIGBEE_BASE_DIR)/ZigbeeCommon/Source
 TOOL_BASE_DIR        ?= $(ZIGBEE_BASE_DIR)/tools
 PDUMCONFIG            = $(TOOL_BASE_DIR)/PDUMConfig/Source/PDUMConfig

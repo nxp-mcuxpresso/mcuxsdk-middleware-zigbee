@@ -218,7 +218,7 @@ PUBLIC  void vOtaInitStateMachine(tsOTA_Common *psCustomData)
 #ifdef APP0
            g_u16OtaPageIndex = 0;
 #else
-#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES) && !defined(RW612_SERIES)
+#if IS_NOT_MCXW_SERIES_OR_RW_SERIES
     OTA_AlignOnReset();
 #endif
 #endif
@@ -535,7 +535,7 @@ PRIVATE  void vOtaUpgManClientStateDownloadInProgress(
                                                                     (0xFFFFFFFF - psOTA_Common->sOTACallBackMessage.sPersistedData.sAttributes.u32FileOffset - 1);
         }
 #else
-#if defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES)
+#if IS_MCXW_SERIES
         if(psOTA_Common->sOTACallBackMessage.sPersistedData.u32CurrentFlashOffset % 8192 == 0)
 #else
         if(psOTA_Common->sOTACallBackMessage.sPersistedData.u32CurrentFlashOffset % 1024 == 0)
@@ -980,6 +980,7 @@ PRIVATE  void vOtaRequestNextBlock(
         return;
     }
 #endif
+    OTA_MakeHeadRoomForNextBlock(psBlock->u8MaxDataSize, NULL, 0);
     DBG_vPrintf(TRACE_BLOCKS, "BLOCK REQ -> %08x\n", psBlock->u32FileOffset);
     eStatus = eOTA_ClientImageBlockRequest(u8SrcEndpoint,u8DstEndpoint,psZCL_Address,psBlock);
     DBG_vPrintf(TRACE_OTA_DEBUG, "OTA 50 ..%x\n",eStatus);

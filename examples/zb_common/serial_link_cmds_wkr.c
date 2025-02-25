@@ -1,5 +1,5 @@
 /*
-* Copyright 2023 NXP
+* Copyright 2023-2024 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -19,7 +19,7 @@
 #include "app_main.h"
 #include "ZQueue.h"
 #include "ZTimer.h"
-#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES)
+#if IS_NOT_MCXW_SERIES
 #include "fsl_reset.h"
 #endif
 #include "app_uart.h"
@@ -30,7 +30,7 @@
 #include "app_main.h"
 #include "PDM_IDs.h"
 #include "app_crypto.h"
-
+#include "zps_nwk_sap.h"
 #include <version.h>
 
 /****************************************************************************/
@@ -58,6 +58,27 @@
 #ifndef TRACE_TX_BUFFERS
 #define TRACE_TX_BUFFERS    FALSE
 #endif
+
+#define BDB_TRSP_KEY_DECIDER_TABLE_SIZE       8
+
+/****************************************************************************/
+/***        Type Definitions                                              ***/
+/****************************************************************************/
+typedef enum
+{
+    E_DECIDER_ALLOW_ALL = 0,
+    E_DECIDER_WHITELIST,
+    E_DECIDER_BLACKLIST
+} BDB_eTrspKeyDeciderPolicy;
+
+typedef uint64 BDB_tsTrspKeyDeciderEntry;
+
+typedef struct
+{
+    BDB_tsTrspKeyDeciderEntry *psTrspKeyDeciderEntry;
+    uint16  u16SizeOfTrspKeyDeciderTable;
+    BDB_eTrspKeyDeciderPolicy eTrspKeyDeciderPolicy;
+} BDB_tsTrspKeyDeciderTable;
 
 /****************************************************************************/
 /***        Local Function Prototypes                                     ***/
@@ -97,7 +118,7 @@ PRIVATE uint8 u8Set2G4ChannelFromMask(uint32 u32ChannelMask);
 //#endif
 
 extern void * zps_psNwkMcpsMgrAllocateReqDescr(void *pvNwk);
-
+extern void zps_vNwkSecClearMatSet(void *psNwk );
 PUBLIC void vAppHandlePDMError(void);
 PUBLIC void vSendPdmStatusToHost(teSL_PdmCmdType eCmdType, uint8 u8PDMStatus);
 PRIVATE uint16 u16SearchKeyTableByIeeeAddress(uint64 u64IEEEAddress);
@@ -105,11 +126,24 @@ PRIVATE uint16 u16SearchKeyTableByIeeeAddress(uint64 u64IEEEAddress);
 PUBLIC uint8 u8EnableBoundDevices( bool_t bState);
 PUBLIC uint8 u8EnableBoundDevice(uint64 u64Address, bool_t bState);
 
+PRIVATE uint8 vAddTrspKeyDeciderEntry(BDB_tsTrspKeyDeciderEntry s_TrspKeyDeciderEntry);
+PRIVATE uint8 vRemoveTrspKeyDeciderEntry(BDB_tsTrspKeyDeciderEntry s_TrspKeyDeciderEntry);
+PRIVATE void vClearTrspKeyDeciderTable();
+PRIVATE uint8 u8GetTrspKeyDeciderFreeIndex();
+PRIVATE uint8 u8GetTrspKeyDeciderIndex(BDB_tsTrspKeyDeciderEntry s_TrspKeyDeciderEntry);
+PRIVATE bool_t doSendTransportKey(uint64 u64DeviceAddress);
+PUBLIC bool_t vNfTcCallback (uint16 u16ShortAddress,
+                             uint64 u64DeviceAddress,
+                             uint64 u64ParentAddress,
+                             uint8 u8Status,
+                             uint16 u16MacId);
+PUBLIC void vResetDataStructures (void);
+PRIVATE bool bAllowInterPanEp(uint8 u8Ep, uint16 u16ProfileId);
 /****************************************************************************/
 /***        Exported Variables                                            ***/
 /****************************************************************************/
 uint32_t u32StatusFlags;
-
+uint32_t u32OldFrameCtr;
 PUBLIC uint8 u8LastMsgLqi =0; /* last message received Lqi. */
 PUBLIC uint8 u8TempExtendedError = 0;
 PUBLIC tsNwkStats sNwkStats;
@@ -121,7 +155,10 @@ extern uint32_t u32OverwrittenRXMessage;
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
-
+PRIVATE BDB_tsTrspKeyDeciderEntry s_TrspKeyDeciderTableStorage[BDB_TRSP_KEY_DECIDER_TABLE_SIZE];
+PRIVATE BDB_tsTrspKeyDeciderTable s_TrspKeyDeciderTable = {s_TrspKeyDeciderTableStorage, 0, 0};
+PRIVATE uint8 u8IpanFilterEndpoint;
+PRIVATE uint16 u16IpanFilterProfileId;
 /****************************************************************************/
 /***        Exported Functions                                            ***/
 /****************************************************************************/
@@ -490,7 +527,6 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
-#ifdef ZB_COORD_DEVICE
     case E_SL_MSG_GET_REPROVISSION_DATA:
     {
         uint64 u64Address;
@@ -527,6 +563,35 @@ PUBLIC void vProcessIncomingSerialCommands(void)
 
             }
         }
+    }
+    break;
+
+    case E_SL_MSG_GET_NWK_DESCRIPTOR:
+    {
+        uint8 u8Index, u8NumOfNwks;
+        u8Index = au8LinkRxBuffer[0];
+
+        /* Get address of descriptor array */
+        ZPS_tsNwkNetworkDescr  *pNwkDescr;
+        pNwkDescr = ZPS_psGetNetworkDescriptors(&u8NumOfNwks);
+
+        /* Get the descriptor at the deisred index */
+        ZPS_tsNwkNetworkDescr sNwkDescrAtIndex;
+        sNwkDescrAtIndex = *(pNwkDescr + u8Index);
+
+        /* Copy descriptor into payload */
+        ZNC_BUF_U64_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u64ExtPanId, u8TxLength );
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8LogicalChan, u8TxLength );
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8StackProfile, u8TxLength );
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8ZigBeeVersion, u8TxLength );
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8PermitJoining, u8TxLength );
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8RouterCapacity, u8TxLength );
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8EndDeviceCapacity, u8TxLength );
+#ifdef WWAH_SUPPORT
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  sNwkDescrAtIndex.u8ParentCapacity, u8TxLength );
+#endif
+
+        u8Status = ZPS_E_SUCCESS;
     }
     break;
 
@@ -576,7 +641,64 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         }
     }
     break;
+
+    case E_SL_MSG_JOIN_NETWORK:
+    {
+        uint16 u16Index = 0x00;
+        ZPS_tsNwkNetworkDescr sNwkDesc;
+
+        /* Rebuild nwk descriptor from payload */
+        sNwkDesc.u64ExtPanId = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkDesc.u8LogicalChan = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkDesc.u8StackProfile = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkDesc.u8ZigBeeVersion = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkDesc.u8PermitJoining = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkDesc.u8RouterCapacity = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkDesc.u8EndDeviceCapacity = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+#ifdef WWAH_SUPPORT
+        sNwkDesc.u8ParentCapacity = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
 #endif
+        u8Status = ZPS_eAplZdoJoinNetwork(&sNwkDesc);
+    }
+    break;
+
+    case E_SL_MSG_FORM_DISTRIBUTED_NETWORK:
+    {
+        uint16 u16Index = 0x00;
+        ZPS_tsAftsStartParamsDistributed sNwkParams;
+        uint8 u8NWKKey[ZPS_SEC_KEY_LENGTH];
+        uint8 i;
+        bool bSendDevice, bRandomKey = TRUE;
+
+        /* Rebuild parameter structure from payload */
+        sNwkParams.u64ExtPanId = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+
+        memcpy(u8NWKKey, &au8LinkRxBuffer[u16Index], ZPS_SEC_KEY_LENGTH);
+        u16Index += ZPS_SEC_KEY_LENGTH;
+
+        for(i = 0; i < ZPS_SEC_KEY_LENGTH; i++)
+        {
+            if(u8NWKKey[i] !=0)
+            {
+                bRandomKey = FALSE;
+            }
+        }
+
+        /* key address is NULL when a random key is used */
+        sNwkParams.pu8NwkKey = (bRandomKey)? NULL: u8NWKKey;
+        sNwkParams.u16PanId = ZNC_RTN_U16_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkParams.u16NwkAddr = ZNC_RTN_U16_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkParams.u8KeyIndex = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkParams.u8LogicalChannel = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        sNwkParams.u8NwkupdateId = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        bSendDevice = ZNC_RTN_U8_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+
+        sNcpDeviceDesc.eState = NOT_FACTORY_NEW;
+        sNcpDeviceDesc.eNodeState = E_RUNNING;
+        ZPS_eAplFormDistributedNetworkRouter(&sNwkParams, bSendDevice);
+
+        break;
+    }
 
     case E_SL_MSG_ADD_REPLACE_LINK_KEY:
     {
@@ -632,6 +754,56 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         ZNC_BUF_U64_UPD( &au8values[u8TxLength], u64Addr , u8TxLength );
 
         u8Status = 0x00;
+        break;
+    }
+
+    case E_SL_MSG_FIND_KEY_DESCRIPTOR:
+    {
+        uint16 u16Index = 0x00;
+        ZPS_tsAplApsKeyDescriptorEntry* psEntry;
+        uint32 u32Index = 0;
+        uint64 u64DeviceAddr = 0x00U;
+
+        /* copy u64DeviceAddr */
+        u64DeviceAddr = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+
+        psEntry = zps_psFindKeyDescr(ZPS_pvAplZdoGetAplHandle(), u64DeviceAddr, &u32Index);
+
+        if(psEntry != NULL)
+        {
+            /* Copy sEntry.u32OutgoingFrameCounter for sending over serial */
+            ZNC_BUF_U32_UPD( &au8values[u8TxLength],  psEntry->u32OutgoingFrameCounter, u8TxLength );
+
+            /* Copy sEntry.u16ExtAddrLkup for sending over serial */
+            ZNC_BUF_U16_UPD( &au8values[u8TxLength], psEntry->u16ExtAddrLkup, u8TxLength );
+
+            /* Copy sEntry.au8LinkKey for sending over serial. Both are byte arrays, endianness irrelevant */
+            memcpy(&au8values[u8TxLength], psEntry->au8LinkKey, ZPS_SEC_KEY_LENGTH);
+            u8TxLength += ZPS_SEC_KEY_LENGTH;
+
+            /* Copy sEntry.u8BitMapSecLevl */
+            /*
+                * This is done in the same way in zigbee/ZPSAPL/Source/APS/zps_apl_aib.c, in
+                * function zps_u8AplAibGetDeviceApsKeyType
+                */
+            if (psEntry->u8BitMapSecLevl == ZPS_APS_NO_KEY_PRESENT)
+            {
+                ZNC_BUF_U8_UPD( &au8values[u8TxLength], ZPS_APS_UNIQUE_LINK_KEY, u8TxLength);
+            }
+            else
+            {
+                ZNC_BUF_U8_UPD( &au8values[u8TxLength],  psEntry->u8BitMapSecLevl, u8TxLength );
+            }
+
+            /* Copy u32Index for sending over serial */
+            ZNC_BUF_U32_UPD( &au8values[u8TxLength],  u32Index, u8TxLength );
+
+            u8Status = 0x00;
+        }
+        else
+        {
+            u8Status = 0x1;
+        }
         break;
     }
 
@@ -693,10 +865,49 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
+    case E_SL_MSG_RESET_DATA_STRUCTURES:
+    {
+        vResetDataStructures();
+        break;
+    }
+
+    case E_SL_MSG_SET_IGNORE_PROFILE_CHECK:
+    {
+        zps_vSetIgnoreProfileCheck();
+        break;
+    }
+
     case E_SL_MSG_SET_NWK_ADDR:
     {
         uint16 u16NWKAddr = ZNC_RTN_U16(au8LinkRxBuffer, 0);
         ZPS_vNwkNibSetNwkAddr( ZPS_pvNwkGetHandle(), u16NWKAddr);
+        break;
+    }
+
+    case E_SL_MSG_REGISTER_INTERPAN_FILTER:
+    {
+        uint16 u16Index = 0;
+
+        /* Set values for the interpan filter callback */
+        u8IpanFilterEndpoint = ZNC_RTN_U8_OFFSET(au8LinkRxBuffer, u16Index, u16Index);
+        u16IpanFilterProfileId = ZNC_RTN_U16_OFFSET( au8LinkRxBuffer, u16Index, u16Index);
+
+        /* Register interpan filter callback */
+        ZPS_vAplZdoRegisterInterPanFilter( bAllowInterPanEp);
+        
+        break;
+    }
+
+    case E_SL_MSG_MAC_SET_TX_BUFFERS:
+    {
+        uint8 u8MaxTxBuffers = au8LinkRxBuffer[0];
+        uint32 u32Ret;
+
+        u32Ret = ZPS_u32MacSetTxBuffers (u8MaxTxBuffers);
+        u8Status = ZPS_E_SUCCESS;
+
+        /* Copy u32Ret for sending over serial */
+        ZNC_BUF_U32_UPD( &au8values[u8TxLength],  u32Ret, u8TxLength );
         break;
     }
 
@@ -1460,59 +1671,17 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     }
         break;
     case E_SL_MSG_REJOIN_NETWORK:
-#ifndef ZB_COORD_DEVICE
-        DBG_vPrintf(TRACE_APP, "E_SL_MSG_REJOIN_NETWORK %d Channels %d\n",
-                au8LinkRxBuffer[0], au8LinkRxBuffer[1]);
-        u8Status = eEZ_ReJoin(au8LinkRxBuffer[0], au8LinkRxBuffer[1]);
-#endif
+
         break;
     case E_SL_MSG_INSECURE_REJOIN_NETWORK:
-#ifndef ZB_COORD_DEVICE
-         DBG_vPrintf(TRACE_EZMODE,"E_SL_MSG_INSECURE_REJOIN_NETWORK %d Channels %d\n",
-                 au8LinkRxBuffer[0], au8LinkRxBuffer[1]);
-         u8Status = eEZ_Insecure_ReJoin(au8LinkRxBuffer[0], au8LinkRxBuffer[1]);
-#endif
+
          break;
 
     case E_SL_MSG_INSECURE_REJOIN_SHORT_PAN:
     {
-#ifndef ZB_COORD_DEVICE
-         DBG_vPrintf(TRACE_EZMODE,"E_SL_MSG_INSECURE_REJOIN_SHORT_PAN Channels %d\n",
-                 au8LinkRxBuffer[0]);
-         u8Status = eEZ_Insecure_ReJoinToShortPan( au8LinkRxBuffer[0] );
-#endif
     }
     break;
 
-#ifndef ZB_COORD_DEVICE
-    case E_SL_MSG__REJOIN_WITH_CHANNEL_MASK:
-    {
-        uint32 u32ChannelMask;
-        bool_t bInsecure;
-        bool_t bToShortPan;
-
-        memcpy(&u32ChannelMask, au8LinkRxBuffer, sizeof(uint32) );
-        bInsecure = au8LinkRxBuffer[4];
-        bToShortPan = au8LinkRxBuffer[5];
-
-        DBG_vPrintf(TRACE_APP, "Rejoin to mask %08x Insecure %d To Short Pan %d\n",
-                u32ChannelMask,
-                bInsecure,
-                bToShortPan);
-
-        if ( MAC_ENUM_SUCCESS == ZPS_eMacValidateChannelMask( u32ChannelMask ) )
-        {
-            DBG_vPrintf(TRACE_EZMODE,"E_SL_MSG__REJOIN_WITH_CHANNEL_MASK Channels %08x Insecure %d  To Short %d\n",
-                    u32ChannelMask, bInsecure, bToShortPan );
-            u8Status = eEZ_ReJoinToChannelMask( u32ChannelMask, bInsecure, bToShortPan );
-        }
-        else
-        {
-            u8Status = ZPS_APL_APS_E_INVALID_PARAMETER;
-        }
-    }
-    break;
-#endif
     case E_SL_MSG_GET_DEFAULT_DISTRIBUTED_APS_LINK_KEY:
     {
         ZPS_tsAplApsKeyDescriptorEntry* psKeyDescr;
@@ -1620,6 +1789,64 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
+    case (E_SL_MSG_FIND_BIND_ENTRY_FOR_CLUSTER_ID):
+    {
+        bool_t bEntryFound;
+        uint16_t u16ClusterId;
+        
+        u16ClusterId = ZNC_RTN_U16( au8LinkRxBuffer, 0 );
+        bEntryFound = ZPS_bAplAibFindBindTableEntryForClusterId(u16ClusterId);
+
+        /* Copy max payload size for sending over serial */
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  bEntryFound, u8TxLength );
+
+        u8Status = ZPS_E_SUCCESS;
+        break;
+    }
+
+    case (E_SL_MSG_SEARCH_EXT_PANID):
+    {
+        bool_t bRetVal = TRUE;
+        uint16_t u16PanId, u16Index = 0x00;
+        uint64_t u64ExtPanId;
+        
+        /* copy u64ExtPanId */
+        u64ExtPanId = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+
+        /* copy u16PanId */
+        u16PanId = ZNC_RTN_U16_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+        
+        int i;
+        ZPS_tsNwkNib *psNib = ZPS_psNwkNibGetHandle(ZPS_pvAplZdoGetNwkHandle());
+        for (i = 0; i < psNib->sTblSize.u8NtDisc; i++)
+        {
+            if ((psNib->sTbl.psNtDisc[i].u64ExtPanId == u64ExtPanId)
+                    || (psNib->sTbl.psNtDisc[i].u16PanId == u16PanId))
+            {
+                bRetVal = FALSE;
+            }
+        }
+
+        /* Copy bRetVal for sending over serial */
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  bRetVal, u8TxLength );
+
+        u8Status = ZPS_E_SUCCESS;
+        break;
+    }
+
+    case (E_SL_MSG_GET_NUMBER_OF_NWK_DESCRIPTORS):
+    {
+        uint8 u8NumberOfNetworks = 0;
+
+        ZPS_psGetNetworkDescriptors(&u8NumberOfNetworks);
+
+        /* Copy number of networks for sending over serial */
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  u8NumberOfNetworks, u8TxLength );
+
+        u8Status = ZPS_E_SUCCESS;
+        break;
+    }
+
     case (E_SL_MSG_GET_MAX_PAYLOAD_SIZE):
     {
         bool_t u8MaxPayloadSize;
@@ -1632,6 +1859,18 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         ZNC_BUF_U8_UPD( &au8values[u8TxLength],  u8MaxPayloadSize, u8TxLength );
 
         u8Status = ZPS_E_SUCCESS;
+        break;
+    }
+
+    case (E_SL_MSG_NWK_NIB_CLEAR_TABLES):
+    {
+        ZPS_vNwkNibClearTables(ZPS_pvAplZdoGetNwkHandle());
+        break;
+    }
+
+    case (E_SL_MSG_NWK_CLEAR_MAT_SET):
+    {
+        zps_vNwkSecClearMatSet(ZPS_pvAplZdoGetNwkHandle());
         break;
     }
 
@@ -1858,6 +2097,16 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         ZNC_BUF_U16_UPD( &au8values[u8TxLength],  u16KeyTableSize, u8TxLength );
     }
         break;
+    case E_SL_MSG_GET_GROUP_TABLE_SIZE: {
+        uint32 u32KeyTableSize;
+        ZPS_tsAplAib *psAib =
+                zps_psAplAibGetAib(ZPS_pvAplZdoGetAplHandle());
+
+        u32KeyTableSize
+                = (uint32) psAib->psAplApsmeGroupTable->u32SizeOfGroupTable;
+        ZNC_BUF_U32_UPD( &au8values[u8TxLength],  u32KeyTableSize, u8TxLength );
+    }
+        break;
     case E_SL_MSG_GET_NEIGHBOR_TABLE_SIZE: {
         uint16 u16TableSize;
         ZPS_tsNwkNib * thisNib;
@@ -1894,7 +2143,36 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         ZNC_BUF_U16_UPD( &au8values[u8TxLength],  u16TableSize, u8TxLength );
     }
     break;
+    case E_SL_MSG_GET_GROUP_TABLE_ENTRY_GROUP_ID:
+    {
+        uint16 u16GroupId;
+        uint32 u32Index;
+        ZPS_tsAplAib *psAib = zps_psAplAibGetAib(ZPS_pvAplZdoGetAplHandle());
 
+        u32Index = ZNC_RTN_U32( au8LinkRxBuffer, 0 );
+        u16GroupId = psAib->psAplApsmeGroupTable->psAplApsmeGroupTableId[u32Index].u16Groupid;
+
+        ZNC_BUF_U16_UPD( &au8values[u8TxLength],  u16GroupId, u8TxLength );
+    }
+        break;
+    case E_SL_MSG_GET_GROUP_TABLE_ENTRY_ENDPOINT_ELEMENT:
+    {
+        uint8 u8Endpoint, u8ByteOffset;
+        uint16 u16Index = 0;
+        uint32 u32EntryIndex;
+        ZPS_tsAplAib *psAib = zps_psAplAibGetAib(ZPS_pvAplZdoGetAplHandle());
+
+        /* Copy u8ByteOffset */
+        u8ByteOffset = ZNC_RTN_U8_OFFSET(au8LinkRxBuffer, u16Index, u16Index);
+
+        /* Copy u32EntryIndex */
+        u32EntryIndex =  ZNC_RTN_U16_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
+
+        u8Endpoint = psAib->psAplApsmeGroupTable->psAplApsmeGroupTableId[u32EntryIndex].au8Endpoint[u8ByteOffset];
+
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  u8Endpoint, u8TxLength );
+    }
+        break;
     case E_SL_MSG_SET_SECURITY_TIMEOUT:
     {
         ZPS_tsAplAib *psAib = zps_psAplAibGetAib(ZPS_pvAplZdoGetAplHandle());
@@ -2527,7 +2805,7 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         u8TxLength += sizeof(uint8);
     }
     break;
-#ifdef ZB_COORD_DEVICE
+
     case E_SL_MSG_GET_GLOBAL_STATS:
 
         /* Copy sNwkStats for sending over serial */
@@ -2565,7 +2843,7 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         ZPS_vNwkNibSetExtPanId (ZPS_pvAplZdoGetNwkHandle(), u64Value);
     }
     break;
-#endif
+
     case E_SL_MSG_CHANGE_PANID:
     {
         uint16 u16Value;
@@ -2582,7 +2860,7 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         /* copy u32ChannelMask */
         u32ChannelMask = ZNC_RTN_U32( au8LinkRxBuffer, 0 );
 
-#ifdef ZB_COORD_DEVICE
+        if (ZPS_ZDO_DEVICE_COORD == sNcpDeviceDesc.u8DeviceType)
         {
             MAC_MlmeReqRsp_s     sMlmeReqRsp;
             MAC_MlmeSyncCfm_s    sMlmeSyncCfm;
@@ -2602,19 +2880,12 @@ PUBLIC void vProcessIncomingSerialCommands(void)
             {
                 u8Status = 1;
             }
-#if 0
-            u8APPScanStatus = E_APP_SCAN_STARTED;
-
-
-            vStartStopTimer(u8APP_DiscoveryTimer,ZTIMER_TIME_MSEC(5000),NULL,0);
-#endif
         }
-
-#else
+        else
+        {
             u8Status = ZPS_eAplZdoDiscoverNetworks(u32ChannelMask);
             DBG_vPrintf(TRACE_APP, "\n u32ChannelMask = 0x%8x, ZPS_eAplZdoDiscoverNetworks... u8Status = %d \r\n", u32ChannelMask ,u8Status);
-#endif
-
+        }
     }
 
     break;
@@ -2748,6 +3019,7 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     {
         uint8 u8DeviceType = au8LinkRxBuffer[0];
         zps_vSetZdoDeviceType(ZPS_pvAplZdoGetAplHandle(),u8DeviceType);
+        sNcpDeviceDesc.u8DeviceType = u8DeviceType;
 
         break;
     }
@@ -2756,8 +3028,21 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     {
         ZPS_teNwkDeviceType eNwkDeviceType = (ZPS_teNwkDeviceType) au8LinkRxBuffer[0];
         ZPS_vNwkSetDeviceType(ZPS_pvAplZdoGetNwkHandle(), eNwkDeviceType);
+        if (eNwkDeviceType == ZPS_NWK_DT_COORDINATOR)
+        {
+            sNcpDeviceDesc.u8DeviceType = ZPS_ZDO_DEVICE_COORD;
+        }
+        else if (eNwkDeviceType == ZPS_NWK_DT_ROUTER)
+        {
+            sNcpDeviceDesc.u8DeviceType = ZPS_ZDO_DEVICE_ROUTER;
+        }
+        else
+        {
+            u8Status = E_SL_MSG_STATUS_INCORRECT_PARAMETERS;
+        }
+        break;
     }
-    
+
     case E_SL_MSG_GET_NWK_INTERFACE_REQ:
     {
         uint8 u8InterfaceIndex;
@@ -3597,6 +3882,11 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         u8Status = eZdpMgmtIeeeJoinListReq(u64ExtAddr, u8StartIndex);
         break;
     }
+    case E_SL_MSG_NWK_CLEAR_DISC_NT:
+    {
+        ZPS_vNwkNibClearDiscoveryNT(ZPS_pvAplZdoGetNwkHandle());
+        break;
+    }
     case E_SL_MSG_SERIAL_LINK_REQ_NEGATIVE:
     {
         uint8 u8TestCase;
@@ -3642,36 +3932,12 @@ PUBLIC void vProcessIncomingSerialCommands(void)
     break;
     case E_SL_MSG_START_ROUTER:
     {
-        ZPS_tsAftsStartParamsDistributed sStartParms;
-        uint16 u16Index = 0;
-        uint64 u64TCAddr;
-        uint8 au8NwkKey[16];
-
-        /* Both are byte arrays, endianness irrelevant */
-        memcpy(au8NwkKey, au8LinkRxBuffer, 16);
-        u16Index     += 16;
-
-        sStartParms.u64ExtPanId = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
-
-        u64TCAddr = ZNC_RTN_U64_OFFSET( au8LinkRxBuffer, u16Index, u16Index );
-
-        sStartParms.u8KeyIndex       = ZNC_RTN_U8_OFFSET(au8LinkRxBuffer, u16Index, u16Index);
-        sStartParms.u8LogicalChannel = ZNC_RTN_U8_OFFSET(au8LinkRxBuffer, u16Index, u16Index);
-
-        ZNC_RTN_U16_OFFSET( &au8LinkRxBuffer[u16Index],  sStartParms.u16NwkAddr, u16Index );
-        ZNC_RTN_U16_OFFSET( &au8LinkRxBuffer[u16Index],  sStartParms.u16PanId, u16Index );
-
-        sStartParms.pu8NwkKey = au8NwkKey;
-
-        u8Status = ZPS_eAplFormDistributedNetworkRouter( &sStartParms, TRUE);
-
-        ZPS_eAplAibSetApsTrustCenterAddress(u64TCAddr);
-        /* set and save the device state */
+        u8Status = zps_eAplZdoStartRouter(ZPS_pvAplZdoGetAplHandle(), (bool_t)au8LinkRxBuffer[0]);
         sNcpDeviceDesc.eNodeState = E_RUNNING;
         sNcpDeviceDesc.eState = NOT_FACTORY_NEW;
         vSaveDevicePdmRecord();
-        break;
     }
+    break;
     case E_SL_MSG_GET_MAC_TYPE:
     {
         /* Version is <Installer version : 16bits><Node version : 16bits> */
@@ -3963,7 +4229,6 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         break;
     }
 
-#if (defined ZB_COORD_DEVICE) || (defined ZB_ROUTER_DEVICE)
     case E_SL_MSG_SET_PARENT_TIMEOUT:
     {
 
@@ -3976,7 +4241,6 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         u8Status = 0;
         break;
     }
-#endif
 
     case E_SL_MSG_SET_PANID_CNFL_RSVL:
     {
@@ -4043,6 +4307,97 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         zps_vSaveAllZpsRecords(ZPS_pvAplZdoGetAplHandle());
     }
     break;
+
+    case E_SL_MSG_GET_TRSP_KEY_DECIDER_TABLE_MAX_SIZE:
+    {
+        /* Copy max table size for sending over serial */
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength],  BDB_TRSP_KEY_DECIDER_TABLE_SIZE, u8TxLength );
+
+        u8Status = 0x00;
+        break;
+    }
+
+    case E_SL_MSG_GET_TRSP_KEY_DECIDER_TABLE_ENTRY:
+    {
+        uint8 u8TableIndex;
+        uint16 u16Index = 0;
+        BDB_tsTrspKeyDeciderEntry sEntry;
+
+        /* copy u16TableIndex */
+        u8TableIndex = ZNC_RTN_U8_OFFSET(au8LinkRxBuffer, u16Index, u16Index);
+
+        if (BDB_TRSP_KEY_DECIDER_TABLE_SIZE <= u8TableIndex)
+        {
+            u8Status = 0x01;
+        }
+        else
+        {
+            sEntry = s_TrspKeyDeciderTable.psTrspKeyDeciderEntry[u8TableIndex];
+
+            /* Copy sEntry for sending over serial */
+            ZNC_BUF_U64_UPD( &au8values[u8TxLength],  (uint64)sEntry, u8TxLength );
+            u8Status = 0x00;
+        }
+        break;
+    }
+    
+    case E_SL_MSG_ADD_TRSP_KEY_DECIDER_TABLE_ENTRY:
+    {
+        BDB_tsTrspKeyDeciderEntry sEntry;
+
+        /* copy entry */
+        sEntry = (BDB_tsTrspKeyDeciderEntry)ZNC_RTN_U64( au8LinkRxBuffer, 0 );
+
+        u8Status = vAddTrspKeyDeciderEntry(sEntry);
+        break;
+    }
+
+    case E_SL_MSG_REMOVE_TRSP_KEY_DECIDER_TABLE_ENTRY:
+    {
+        BDB_tsTrspKeyDeciderEntry sEntry;
+
+        /* copy entry */
+        sEntry = (BDB_tsTrspKeyDeciderEntry)ZNC_RTN_U64( au8LinkRxBuffer, 0 );
+
+        u8Status = vRemoveTrspKeyDeciderEntry(sEntry);
+        break;
+    }
+    
+    case E_SL_MSG_CLEAR_TRSP_KEY_DECIDER_TABLE:
+    {
+        vClearTrspKeyDeciderTable();
+        u8Status = 0x00;
+        break;
+    }
+    
+    case E_SL_MSG_GET_TRSP_KEY_DECIDER_TABLE_POLICY:
+    {
+        /* Copy policy for sending over serial */
+        ZNC_BUF_U8_UPD( &au8values[u8TxLength], s_TrspKeyDeciderTable.eTrspKeyDeciderPolicy, u8TxLength );
+        u8Status = 0x00;
+        break;
+    }
+   
+    case E_SL_MSG_SET_TRSP_KEY_DECIDER_TABLE_POLICY:
+    {
+        BDB_eTrspKeyDeciderPolicy ePolicy;
+        uint16 u16Index = 0;
+
+        /* copy policy */
+        ePolicy = (BDB_eTrspKeyDeciderPolicy)ZNC_RTN_U8_OFFSET(au8LinkRxBuffer, u16Index, u16Index);
+
+        if(ePolicy > 2)
+        {
+            /* Invalid policy value*/
+            u8Status = 0x01;
+        }
+        else
+        {
+            s_TrspKeyDeciderTable.eTrspKeyDeciderPolicy = ePolicy;
+            u8Status = 0x00;
+        }
+        break;
+    }
 
     default:
         u8Status = E_SL_MSG_STATUS_UNSUPPORTED_COMMAND;
@@ -4569,12 +4924,7 @@ PRIVATE void vControlNodeScanStart(void)
         }
         else
         {
-#ifndef ZB_COORD_DEVICE
-            bRestartTimerExpired = FALSE;
-            eEZ_UpdateEZState(E_EZ_SETUP_START);
-#endif
             sNcpDeviceDesc.eNodeState = E_DISCOVERY;
-
             vSaveDevicePdmRecord();
 
         }
@@ -4590,9 +4940,6 @@ PRIVATE void vControlNodeScanStart(void)
         else
         {
             ZPS_eAplZdoStartStack();
-#ifndef ZB_COORD_DEVICE
-            eEZ_UpdateEZState(E_EZ_SETUP_DEVICE_IN_NETWORK);
-#endif
         }
     }
 }
@@ -4811,7 +5158,7 @@ PRIVATE uint8 u8AppChangeChannel( uint32 u32Channel)
     }
     return u8Status;
 }
-//#ifdef ZB_COORD_DEVICE
+
 /****************************************************************************
  *
  * NAME: bGetDeviceStats
@@ -4843,7 +5190,7 @@ PRIVATE bool_t bGetDeviceStats(uint64 u64Mac, uint8 *pu8LastLqi, uint8 *pu8Avera
     }
     return FALSE;
 }
-//#endif
+
 /****************************************************************************
  *
  * NAME: u16GetTemp
@@ -5224,6 +5571,307 @@ PRIVATE uint16 u16SearchKeyTableByIeeeAddress(uint64 u64IEEEAddress)
 
     return u16TableIndex;
 
+}
+
+/****************************************************************************
+ *
+ * NAME: vAddTrspKeyDeciderEntry
+ *
+ * DESCRIPTION:
+ *  Adds given entry to transport key decider table if not already present. 
+ *  Fails if table full.
+ *
+ * PARAMETERS:      Name                    RW      Usage
+ *                  s_TrspKeyDeciderEntry           Entry to add
+ * RETURNS:
+ *  uint8
+ *
+ ****************************************************************************/
+PUBLIC uint8 vAddTrspKeyDeciderEntry(BDB_tsTrspKeyDeciderEntry s_TrspKeyDeciderEntry)
+{
+    if(u8GetTrspKeyDeciderIndex(s_TrspKeyDeciderEntry) != BDB_TRSP_KEY_DECIDER_TABLE_SIZE)
+    {
+        /* Entry already present, nothing to do */
+        return 0x00;
+    }
+
+    if(s_TrspKeyDeciderTable.u16SizeOfTrspKeyDeciderTable == BDB_TRSP_KEY_DECIDER_TABLE_SIZE)
+    {
+        /* Table full */
+        return 0x01;
+    }
+
+    uint8 u8FreeIndex = u8GetTrspKeyDeciderFreeIndex();
+    s_TrspKeyDeciderTable.psTrspKeyDeciderEntry[u8FreeIndex] = s_TrspKeyDeciderEntry;
+    s_TrspKeyDeciderTable.u16SizeOfTrspKeyDeciderTable++;
+    return 0x00;
+}
+
+/****************************************************************************
+ *
+ * NAME: vRemoveTrspKeyDeciderEntry
+ *
+ * DESCRIPTION:
+ *  Removes given entry from transport key decider table if not already missing. 
+ *  Fails if table empty.
+ *
+ * PARAMETERS:      Name                    RW      Usage
+ *                  s_TrspKeyDeciderEntry           Entry to remove
+ * RETURNS:
+ *  uint8
+ *
+ ****************************************************************************/
+PUBLIC uint8 vRemoveTrspKeyDeciderEntry(BDB_tsTrspKeyDeciderEntry s_TrspKeyDeciderEntry)
+{
+    if(u8GetTrspKeyDeciderIndex(s_TrspKeyDeciderEntry) == BDB_TRSP_KEY_DECIDER_TABLE_SIZE)
+    {
+        /* Entry already absent, nothing to do */
+        return 0x00;
+    }
+
+    if(s_TrspKeyDeciderTable.u16SizeOfTrspKeyDeciderTable == 0)
+    {
+        /* Table empty */
+        return 0x01;
+    }
+
+    uint8 u8IndexToRemove = u8GetTrspKeyDeciderIndex(s_TrspKeyDeciderEntry);
+    s_TrspKeyDeciderTable.psTrspKeyDeciderEntry[u8IndexToRemove] = 0;
+    s_TrspKeyDeciderTable.u16SizeOfTrspKeyDeciderTable--;
+    return 0x00;
+}
+
+/****************************************************************************
+ *
+ * NAME: vClearTrspKeyDeciderTable
+ *
+ * DESCRIPTION:
+ *  Zeroes out the transport key decider table.
+ *
+ * PARAMETERS:      Name            RW  Usage
+ * 
+ * RETURNS:
+ *  void
+ *
+ ****************************************************************************/
+PUBLIC void vClearTrspKeyDeciderTable()
+{
+    uint8 u8Index;
+
+    if(s_TrspKeyDeciderTable.u16SizeOfTrspKeyDeciderTable == 0)
+    {
+        /* Table empty */
+        return;
+    }
+    else
+    {   
+        for(u8Index = 0; u8Index < BDB_TRSP_KEY_DECIDER_TABLE_SIZE; u8Index++)
+        {
+           s_TrspKeyDeciderTable.psTrspKeyDeciderEntry[u8Index] = 0;
+        }
+        s_TrspKeyDeciderTable.u16SizeOfTrspKeyDeciderTable = 0;
+    }
+}
+
+PUBLIC bool_t vNfTcCallback (uint16 u16ShortAddress,
+                             uint64 u64DeviceAddress,
+                             uint64 u64ParentAddress,
+                             uint8 u8Status,
+                             uint16 u16MacId )
+{
+    /*If we are joining with default key we only need to remove the existing key */
+    ZPS_tsAplAib *psAib                          = zps_psAplAibGetAib( ZPS_pvAplZdoGetAplHandle( ) );
+    uint32 u32KeyTblSize                         = psAib->psAplDeviceKeyPairTable->u16SizeOfKeyDescriptorTable;
+    ZPS_tsAplApsKeyDescriptorEntry *psKeyTbl     = psAib->psAplDeviceKeyPairTable->psAplApsKeyDescriptorEntry;
+    uint32 i;
+
+    /* we are only interested in insecure join , all other joins we should
+     * use the normal key which is the TC key if negotiated else it is
+     * the global or install code.
+     */
+    if(u8Status == ZPS_APL_SEC_STD_UNSEC_JOIN )
+    {
+        for (i = 0; i < u32KeyTblSize; i++)
+        {
+            if (u64DeviceAddress == ZPS_u64NwkNibGetMappedIeeeAddr( ZPS_pvAplZdoGetNwkHandle(), psKeyTbl[i].u16ExtAddrLkup ) )
+            {
+                ZPS_tsAplAib *psAib =
+                zps_psAplAibGetAib(ZPS_pvAplZdoGetAplHandle());
+                /* Getter for bUseInstallCode member to be implemented, acces it directly for now*/
+            	if(psAib->bUseInstallCode == FALSE)
+            	{
+            		psAib->pu32IncomingFrameCounter[i]  = 0;
+                	memset(&psKeyTbl[i], 0, sizeof(ZPS_tsAplApsKeyDescriptorEntry));
+                	psKeyTbl[i].u16ExtAddrLkup          = 0xFFFF;
+				}
+                ZPS_vSaveAllZpsRecords();
+            }
+        }
+    }
+    /* Return TRUE or FALSE according to the transport key decider table */
+     return doSendTransportKey(u64DeviceAddress);
+}
+
+/****************************************************************************/
+/***        Local Functions                                               ***/
+/****************************************************************************/
+
+/****************************************************************************
+ *
+ * NAME: u8GetTrspKeyDeciderFreeIndex
+ *
+ * DESCRIPTION:
+ *  Returns the index of the first free entry in the transport key decider table.
+ *
+ * PARAMETERS:      Name            RW  Usage
+ * 
+ * RETURNS:
+ *  uint8
+ *
+ ****************************************************************************/
+PRIVATE uint8 u8GetTrspKeyDeciderFreeIndex()
+{
+    uint8 u8FreeIndex = 0;
+    while(s_TrspKeyDeciderTable.psTrspKeyDeciderEntry[u8FreeIndex] && u8FreeIndex < BDB_TRSP_KEY_DECIDER_TABLE_SIZE)
+    {
+        u8FreeIndex++;
+    }
+    return u8FreeIndex;
+}
+
+/****************************************************************************
+ *
+ * NAME: u8GetTrspKeyDeciderIndex
+ *
+ * DESCRIPTION:
+ *  Returns the index of the entry received as parameter
+ *  If entry is not present, returns table size
+ *
+ * PARAMETERS:      Name                    RW  Usage
+ *                  s_TrspKeyDeciderEntry       Searched entry
+ * RETURNS:
+ *  uint8
+ *
+ ****************************************************************************/
+PRIVATE uint8 u8GetTrspKeyDeciderIndex(BDB_tsTrspKeyDeciderEntry s_TrspKeyDeciderEntry)
+{
+    uint8 u8Index;
+    for(u8Index = 0; u8Index < BDB_TRSP_KEY_DECIDER_TABLE_SIZE; u8Index++)
+    {
+        if(s_TrspKeyDeciderTable.psTrspKeyDeciderEntry[u8Index] == s_TrspKeyDeciderEntry)
+        {
+            return u8Index;
+        }
+    }
+    return BDB_TRSP_KEY_DECIDER_TABLE_SIZE;
+}
+
+/****************************************************************************
+ *
+ * NAME: doSendTransportKey
+ *
+ * DESCRIPTION:
+ *  Returns true if the transport key is to be sent to the (re)joining device
+ *  identified with the IEEE address u64DeviceAddress or false otherwise.
+ *
+ * PARAMETERS:      Name              RW  Usage
+ *                  u64DeviceAddress      IEEE address of (re)joining device
+ * RETURNS:
+ *  uint8
+ *
+ ****************************************************************************/
+PRIVATE bool_t doSendTransportKey(uint64 u64DeviceAddress)
+{
+    BDB_tsTrspKeyDeciderEntry s_TrspKeyDeciderEntry = (BDB_tsTrspKeyDeciderEntry)u64DeviceAddress;
+
+    switch(s_TrspKeyDeciderTable.eTrspKeyDeciderPolicy)
+    {
+        case E_DECIDER_ALLOW_ALL:
+            return TRUE;
+        case E_DECIDER_WHITELIST:
+            return (u8GetTrspKeyDeciderIndex(s_TrspKeyDeciderEntry) != BDB_TRSP_KEY_DECIDER_TABLE_SIZE);
+        case E_DECIDER_BLACKLIST:
+            return (u8GetTrspKeyDeciderIndex(s_TrspKeyDeciderEntry) == BDB_TRSP_KEY_DECIDER_TABLE_SIZE);
+        default:
+            return TRUE;
+    }
+}
+
+/****************************************************************************
+ *
+ * NAME: vResetDataStructures
+ *
+ * DESCRIPTION:
+ * Resets persisted data structures to factory new state
+ *
+ * RETURNS:
+ * void
+ *
+ ****************************************************************************/
+PUBLIC void vResetDataStructures(void)
+{
+
+    void * pvNwk = ZPS_pvAplZdoGetNwkHandle();
+    ZPS_tsNwkNib *psNib = ZPS_psNwkNibGetHandle( pvNwk);
+    int i;
+
+    u32OldFrameCtr = psNib->sPersist.u32OutFC;
+
+    ZPS_vNwkNibClearTables(pvNwk);
+    (*(ZPS_tsNwkNibInitialValues *)psNib) = *(psNib->sTbl.psNibDefault);
+
+   /* Clear Security Material Set - will set all 64bit addresses to ZPS_NWK_NULL_EXT_ADDR */
+    zps_vNwkSecClearMatSet(pvNwk);
+
+    /* Set default values in Material Set Table */
+    for (i = 0; i < psNib->sTblSize.u8SecMatSet; i++)
+    {
+        psNib->sTbl.psSecMatSet[i].u8KeyType = ZPS_NWK_SEC_KEY_INVALID_KEY;
+    }
+    psNib->sPersist.u64ExtPanId = ZPS_NWK_NULL_EXT_PAN_ID; /* needs a default value? */
+    psNib->sPersist.u16NwkAddr = 0xffff;
+    psNib->sPersist.u8ActiveKeySeqNumber = 0xff;
+#if (JENNIC_CHIP_FAMILY != JN518x)
+    psNib->sTbl.u32OutFC = u32OldFrameCtr;
+#else
+    psNib->sPersist.u32OutFC = u32OldFrameCtr;
+#endif
+
+    ZPS_vSetKeys();
+
+    /* set the aps use pan id */
+    ZPS_eAplAibSetApsUseExtendedPanId( 0 );
+    ZPS_eAplAibSetApsTrustCenterAddress( 0 );
+
+    sNcpDeviceDesc.eNodeState = E_STARTUP;
+    ZPS_vSaveAllZpsRecords();
+}
+
+/****************************************************************************
+ *
+ * NAME: bAllowInterPanEp
+ *
+ * DESCRIPTION:
+ * Allows the application to decide which end point receives inter pan messages.
+ * Returns true to allow reception, False otherwise
+ *
+ *
+ * PARAMETERS:      Name                        RW  Usage
+ *                  u8Ep                The endpoint receiving the interpan
+ *                  u16ProfileId        The corresponding profile ID
+ * RETURNS:
+ *  bool
+ *
+ ****************************************************************************/
+
+PRIVATE bool bAllowInterPanEp(uint8 u8Ep, uint16 u16ProfileId) {
+
+    if ( (u8Ep == u8IpanFilterEndpoint) &&
+          ( u16ProfileId == u16IpanFilterProfileId))
+    {
+        return TRUE;
+    }
+    return FALSE;
 }
 /****************************************************************************/
 /***        END OF FILE                                                   ***/

@@ -29,13 +29,15 @@
 
 #include "jendefs.h"
 #include "string.h"
+#include "zb_platform.h"
 
 #ifndef ZIGBEE_USE_FRAMEWORK
 #define ZIGBEE_USE_FRAMEWORK 0
 #endif
 
+typedef void (*ZQueue_pfCallback)();
 #if ZIGBEE_USE_FRAMEWORK
-#if defined(K32W1480_SERIES) || defined(K32W1) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
+#if IS_MCXW_SERIES_OR_RW_SERIES
 #include "fsl_component_generic_list.h"
 #else
 #include "GenericList.h"
@@ -43,12 +45,13 @@
 
 typedef struct
 {
-#if defined(K32W1480_SERIES) || defined(K32W1) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
+#if IS_MCXW_SERIES_OR_RW_SERIES
     list_label_t list;
 #else
     list_t list;
 #endif
     uint32 u32ItemSize;
+    ZQueue_pfCallback pfCallback;
 }tszQueue;
 #else
 typedef struct
@@ -59,6 +62,7 @@ typedef struct
     void  *pvHead;                    /*< Points to the beginning of the queue storage area. */
     void  *pvWriteTo;                    /*< Points to the free next place in the storage area. */
     void  *pvReadFrom;                /*< Points to the free next place in the storage area. */
+    ZQueue_pfCallback pfCallback;
 }tszQueue;
 #endif
 
@@ -71,6 +75,7 @@ PUBLIC uint32 ZQ_u32QueueGetQueueMessageWaiting ( void*    pu8QueueHandle );
 PUBLIC void* ZQ_pvGetFirstElementOnQueue ( void* pvQueueHandle );
 PUBLIC void* ZQ_pvGetNextElementOnQueue ( void* pvQueueHandle, void* pvMsg );
 PUBLIC void ZQ_bQueueFlush(void *pvQueueHandle);
+PUBLIC void ZQ_vRegisterCallback(void *pvQueueHandle, ZQueue_pfCallback pfCallback);
 #endif /*ZQUEUE_H_*/
 
 /****************************************************************************/

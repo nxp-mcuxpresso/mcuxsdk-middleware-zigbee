@@ -43,7 +43,7 @@
 #ifdef WEAK
 #undef WEAK
 #endif
-#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES) && !defined(RW612_SERIES)
+#if IS_NOT_MCXW_SERIES_OR_RW_SERIES
 #include "rom_psector.h"
 #include "rom_api.h"
 #endif
@@ -728,7 +728,7 @@ PUBLIC  teZCL_Status eOTA_ClientSwitchToNewImage(uint8 u8SourceEndPointId)
     {
         if(!psOTA_Common->sOTACallBackMessage.sPersistedData.bIsNullImage)
         {
-#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES)
+#if IS_NOT_MCXW_SERIES_OR_RW_SERIES
             uint8 au8MagicNumbers[12] = {0};
             uint32 u32Offset;
 #if (defined JENNIC_CHIP_FAMILY_JN516x) || (defined JENNIC_CHIP_FAMILY_JN517x) || (defined APP0)
@@ -816,7 +816,7 @@ PUBLIC  teZCL_Status eOTA_ClientSwitchToNewImage(uint8 u8SourceEndPointId)
 #else
                 /* Indicate new image is available */
                 vOtaFlagNewImage();
-#if defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES)
+#if IS_MCXW_SERIES_OR_RW_SERIES
                 vOtaClientUpgMgrMapStates(E_CLD_OTA_STATUS_NORMAL,psEndPointDefinition,psOTA_Common);
                 eOtaSetEventTypeAndGiveCallBack(psOTA_Common, E_CLD_OTA_INTERNAL_COMMAND_SAVE_CONTEXT,psEndPointDefinition);
 #endif
@@ -824,7 +824,7 @@ PUBLIC  teZCL_Status eOTA_ClientSwitchToNewImage(uint8 u8SourceEndPointId)
 #endif
 
                 vOtaSwitchLoads();
-#if !defined(K32W1480_SERIES) && !defined(MCXW716A_SERIES) && !defined(MCXW716C_SERIES)
+#if IS_NOT_MCXW_SERIES_OR_RW_SERIES
             }
             else
             {

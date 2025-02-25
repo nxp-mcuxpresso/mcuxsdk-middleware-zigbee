@@ -166,7 +166,6 @@ PUBLIC  teZCL_Status eCLD_GroupsCreateGroups(
     vDLISTinitialise(&((tsCLD_GroupsCustomDataStructure*)psClusterInstance->pvEndPointCustomStructPtr)->lGroupsAllocList);
     vDLISTinitialise(&((tsCLD_GroupsCustomDataStructure*)psClusterInstance->pvEndPointCustomStructPtr)->lGroupsDeAllocList);
     #ifdef GROUPS_SERVER
-	    ZPS_tsAplAib *psAib;
         for(n=0; n < CLD_GROUPS_MAX_NUMBER_OF_GROUPS; n++)
         {
             /* add all header slots to the to free list */
@@ -174,9 +173,8 @@ PUBLIC  teZCL_Status eCLD_GroupsCreateGroups(
         }
         
         /* Get AIB find out group table capacity */
-        psAib = ZPS_psAplAibGetAib();
-
-        if(psAib->psAplApsmeGroupTable->u32SizeOfGroupTable < CLD_GROUPS_MAX_NUMBER_OF_GROUPS)
+        uint32_t u32GroupTableSize = ZPS_u32AplAibGetGroupTableSize();
+        if(u32GroupTableSize < CLD_GROUPS_MAX_NUMBER_OF_GROUPS)
         {
             return E_CLD_GROUPS_TABLE_SIZE_MISMATCH;
         }
@@ -186,9 +184,11 @@ PUBLIC  teZCL_Status eCLD_GroupsCreateGroups(
         u8ByteOffset = (psEndPointDefinition->u8EndPointNumber - 1) / 8;
         u8BitOffset  = (psEndPointDefinition->u8EndPointNumber - 1) % 8;
 
-        for(n = 0; n < psAib->psAplApsmeGroupTable->u32SizeOfGroupTable; n++)
+        for(n = 0; n < u32GroupTableSize; n++)
         {
-            if((psAib->psAplApsmeGroupTable->psAplApsmeGroupTableId[n].au8Endpoint[u8ByteOffset] & (1 << u8BitOffset)) != 0)
+            uint16 u16Groupid = ZPS_u16AplAibGetGroupTableEntryGroupId(n);
+            uint8 u8Endpoint = ZPS_u8AplAibGetGroupTableEntryEndpoint(n,u8ByteOffset);
+            if((u8Endpoint & (1 << u8BitOffset)) != 0)
             {
                 /* Get a free table entry */
                 psTableEntry = (tsCLD_GroupTableEntry*)psDLISTgetHead(&psCustomDataStructure->lGroupsDeAllocList);
@@ -202,7 +202,7 @@ PUBLIC  teZCL_Status eCLD_GroupsCreateGroups(
                 vDLISTaddToTail(&psCustomDataStructure->lGroupsAllocList, (DNODE*)psTableEntry);
 
                 /* Fill in table entry */
-                psTableEntry->u16GroupId = psAib->psAplApsmeGroupTable->psAplApsmeGroupTableId[n].u16Groupid;
+                psTableEntry->u16GroupId = u16Groupid;
                 memset(psTableEntry->au8GroupName, 0, sizeof(psTableEntry->au8GroupName));
             }
         }

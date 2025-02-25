@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE. 
 # 
-# Copyright 2015-2016 NXP
+# Copyright 2015-2016, 2024 NXP
 #
 ###############################################################################
 
@@ -88,6 +88,19 @@ ifeq ($(RAMOPT), 1)
 ZCLAPPSRC += $(NF_SRC)
 else
 APPSRC += $(NF_SRC)
+endif
+endif
+
+
+BDB_TKD_INC_DIR = $(ZIGBEE_BASE_DIR)/BDB/Source/TransportKeyDecider
+INCFLAGS += -I$(BDB_TKD_INC_DIR)
+ifneq ($(ZIGBEE_PLAT),NCP_HOST)
+BDB_TKD_SRC_DIR = $(ZIGBEE_BASE_DIR)/BDB/Source/TransportKeyDecider
+TKD_SRC := $(shell cd $(BDB_TKD_SRC_DIR); ls *.c)
+ifeq ($(RAMOPT), 1)
+ZCLAPPSRC += $(TKD_SRC)
+else
+APPSRC += $(TKD_SRC)
 endif
 endif
 
@@ -181,7 +194,7 @@ endif
 
 ###############################################################################
 ifeq ($(JENNIC_CHIP_FAMILY),$(filter $(JENNIC_CHIP_FAMILY),JN517x JN516x)) 
-BDB_SRC_DIR = $(BDB_COMN_SRC_DIR):$(ZIGBEE_COMN_SRC_DIR):$(BDB_NS_SRC_DIR):$(BDB_NF_SRC_DIR):$(BDB_TL_SRC_DIR):$(BDB_FB_INI_SRC_DIR): $(BDB_FB_TAR_SRC_DIR): $(BDB_OOB_SRC_DIR)
+BDB_SRC_DIR = $(BDB_COMN_SRC_DIR):$(ZIGBEE_COMN_SRC_DIR):$(BDB_NS_SRC_DIR):$(BDB_NF_SRC_DIR):$(BDB_TKD_SRC_DIR):$(BDB_TL_SRC_DIR):$(BDB_FB_INI_SRC_DIR): $(BDB_FB_TAR_SRC_DIR): $(BDB_OOB_SRC_DIR)
 else
-BDB_SRC_DIR = $(BDB_COMN_SRC_DIR):$(BDB_NS_SRC_DIR):$(BDB_NF_SRC_DIR):$(BDB_TL_SRC_DIR):$(BDB_FB_INI_SRC_DIR): $(BDB_FB_TAR_SRC_DIR): $(BDB_OOB_SRC_DIR)
+BDB_SRC_DIR = $(BDB_COMN_SRC_DIR):$(BDB_NS_SRC_DIR):$(BDB_NF_SRC_DIR):$(BDB_TKD_SRC_DIR):$(BDB_TL_SRC_DIR):$(BDB_FB_INI_SRC_DIR): $(BDB_FB_TAR_SRC_DIR): $(BDB_OOB_SRC_DIR)
 endif

@@ -83,7 +83,7 @@
  *
  ****************************************************************************/
 
-PUBLIC  void* pvZCL_HeapAlloc(void *pvPointer, uint32 u32BytesNeeded, bool_t bClear)
+PUBLIC WEAK void* pvZCL_HeapAlloc(void *pvPointer, uint32 u32BytesNeeded, bool_t bClear)
 {
     uint32 u32HeapStartAligned;
 

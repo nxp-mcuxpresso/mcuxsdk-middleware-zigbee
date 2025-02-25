@@ -31,9 +31,10 @@
 #include "ZQueue.h"
 #include "dbg.h"
 #include "pwrm.h"
+#include "zb_platform.h"
 
 #if ZIGBEE_USE_FRAMEWORK
-    #if defined(K32W1480_SERIES) || defined(K32W1) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
+    #if IS_MCXW_SERIES_OR_RW_SERIES
         #include "fsl_component_messaging.h"
     #else
         #include "Messaging.h"
@@ -47,7 +48,7 @@
     #endif
     /* Default memory allocator */
     #ifndef ZB_BufferAlloc
-        #if defined(K32W1480_SERIES) || defined(K32W1) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
+        #if IS_MCXW_SERIES_OR_RW_SERIES
             #define ZB_BufferAlloc(numBytes)   MSG_Alloc(numBytes)
         #else
             #define ZB_BufferAlloc(numBytes)   MEM_BufferAllocWithId(numBytes, gZbPoolId_d, (void*)__get_LR())
@@ -94,8 +95,9 @@ PUBLIC void ZQ_vQueueCreate ( tszQueue*       psQueueHandle,
                               const uint32    u32ItemSize,
                               uint8*          pu8StartQueue )
 {
+        psQueueHandle->pfCallback = NULL;
 #if ZIGBEE_USE_FRAMEWORK
-#if defined(K32W1480_SERIES) || defined(K32W1) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
+#if IS_MCXW_SERIES_OR_RW_SERIES
         LIST_Init(&psQueueHandle->list,u32QueueLength);
 #else
         ListInit(&psQueueHandle->list,u32QueueLength);
@@ -128,7 +130,7 @@ PUBLIC bool_t ZQ_bQueueSend ( void*          pvQueueHandle,
     tszQueue *psQueueHandle = (tszQueue *)pvQueueHandle;
     /* Put a message in a queue. */
 
-#if defined(K32W1480_SERIES) || defined(K32W1) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
+#if IS_MCXW_SERIES_OR_RW_SERIES
     if(LIST_GetAvailableSize(&psQueueHandle->list) || (0 == psQueueHandle->list.max))
 #else
     if(ListGetAvailable(&psQueueHandle->list) || (0 == psQueueHandle->list.max))
@@ -140,14 +142,17 @@ PUBLIC bool_t ZQ_bQueueSend ( void*          pvQueueHandle,
             FLib_MemCpy(pMsg, (void*)pvItemToQueue, psQueueHandle->u32ItemSize);
 
             /* Put a message in a queue. */
-#if defined(K32W1480_SERIES) || defined(K32W1) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
+#if IS_MCXW_SERIES_OR_RW_SERIES
             MSG_QueueAddTail(&psQueueHandle->list, pMsg);
 #else
             MSG_Queue(&psQueueHandle->list, pMsg);
 #endif
-
             /* Increase power manager activity count */
             PWRM_eStartActivity();
+            if (psQueueHandle->pfCallback)
+            {
+                psQueueHandle->pfCallback();
+            }
             OSA_InterruptEnable();
             return TRUE;
         }
@@ -172,9 +177,12 @@ PUBLIC bool_t ZQ_bQueueSend ( void*          pvQueueHandle,
         ( void ) memcpy( psQueueHandle->pvWriteTo, pvItemToQueue, psQueueHandle->u32ItemSize );
         psQueueHandle->u32MessageWaiting++;
         psQueueHandle->pvWriteTo += psQueueHandle->u32ItemSize;
-
         /* Increase power manager activity count */
         PWRM_eStartActivity();
+        if (psQueueHandle->pfCallback)
+        {
+            psQueueHandle->pfCallback();
+        }
         bReturn = TRUE;
     }
     MICRO_RESTORE_INTERRUPTS(u32Store);
@@ -189,13 +197,13 @@ PUBLIC bool_t ZQ_bQueueReceive ( void*    pvQueueHandle,
     OSA_InterruptDisable();
     tszQueue *psQueueHandle = (tszQueue *)pvQueueHandle;
 
-#if defined(K32W1480_SERIES) || defined(K32W1) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
+#if IS_MCXW_SERIES_OR_RW_SERIES
     if( MSG_QueueGetHead(&psQueueHandle->list))
 #else
     if( MSG_Pending(&psQueueHandle->list))
 #endif
     {
-#if defined(K32W1480_SERIES) || defined(K32W1) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
+#if IS_MCXW_SERIES_OR_RW_SERIES
         void* pMsg = MSG_QueueRemoveHead(&psQueueHandle->list);
 #else
         void* pMsg = MSG_DeQueue(&psQueueHandle->list);
@@ -290,7 +298,7 @@ PUBLIC void* ZQ_pvGetFirstElementOnQueue ( void* pvQueueHandle )
 {
 
 #if ZIGBEE_USE_FRAMEWORK
-#if defined(K32W1480_SERIES) || defined(K32W1) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
+#if IS_MCXW_SERIES_OR_RW_SERIES
     return LIST_GetHead(&((tszQueue *)pvQueueHandle)->list);
 #else
     return ListGetHeadMsg(&((tszQueue *)pvQueueHandle)->list);
@@ -317,7 +325,7 @@ PUBLIC void* ZQ_pvGetNextElementOnQueue ( void* pvQueueHandle, void* pvMsg )
 
 #if ZIGBEE_USE_FRAMEWORK
     void* pvReadFrom = NULL;
-#if defined(K32W1480_SERIES) || defined(K32W1) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES)
+#if IS_MCXW_SERIES_OR_RW_SERIES
     pvReadFrom = LIST_GetNext(pvMsg);
 #else
     pvReadFrom = ListGetNextMsg(pvMsg);
@@ -354,6 +362,11 @@ PUBLIC void ZQ_bQueueFlush (void *pvQueueHandle)
     MICRO_RESTORE_INTERRUPTS(u32Store);
 }
 #endif
+PUBLIC void ZQ_vRegisterCallback(void *pvQueueHandle, ZQueue_pfCallback pfCallback)
+{
+    tszQueue *psQueueHandle = (tszQueue *)pvQueueHandle;
+    psQueueHandle->pfCallback = pfCallback;
+}
 /****************************************************************************/
 /***        END OF FILE                                                   ***/
 /****************************************************************************/

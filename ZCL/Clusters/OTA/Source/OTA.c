@@ -45,7 +45,7 @@
 #ifndef TRACE_OTA_DEBUG
 #define TRACE_OTA_DEBUG FALSE
 #endif
-#if (defined JENNIC_CHIP_FAMILY_JN518x) && !(defined(NCP_HOST) || defined(K32W1480_SERIES) || defined(MCXW716A_SERIES) || defined(MCXW716C_SERIES) || defined(RW612_SERIES))
+#if IS_JN518x_SERIES
 #include "fsl_aes.h"
 #ifdef WEAK
 #undef WEAK

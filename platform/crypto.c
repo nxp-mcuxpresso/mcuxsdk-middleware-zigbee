@@ -46,6 +46,11 @@ uint32_t zbPlatCryptoRandom256Get(void)
     return RND_u32GetRand256();
 }
 
+int16_t zbPlatRngGetPseudoRandom(uint8_t* pOut, uint8_t outBytes, uint8_t* pSeed)
+{
+    return RNG_GetPseudoRandomNo(pOut, outBytes, pSeed);
+}
+
 void zbPlatCryptoAesHmacMmo(uint8_t *pu8Data, int iDataLen, void *key, void *hash)
 {
     return AESSW_vHMAC_MMO(pu8Data, iDataLen, (AESSW_Block_u *)key, (AESSW_Block_u *)hash);

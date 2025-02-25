@@ -1,5 +1,5 @@
 /*
-* Copyright 2023 NXP
+* Copyright 2023-2024 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -512,7 +512,33 @@ typedef enum
     E_SL_MSG_GET_FRAGMENTATION_SUPPORT              =   0x9081U,
     E_SL_MSG_GET_MAX_PAYLOAD_SIZE                   =   0x9082U,
     E_SL_MSG_SET_TC_LOCKDOWN_OVERRIDE               =   0x9083U,
-    E_SL_MSG_IS_COPROCESSOR_NEW_MODULE              =   0x9084U
+    E_SL_MSG_IS_COPROCESSOR_NEW_MODULE              =   0x9084U,
+    E_SL_MSG_GET_TRSP_KEY_DECIDER_TABLE_MAX_SIZE    =   0x9085U,
+    E_SL_MSG_GET_TRSP_KEY_DECIDER_TABLE_ENTRY       =   0x9086U,
+    E_SL_MSG_ADD_TRSP_KEY_DECIDER_TABLE_ENTRY       =   0x9087U,
+    E_SL_MSG_REMOVE_TRSP_KEY_DECIDER_TABLE_ENTRY    =   0x9088U,
+    E_SL_MSG_CLEAR_TRSP_KEY_DECIDER_TABLE           =   0x9089U,
+    E_SL_MSG_GET_TRSP_KEY_DECIDER_TABLE_POLICY      =   0x9090U,
+    E_SL_MSG_SET_TRSP_KEY_DECIDER_TABLE_POLICY      =   0x9091U,
+    E_SL_MSG_GET_GROUP_TABLE_SIZE                   =   0x9092U,
+    E_SL_MSG_GET_GROUP_TABLE_ENTRY_GROUP_ID         =   0x9093U,
+    E_SL_MSG_GET_GROUP_TABLE_ENTRY_ENDPOINT_ELEMENT =   0x9094U,
+    E_SL_MSG_NWK_CLEAR_DISC_NT                      =   0x9095U,
+    E_SL_MSG_GET_NUMBER_OF_NWK_DESCRIPTORS          =   0x9096U,
+    E_SL_MSG_GET_NWK_DESCRIPTOR                     =   0x9097U,
+    E_SL_MSG_JOIN_NETWORK                           =   0x9098U,
+    E_SL_MSG_FIND_KEY_DESCRIPTOR                    =   0x9099U,
+    E_SL_MSG_FIND_BIND_ENTRY_FOR_CLUSTER_ID         =   0x909AU,
+    E_SL_MSG_TC_STATUS                              =   0x909BU,
+    E_SL_MSG_ZDO_BIND_EVENT                         =   0x909CU,
+    E_SL_MSG_NWK_NIB_CLEAR_TABLES                   =   0x909DU,
+    E_SL_MSG_NWK_CLEAR_MAT_SET                      =   0x909EU,
+    E_SL_MSG_RESET_DATA_STRUCTURES                  =   0x909FU,
+    E_SL_MSG_SET_IGNORE_PROFILE_CHECK               =   0x90A0U,
+    E_SL_MSG_REGISTER_INTERPAN_FILTER               =   0x90A1U,
+    E_SL_MSG_MAC_SET_TX_BUFFERS                     =   0x90A2U,
+    E_SL_MSG_SEARCH_EXT_PANID                       =   0x90A3U,
+    E_SL_MSG_FORM_DISTRIBUTED_NETWORK               =   0x90A4U
 
 } teSL_MsgType;
 typedef enum

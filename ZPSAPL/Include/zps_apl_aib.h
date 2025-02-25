@@ -65,7 +65,7 @@
 #define apsSecurityTimeoutPeriod    u16ApsSecurityTimeOutPeriod
 #ifdef R23_UPDATES
 #define apsSupportedKeyNegotiationMethods u8ApsSupportedKeyNegotiationMethods
-#define apsSharedSecretsMask u8SharedSecretsMask
+#define apsSharedSecretsMask        u8SharedSecretsMask
 #define apsZdoRestrictedMode        bApsZdoRestrictedMode
 #endif
 
@@ -93,6 +93,10 @@
 #ifdef WWAH_SUPPORT
 #define ZPS_APL_WWAH_KEY_ROTATION        0x1
 #define ZPS_APL_WWAH_CONFIG_MODE         0x2
+#endif
+
+#ifdef R23_UPDATES
+#define ZPS_APL_FEATCAPAB_FCSYNC           1
 #endif
 
 
@@ -204,6 +208,7 @@ typedef struct
     uint8  au8LinkKey[ZPS_SEC_KEY_LENGTH];
     uint8  u8BitMapSecLevl;
 #ifdef R23_UPDATES
+    uint8 u8FeaturesCapabilities;
     uint8 u8InitialJoinAuth;
     uint8 u8PostJoinKeyUpdateMethod;
     uint8 u8KeyNegotiationMethod;
@@ -211,7 +216,7 @@ typedef struct
     struct
 	{
         uint8 u8KeyNegotiationState: 2;
-        uint8 u8PassphraseUpdateAllowed: 1;
+        uint8 bPassphraseUpdateAllowed: 1;
         uint8 u8PassphraseLen:       5; /* Len == 0 means Passphrase unset */
 	};
     uint8 au8Passphrase[ZPS_SEC_KEY_LENGTH];
@@ -341,15 +346,22 @@ PUBLIC ZPS_teStatus zps_eAplAibRemoveBindTableEntryForMacAddress( void *pvApl, u
 PUBLIC uint8 zps_u8AplAibGetDeviceApsKeyType(void *pvApl, uint64 u64IeeeAddress, bool_t bFindFixTclk);
 PUBLIC ZPS_teStatus zps_eAplAibSetDeviceApsKeyType(void *pvApl,uint64 u64IeeeAddress, uint8 u8KeyType);
 PUBLIC ZPS_tsAplApsKeyDescriptorEntry** zps_psAplDefaultTrustCenterAPSLinkKey(void *pvApl);
+PUBLIC uint32 zps_u32AplAibGetGroupTableSize(void *pvApl);
+PUBLIC uint16 zps_u16AplAibGetGroupTableEntryGroupId(void *pvApl, uint32 u32Index);
+PUBLIC uint8 zps_u8AplAibGetGroupTableEntryEndpoint(void *pvApl, uint32 u32Index, uint8 u8ByteOffset);
+PUBLIC bool zps_bAplAibFindBindTableEntryForClusterId( void *pvApl, uint16 u16ClusterId );
+
 #ifdef R23_UPDATES
 PUBLIC ZPS_teStatus zps_eAplAibAddChallengeReqEntry(void* pvApl, uint64 u64Addr, uint64 u64ChallengeValue);
 PUBLIC ZPS_teStatus zps_eAplAibRemoveChallengeReqEntry(void* pvApl, uint64 u64Addr);
 PUBLIC bool zps_eAplAibFindChallengeReqTableEntry(void* pvApl, uint64 u64Addr, ZPS_tsAplApsChallengeReqEntry **psChallengeReqEntry);
 PUBLIC ZPS_teStatus zps_eAplAibAddFragmentationTableEntry(void* pvApl, tuFragParams *psTlvFrag);
 PUBLIC bool zps_eAplAibFindFragmentationTableEntry(void* pvApl, uint16 u16Addr, ZPS_tsAplApsFragmentationEntry **psFragmentationEntry);
+PUBLIC ZPS_teStatus zps_eAplAibSetKeyNegotiationOptions(void *pvApl, uint8 u8Methods, uint8 u8SharedSecrets);
+PUBLIC ZPS_teStatus zps_eAplAibSetDeviceApsDlkPassphrase(void *pvApl, uint64 u64IeeeAddress, uint8 *pu8Passphrase, uint8 u8Len);
 #endif
 #if defined(R23_UPDATES) || defined(WWAH_SUPPORT)
-PUBLIC bool_t zps_bIsClusterReqWithApsKey ( uint8 u8Endpoint, uint16 u16ClusterId );
+PUBLIC bool_t zps_bIsClusterReqWithApsKey(void *pvApl, uint8 u8Endpoint, uint16 u16ClusterId, ZPS_tuAddress uAddr, bool_t bExt);
 #endif
 #ifdef WWAH_SUPPORT
 PUBLIC void ZPS_vAplExtdedAibSetWWAH ( uint8 u8BitmaskSet );
@@ -483,6 +495,43 @@ ZPS_AIB_INLINE ZPS_tsAplApsKeyDescriptorEntry** ZPS_psAplDefaultTrustCenterAPSLi
     return zps_psAplDefaultTrustCenterAPSLinkKey(ZPS_pvAplZdoGetAplHandle());
 }
 
+#ifdef R23_UPDATES
+ZPS_AIB_INLINE ZPS_teStatus ZPS_eAplAibSetKeyNegotiationOptions(uint8 u8Methods, uint8 u8SharedSecrets) ALWAYS_INLINE;
+ZPS_AIB_INLINE ZPS_teStatus ZPS_eAplAibSetKeyNegotiationOptions(uint8 u8Methods, uint8 u8SharedSecrets)
+{
+    return zps_eAplAibSetKeyNegotiationOptions(ZPS_pvAplZdoGetAplHandle(), u8Methods, u8SharedSecrets);
+}
+
+ZPS_AIB_INLINE ZPS_teStatus ZPS_eAplAibSetDeviceApsDlkPassphrase(uint64 u64IeeeAddress, uint8 *pu8Passphrase, uint8 u8Len) ALWAYS_INLINE;
+ZPS_AIB_INLINE ZPS_teStatus ZPS_eAplAibSetDeviceApsDlkPassphrase(uint64 u64IeeeAddress, uint8 *pu8Passphrase, uint8 u8Len)
+{
+    return zps_eAplAibSetDeviceApsDlkPassphrase(ZPS_pvAplZdoGetAplHandle(), u64IeeeAddress, pu8Passphrase, u8Len);
+}
+#endif
+
+ZPS_AIB_INLINE uint32 ZPS_u32AplAibGetGroupTableSize(void) ALWAYS_INLINE;
+ZPS_AIB_INLINE uint32 ZPS_u32AplAibGetGroupTableSize(void)
+{
+    return zps_u32AplAibGetGroupTableSize(ZPS_pvAplZdoGetAplHandle());
+}
+
+ZPS_AIB_INLINE PUBLIC uint16 ZPS_u16AplAibGetGroupTableEntryGroupId(uint32 u32Index) ALWAYS_INLINE;
+ZPS_AIB_INLINE PUBLIC uint16 ZPS_u16AplAibGetGroupTableEntryGroupId(uint32 u32Index)
+{
+    return zps_u16AplAibGetGroupTableEntryGroupId(ZPS_pvAplZdoGetAplHandle(), u32Index);
+}
+
+ZPS_AIB_INLINE PUBLIC uint8 ZPS_u8AplAibGetGroupTableEntryEndpoint(uint32 u32Index, uint8 u8ByteOffset) ALWAYS_INLINE;
+ZPS_AIB_INLINE PUBLIC uint8 ZPS_u8AplAibGetGroupTableEntryEndpoint(uint32 u32Index, uint8 u8ByteOffset)
+{
+    return zps_u8AplAibGetGroupTableEntryEndpoint(ZPS_pvAplZdoGetAplHandle(), u32Index, u8ByteOffset);
+}
+
+ZPS_AIB_INLINE PUBLIC bool ZPS_bAplAibFindBindTableEntryForClusterId(uint16 u16ClusterId) ALWAYS_INLINE;
+ZPS_AIB_INLINE PUBLIC bool ZPS_bAplAibFindBindTableEntryForClusterId(uint16 u16ClusterId)
+{
+    return zps_bAplAibFindBindTableEntryForClusterId(ZPS_pvAplZdoGetAplHandle(), u16ClusterId);
+}
 /****************************************************************************/
 /****************************************************************************/
 /****************************************************************************/

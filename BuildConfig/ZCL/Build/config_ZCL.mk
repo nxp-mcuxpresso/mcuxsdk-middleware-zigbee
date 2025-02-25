@@ -36,7 +36,11 @@
 RAMOPT ?= 0
 OTA    ?= 0
 # Get ZigBee stack makefile requirements
+ifneq ($(ZIGBEE_PLAT),NCP_HOST)
 include $(SDK_BASE_DIR)/middleware/wireless/zigbee/BuildConfig/ZBPro/Build/config_ZBPro.mk
+else
+include $(ZIGBEE_BASE_DIR)/BuildConfig/ZBPro/Build/config_ZBPro.mk
+endif
 
 ###############################################################################
 ZCIF_BASE        = $(ZIGBEE_BASE_DIR)/ZCIF

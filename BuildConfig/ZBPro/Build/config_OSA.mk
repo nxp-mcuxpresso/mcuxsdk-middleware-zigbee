@@ -8,22 +8,37 @@
 USE_FREERTOS ?= 0
 
 ifeq ($(USE_FREERTOS), 1)
-FREERTOS_INC         = $(SDK2_BASE_DIR)/rtos/amazon-freertos/lib/include
-FREERTOS_SRC         = $(SDK2_BASE_DIR)/rtos/amazon-freertos/lib/FreeRTOS
-FREERTOS_MM_SRC      = $(SDK2_BASE_DIR)/rtos/amazon-freertos/lib/FreeRTOS/portable/MemMang
-FREERTOS_PORT_SRC    = $(SDK2_BASE_DIR)/rtos/amazon-freertos/lib/FreeRTOS/portable/GCC/ARM_CM3
+    ifeq ($(ZIGBEE_PLAT), K32W0)
+        FREERTOS_INC         = $(SDK2_BASE_DIR)/rtos/amazon-freertos/lib/include
+        FREERTOS_SRC         = $(SDK2_BASE_DIR)/rtos/amazon-freertos/lib/FreeRTOS
+        FREERTOS_MM_SRC      = $(SDK2_BASE_DIR)/rtos/amazon-freertos/lib/FreeRTOS/portable/MemMang
+        FREERTOS_PORT_SRC    = $(SDK2_BASE_DIR)/rtos/amazon-freertos/lib/FreeRTOS/portable/GCC/ARM_CM3
+    endif
+    ifeq ($(ZIGBEE_PLAT), K32W1)
+        FREERTOS_INC         = $(SDK2_BASE_DIR)/rtos/freertos/freertos-kernel/include
+        FREERTOS_SRC         = $(SDK2_BASE_DIR)/rtos/freertos/freertos-kernel/
+        FREERTOS_MM_SRC      = $(SDK2_BASE_DIR)/middleware/wireless/framework/Common/rtos/freertos
+        FREERTOS_PORT_SRC    = $(SDK2_BASE_DIR)/rtos/freertos/freertos-kernel/portable/GCC/ARM_CM33_NTZ/non_secure
+    endif
 endif
 
 ifeq ($(USE_FREERTOS), 1)
-    APPSRC += event_groups.c
-    APPSRC += list.c
-    APPSRC += queue.c
-    APPSRC += stream_buffer.c
-    APPSRC += tasks.c
-    APPSRC += timers.c
-    APPSRC += heap_4.c
-    APPSRC += port.c
-    APPSRC += fsl_os_abstraction_free_rtos.c
+        APPSRC += event_groups.c
+        APPSRC += list.c
+        APPSRC += queue.c
+        APPSRC += stream_buffer.c
+        APPSRC += tasks.c
+        APPSRC += timers.c
+        APPSRC += port.c
+        APPSRC += fsl_os_abstraction_free_rtos.c
+    ifeq ($(ZIGBEE_PLAT), K32W0)
+        APPSRC += heap_4.c
+    endif
+    ifeq ($(ZIGBEE_PLAT), K32W1)
+        APPSRC += croutine.c
+        APPSRC += portasm.c
+        APPSRC += heap_mem_manager.c
+    endif
 else
     APPSRC += fsl_os_abstraction_bm.c
 endif

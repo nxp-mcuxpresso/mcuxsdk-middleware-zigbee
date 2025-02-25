@@ -271,6 +271,7 @@ PUBLIC void vDisplayAPSTable(void)
         DBG_vPrintf(TRACE_ZBP_UTILS, "Incoming FC: %d\n", tsAplAib->pu32IncomingFrameCounter[i]);
         DBG_vPrintf(TRACE_ZBP_UTILS, "Outgoing FC: %d\n", tsAplAib->psAplDeviceKeyPairTable->psAplApsKeyDescriptorEntry[i].u32OutgoingFrameCounter);
 #ifdef R23_UPDATES
+        DBG_vPrintf(TRACE_ZBP_UTILS, "Features   : x%x\n", tsAplAib->psAplDeviceKeyPairTable->psAplApsKeyDescriptorEntry[i].u8FeaturesCapabilities);
         DBG_vPrintf(TRACE_ZBP_UTILS, "Verified FC: %d\n", tsAplAib->pbVerifiedFrameCounter[i]);
 #endif
     }

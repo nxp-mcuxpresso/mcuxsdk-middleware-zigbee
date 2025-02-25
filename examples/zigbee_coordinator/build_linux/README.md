@@ -1,81 +1,102 @@
 
 # 1. General description
 
-<p>The purpose of this demo is to demonstrate the capabilities of the K32W1480 SoC when used as a Zigbee NCP together with a Zigbee Coordinator application running on the iMX8 (or x86) platform under Linux. </p>
+<p>The purpose of this demo is to demonstrate the capabilities of the NXP Wireless SoC when used as a Zigbee NCP together with a Zigbee Coordinator application running on the iMX8 (or x86) platform under Linux. </p>
 
 <p>The demo showcases how to connect a Zigbee End Device to the network formed by the Zigbee Coordinator and toggle the RGB LED available on the device. </p>
 
 <p>A step-by-step guide to the hardware and software configurations are provided, as well as the steps needed to be executed in order to get the boards up and running.</p>
 
+List of supported NXP Wireless SoC to act as coprocessor:
+
+* K32W148
+
+* MCXW71
+
+* K32W061
+
 # 2. Required Hardware
 
 * 1 x iMX8M-EVK board running Linux - Host 
 
-* 1 x K32W148-EVK board or 1 x K32W061 DK6 board – Zigbee NCP coprocessor
+* 1 x K32W148-EVK board or 1 x K32W061 DK6 board or 1 x FRDM-MCXW71 board – Zigbee NCP coprocessor
 
 * 1 x K32W061 DK6 board - Zigbee End Device 
 
 ## 2.1. iMX8 board configuration 
 
 <p>Ensure that SW801 on the IMX8 EVK board is configured for SD card boot.
-For more information see the following starting guide for IMX8M EVK board: https://www.nxp.com/document/guide/getting-started-with-the-i-mx-8m-plus-evk:GS-iMX-8M-Plus-EVK. </p>
+For more information see the following starting guide for iMX8M EVK board: https://www.nxp.com/document/guide/getting-started-with-the-i-mx-8m-plus-evk:GS-iMX-8M-Plus-EVK. </p>
 
 ## 2.2. Zigbee NCP coprocessor board configuration
 
-<p>The Zigbee NCP coprocessor can be either a K32W148-EVK board or a K32W061 DK6 board. After the board is properly configured it should be connected to the iMX8M board using a 
+<p>The Zigbee NCP coprocessor can be either of the SoCs listed in the supported platforms. After the board is properly configured it should be connected to the iMX8M board using a 
 standard micro USB cable that will be also used for power delivery to the board.</p>
 
-### 2.2.1 K32W148 board configuration
+### 2.2.1 K32W148 EVK/FRDM-MCXW71 board configuration
 
-<p>For the detailed board configuration, see the “Getting Started with MCUXpresso SDK for K32W148-EVK.pdf” guide, part of the K32W148 SDK. </p>
+<p>For the detailed K32W148 EVK board configuration, see the “Getting Started with MCUXpresso SDK for K32W148-EVK.pdf” guide, part of the K32W148 SDK. </p>
+<p>For the detailed FRDM-MCXW71 board configuration, see the “Getting Started with MCUXpresso SDK for FRDM-MCXW71.pdf” guide, part of the FRDMMCXW71 SDK. </p>
 <p>Ensure that the debug firmware on the board is J-Link. If this is not the case, follow the steps in chapter 7 of the aforementioned document to update the firmware accordingly.</p>
-<p>The board should be updated with the binary image `k32w148evk_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the K32W148 SDK.</p>
+<p>The board should be updated with the binary image `k32w148evk_zigbee_coprocessor_bm.axf`/`frdmmcxw71_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the K32W148/FRDMMCXW71 SDK.</p>
 
-### 2.2.2 K32W061 board configuration
+### 2.2.2 K32W061 DK6 board configuration
 
 <p>For the detailed board configuration, see the “Getting Started with MCUXpresso SDK for K32W061.pdf” guide, part of the K32W061 SDK. </p>
 <p>Ensure that the debug firmware on the board is DK6 Flash Programmer. For additional information, please you the aforementioned document together with the 
 DK6-UG-3127-Production-Flash-Programmer.pdf document.</p>
 <p>The board should be updated with the binary image `k32w061dk6_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the K32W061 SDK.</p>
 
-## 2.3. K32W061 board configuration (ZED RX ON)
+## 2.3. K32W061 DK6 board configuration (ZED RX ON)
 
 <p>For the detailed board configuration see the “Getting Started with MCUXpresso SDK for K32W061.pdf” guide, part of the K32W061 SDK</p>
 
 # 3. Building
 
-<p>The building process has small differences depending on the host (iMX8 or x86) on which the Zigbee Coordinator application is running on. For the x86 platform it allows 
-for user configurable options in terms of MCUXPRESSO SDK package and Mbedtls package. The Mbedtls package is required for the encryption/decryption capabilities needed to 
-obtain a secured Serial Link.</p>
+<p>The building process has small differences depending on the host (iMX8 or x86) on which the Zigbee Coordinator application is running on. The user has also the option to cross-compile the Coordinator application under x86 Linux distribution</p>
+
+### Environment Setup
+
+The NCP Host offers toolchain files that can be used to compile and cross compile the applications. They are available at ZIGBEE_BASE/platform/NCP_HOST/cmake/toolchains and should be provided to cmake `-DCMAKE_TOOLCHAIN_FILE` command line argument:
+-   `x86_64-linux-gnu.cmake` - toolchain file for x86 compile
+-   `arm-linux` - toolchain file for imx8 cross-compile
+
+The armgcc toolchain was obtained from official Arm GNU Toolchain website and by default the toolchain file relies on this particular configuration. User can change through environment variables and cmake arguments the default behavior. 
+-   `ARMGCC_DIR` - path to installed toolchain
+-   `TOOLCHAIN_NAME` - toolchain name
+
+The Mbedtls package is required for the encryption/decryption capabilities needed to obtain a secured Serial Link. There are three options to obtain the mbedlts library, options configurable through cmake command line arguments:
+-   `CONFIG_MBEDTLS_SOURCE=SDK` - Mbedtls package is obtained from MCUXPRESSO SDK 
+-   `CONFIG_MBEDTLS_SOURCE=GIT` - Mbedtls package is retrieved from git official repository
+-   `CONFIG_MBEDTLS_SOURCE=SYSTEM` - Mbedtls package is used as a preinstalled package
+
+
+Examples for cross-compile:
+-   `cmake .. -DCMAKE_TOOLCHAIN_FILE=$PWD/../../../../platform/NCP_HOST/cmake/toolchains/arm-linux.cmake -DCONFIG_MBEDTLS_SOURCE=SYSTEM` - Cross-compile for imx8 with mbedtls as a preinstalled package. The toolchain file provided detects that machine type is imx8
+-   `cmake .. -DCMAKE_TOOLCHAIN_FILE=$PWD/../../../../platform/NCP_HOST/cmake/toolchains/arm-linux.cmake -DTOOLCHAIN_NAME=aarch64-linux-gnu` - Cross-compile for imx8 with toolchain available for Ubuntu 22.04
+
 
 ## 3.1. iMX8 platform 
 
-<p>Create a directory `out` under the `build_linux` directory and issue the cmake command with the `MACHINE=imx8` option. The mbedtls package is preinstalled in the provided 
+<p>Create a directory `out` under the `build_linux` directory and issue the cmake command with the `MACHINE_TYPE=imx8` option. The mbedtls package is preinstalled in the provided 
 Board Support Package (BSP).</p>
 
-<p>The user has the option to cross-compile the Coordinator application under x86 Linux distribution. The toolchain to be used should be provided through the `ARMGCC_DIR` 
-environment variable.</p>
 
 ```
->$ cd out ; cmake .. -DMACHINE=imx8 
--- The C compiler identification is GNU 11.4.0
--- The CXX compiler identification is GNU 11.4.0
+>$ cd out ; cmake .. -DMACHINE_TYPE=imx8 
+-- The C compiler identification is GNU 13.2.1
+-- The CXX compiler identification is GNU GNU 13.2.1
 -- Detecting C compiler ABI info
 -- Detecting C compiler ABI info - done
--- Check for working C compiler: /usr/bin/cc - skipped
+-- Check for working C compiler: /usr/bin/aarch64-none-linux-gnu-gcc - skipped
 -- Detecting C compile features
 -- Detecting C compile features - done
 -- Detecting CXX compiler ABI info
 -- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Check for working CXX compiler: /usr/bin/aarch64-none-linux-gnu-c++ - skipped
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
--- Using Zigbee root path /home/zb-linux-coord/zigbee/
--- Using preinstalled MbedTLS package
-CMake Warning at CMakeLists.txt:277 (message):
-  Compiling for x86
-
-
+-- Using preinstalled MbedTLS package /usr/local/mbedtls/cmake
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/zb-linux-coord/zigbee/examples/zigbee_coordinator/build_linux/out 
@@ -90,7 +111,7 @@ Issue the command `make` to execute the newly generated Makefile.
 [  2%] Building C object CMakeFiles/pdum_static.dir/home/zb-linux-coord/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_dbg.c.o
 [  3%] Building C object CMakeFiles/pdum_static.dir/home/zb-linux-coord/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_nwk.c.o
 [  4%] Linking C static library pdum/lib/libpdum.a
-[  4%] Built target pdum_static
+[  4%] Built target ncphost-PDUM
 [  5%] Building C object CMakeFiles/zb_coord_linux.dir/home/zb-linux-coord/zigbee/examples/zigbee_coordinator/zigbee/examples/zigbee_coordinator/src/linux/pdum_gen_glue.c.o
 [  6%] Building C object CMakeFiles/zb_coord_linux.dir/home/zb-linux-coord/zigbee/examples/zigbee_coordinator/zigbee/examples/zigbee_coordinator/src/app_coordinator_ncp.c.o
 . . .
@@ -103,14 +124,6 @@ Issue the command `make` to execute the newly generated Makefile.
 
 <p>The Zigbee Coordinator demo application was compiled and verified on a x86 Linux distribution (Ubuntu 22.04.2 LTS). The CMakeFile of the application determines as a prebuild step
 if the application was provided as part of a MCUXPRESSO SDK package or as standalone Zigbee module. Depending on the SDK package existence, the Mbedtls can be used either from within the SDK package, as a preinstalled package or it can be obtained from official git repository (version 2.28.0). </p>
-
-### Environment Setup
-
-For the x86 platform, the user can provide a MCUXPRESSO SDK path and a method to obtain the Mbedtls package through environment variables:
--   `export NXP_SDK_BASE=/home/mcu-sdk-2.0/` - example on how to provide MCUXPRESSO SDK path
--   `export MBEDTLS_ORIGIN=SDK` - Mbedtls package is obtained from MCUXPRESSO SDK 
--   `export MBEDTLS_ORIGIN=GIT` - Mbedtls package is retrieved from git official repository
--   `export MBEDTLS_ORIGIN=SYSTEM` - Mbedtls package is used as a preinstalled package
 
 ### MCUXPRESSO SDK package
 
@@ -130,18 +143,12 @@ For the x86 platform, the user can provide a MCUXPRESSO SDK path and a method to
 -- Check for working CXX compiler: /usr/bin/c++ - skipped
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
--- Found MCUXPRESSO SDK internal
--- Using SDK root path /home/mcu-sdk-2.0
--- Using Zigbee root path /home/mcu-sdk-2.0/middleware/wireless/zigbee
--- Using mbedtls from SDK
+-- Found MCUXPRESSO SDK
+-- Using SDK root path /home/mcu-sdk
 -- Build mbedtls from SDK source code
-CMake Warning at CMakeLists.txt:277 (message):
-  Compiling for x86
-
-
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/mcu-sdk-2.0/middleware/wireless/zigbee/examples/zigbee_coordinator/build_linux/out 
+-- Build files have been written to: /home/mcu-sdk/middleware/wireless/zigbee/examples/zigbee_coordinator/build_linux/out 
 ```
 
 Issue the command `make` to execute the newly generated Makefile.
@@ -149,18 +156,68 @@ Issue the command `make` to execute the newly generated Makefile.
 ```
 >[b06830_local@fsr-ub1864-125 out]$ make 
 
-[  1%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum.c.o
-[  1%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_apl.c.o
-[  2%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_dbg.c.o
-[  2%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_nwk.c.o
+[  1%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum.c.o
+[  1%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_apl.c.o
+[  2%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_dbg.c.o
+[  2%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_nwk.c.o
 [  3%] Linking C static library pdum/lib/libpdum.a
-[  3%] Built target pdum_static
+[  3%] Built target ncphost-PDUM
 [  3%] Building C object mbedtls/library/CMakeFiles/ncp-host-mbedcrypto.dir/aes.c.o
 . . .
-[ 99%] Building C object CMakeFiles/zb_coord_linux.dir/home/mcu-sdk-2.0/middleware/wireless/zigbee//examples/zigbee_coordinator/zigbee/ZCL/Clusters/OTA/Source/OTA.c.o
+[ 99%] Building C object CMakeFiles/zb_coord_linux.dir/home/mcu-sdk/middleware/wireless/zigbee//examples/zigbee_coordinator/zigbee/ZCL/Clusters/OTA/Source/OTA.c.o
 [100%] Linking C executable zb_coord_linux
 [100%] Built target zb_coord_linux
 ```
+
+The following error might appear, which indicates that the SDK Mbedtls version is too old: 
+
+```
+-- SDK MBEDTLS version is below 2.28, use CONFIG_MBEDTLS_SOURCE as GIT or SYSTEM instead
+CMake Error at /home/mcu-sdk/middleware/wireless/zigbee/platform/NCP_HOST/cmake/NxpZbNcpHostConfig.cmake:46 (message):
+Call Stack (most recent call first):
+  CMakeLists.txt:32 (include)
+```
+
+If so, switch the Mbedtls origin to GIT instead, by building with the following commands:
+
+```
+>$ cd out ; cmake -DCONFIG_MBEDTLS_SOURCE=GIT ..
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found MCUXPRESSO SDK internal
+-- Using SDK root path /home/mcu-sdk
+-- Populate mbedtls repository
+Cloning into 'repo'...
+HEAD is now at 8b3f26a5ac Merge pull request #868 from ARMmbed/mbedtls-2.28.0rc0-pr
+...
+
+-- Found Python3: /usr/bin/python3.10 (found version "3.10.12") found components: Interpreter
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS - Success
+-- Looking for pthread.h
+-- Looking for pthread.h - found
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/zb-linux-coord/zigbee/examples/zigbee_coordinator/build_linux/out 
+```
+
+Then issue the command `make` as usual to execute the newly generated Makefile.
+
 
 ### Standalone Zigbee module
 
@@ -183,9 +240,11 @@ Create a directory `out` under the `build_linux` directory and issue the cmake c
 -- Check for working CXX compiler: /usr/bin/c++ - skipped
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
--- Using Zigbee root path /home/zb-linux-coord/zigbee/
--- Using mbedtls from GIT
--- Clone mbedtls repository
+-- Populate mbedtls repository
+Cloning into 'repo'...
+HEAD is now at 8b3f26a5ac Merge pull request #868 from ARMmbed/mbedtls-2.28.0rc0-pr
+...
+
 -- Found Python3: /usr/bin/python3.10 (found version "3.10.12") found components: Interpreter
 -- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS
 -- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS - Success
@@ -211,7 +270,7 @@ Issue the command `make` to execute the newly generated Makefile.
 [  2%] Building C object CMakeFiles/pdum_static.dir/home/zb-linux-coord/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_dbg.c.o
 [  3%] Building C object CMakeFiles/pdum_static.dir/home/zb-linux-coord/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_nwk.c.o
 [  4%] Linking C static library pdum/lib/libpdum.a
-[  4%] Built target pdum_static
+[  4%] Built target ncphost-PDUM
 [  5%] Building C object CMakeFiles/zb_coord_linux.dir/home/zb-linux-coord/zigbee/examples/zigbee_coordinator/zigbee/examples/zigbee_coordinator/src/linux/pdum_gen_glue.c.o
 [  6%] Building C object CMakeFiles/zb_coord_linux.dir/home/zb-linux-coord/zigbee/examples/zigbee_coordinator/zigbee/examples/zigbee_coordinator/src/app_coordinator_ncp.c.o
 . . .
@@ -245,15 +304,12 @@ Example to start the Zigbee NCP Coordinator:
 [0] ZQ: Initialised a queue: Handle=565f3700 Length=20 ItemSize=4
 [0] ZQ: Initialised a queue: Handle=565f3728 Length=38 ItemSize=4
 [0] serial Link initialised
-[0]
-eOTA_NewImageLoaded status = 1
+[0] eOTA_NewImageLoaded status = 1
 [2] New max process gap 1
 [2] Pkt Type 0010 Set New Max Response Time 2
 [212] New max process gap 210
 [226] Pkt Type 0012 Set New Max Response Time 13
-zps_eAplZdoGetDeviceType - hardwired coord
 [1178] Recovered Application State 0 On Network 0
-zps_eAplZdoGetDeviceType - hardwired coord
 >
 ```
 
@@ -262,8 +318,6 @@ zps_eAplZdoGetDeviceType - hardwired coord
 ```
 [3259] Form
 [3259] APP-EVT: Event 8, NodeState=0
-zps_eAplZdoGetDeviceType - hardwired coord
-zps_eAplZdoGetDeviceType - hardwired coord
 [3267] BDB: Forming Centralized Nwk
 [3285] Pkt Type 0024 Set New Max Response Time 18
 [3285] APP-EVT: Request Nwk Formation 00
@@ -271,7 +325,7 @@ zps_eAplZdoGetDeviceType - hardwired coord
 [3805] BDB: APP_vGenCallback [0 4]
 ZPS_vSetTCLockDownOverride
 [3805] APP-BDB: NwkFormation Success
-[3805] APP-ZDO: Network started Channel = 13
+[3805] APP-ZDO: Network started Channel = 12
 ```
 
 ## 4.3. Steer the network

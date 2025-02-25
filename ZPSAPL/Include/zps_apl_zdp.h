@@ -780,6 +780,10 @@ typedef struct {
 } ZPS_tsAplZdpSecurityChallengeReq;
 
 typedef struct {
+    uint8  u8TlvTypeTagId;
+} ZPS_tsAplZdpSecurityRetrieveAuthTokenReq;
+
+typedef struct {
     uint64 u64JoinerAddr;
     bool_t bNoNwkKey;
     uint8  u8SelectedKeyNegotiationMethod;
@@ -1263,10 +1267,13 @@ typedef struct {
 } ZPS_tsAplZdpSecurityStartKeyUpdateRsp;
 
 typedef struct {
+    uint8                  u8OverallStatus;
+    uint8                  *pu8Passphrase;
+} ZPS_tsAplZdpSecurityRetrieveAuthTokenRsp;
+
+typedef struct {
     uint64                  u64PartnerAddr;
-    CRYPTO_ecdhPublicKey_t  *psPublicKey;
     CRYPTO_ecdhPublicKey_t  *psPartnerPublicKey;
-    CRYPTO_ecdhPrivateKey_t *psSecretKey;
 #ifdef CRYPTO_ECDH_P256
     uint8                   au8PublicPointY[32];
 #endif
@@ -1770,6 +1777,14 @@ PUBLIC ZPS_teStatus zps_eAplZdpSecurityStartKeyUpdateRequest(
     bool bExtAddr,
     uint8 *pu8SeqNumber,
     ZPS_tsAplZdpSecurityStartKeyUpdateReq *psZdpSecurityStartKeyUpdateReq);
+
+PUBLIC ZPS_teStatus zps_eAplZdpSecurityRetrieveAuthTokenRequest(
+    void *pvApl,
+    PDUM_thAPduInstance hAPduInst,
+    ZPS_tuAddress uDstAddr,
+    bool bExtAddr,
+    uint8 *pu8SeqNumber,
+    ZPS_tsAplZdpSecurityRetrieveAuthTokenReq *psZdpSecurityRetrieveAuthTokenReq);
 
 PUBLIC ZPS_teStatus zps_eAplZdpSecurityStartKeyNegotiationRequest(
     void *pvApl,
@@ -2656,6 +2671,23 @@ ZPS_APL_INLINE ZPS_teStatus ZPS_eAplZdpSecurityStartKeyUpdateRequest(
 {
     return zps_eAplZdpSecurityStartKeyUpdateRequest(ZPS_pvAplZdoGetAplHandle(), hAPduInst,
             uDstAddr, bExtAddr, pu8SeqNumber, psZdpSecurityStartKeyUpdateReq);
+}
+
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplZdpSecurityRetrieveAuthTokenRequest(
+    PDUM_thAPduInstance hAPduInst,
+    ZPS_tuAddress uDstAddr,
+    bool bExtAddr,
+    uint8 *pu8SeqNumber,
+    ZPS_tsAplZdpSecurityRetrieveAuthTokenReq *psZdpSecurityRetrieveAuthTokenReq) ZPS_ZDP_ALWAYS_INLINE;
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplZdpSecurityRetrieveAuthTokenRequest(
+    PDUM_thAPduInstance hAPduInst,
+    ZPS_tuAddress uDstAddr,
+    bool bExtAddr,
+    uint8 *pu8SeqNumber,
+    ZPS_tsAplZdpSecurityRetrieveAuthTokenReq *psZdpSecurityRetrieveAuthTokenReq)
+{
+    return zps_eAplZdpSecurityRetrieveAuthTokenRequest(ZPS_pvAplZdoGetAplHandle(), hAPduInst,
+            uDstAddr, bExtAddr, pu8SeqNumber, psZdpSecurityRetrieveAuthTokenReq);
 }
 
 ZPS_APL_INLINE ZPS_teStatus ZPS_eAplZdpSecurityStartKeyNegotiationRequest(

@@ -15,6 +15,64 @@
 #include "jendefs.h"
 #include "EmbeddedTypes.h"
 
+#define IS_K32W1_SERIES                                                        \
+      (                                                                        \
+       defined(K32W1480_SERIES)                                             || \
+       defined(K32W1)                                                          \
+      )
+#define IS_NOT_K32W1_SERIES (!(IS_K32W1_SERIES))
+
+#define IS_MCXW71_SERIES                                                       \
+      (                                                                        \
+       IS_K32W1_SERIES                                                      || \
+       defined(MCXW716A_SERIES)                                             || \
+       defined(MCXW716C_SERIES)                                                \
+      )
+#define IS_NOT_MCXW71_SERIES (!(IS_MCXW71_SERIES))
+
+#define IS_MCXW72_SERIES                                                       \
+      (                                                                        \
+       defined(MCXW727A_cm33_core0_SERIES)                                  || \
+       defined(MCXW727C_cm33_core0_SERIES)                                  || \
+       defined(MCXW727D_cm33_core0_SERIES)                                  || \
+       defined(MCXW728A_cm33_core0_SERIES)                                  || \
+       defined(MCXW728D_cm33_core0_SERIES)                                  || \
+       defined(MCXW72B1_cm33_core0_SERIES)                                  || \
+       defined(MCXW72BD_cm33_core0_SERIES)                                     \
+      )
+#define IS_NOT_MCXW72_SERIES (!(IS_MCXW72_SERIES))
+
+#define IS_MCXW7x_SERIES                                                       \
+       (                                                                       \
+        IS_MCXW71_SERIES                                                    || \
+        IS_MCXW72_SERIES                                                       \
+       )
+#define IS_NOT_MCXW7x_SERIES (!(IS_MCXW7x_SERIES))
+
+/* Placeholder when we add next MCXW series */
+#define IS_MCXW_SERIES          (IS_MCXW7x_SERIES)
+#define IS_NOT_MCXW_SERIES      (!IS_MCXW7x_SERIES)
+
+/* Placeholder when we add next RW/IW series */
+#define IS_RW_SERIES            (defined(RW612_SERIES))
+#define IS_NOT_RW_SERIES        (!(defined(RW612_SERIES)))
+
+#define IS_MCXW_SERIES_OR_RW_SERIES     (IS_MCXW_SERIES || IS_RW_SERIES)
+#define IS_NOT_MCXW_SERIES_OR_RW_SERIES (!(IS_MCXW_SERIES_OR_RW_SERIES))
+
+#define IS_MCXW_SERIES_OR_RW_SERIES_OR_NCP                                    \
+        (IS_MCXW_SERIES_OR_RW_SERIES ||                                       \
+         defined(NCP_HOST))
+#define IS_NOT_MCXW_SERIES_OR_RW_SERIES_OR_NCP \
+          !(IS_MCXW_SERIES_OR_RW_SERIES_OR_NCP)
+
+#define IS_MCXW_SERIES_OR_NCP            ((IS_MCXW_SERIES) || defined(NCP_HOST))
+#define IS_NOT_MCXW_SERIES_OR_NCP        (!IS_MCXW_SERIES_OR_NCP)
+
+#define IS_JN518x_SERIES                                                       \
+        defined(JENNIC_CHIP_FAMILY_JN518x) &&                                  \
+        IS_NOT_MCXW_SERIES_OR_RW_SERIES_OR_NCP
+
 /* Select the Elliptic curve: P-256 or Curve25519 */
 //#define CRYPTO_ECDH_P256
 //#define  CRYPTO_ECDH_CURVE25519
@@ -156,6 +214,7 @@ bool_t zbPlatCryptoEcdhGenerateKeys(CRYPTO_ecdhPublicKey_t *psPublicKey, CRYPTO_
 bool_t zbPlatCryptoEcdhComputeDhKey(CRYPTO_ecdhPrivateKey_t *psSecretKey, CRYPTO_ecdhPublicKey_t *psPeerPublicKey, CRYPTO_ecdhDhKey_t *psOutEcdhKey, const uint8_t* pu8BasePointG);
 fpZbRngPrng_t zbPlatRngGetPrngFunc(void);
 void* zbPlatRngGetPrngContext(void);
+int16_t zbPlatRngGetPseudoRandom(uint8_t* pOut, uint8_t outBytes, uint8_t* pSeed);
 
 /* Boot-time functions */
 void zbPlatWdogResetCheckSource(void);

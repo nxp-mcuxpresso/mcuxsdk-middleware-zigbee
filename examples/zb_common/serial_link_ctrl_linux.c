@@ -117,10 +117,10 @@ PUBLIC teSL_Status eSL_SerialInit(void)
 
     /* Create OS Queue for waiting for receiving fully parsed serial command
      * from 68 */
-    ZQ_vQueueCreate(&sSL_FreeRtosCommon.serialQueueHandle, 20UL, 0x04UL, NULL);
+    ZQ_vQueueCreate(&sSL_FreeRtosCommon.serialQueueHandle, 20UL, sizeof(uintptr_t), NULL);
 
     /* Create queue for receiving characters from the UART */
-    ZQ_vQueueCreate(&sSL_FreeRtosCommon.serialRxUartQueueHandle, MAX_RX_SERIAL_BUFFERS, 0x04UL, NULL);
+    ZQ_vQueueCreate(&sSL_FreeRtosCommon.serialRxUartQueueHandle, MAX_RX_SERIAL_BUFFERS, sizeof(uintptr_t), NULL);
 
     return E_SL_SUCCESS;
 }
@@ -144,14 +144,14 @@ PUBLIC teSL_Status eSL_SerialInit(void)
  ********************************************************************************/
 PUBLIC uint8 vSL_CheckAndHandleSerialMsg(void)
 {
-    uint32 u32Msg;
+    uintptr_t uiMsg;
     bool_t pBT = FALSE;
     pBT = ZQ_bQueueReceive(&sSL_FreeRtosCommon.serialRxUartQueueHandle,
-                           (void*)&u32Msg);
+                           (void*)&uiMsg);
     if(pBT == TRUE)
     {
         /*Call vProcessSerialCommand function*/
-        vProcessIncomingSerialCommands((uint8*)u32Msg);
+        vProcessIncomingSerialCommands((uint8*)uiMsg);
     }
     return (uint8)pBT;
 }
@@ -173,14 +173,14 @@ PUBLIC uint8 vSL_CheckAndHandleSerialMsg(void)
  ********************************************************************************/
 PUBLIC void vSL_CheckAndHandleSerialLogMsg(void)
 {
-    uint32 u32Msg;
+    uintptr_t uiMsg;
     bool_t pBT = FALSE;
     pBT = ZQ_bQueueReceive(&sSL_FreeRtosCommon.serialRxUartQueueHandle,
-                           (void*)&u32Msg);
+                           (void*)&uiMsg);
     if(pBT == TRUE)
     {
         /*Call vProcessSerialCommand function*/
-        vProcessIncomingSerialLogCommand((uint8*)u32Msg);
+        vProcessIncomingSerialLogCommand((uint8*)uiMsg);
     }
 
 }
@@ -290,7 +290,7 @@ PUBLIC uint8 *pu8SL_GetRxMessageFromSerialQueue(uint16 u16MsgTypeTransmitted)
 
     uint16 u16SRxPktType;
 
-    uint32 u32Msg;
+    uintptr_t uiMsg;
     bool pBT;
 
     sSL_FreeRtosCommon.rxSerialRspTimerHandle = u32RspTimerPeriod;
@@ -300,10 +300,10 @@ PUBLIC uint8 *pu8SL_GetRxMessageFromSerialQueue(uint16 u16MsgTypeTransmitted)
 #ifndef MULTI_TASK_ENABLED
         (void)vSL_CheckAndHandleSerialMsg();
 #endif
-        pBT = ZQ_bQueueReceive(&sSL_FreeRtosCommon.serialQueueHandle, (void*)&u32Msg);
+        pBT = ZQ_bQueueReceive(&sSL_FreeRtosCommon.serialQueueHandle, (void*)&uiMsg);
         if(pBT == TRUE)
         {
-            pu8RxBuffer =(uint8*)u32Msg;
+            pu8RxBuffer =(uint8*)uiMsg;
             uint16 u16Code = ((uint16)*(pu8RxBuffer+SL_MSG_TYPE_MSB_IDX)) << 8U;
             u16Code += *(pu8RxBuffer+SL_MSG_TYPE_LSB_IDX);
             /* 8 and 9 bits in the received message represents message type */
@@ -315,18 +315,18 @@ PUBLIC uint8 *pu8SL_GetRxMessageFromSerialQueue(uint16 u16MsgTypeTransmitted)
             {
                 //(void)ZTIMER_eStop(sSL_FreeRtosCommon.rxSerialRspTimerHandle);
                 sSL_FreeRtosCommon.rxSerialRspTimerHandle = 0;
-                return (uint8*)u32Msg;
+                return (uint8*)uiMsg;
             }
             else if (u16Code == (uint16)E_SL_MSG_HOST_JN_NACK)
             {
                 //(void)ZTIMER_eStop(sSL_FreeRtosCommon.rxSerialRspTimerHandle);
                 sSL_FreeRtosCommon.rxSerialRspTimerHandle = 0;
-                vSL_FreeRxBuffer((uint8*)u32Msg);
+                vSL_FreeRxBuffer((uint8*)uiMsg);
                 return NULL;
             }
             else
             {
-                vSL_FreeRxBuffer((uint8*)u32Msg);
+                vSL_FreeRxBuffer((uint8*)uiMsg);
                  DBG_vPrintf((bool_t)TRUE, "u16SRxPktType = 0x%04x u16MsgTypeTransmitted = 0x%04x\r\n", u16SRxPktType, u16MsgTypeTransmitted);
             }
         }
@@ -423,21 +423,21 @@ PUBLIC void vSL_PostMessageToSerialRxQueue(void *pvMessage)
  ********************************************************************************/
 PUBLIC void vSL_EmptyStatusMsgQueue(void)
 {
-    uint32 u32Msg;
+    uintptr_t uiMsg;
     bool pBT = TRUE;
 
     while (pBT == TRUE)
     {
-        pBT = ZQ_bQueueReceive(&sSL_FreeRtosCommon.serialQueueHandle, (void*)&u32Msg);
+        pBT = ZQ_bQueueReceive(&sSL_FreeRtosCommon.serialQueueHandle, (void*)&uiMsg);
         if(pBT == TRUE)
         {
             uint16 u16SRxPktType;
-            uint8* pu8RxBuffer =(uint8*)u32Msg;
+            uint8* pu8RxBuffer =(uint8*)uiMsg;
             u16SRxPktType = ((uint16)*(pu8RxBuffer+8)) << 8U;
             u16SRxPktType += *(pu8RxBuffer+9);
             DBG_vPrintf((bool_t)TRUE, "Throw away status type %04x\n", u16SRxPktType);
 
-            vSL_FreeRxBuffer((uint8*)u32Msg);
+            vSL_FreeRxBuffer((uint8*)uiMsg);
         }
         /* stops once the queue is empty and pBT is set false */
     }

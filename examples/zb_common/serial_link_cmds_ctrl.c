@@ -1,5 +1,5 @@
 /*
-* Copyright 2023 NXP
+* Copyright 2023-2024 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -17,11 +17,16 @@
 #include "jendefs.h"
 #include "app_zcl_task.h"
 #include "app_common.h"
+#include "app_main.h"
 #include "serial_link_ctrl.h"
 #include "serial_link_cmds_ctrl.h"
 #include <string.h>
 #include "dbg.h"
 #include "zps_apl_zdo.h"
+#include "bdb_api.h"
+#if (BDB_SET_DEFAULT_TC_POLICY == TRUE)
+#include "bdb_tkd.h"
+#endif
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -66,7 +71,8 @@ PRIVATE bool_t bIsInProgramMode;
 
 #define ZERO_KEY {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 
-ZPS_tsAplApsKeyDescriptorEntry s_keyPairTableStorage[3] = {
+ZPS_tsAplApsKeyDescriptorEntry s_keyPairTableStorage[4] = {
+        {0, 0x0000, ZERO_KEY, 0x00},
         {0, 0x0000, ZERO_KEY, 0x00},
         {0, 0x0000, ZERO_KEY, 0x00},
         {0, 0x0000, ZERO_KEY, 0x00}
@@ -75,10 +81,17 @@ ZPS_tsAplApsKeyDescriptorEntry s_keyPairTableStorage[3] = {
 ZPS_tsAplApsKeyDescriptorEntry  *psAplDefaultDistributedAPSLinkKey = &s_keyPairTableStorage[0];
 ZPS_tsAplApsKeyDescriptorEntry  *psAplDefaultGlobalAPSLinkKey = &s_keyPairTableStorage[1];
 ZPS_tsAplApsKeyDescriptorEntry  *psAplDefaultTCAPSLinkKey = &s_keyPairTableStorage[2];
+ZPS_tsAplApsKeyDescriptorEntry  *psAplTCAPSLinkKey = &s_keyPairTableStorage[3];
+
 uint8 u8NwkKey;
 
 uint32 u32ApsChannelMask[MAX_NUM_OF_CHANNEL_MASK] =
         {0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000};
+
+uint8 u8NumberOfNetworks;
+ZPS_tsNwkNetworkDescr psNwkDescriptors[ZPS_NWK_MAX_DISC_NWK_DESCRS]; 
+
+ZPS_tsAplApsKeyDescriptorEntry sKeyDescriptorEntry = {0, 0x0000, ZERO_KEY, 0x00};
 
 /****************************************************************************/
 /***        Exported Functions                                            ***/
@@ -254,7 +267,7 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
         *pu8RxBuffer = SL_MSG_TYPE_OL_RESETED;
         /* post a message to ESI (App) task */
 
-        APP_vPostToAppQueue (&pu8Msg);
+        APP_vPostToAppQueue ((void*)&pu8Msg);
     }
     break;
     case (uint16)E_SL_MSG_EVENT_OL_REALIGN:
@@ -379,7 +392,7 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
         /* Update 1st byte that will indicates the new node parent indication */
         *pu8RxBuffer = SL_MSG_TYPE_NODE_PARENT;
         /* post message to the App Task queue */
-        APP_vPostToAppQueue(&pu8Msg);
+        APP_vPostToAppQueue((void*)&pu8Msg);
         break;
 
     case (uint16)E_SL_MSG_JEN_OS_ERROR:
@@ -416,7 +429,7 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
         *pu8RxBuffer = SL_MSG_TYPE_ZDP_MSG;
         /* post message to the App Task queue */
 
-        APP_vPostToAppQueue(&pu8Msg);
+        APP_vPostToAppQueue((void*)&pu8Msg);
         break;
     case (uint16)E_SL_MSG_DATA_INDICATION:
     case (uint16)E_SL_MSG_DATA_ACK:
@@ -435,7 +448,7 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
         APP_vPostToZclQueue(pu8Msg);
 
         /* post to App queue for diagnostic stack */
-        APP_vPostToAppQueue(&pu8Msg);
+        APP_vPostToAppQueue((void*)&pu8Msg);
         break;
 
     case (uint16)E_SL_MSG_INTERPAN_DATA_INDICATION:
@@ -478,19 +491,21 @@ PUBLIC void vProcessIncomingSerialCommands(uint8 *pu8RxBuffer)
     case (uint16)E_SL_MSG_ZPS_FRAME_COUNTER_HIGH:
     case (uint16)E_SL_MSG_NWK_ROUTE_DISCOVERY:
     case (uint16)E_SL_MSG_PANID_CNFL_INDICATION:
+    case (uint16)E_SL_MSG_TC_STATUS:
+    case (uint16)E_SL_MSG_ZDO_BIND_EVENT:
 
         if (u16PktType == (uint16)E_SL_MSG_NETWORK_JOINED_FORMED)
         {
             uint32 u32Stop = zbPlatGetTime();
 
-            DBG_vPrintf((bool_t)TRUE, "Nwk formation took %d MS\n", (u32Stop - u32FormationStartTime));
+            DBG_vPrintf((bool_t)TRUE, "Nwk formation/joining took %d MS\n", (u32Stop - u32FormationStartTime));
             vSL_SetStandardResponsePeriod();
         }
 
         /* Update 1st byte that will indicates the Network indication */
         *pu8RxBuffer = SL_MSG_TYPE_NWK;
         /* post message to the App Task queue */
-        APP_vPostToAppQueue(&pu8Msg);
+        APP_vPostToAppQueue((void*)&pu8Msg);
         break;
 
     default:
@@ -1020,6 +1035,49 @@ PUBLIC void vSL_HandleNwkEvent(
         u8TempStatus = (uint8)ZPS_NWK_ENUM_NO_NETWORKS;
         psStackEvent->uEvent.sNwkJoinFailedEvent.bRejoin = (bool_t)FALSE;
     }
+    else if(u16PktType == (uint16)E_SL_MSG_TC_STATUS)
+    {
+        /* Update Event type */
+        psStackEvent->eType = ZPS_EVENT_TC_STATUS;
+
+        /* Copy TC status */
+        uint8 u8TcStatus = *(pu8Msg+u16Len++);
+        psStackEvent->uEvent.sApsTcEvent.u8Status = u8TcStatus;
+
+        switch (u8TcStatus) 
+        {
+        case ZPS_APL_APS_E_SECURED_LINK_KEY:
+        case ZPS_APL_APS_E_SECURITY_FAIL:
+        {
+            psStackEvent->uEvent.sApsTcEvent.uTcData.u64ExtendedAddress = u64SL_ConvBiToU64(pu8Msg+u16Len);
+            u16Len += sizeof(uint64);
+        }
+        break;
+        case ZPS_E_SUCCESS:
+        {
+            /* Copy outgoing frame counter */
+            psAplTCAPSLinkKey->u32OutgoingFrameCounter = u32SL_ConvBiToU32(pu8Msg+u16Len);
+            u16Len += (uint16)sizeof(uint32);
+
+            /* Copy ext address lookup */
+            psAplTCAPSLinkKey->u16ExtAddrLkup = ((uint16)*(pu8Msg+u16Len++))  << 8U;
+            psAplTCAPSLinkKey->u16ExtAddrLkup += *(pu8Msg+u16Len++);
+
+            /* Copy TC APS link key */
+            (void)ZBmemcpy( psAplTCAPSLinkKey->au8LinkKey, pu8Msg, ZPS_SEC_KEY_LENGTH);
+            u16Len += ZPS_SEC_KEY_LENGTH;
+
+            /* Copy bitmap sec level */
+            psAplTCAPSLinkKey->u8BitMapSecLevl = *(pu8Msg+u16Len++);
+
+            psStackEvent->uEvent.sApsTcEvent.uTcData.pKeyDesc = psAplTCAPSLinkKey;
+        }
+        break;
+        default:
+            DBG_vPrintf(TRUE, "Unhandled ZPS_EVENT_TC_STATUS status %x", u8TcStatus);
+            break;
+        }
+    }
     else if (u16PktType == (uint16)E_SL_MSG_NWK_ED_SCAN)
     {
         /* Update NWK Event type */
@@ -1065,6 +1123,34 @@ PUBLIC void vSL_HandleNwkEvent(
         /* Update NWK Route Discovery Event NWK status */
         psStackEvent->uEvent.sNwkRouteDiscoveryConfirmEvent.u8NwkStatus = *(pu8Msg+u16Len++);
     }
+    else if(u16PktType == (uint16)E_SL_MSG_ZDO_BIND_EVENT)
+    {
+        /* Update Event type */
+        psStackEvent->eType = ZPS_EVENT_ZDO_BIND;
+
+        /* Copy destination address mode */
+        uint8 u8DstAddrMode = *(pu8Msg+u16Len++);
+        psStackEvent->uEvent.sZdoBindEvent.u8DstAddrMode = u8DstAddrMode;
+
+        /* Copy destination address */
+        if(ZPS_E_ADDR_MODE_IEEE == u8DstAddrMode)
+        {
+            psStackEvent->uEvent.sZdoBindEvent.uDstAddr.u64Addr = u64SL_ConvBiToU64(pu8Msg+u16Len);
+            u16Len += sizeof(uint64);
+        }
+        else
+        {
+            psStackEvent->uEvent.sZdoBindEvent.uDstAddr.u16Addr = ((uint16)*(pu8Msg+u16Len++))  << 8U;
+            psStackEvent->uEvent.sZdoBindEvent.uDstAddr.u16Addr += *(pu8Msg+u16Len++);
+        }
+
+        /* Copy source endpoint */
+        psStackEvent->uEvent.sZdoBindEvent.u8SrcEp = *(pu8Msg+u16Len++);
+
+        /* Copy desination endpoint */
+        psStackEvent->uEvent.sZdoBindEvent.u8DstEp = *(pu8Msg+u16Len++);
+
+    }
     else if (u16PktType == (uint16)E_SL_MSG_ZPS_ERROR )
     {
         psStackEvent->eType  = ZPS_EVENT_ERROR;
@@ -1076,7 +1162,7 @@ PUBLIC void vSL_HandleNwkEvent(
         if (psStackEvent->uEvent.sAfErrorEvent.eError == ZPS_ERROR_OS_MESSAGE_QUEUE_OVERRUN)
         {
             /* Update the OS Error Message */
-            psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage = (void *)u32SL_ConvBiToU32(pu8Msg+u16Len);
+            psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorOsMessageOverrun.hMessage = (void *)(uintptr_t)u32SL_ConvBiToU32(pu8Msg+u16Len);
             u16Len += (uint16)sizeof(uint32);
             u8TempStatus = (uint8)JN_ERROR_OS_MESSAGE_QUEUE_OVERRUN;
         }
@@ -1113,7 +1199,7 @@ PUBLIC void vSL_HandleNwkEvent(
             /* Update Event Error Data Source Endpoint */
             psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorApdu.u8SrcEndpoint = *(pu8Msg+u16Len++);
             /* Update Event Error Data APDU */
-            psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorApdu.hAPdu = (PDUM_thAPdu)u32SL_ConvBiToU32(pu8Msg+u16Len);
+            psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorApdu.hAPdu = (PDUM_thAPdu)(uintptr_t)u32SL_ConvBiToU32(pu8Msg+u16Len);
             u16Len += sizeof(uint32);
             /* Update Event Error Data Data Size */
             psStackEvent->uEvent.sAfErrorEvent.uErrorData.sAfErrorApdu.u16DataSize = ((uint16)*(pu8Msg+u16Len++)) << 8U;
@@ -1791,6 +1877,30 @@ PUBLIC uint16 u16GetApsKeyTableSize(void)
     /* Send over serial */
     (void)u8SL_WriteMessage((uint16)E_SL_MSG_GET_APS_KEY_TABLE_SIZE, 0U, NULL, &u16TableSize);
     return u16TableSize;
+}
+
+/********************************************************************************
+  *
+  * @fn PUBLIC uint16 u16GetApsKeyTableSize
+  *
+  */
+ /**
+  *
+  *
+  * @brief Attempt to read a complete message from the serial link
+  *
+  * @return TRUE if a complete valid message has been received
+  *
+  * @note
+  *
+  * imported description
+ ********************************************************************************/
+PUBLIC uint32 u32GetApsGroupTableSize(void)
+{
+    uint32 u32TableSize = 0U;
+    /* Send over serial */
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_GET_GROUP_TABLE_SIZE, 0U, NULL, &u32TableSize);
+    return u32TableSize;
 }
 
 /********************************************************************************
@@ -3803,80 +3913,6 @@ PUBLIC ZPS_teStatus eSendGetClearMacIfTxCount(uint8 u8GetClear,
 
 /********************************************************************************
   *
-  * @fn PUBLIC uint8 u8SendStrtRouter
-  *
-  */
- /**
-  *
-  * @param pu8NwkKey uint8 *
-  * @param u64Epid uint64
-  * @param u64TCAddr uint64
-  * @param u8KSN uint8
-  * @param u8Channel uint8
-  * @param u16NwkAddr uint16
-  * @param u16PanId uint16
-  *
-  * @brief void
-  *
-  * @return PUBLIC uint8
-  *
-  * @note
-  *
- ********************************************************************************/
-PUBLIC uint8 u8SendStrtRouter( uint8 *pu8NwkKey,
-                               uint64 u64Epid,
-                               uint64 u64TCAddr,
-                               uint8 u8KSN,
-                               uint8 u8Channel,
-                                 uint16 u16NwkAddr,
-                                 uint16 u16PanId)
-{
-    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], u8Status;
-    uint16 u16TxLength = 0x00U;
-    uint8 *pu8TxBuffer;
-
-    pu8TxBuffer = au8TxSerialBuffer;
-
-    /* Copy Network Key */
-    (void)ZBmemcpy(pu8TxBuffer, pu8NwkKey, 16UL);
-    u16TxLength += 16U;
-    pu8TxBuffer += 16;
-
-    /* Copy Extended PAN ID */
-    vSL_ConvU64ToBi( u64Epid, pu8TxBuffer);
-    u16TxLength += sizeof(uint64);
-    pu8TxBuffer += sizeof(uint64);
-
-    /* Copy Trust Center Address */
-    vSL_ConvU64ToBi( u64TCAddr, pu8TxBuffer);
-    u16TxLength += sizeof(uint64);
-    pu8TxBuffer += sizeof(uint64);
-
-    /* Copy Key Sequence Number */
-    *pu8TxBuffer++  = u8KSN;
-    u16TxLength++;
-
-    /* Copy Channel */
-    *pu8TxBuffer++  = u8Channel;
-    u16TxLength++;
-
-    /* Copy Network Address */
-    *pu8TxBuffer++ = (uint8)(u16NwkAddr >> 8U);
-    *pu8TxBuffer++ = (uint8)u16NwkAddr;
-    u16TxLength += sizeof(uint16);
-
-    /* Copy PAN ID */
-    *pu8TxBuffer++ = (uint8)(u16PanId >> 8U);
-    *pu8TxBuffer++ = (uint8)u16PanId;
-    u16TxLength += sizeof(uint16);
-
-    /* Send over serial */
-    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_START_ROUTER, u16TxLength, au8TxSerialBuffer, NULL);
-    return u8Status;
-}
-
-/********************************************************************************
-  *
   * @fn PUBLIC uint8 u8SendCloneZed
   *
   */
@@ -4408,11 +4444,11 @@ union
         upBuf.pu8 = au8Response;
         u32Outgoing = *upBuf.pu32;
         u32Incoming = *(upBuf.pu32 + 1);   /* points to au8Response[4] */
-        DBG_vPrintf((bool_t)TRUE, "Device %016llx has Out FC %08x and In FC %08x\n", u64Address, u32Outgoing, u32Incoming);
+        DBG_vPrintf((bool_t)TRUE, "Device %016lx has Out FC %08x and In FC %08x\n", u64Address, u32Outgoing, u32Incoming);
     }
     else
     {
-        DBG_vPrintf((bool_t)TRUE, "Device %016llx not found\n", u64Address);
+        DBG_vPrintf((bool_t)TRUE, "Device %016lx not found\n", u64Address);
     }
     return u8Status;
 }
@@ -6035,6 +6071,103 @@ PUBLIC uint16 zps_u16AplAibGetDeviceKeyPairTableSize(void *pvApl)
 
 /********************************************************************************
   *
+  * @fn PUBLIC uint64 zps_u16AplAibGetGroupTableSize
+  *
+  */
+ /**
+  *
+  * @param pvApl void *
+  *
+  * @brief Attempt to read a complete message from the serial link
+  *
+  * @return APS group table size
+  *
+  * @note
+  *
+  * imported description
+ ********************************************************************************/
+PUBLIC uint32 zps_u32AplAibGetGroupTableSize(void *pvApl)
+{
+    return u32GetApsGroupTableSize();
+}
+
+/********************************************************************************
+  *
+  * @fn PUBLIC uint16 zps_u16AplAibGetGroupTableEntryGroupId
+  *
+  */
+ /**
+  *
+  * @param pvApl void *
+  *
+  * @brief Attempt to read a complete message from the serial link
+  *
+  * @return group ID member of group table entry 
+  *
+  * @note
+  *
+  * imported description
+ ********************************************************************************/
+PUBLIC uint16 zps_u16AplAibGetGroupTableEntryGroupId(void *pvApl, uint32 u32Index)
+{
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
+    uint16 u16TxLength = 0x00U;
+    uint16 u16GroupId = 0x00U;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy u32Index */
+    vSL_ConvU32ToBi(u32Index, pu8TxBuffer);
+    pu8TxBuffer += sizeof(uint32);
+    u16TxLength += sizeof(uint32);
+
+    /* Send over serial */
+    u8SL_WriteMessage((uint16)E_SL_MSG_GET_GROUP_TABLE_ENTRY_GROUP_ID, u16TxLength, au8TxSerialBuffer, &u16GroupId);
+
+    return u16GroupId;
+}
+
+/********************************************************************************
+  *
+  * @fn PUBLIC uint8 zps_u8AplAibGetGroupTableEntryEndpoint
+  *
+  */
+ /**
+  *
+  * @param pvApl void *
+  *
+  * @brief Attempt to read a complete message from the serial link
+  *
+  * @return element of endpoint member of group table entry 
+  *
+  * @note
+  *
+  * imported description
+ ********************************************************************************/
+PUBLIC uint8 zps_u8AplAibGetGroupTableEntryEndpoint(void *pvApl, uint32 u32Index, uint8 u8ByteOffset)
+{
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
+    uint16 u16TxLength = 0x00U;
+    uint8 u8Endpoint = 0x00U;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy u32Index */
+    vSL_ConvU32ToBi(u32Index, pu8TxBuffer);
+    pu8TxBuffer += sizeof(uint32);
+    u16TxLength += sizeof(uint32);
+
+    /* Copy u8ByteOffset */
+    *pu8TxBuffer++ = u8ByteOffset;
+    u16TxLength += sizeof(uint8);
+
+    /* Send over serial */
+    u8SL_WriteMessage((uint16)E_SL_MSG_GET_GROUP_TABLE_ENTRY_ENDPOINT_ELEMENT, u16TxLength, au8TxSerialBuffer, &u8Endpoint);
+
+    return u8Endpoint;
+}
+/********************************************************************************
+  *
   * @fn PUBLIC uint64 zps_tsAplAibGetDeviceKeyPairTableEntry
   *
   */
@@ -7090,7 +7223,7 @@ PUBLIC uint32_t* zps_pu32AplAibGetApsChannelMask(void *pvApl, uint8_t *u8Channel
         u32ApsChannelMask[i++] = u32SL_ConvBiToU32(au8Mask+u8Index);
         u8Index += sizeof(uint32);
     }
-    return &u32ApsChannelMask;
+    return (uint32*)&u32ApsChannelMask;
 }
 
 /********************************************************************************
@@ -7563,21 +7696,176 @@ PUBLIC ZPS_teStatus zps_eAfVerifyKeyReqRsp ( void* pvApl,  uint64 u64DstAddr,  u
 }
 PUBLIC ZPS_teStatus zps_eAplZdoJoinNetwork(void *pvApl, ZPS_tsNwkNetworkDescr *psNetworkDescr)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return 0;
+    uint8 au8TxSerialBuffer[40];
+    uint8 *pu8TxBuffer;
+    uint8 u8Status;
+    uint16 u16TxLength = 0x00U;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy psNetworkDescr->u64ExtPanId */
+    vSL_ConvU64ToBi( psNetworkDescr->u64ExtPanId, pu8TxBuffer);
+    pu8TxBuffer += sizeof(uint64);
+    u16TxLength += sizeof(uint64);
+
+    /* Copy psNetworkDescr->u8LogicalChan */
+    *pu8TxBuffer = psNetworkDescr->u8LogicalChan;
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+
+    /* Copy psNetworkDescr->u8StackProfile */
+    *pu8TxBuffer = psNetworkDescr->u8StackProfile;
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+
+    /* Copy psNetworkDescr->u8ZigBeeVersion */
+    *pu8TxBuffer = psNetworkDescr->u8ZigBeeVersion;
+    pu8TxBuffer += sizeof(uint8);    
+    u16TxLength += sizeof(uint8);
+
+    /* Copy psNetworkDescr->u8PermitJoining */
+    *pu8TxBuffer = psNetworkDescr->u8PermitJoining;
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+
+    /* Copy psNetworkDescr->u8RouterCapacity */
+    *pu8TxBuffer = psNetworkDescr->u8RouterCapacity;
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+
+    /* Copy psNetworkDescr->u8EndDeviceCapacity */
+    *pu8TxBuffer = psNetworkDescr->u8EndDeviceCapacity;
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+
+#ifdef WWAH_SUPPORT
+    /* Copy psNetworkDescr->u8ParentCapacity */
+    *pu8TxBuffer = psNetworkDescr->u8ParentCapacity;
+    pu8TxBuffer += sizeof(uint8);
+    u16TxLength += sizeof(uint8);
+#endif
+    vSL_SetLongResponsePeriod();
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_JOIN_NETWORK, u16TxLength, au8TxSerialBuffer, NULL);
+    vSL_SetStandardResponsePeriod();
+    return u8Status;
 }
+
 PUBLIC ZPS_tsAplApsKeyDescriptorEntry *zps_psFindKeyDescr(void *pvApl,  uint64 u64DeviceAddr,  uint32* pu32Index)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return NULL;
+    uint8 au8TxSerialBuffer[40];
+    uint8 *pu8TxBuffer;
+    uint8 u8Status;
+    uint8 u8Index = 0;
+    uint16 u16TxLength = 0x00U;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    uint8 au8FindKeyDescResp[27];
+
+    /* Copy u64DeviceAddr */
+    vSL_ConvU64ToBi(u64DeviceAddr, pu8TxBuffer);
+    pu8TxBuffer += sizeof(uint64);
+    u16TxLength += sizeof(uint64);
+
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_FIND_KEY_DESCRIPTOR, u16TxLength, au8TxSerialBuffer, au8FindKeyDescResp);
+
+    if (u8Status == ZPS_E_SUCCESS)
+    {
+        
+        /* Copy sKeyDescriptorEntry.u32OutgoingFrameCounter */
+        sKeyDescriptorEntry.u32OutgoingFrameCounter = u32SL_ConvBiToU32(&au8FindKeyDescResp[u8Index]);
+        u8Index += sizeof(uint32);
+
+        /* Copy sKeyDescriptorEntry.u16ExtAddrLkup */
+        sKeyDescriptorEntry.u16ExtAddrLkup = ((uint32)au8FindKeyDescResp[u8Index++] << 8U);
+        sKeyDescriptorEntry.u16ExtAddrLkup += (uint32)au8FindKeyDescResp[u8Index++];
+        
+        /*Copy sKeyDescriptorEntry.au8LinkKey */
+        memcpy(sKeyDescriptorEntry.au8LinkKey, &au8FindKeyDescResp[u8Index], ZPS_SEC_KEY_LENGTH);
+        u8Index += ZPS_SEC_KEY_LENGTH;
+
+        /* sKeyDescriptorEntry.u8BitMapSecLevl */
+        sKeyDescriptorEntry.u8BitMapSecLevl = au8FindKeyDescResp[u8Index];
+        u8Index += sizeof(uint8);
+
+        /* Copy u32Index */
+        *pu32Index = u32SL_ConvBiToU32(&au8FindKeyDescResp[u8Index]);
+        u8Index += sizeof(uint32);
+        
+        return &sKeyDescriptorEntry;
+    }
+    else
+    {
+        return NULL;
+    }
 }
+
 PUBLIC ZPS_teStatus zps_eAplFormDistributedNetworkRouter(
     void *pvApl ,
     ZPS_tsAftsStartParamsDistributed *psStartParms,
     bool_t bSendDevice)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return 0;
+    uint8 au8TxSerialBuffer[40];
+    uint8 *pu8TxBuffer;
+    uint8 u8Status,i;
+    uint16 u16TxLength = 0x00U;
+    bool bRandomKey = (psStartParms->pu8NwkKey == NULL)? TRUE: FALSE;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* copy psStartParms->u64ExtPanId */
+    vSL_ConvU64ToBi(psStartParms->u64ExtPanId, pu8TxBuffer);
+    u16TxLength += sizeof(uint64);
+    pu8TxBuffer += sizeof(uint64);
+
+    /* if pu8NwkKey is not null, send key, else send 0 (random key) */ 
+    if(bRandomKey == FALSE)
+    {
+        (void)ZBmemcpy(pu8TxBuffer, psStartParms->pu8NwkKey, ZPS_SEC_KEY_LENGTH);
+    }
+    else
+    {
+        (void)ZBmemset(pu8TxBuffer, 0x0U, ZPS_SEC_KEY_LENGTH);
+    }
+    u16TxLength += ZPS_SEC_KEY_LENGTH;
+    pu8TxBuffer += ZPS_SEC_KEY_LENGTH;
+
+    /* copy psStartParms->u16PanId */ 
+    *pu8TxBuffer++ = (uint8)(psStartParms->u16PanId >> 8U);
+    *pu8TxBuffer++ = (uint8)(psStartParms->u16PanId);
+    u16TxLength += sizeof(uint16);
+
+    /* copy psStartParms->u16NwkAddr */ 
+    *pu8TxBuffer++ = (uint8)(psStartParms->u16NwkAddr >> 8U);
+    *pu8TxBuffer++ = (uint8)(psStartParms->u16NwkAddr);
+    u16TxLength += sizeof(uint16);
+
+    /* copy psStartParms->u8KeyIndex */ 
+    *pu8TxBuffer = psStartParms->u8KeyIndex;
+    u16TxLength += sizeof(uint8);
+    pu8TxBuffer += sizeof(uint8);
+
+    /* copy psStartParms->u8LogicalChannel */ 
+    *pu8TxBuffer = psStartParms->u8LogicalChannel;
+    u16TxLength += sizeof(uint8);
+    pu8TxBuffer += sizeof(uint8);
+
+    /* copy psStartParms->u8NwkupdateId */ 
+    *pu8TxBuffer = psStartParms->u8NwkupdateId;
+    u16TxLength += sizeof(uint8);
+    pu8TxBuffer += sizeof(uint8);
+
+    /* copy bSendDevice */
+    *pu8TxBuffer = bSendDevice;
+    u16TxLength += sizeof(uint8);
+    pu8TxBuffer += sizeof(uint8);
+
+    /* Set Long Response Timeout Period */
+    vSL_SetLongResponsePeriod();
+    
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_FORM_DISTRIBUTED_NETWORK, u16TxLength, au8TxSerialBuffer, NULL);
+
+    return u8Status;
 }
 
 PUBLIC ZPS_teStatus zps_eAplZdoBind(    void   *pvApl,
@@ -7598,8 +7886,8 @@ PUBLIC ZPS_teStatus zps_eAplZdoBind(    void   *pvApl,
 }
 PUBLIC ZPS_teStatus zps_eAplZdoStartRouter(void *pvApl, bool_t bDeviceAnnounce)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return 0;
+    uint8 u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_START_ROUTER, (uint16)sizeof(bDeviceAnnounce), &bDeviceAnnounce, NULL);
+    return u8Status;
 }
 
 uint64 zps_u64NwkLibFromPayload(
@@ -7641,8 +7929,7 @@ PUBLIC  ZPS_teStatus zps_eAplAfBoundDataReqNonBlocking( void                  *p
 
 PUBLIC ZPS_teZdoDeviceType zps_eAplZdoGetDeviceType(void *pvApl)
 {
-    fprintf(stderr,"%s - hardwired coord\n", __func__);
-    return ZPS_ZDO_DEVICE_COORD;
+    return APP_eGetNodeDeviceType();
 }
 PUBLIC ZPS_tsAplAib *zps_psAplAibGetAib(void *pvApl)
 {
@@ -8009,9 +8296,9 @@ PUBLIC uint64 ZPS_u64NwkNibFindExtAddr(void *pvNwk, uint16 u16NwkAddr)
  ********************************************************************************/
 PUBLIC bool eSL_SearchExtendedPanId(uint64 u64ExtPanId, uint16 u16PanId)
 {
-#if 0
     uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer, u8Status;
     uint16 u16TxLength = 0x00U;
+    bool bRetVal = TRUE;
 
     pu8TxBuffer = au8TxSerialBuffer;
 
@@ -8024,13 +8311,8 @@ PUBLIC bool eSL_SearchExtendedPanId(uint64 u64ExtPanId, uint16 u16PanId)
     pu8TxBuffer[u16TxLength++] = (uint8)u16PanId;
 
     /* Send over serial */
-    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_SEARCH_EXT_PANID, u16TxLength, au8TxSerialBuffer, NULL);
-    return (bool)u8Status;
-#else
-    bool ret = TRUE;
-    DBG_vPrintf(TRUE, "%s not yet implemented, returning %d\n", __func__, ret);
-    return ret;
-#endif
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_SEARCH_EXT_PANID, u16TxLength, au8TxSerialBuffer, &bRetVal);
+    return bRetVal;
 }
 
 PUBLIC ZPS_tsAplApsKeyDescriptorEntry** ZPS_psAplDefaultDistributedAPSLinkKey(void)
@@ -8184,18 +8466,41 @@ PUBLIC uint8 ZPS_u8AplGetMaxPayloadSize(void *pvApl , uint16 u16Addr)
 }
 PUBLIC uint8 ZPS_u8NwkManagerState(void)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return 0;
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE];
+    uint16 u16TxLength = 0x00U;
+    uint8 u8NwkState = 0x0U;
+   
+    /* Send over serial */
+    u8SL_WriteMessage((uint16)E_SL_MSG_NWK_MANAGER_STATE, u16TxLength, au8TxSerialBuffer, &u8NwkState);
+  
+    return u8NwkState;
 }
 PUBLIC void ZPS_vNwkNibClearDiscoveryNT(void *pvNwk)
 {
-    fprintf(stderr,"%s\n", __func__);
+    /* Send over serial */
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_NWK_CLEAR_DISC_NT, 0U, NULL, NULL);
 }
 PUBLIC  ZPS_tsNwkNetworkDescr* ZPS_psGetNetworkDescriptors (uint8 *pu8NumberOfNetworks)
 {
-    fprintf(stderr,"%s\n", __func__);
-    return NULL;
+    /* Get number of nwk descriptors */
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE];
+    uint16 u16TxLength = 0x00U;
+    uint8 i = 0;
+   
+    u8SL_WriteMessage((uint16)E_SL_MSG_GET_NUMBER_OF_NWK_DESCRIPTORS, u16TxLength, au8TxSerialBuffer, &u8NumberOfNetworks);
+    *pu8NumberOfNetworks = u8NumberOfNetworks;
+
+    /* Build nwk descriptor array */
+    for(i = 0; i < u8NumberOfNetworks; i++)
+    {
+        ZPS_tsNwkNetworkDescr tsCurrDesc;
+        u8SL_WriteMessage((uint16)E_SL_MSG_GET_NWK_DESCRIPTOR, u16TxLength, au8TxSerialBuffer, &tsCurrDesc);
+        *(psNwkDescriptors + i) = tsCurrDesc;
+    }
+
+    return psNwkDescriptors;
 }
+
 PUBLIC void ZPS_vTCSetCallback(void *pfTcFunc)
 {
     fprintf(stderr,"%s\n", __func__);
@@ -8257,6 +8562,301 @@ PUBLIC bool_t ZPS_bIsCoprocessorNewModule(void)
     return bCoproFactoryNew;
 }
 
+#if (BDB_SET_DEFAULT_TC_POLICY == TRUE)
+
+/****************************************************************************
+ *
+ * NAME: eGetTrspKeyDeciderPolicy
+ *
+ * DESCRIPTION:
+ *  Return the policy of the transport key decider table.
+ *
+ * PARAMETERS:      Name            RW      Usage
+ * 
+ * RETURNS:
+ *  BDB_eTrspKeyDeciderPolicy
+ *
+ ****************************************************************************/
+PUBLIC BDB_eTrspKeyDeciderPolicy eGetTrspKeyDeciderPolicy()
+{
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE];
+    uint16 u16TxLength = 0x00U;
+    BDB_eTrspKeyDeciderPolicy eTrspKeyDeciderPolicy = 0x0U;
+   
+    /* Send over serial */
+    u8SL_WriteMessage((uint16)E_SL_MSG_GET_TRSP_KEY_DECIDER_TABLE_POLICY, u16TxLength, au8TxSerialBuffer, &eTrspKeyDeciderPolicy);
+   
+    return eTrspKeyDeciderPolicy;
+}
+
+/****************************************************************************
+ *
+ * NAME: vSetTrspKeyDeciderPolicy
+ *
+ * DESCRIPTION:
+ *  Sets the policy of the transport key decider table to the given policy
+ *  Policy modes are ignore, whitelist and blacklist. 
+ *  Fails if given value is not a valid policy
+ *
+ * PARAMETERS:      Name            RW      Usage
+ * 
+ * RETURNS:
+ *  BDB_teStatus
+ *
+ ****************************************************************************/
+PUBLIC BDB_teStatus vSetTrspKeyDeciderPolicy(BDB_eTrspKeyDeciderPolicy eTrspKeyDeciderPolicy)
+{
+    uint8 u8Status;
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE];
+    uint16 u16TxLength = 0x00U;
+
+    /* Copy policy */
+    au8TxSerialBuffer[0] = eTrspKeyDeciderPolicy;
+    u16TxLength += sizeof(uint8);
+
+    /* Send over serial */
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_SET_TRSP_KEY_DECIDER_TABLE_POLICY, u16TxLength, au8TxSerialBuffer, NULL);
+
+    return (BDB_teStatus)u8Status;
+}
+
+/****************************************************************************
+ *
+ * NAME: u8GetTrspKeyDeciderTableSize
+ *
+ * DESCRIPTION:
+ *  Returns the current number of occupied transport key decider table entries. 
+ *
+ * PARAMETERS:      Name            RW      Usage
+ * 
+ * RETURNS:
+ *  uint8
+ *
+ ****************************************************************************/
+PUBLIC uint8 u8GetTrspKeyDeciderTableMaxSize()
+{
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE];
+    uint16 u16TxLength = 0x00U;
+    uint8 u8TkdSize;
+   
+    /* Send over serial */
+    u8SL_WriteMessage((uint16)E_SL_MSG_GET_TRSP_KEY_DECIDER_TABLE_MAX_SIZE, u16TxLength, au8TxSerialBuffer, &u8TkdSize);
+  
+    return u8TkdSize;
+}
+
+/****************************************************************************
+ *
+ * NAME: vGetTrspKeyDeciderEntry
+ *
+ * DESCRIPTION:
+ * Gets entry of the transport key decider table for the given index.
+ * Fails if given index is out of bounds.
+ * PARAMETERS:      Name                    RW      Usage
+ *                  s_TrspKeyDeciderEntry           Entry to remove
+ * RETURNS:
+ *  BDB_teStatus
+ *
+ ****************************************************************************/
+PUBLIC BDB_teStatus tsGetTrspKeyDeciderEntry(uint8 u8Index, BDB_tsTrspKeyDeciderEntry* psTrspKeyDeciderEntry)
+{
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer, u8Status;
+    uint16 u16TxLength = 0x00U;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy index */
+    au8TxSerialBuffer[0] = u8Index;
+    u16TxLength += sizeof(uint8);
+
+    (void)ZBmemset(psTrspKeyDeciderEntry, 0x00, sizeof(BDB_tsTrspKeyDeciderEntry));
+
+    /* Send over serial */
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_GET_TRSP_KEY_DECIDER_TABLE_ENTRY,
+                                 u16TxLength,
+                                 au8TxSerialBuffer,
+                                 psTrspKeyDeciderEntry);
+
+    return (BDB_teStatus)u8Status;
+}
+
+/****************************************************************************
+ *
+ * NAME: vAddTrspKeyDeciderEntry
+ *
+ * DESCRIPTION:
+ *  Adds given entry to transport key decider table if not already present. 
+ *  Fails if table full.
+ *
+ * PARAMETERS:      Name                    RW      Usage
+ *                  s_TrspKeyDeciderEntry           Entry to add
+ * RETURNS:
+ *  BDB_teStatus
+ *
+ ****************************************************************************/
+PUBLIC BDB_teStatus vAddTrspKeyDeciderEntry(BDB_tsTrspKeyDeciderEntry s_TrspKeyDeciderEntry)
+{
+    uint8 u8Status;
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
+    uint16 u16TxLength = 0x00U;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Serialize u64IEEEAddress */
+    vSL_ConvU64ToBi((uint64)s_TrspKeyDeciderEntry, pu8TxBuffer);
+    u16TxLength += sizeof(uint64);
+
+    /* Send over serial */
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_ADD_TRSP_KEY_DECIDER_TABLE_ENTRY,
+                                 u16TxLength,
+                                 au8TxSerialBuffer,
+                                 NULL);
+
+    return (BDB_teStatus)u8Status;
+}
+
+/****************************************************************************
+ *
+ * NAME: vRemoveTrspKeyDeciderEntry
+ *
+ * DESCRIPTION:
+ *  Removes given entry from transport key decider table if not already missing. 
+ *  Fails if table empty.
+ *
+ * PARAMETERS:      Name                    RW      Usage
+ *                  s_TrspKeyDeciderEntry           Entry to remove
+ * RETURNS:
+ *  BDB_teStatus
+ *
+ ****************************************************************************/
+PUBLIC BDB_teStatus vRemoveTrspKeyDeciderEntry(BDB_tsTrspKeyDeciderEntry s_TrspKeyDeciderEntry)
+{
+    uint8 u8Status;
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
+    uint16 u16TxLength = 0x00U;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Serialize u64IEEEAddress */
+    vSL_ConvU64ToBi((uint64)s_TrspKeyDeciderEntry, pu8TxBuffer);
+    u16TxLength += sizeof(uint64);
+
+    /* Send over serial */
+    u8Status = u8SL_WriteMessage((uint16)E_SL_MSG_REMOVE_TRSP_KEY_DECIDER_TABLE_ENTRY,
+                                 u16TxLength,
+                                 au8TxSerialBuffer,
+                                 NULL);
+
+    return (BDB_teStatus)u8Status;
+}
+
+/****************************************************************************
+ *
+ * NAME: vClearTrspKeyDeciderTable
+ *
+ * DESCRIPTION:
+ *  Zeroes out the transport key decider table.
+ *
+ * PARAMETERS:      Name            RW  Usage
+ * 
+ * RETURNS:
+ *  void
+ *
+ ****************************************************************************/
+PUBLIC void vClearTrspKeyDeciderTable()
+{
+    /* Send over serial */
+    u8SL_WriteMessage((uint16)E_SL_MSG_CLEAR_TRSP_KEY_DECIDER_TABLE, 0U, NULL, NULL);
+}
+
+#endif
+
+/****************************************************************************
+ *
+ * NAME: zps_bAplAibFindBindTableEntryForClusterId
+ *
+ * DESCRIPTION:
+ *  Searches for bind table entry corresponding to given cluster ID. Returns 
+ *  true if found, false otherwise.
+ *
+ * PARAMETERS:      Name                    RW      Usage
+ *                  pvApl                         APL handle
+ *                  u16ClusterId                  cluster ID to search for
+ * RETURNS:
+ *  bool
+ *
+ *****************************************************************************/
+PUBLIC bool zps_bAplAibFindBindTableEntryForClusterId( void *pvApl, uint16 u16ClusterId )
+{
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
+    uint16 u16TxLength = 0x00U;
+    bool bEntryFound = FALSE;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy u16ClusterId */
+    *pu8TxBuffer++ = (uint8)(u16ClusterId >> 8U);
+    *pu8TxBuffer++ = (uint8)(u16ClusterId);
+    u16TxLength += sizeof(uint16);
+
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_FIND_BIND_ENTRY_FOR_CLUSTER_ID, u16TxLength, au8TxSerialBuffer, &bEntryFound);
+
+    return bEntryFound;
+}
+
+PUBLIC void zps_vSetIgnoreProfileCheck(void)
+{
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_SET_IGNORE_PROFILE_CHECK, 0U, NULL, NULL);
+}
+
+PUBLIC void ZPS_vAplZdoRegisterInterPanFilter(void* fnPtr)
+{
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
+    uint16 u16TxLength = 0x00U;
+
+    uint8 u8Endpoint = ROUTER_ONOFFLIGHT_ENDPOINT;
+    uint16 u16ProfileId = ZLL_PROFILE_ID;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy u8Endpoint */
+    *pu8TxBuffer++ = u8Endpoint;
+    u16TxLength += sizeof(uint8);
+
+    /* Copy u16ProfileId */
+    *pu8TxBuffer++ = (uint8)(u16ProfileId >> 8U);
+    *pu8TxBuffer++ = (uint8)(u16ProfileId);
+    u16TxLength += sizeof(uint16);
+
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_REGISTER_INTERPAN_FILTER, u16TxLength, au8TxSerialBuffer, NULL);
+}
+
+PUBLIC void ZPS_vNwkNibClearTables (void *pvNwk)
+{
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_NWK_NIB_CLEAR_TABLES, 0U, NULL, NULL);
+}
+
+PUBLIC void zps_vNwkSecClearMatSet(void *psNwk)
+{
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_NWK_CLEAR_MAT_SET, 0U, NULL, NULL);
+}
+
+PUBLIC uint32 ZPS_u32MacSetTxBuffers (uint8 u8MaxTxBuffers)
+{
+    uint8 au8TxSerialBuffer[MAX_TX_SERIAL_BUFFER_SIZE], *pu8TxBuffer;
+    uint16 u16TxLength = 0x00U;
+    uint32 u32Ret = 0;
+
+    pu8TxBuffer = au8TxSerialBuffer;
+
+    /* Copy u8MaxTxBuffers */
+    *pu8TxBuffer++ = u8MaxTxBuffers;
+    u16TxLength += sizeof(uint8);
+
+    (void)u8SL_WriteMessage((uint16)E_SL_MSG_MAC_SET_TX_BUFFERS, u16TxLength, au8TxSerialBuffer, &u32Ret);
+
+    return u32Ret;
+}
 /****************************************************************************/
 /***        END OF FILE                                                   ***/
 /****************************************************************************/

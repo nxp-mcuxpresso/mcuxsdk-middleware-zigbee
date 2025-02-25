@@ -108,7 +108,7 @@ PUBLIC bool_t ZPS_bSecEncrypt(void *pvNwk,
                               uint8 u8KeyId,
                               uint8 u8KeySeqNum,
                               PDUM_thNPdu hNPdu,
-                              bool_t bIsApsAux);
+                              bool_t bVerifiedFC);
 PUBLIC bool_t ZPS_bSecDecrypt(void *pvNwk,
                               ZPS_tsSecAuxHdr *psAuxSecHdr,
                               uint8 *pu8AuxSecHdr,

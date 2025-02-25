@@ -1,5 +1,5 @@
 /*
-* Copyright 2023 NXP
+* Copyright 2023-2024 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -30,6 +30,8 @@
 #include "zps_apl_aib.h"
 #include "dbg.h"
 #include "app_uart.h"
+#include "bdb_api.h"
+#include "bdb_tkd.h"
 
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
@@ -1103,6 +1105,7 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_SET_NUM_EZ_SCANS:
                 case (uint16)E_SL_MSG_SET_CHANNELMASK:
                 case (uint16)E_SL_MSG_SET_SECURITY:
+                case (uint16)E_SL_MSG_ZDO_SET_DEVICETYPE:
                 case (uint16)E_SL_MSG_ERASE_PERSISTENT_DATA:
                 case (uint16)E_SL_MSG_PERMIT_JOINING_REQUEST:
                 case (uint16)E_SL_MSG_TEST_TYPE:
@@ -1180,6 +1183,12 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_SET_DEPTH:
                 case (uint16)E_SL_MSG_ADD_REPLACE_INSTALL_CODES:
                 case (uint16)E_SL_MSG_SET_TC_LOCKDOWN_OVERRIDE:
+                case (uint16)E_SL_MSG_ADD_TRSP_KEY_DECIDER_TABLE_ENTRY:
+                case (uint16)E_SL_MSG_REMOVE_TRSP_KEY_DECIDER_TABLE_ENTRY:
+                case (uint16)E_SL_MSG_SET_TRSP_KEY_DECIDER_TABLE_POLICY:
+                case (uint16)E_SL_MSG_CLEAR_TRSP_KEY_DECIDER_TABLE:
+                case (uint16)E_SL_MSG_NWK_CLEAR_DISC_NT:
+                case (uint16)E_SL_MSG_JOIN_NETWORK:
                 {
                     /* no extra data; just status seq no & type */
                     u16ReadIdx = SL_MSG_RSP_START_IDX;
@@ -1319,6 +1328,13 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_GET_FRAGMENTATION_SUPPORT:
                 case (uint16)E_SL_MSG_GET_MAX_PAYLOAD_SIZE:
                 case (uint16)E_SL_MSG_IS_COPROCESSOR_NEW_MODULE:
+                case (uint16)E_SL_MSG_GET_TRSP_KEY_DECIDER_TABLE_MAX_SIZE:
+                case (uint16)E_SL_MSG_GET_TRSP_KEY_DECIDER_TABLE_POLICY:
+                case (uint16)E_SL_MSG_GET_GROUP_TABLE_ENTRY_ENDPOINT_ELEMENT:
+                case (uint16)E_SL_MSG_GET_NUMBER_OF_NWK_DESCRIPTORS:
+                case (uint16)E_SL_MSG_FIND_BIND_ENTRY_FOR_CLUSTER_ID:
+                case (uint16)E_SL_MSG_SEARCH_EXT_PANID:
+                case (uint16)E_SL_MSG_FORM_DISTRIBUTED_NETWORK:
                 {
                     u16ReadIdx = SL_MSG_RSP_START_IDX;
                     if(NULL != pu8Temp)
@@ -1388,6 +1404,21 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                         the payload but not used, so increase read index by their size to avoid mismatch warning */
                         u16ReadIdx += 5;
                     }
+                    break;
+                }
+                case (uint16)E_SL_MSG_GET_TRSP_KEY_DECIDER_TABLE_ENTRY:
+                {
+#if (BDB_SET_DEFAULT_TC_POLICY == TRUE)
+                    BDB_tsTrspKeyDeciderEntry *psEntry = (BDB_tsTrspKeyDeciderEntry*)pvData;
+                    u16ReadIdx = SL_MSG_RSP_START_IDX;
+
+                    /* check status */
+                    if((NULL != pvData) && (u8Status == BDB_E_SUCCESS))
+                    {
+                        (void)ZBmemcpy(psEntry, pu8RxBuffer+u16ReadIdx,sizeof(BDB_tsTrspKeyDeciderEntry));
+                        u16ReadIdx += sizeof(BDB_tsTrspKeyDeciderEntry);
+                    }
+#endif
                     break;
                 }
                 case (uint16)E_SL_MSG_GET_DEFAULT_TC_APS_LINK_KEY:
@@ -1619,6 +1650,8 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_SERIAL_LINK_GET_OL_CHANNEL:
                 case (uint16)E_SL_MSG_GET_NWK_OUTGOING_FRAME_COUNT:
                 case (uint16)E_SL_MSG_SERIAL_LINK_GET_STATUS_FLAGS:
+                case (uint16)E_SL_MSG_GET_GROUP_TABLE_SIZE:
+                case (uint16)E_SL_MSG_MAC_SET_TX_BUFFERS:
                     if(NULL != pu8Temp)
                     {
                         *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+3);
@@ -1655,6 +1688,7 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_GET_NEIGHBOR_TABLE_SIZE:
                 case (uint16)E_SL_MSG_GET_ADDRESS_MAP_TABLE_SIZE:
                 case (uint16)E_SL_MSG_GET_ROUTING_TABLE_SIZE:
+                case (uint16)E_SL_MSG_GET_GROUP_TABLE_ENTRY_GROUP_ID:
                     if(NULL != pu8Temp)
                     {
                         *pu8Temp++ = *(pu8RxBuffer+SL_MSG_RSP_START_IDX+1);
@@ -1701,6 +1735,11 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                 case (uint16)E_SL_MSG_ZPS_DEFAULT_STACK:
                 case (uint16)E_SL_MSG_ZPS_SET_KEYS:
                 case (uint16)E_SL_MSG_ZPS_SAVE_ALL_RECORDS:
+                case (uint16)E_SL_MSG_NWK_NIB_CLEAR_TABLES:
+                case (uint16)E_SL_MSG_NWK_CLEAR_MAT_SET:
+                case (uint16)E_SL_MSG_RESET_DATA_STRUCTURES:
+                case (uint16)E_SL_MSG_SET_IGNORE_PROFILE_CHECK:
+                case (uint16)E_SL_MSG_REGISTER_INTERPAN_FILTER:
                     if(NULL != pvData)
                     {
                         *(uint8*)pvData = *(pu8RxBuffer+SL_MSG_TSN_IDX);
@@ -1933,6 +1972,68 @@ PUBLIC uint8 u8SL_WriteMessage(uint16 u16Type, uint16 u16Length, uint8 *pu8Data,
                         }
                     }
                 }
+                break;
+
+                case (uint16)E_SL_MSG_GET_NWK_DESCRIPTOR:
+                    if(NULL != pvData)
+                    {
+                        ZPS_tsNwkNetworkDescr *psNwkDesc = (ZPS_tsNwkNetworkDescr*)pvData;
+                        u16ReadIdx = SL_MSG_RSP_START_IDX;
+                        if ( u8Status == ZPS_E_SUCCESS )
+                        {
+                            psNwkDesc->u64ExtPanId = ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 56U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 48U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 40U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 32U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 24U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 16U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++)) << 8U;
+                            psNwkDesc->u64ExtPanId += ((uint64)*(pu8RxBuffer+u16ReadIdx++));
+
+                            psNwkDesc->u8LogicalChan = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+                            psNwkDesc->u8StackProfile = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+                            psNwkDesc->u8ZigBeeVersion = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+                            psNwkDesc->u8PermitJoining = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+                            psNwkDesc->u8RouterCapacity = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+                            psNwkDesc->u8EndDeviceCapacity = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+#ifdef WWAH_SUPPORT
+                            psNwkDesc->u8ParentCapacity = ((uint8)*(pu8RxBuffer+u16ReadIdx++));
+#endif
+                        }
+                    }
+                break;
+
+                case (uint16)E_SL_MSG_FIND_KEY_DESCRIPTOR:
+                    if(NULL != pvData)
+                    {
+                        u16ReadIdx = SL_MSG_RSP_START_IDX;
+                        if ( u8Status == ZPS_E_SUCCESS )
+                        {
+                            /* Copy u32OutgoingFrameCounter */
+                            (void)ZBmemcpy(pu8Temp, &pu8RxBuffer[u16ReadIdx], sizeof(uint32));
+                            pu8Temp += sizeof(uint32);
+                            u16ReadIdx += sizeof(uint32);
+
+                            /* Copy u16ExtAddrLkup*/
+                            (void)ZBmemcpy(pu8Temp, &pu8RxBuffer[u16ReadIdx], sizeof(uint16));
+                            pu8Temp += sizeof(uint16);
+                            u16ReadIdx += sizeof(uint16);
+                             
+                            /* Copy au8LinkKey */
+                            (void)ZBmemcpy(pu8Temp, &pu8RxBuffer[u16ReadIdx], ZPS_SEC_KEY_LENGTH);
+                            pu8Temp += ZPS_SEC_KEY_LENGTH;
+                            u16ReadIdx += ZPS_SEC_KEY_LENGTH;
+
+                            /* Copy u8BitMapSecLevl */
+                            *pu8Temp++ = pu8RxBuffer[u16ReadIdx];
+                            u16ReadIdx ++;
+
+                            /* Copy u32Index */
+                            (void)ZBmemcpy(pu8Temp, &pu8RxBuffer[u16ReadIdx], sizeof(uint32));
+                            pu8Temp += sizeof(uint32);
+                            u16ReadIdx += sizeof(uint32);
+                        }
+                    }
                 break;
 
                 case (uint16)E_SL_MSG_CONVERT_LQI_TO_RSSI_DBM:
