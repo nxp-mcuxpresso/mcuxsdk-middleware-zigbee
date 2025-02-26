@@ -21,7 +21,7 @@
 /****************************************************************************/
 #define ZIGBEE_TIMER_STORAGE         (6)
 	
-#define BDB_QUEUE_SIZE               (2)
+#define BDB_QUEUE_SIZE               (3)
 #define TIMER_QUEUE_SIZE             (8)
 #define MLME_QUEQUE_SIZE             (9)
 #define MCPS_QUEUE_SIZE              (16)
