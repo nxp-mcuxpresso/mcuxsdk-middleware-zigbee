@@ -210,13 +210,6 @@ void vAppWakeup(void)
         APP_vAlignStatesAfterSleep();
     }
 #else
-    /* NOTE: Currently vWakeCallBack callback is called before this callback,
-     * this is a known limitation of current low power system.
-     */
-
-    /* Only need to update ZCL timer for 1 second, the hardcoded sleep period */
-    APP_vUpdateZCLTimer();
-
     /* Restore LED states */
     APP_vSetLed(APP_E_LEDS_LED_1, !!(led_states & (1 << APP_E_LEDS_LED_1)));
     APP_vSetLed(APP_E_LEDS_LED_2, !!(led_states & (1 << APP_E_LEDS_LED_2)));
@@ -269,6 +262,12 @@ void vWakeCallBack(void)
     App_ZB_WakeCallBack();
 #endif
 
+#ifdef IS_MCXW_SERIES
+    /* Only need to update ZCL timer for ZED_SLEEP_PERIOD second, the hardcoded sleep period 
+     * Expired timers will be handled in the context of the application task 
+     */
+    vZCL_SetUTCTime(u32ZCL_GetUTCTime() + (ZED_SLEEP_PERIOD / 1000));
+#endif
     APP_ZCL_vStartTimers();
     if(ZTIMER_eStart(u8TimerPoll, POLL_TIME_FAST) != E_ZTIMER_OK)
     {
