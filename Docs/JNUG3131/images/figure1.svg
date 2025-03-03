@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="104.57366mm"
+   height="90.921165mm"
+   viewBox="0 0 104.57366 90.921165"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   sodipodi:docname="Figure1.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     fit-margin-top="1"
+     fit-margin-left="1"
+     fit-margin-right="1"
+     fit-margin-bottom="1"
+     inkscape:showpageshadow="false"
+     inkscape:zoom="0.58718102"
+     inkscape:cx="-355.08641"
+     inkscape:cy="183.07812"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <rect
+       x="-340.61047"
+       y="-122.61977"
+       width="1451.0006"
+       height="1345.4113"
+       id="rect30164" />
+    <rect
+       x="-398.51425"
+       y="-183.92966"
+       width="1597.4631"
+       height="1519.1227"
+       id="rect26902" />
+    <rect
+       x="-157.75542"
+       y="791.18561"
+       width="940.51129"
+       height="351.63803"
+       id="rect24058" />
+    <rect
+       x="-19.267838"
+       y="850.19336"
+       width="868.25696"
+       height="207.12926"
+       id="rect20554" />
+    <rect
+       x="40.944157"
+       y="55.395035"
+       width="107.17735"
+       height="67.437431"
+       id="rect17370" />
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath37">
+      <path
+         d="m 72,720 h 468 v -7.8 H 72 Z"
+         clip-rule="evenodd"
+         id="path35" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath43">
+      <path
+         d="M 0,792.03 H 612 V 0.03 H 0 Z"
+         id="path41" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath87">
+      <path
+         d="M 154.5,645.24 H 457.26 V 381.18 H 154.5 Z"
+         clip-rule="evenodd"
+         id="path85" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath93">
+      <path
+         d="M 72,655.2 H 539.7 V 380.22 H 72 Z"
+         clip-rule="evenodd"
+         id="path91" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath99">
+      <path
+         d="M 0,792.03 H 612 V 0.03 H 0 Z"
+         id="path97" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath109">
+      <path
+         d="M 160.5,639.24 H 451.26 V 387.18 H 160.5 Z"
+         clip-rule="evenodd"
+         id="path107" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath115">
+      <path
+         d="M 154.5,645.24 H 457.26 V 381.18 H 154.5 Z"
+         clip-rule="evenodd"
+         id="path113" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath121">
+      <path
+         d="M 72,655.2 H 539.7 V 380.22 H 72 Z"
+         clip-rule="evenodd"
+         id="path119" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath127">
+      <path
+         d="M 0,792.03 H 612 V 0.03 H 0 Z"
+         id="path125" />
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-184.06783,-120.22833)">
+    <text
+       style="font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.8735px;font-family:Arial;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.352778"
+       id="text65"
+       x="173.8495"
+       y="107.597"><tspan
+         x="173.8495"
+         sodipodi:role="line"
+         id="tspan63"
+         style="stroke-width:0.352778"
+         y="107.597" /></text>
+    <g
+       id="g81"
+       transform="matrix(0.35277777,0,0,-0.35277777,128.447,346.73799)">
+      <g
+         id="g83"
+         clip-path="url(#clipPath87)">
+        <g
+           id="g89"
+           clip-path="url(#clipPath93)">
+          <g
+             id="g95"
+             clip-path="url(#clipPath99)">
+            <path
+               d="M 160.5,387.18 H 451.26 V 639.24 H 160.5 Z"
+               style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+               id="path101" />
+          </g>
+        </g>
+      </g>
+    </g>
+    <g
+       id="g123"
+       clip-path="url(#clipPath127)"
+       transform="matrix(0.35277777,0,0,-0.35277777,128.447,346.73799)">
+      <path
+         d="m 162,460.08 h 287.28 v 41.46 H 162 Z"
+         style="fill:#00afaf;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path129" />
+      <path
+         d="m 162,460.08 h 287.28 v 41.46 H 162 Z"
+         style="fill:none;stroke:#00afaf;stroke-width:0.699;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path131" />
+      <path
+         d="m 162.18,424.02 h 287.7 v 28.38 h -287.7 z"
+         style="fill:#007c7c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path133" />
+      <path
+         d="m 162.18,424.02 h 287.7 v 28.38 h -287.7 z"
+         style="fill:none;stroke:#007c7c;stroke-width:0.699;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path135" />
+      <text
+         transform="matrix(1,0,0,-1,255.78,435.12)"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.9905px;font-family:Calibri;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text139"><tspan
+           x="0 2.7054274 7.5078607 12.421188 17.334517 19.630333 24.73348 29.774687 34.875835 37.455383 42.558533 47.661678 50.30117 55.404316 57.563263 66.262993 72.383171 77.706108 79.865059 82.36068 87.333954 92.107414 97.083679"
+           y="0"
+           sodipodi:role="line"
+           id="tspan137">IEEE 802.15.4 MAC layer</tspan></text>
+      <path
+         d="m 162.12,508.74 h 287.16 v 129 H 162.12 Z"
+         style="fill:#00e1e1;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path141" />
+      <path
+         d="m 162.12,508.74 h 287.16 v 129 H 162.12 Z"
+         style="fill:none;stroke:#00e1e1;stroke-width:0.699;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path143" />
+      <text
+         transform="matrix(1,0,0,-1,258.48,624.78)"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.9905px;font-family:Calibri;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text147"><tspan
+           x="0 6.0622354 11.435126 16.808018 19.211731 21.677387 25.861408 30.804708 34.348339 36.752052 42.155914 47.528805 49.687752 52.812778 58.932961 64.255898 68.489876 71.614899 73.880745 76.40435 81.327667 86.011215 91.107368"
+           y="0"
+           sodipodi:role="line"
+           id="tspan145">Application (APL) layer</tspan></text>
+      <path
+         d="m 162.18,388.56 h 287.7 v 28.38 h -287.7 z"
+         style="fill:#007c7c;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path149" />
+      <path
+         d="m 162.18,388.56 h 287.7 v 28.38 h -287.7 z"
+         style="fill:none;stroke:#007c7c;stroke-width:0.699;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path151" />
+      <text
+         transform="matrix(1,0,0,-1,257.34,399.78)"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.9905px;font-family:Calibri;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text155"><tspan
+           x="0 2.6994331 7.5018663 12.4092 17.316534 19.606356 24.70351 29.744715 34.841869 37.541302 42.638454 47.619717 50.319153 55.416306 57.635193 62.913177 69.249153 74.476181 76.766006 79.169716 84.212921 88.896469 93.872734"
+           y="0"
+           sodipodi:role="line"
+           id="tspan153">IEEE 802.15.4 PHY layer</tspan></text>
+      <path
+         d="M 231.06,550.5 H 378.9 v 30.48 H 231.06 Z"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path157" />
+      <path
+         d="M 231.06,550.5 H 378.9 v 30.48 H 231.06 Z"
+         style="fill:none;stroke:#000000;stroke-width:0.699;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path159" />
+      <text
+         transform="matrix(1,0,0,-1,249.66,562.74)"
+         style="font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.9905px;font-family:Calibri;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text163"><tspan
+           x="0 4.6695595 7.0043397 11.703871 17.132708 22.101984 27.146187 29.305134 34.643059 36.924889 42.260815 46.161106 49.50193 54.471203 57.951893 60.291668 64.487679 66.769508 72.00853 75.48922 80.268669 83.812302 88.316017 90.474968 93.593002 98.262566 103.5815 107.77152"
+           y="0"
+           sodipodi:role="line"
+           id="tspan161">ZigBee Cluster Library (ZCL)</tspan></text>
+      <path
+         d="m 230.52,585.06 h 148.2 v 31.5 h -148.2 z"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path165" />
+      <path
+         d="m 230.52,585.06 h 148.2 v 31.5 h -148.2 z"
+         style="fill:none;stroke:#000000;stroke-width:0.699;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path167" />
+      <text
+         transform="matrix(1,0,0,-1,271.44,597.78)"
+         style="font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.9905px;font-family:Calibri;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text171"><tspan
+           x="0 4.7374949 7.012332 11.731844 17.180662 22.169918 27.159174 29.431013 35.589157 40.513477 45.137077 47.351974 51.591942 56.516258 59.634293 63.533585"
+           y="0"
+           sodipodi:role="line"
+           id="tspan169">ZigBee Device(s)</tspan></text>
+      <path
+         d="m 382.32,550.44 h 59.04 v 66.12 h -59.04 z"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path173" />
+      <path
+         d="m 382.32,550.44 h 59.04 v 66.12 h -59.04 z"
+         style="fill:none;stroke:#000000;stroke-width:0.699;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path175" />
+      <text
+         transform="matrix(1,0,0,-1,398.34,598.5)"
+         style="font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.9905px;font-family:Calibri;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text185"><tspan
+           x="0 4.6775522 6.9673748 11.674898 17.111729 22.088995 27.1332"
+           y="0"
+           sodipodi:role="line"
+           id="tspan177">ZigBee</tspan><tspan
+           x="0 6.1331677 11.097447 15.602164 17.879 22.20089 27.125206"
+           y="11.99959"
+           sodipodi:role="line"
+           id="tspan179">Device</tspan><tspan
+           x="-1.8002881 4.8074288 10.046447 12.428182 17.397457 21.719347 25.020208"
+           y="24.120064"
+           sodipodi:role="line"
+           id="tspan181">Objects</tspan><tspan
+           x="1.7992891 4.8064294 9.4620028 15.586179 22.30479"
+           y="36.059711"
+           sodipodi:role="line"
+           id="tspan183">(ZDO)</tspan></text>
+      <text
+         transform="matrix(1,0,0,-1,261.23937,477.77979)"
+         style="font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.9905px;font-family:Calibri;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text189"><tspan
+           x="0 6.5977263 11.636934 15.117624 22.496609 27.960413 31.555994 36.236542 38.515377 41.646397 48.244125 57.24157 62.762318 65.893341 68.165184 70.688782 75.552155 80.301643 85.397797"
+           y="0"
+           sodipodi:role="line"
+           id="tspan187">Network (NWK) layer</tspan></text>
+      <path
+         d="m 169.2,515.88 h 57.72 V 616.56 H 169.2 Z"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path191" />
+      <path
+         d="m 169.2,515.88 h 57.72 V 616.56 H 169.2 Z"
+         style="fill:none;stroke:#000000;stroke-width:0.699;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path193" />
+      <text
+         transform="matrix(1,0,0,-1,184.62,575.22)"
+         style="font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.9905px;font-family:Calibri;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text201"><tspan
+           x="0 4.6775522 6.9673748 11.674898 17.111729 22.088995 27.1332"
+           y="0"
+           sodipodi:role="line"
+           id="tspan195">ZigBee</tspan><tspan
+           x="3.9002912 9.3311272 14.11258 18.01487 22.986143"
+           y="12.120475"
+           sodipodi:role="line"
+           id="tspan197">Base</tspan><tspan
+           x="-0.119886 6.0132818 10.977561 15.482278 17.817059 22.079004"
+           y="24.120064"
+           sodipodi:role="line"
+           id="tspan199">Device</tspan></text>
+      <path
+         d="M 230.52,515.88 H 441.36 V 546.3 H 230.52 Z"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path203" />
+      <path
+         d="M 230.52,515.88 H 441.36 V 546.3 H 230.52 Z"
+         style="fill:none;stroke:#000000;stroke-width:0.699;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         id="path205" />
+      <text
+         transform="matrix(1,0,0,-1,263.76,528.0601)"
+         style="font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.9905px;font-family:Calibri;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text209"><tspan
+           x="0 5.8234625 10.97956 16.315485 18.592321 20.869156 25.084146 29.858608 33.194435 35.471272 40.725273 45.959297 48.206161 52.780811 58.116737 63.272835 68.608757 73.765854 77.309486 80.645317 82.892174 86.787476 92.0215 97.255516 100.37356 102.65039 107.42485 111.93956 116.98376 120.45946 122.70632 125.72245 131.54591 136.70001 141.37556"
+           y="0"
+           sodipodi:role="line"
+           id="tspan207">Application Support sub-layer (APS)</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,147.13717,81.247617)"
+       id="text17368"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect17370);fill:#000000;fill-opacity:1;stroke:none" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,147.13717,81.247617)"
+       id="text20552"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect20554);fill:#000000;fill-opacity:1;stroke:none" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,147.13717,81.247617)"
+       id="text24056"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect24058);fill:#000000;fill-opacity:1;stroke:none" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,147.13717,81.247617)"
+       id="text26900"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect26902);fill:#000000;fill-opacity:1;stroke:none" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,147.13717,81.247617)"
+       id="text30162"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect30164);fill:#000000;fill-opacity:1;stroke:none" />
+  </g>
+</svg>
