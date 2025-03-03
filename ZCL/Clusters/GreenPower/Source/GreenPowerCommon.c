@@ -641,14 +641,19 @@ bool_t bGP_CheckGroupTable(uint16 u16GrpId )
 		DBG_vPrintf(TRACE_GP_DEBUG, "\n Auth failed \n");
 		return FALSE;
 	}
+
 	psGpCustomDataStructure->sGPCommon.sGreenPowerCallBackMessage.eEventType = E_GP_COMMISSION_DATA_INDICATION;
 	psGpCustomDataStructure->sGPCommon.sGreenPowerCallBackMessage.uMessage.psZgpCommissionIndication =
 			&sZgpCommissionIndication;
 
 	/* Give Application Callback for functionality matching */
 	psEndPointDefinition->pCallBackFunctions(&psGpCustomDataStructure->sGPCommon.sGPCustomCallBackEvent);
-	if((psGpCustomDataStructure->sGPCommon.sGreenPowerCallBackMessage.uMessage.bIsActAsTempMaster) ||
-			(psZgpDataIndication->bRxAfterTx == FALSE))
+
+	/* Our Combo Basic Device currently supports a minimum implementation in terms of tempMaster:
+	 * Sink is always the tempMaster and no tempMaster election is implemented */
+	bool_t bIsActAsTempMaster = TRUE;
+
+	if ((bIsActAsTempMaster) || (psZgpDataIndication->bRxAfterTx == FALSE))
 	{
 		if(psGpCustomDataStructure->eGreenPowerDeviceMode != E_GP_OPERATING_MODE)
 		{
@@ -661,8 +666,6 @@ bool_t bGP_CheckGroupTable(uint16 u16GrpId )
 			}
 		}
 	}
-
-
 #endif
 	return TRUE;
  }
