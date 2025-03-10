@@ -1,7 +1,7 @@
 NXP Software Content Register
 
 Package: Zigbee
-Version: 1.0.17b
+Version: 1.0.17
 Outgoing License: LA_OPT_Online_Code_Hosting
 License File: LICENSE.txt
 Type of Content: object code, source code, header files
