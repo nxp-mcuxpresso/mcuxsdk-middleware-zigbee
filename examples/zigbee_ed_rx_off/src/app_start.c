@@ -1,5 +1,5 @@
 /*
-* Copyright 2019, 2023-2024 NXP
+* Copyright 2019, 2023-2025 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -34,6 +34,9 @@
 #include "pwrm.h"
 #include "app_reporting.h"
 #include "fsl_os_abstraction.h"
+#if IS_JN518x_SERIES
+#include "board.h"
+#endif
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
