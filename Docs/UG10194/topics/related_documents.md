@@ -1,0 +1,21 @@
+# Related documentation
+
+The table below lists the documents that can be referred for more information and developing custom applications based on this user guide. <br>
+
+**Related documentation**   
+| Documents                                             | Description                                                                                                                                          | Link/how to obtain                                                       |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| ZigBee Base Device Behavior Specification Version 1.0 | It provides a definition for the base device behavior specification, for devices operating on the ZigBee-PRO stack.                                  | [ZigBee Base Device Behavior Specification](https://zigbeealliance.org/wp-content/uploads/2019/12/docs-13-0402-13-00zi-Base-Device-Behavior-Specification-2-1.pdf)                                |
+| Getting Started with the K32W148 Development Platform | It provides detailed instructions for installing the MCUXpresso SDK for the K32W148-EVK board.                                                       | [Getting Started with the K32W148 Development Platform](https://www.nxp.com/document/guide/getting-started-with-the-k32w148-development-platform:GS-K32W148EVK)                    |
+| Getting Started with the FRDM- MCXW71                 | It provides detailed instructions for installing the MCUXpresso SDK for the FRDM-MCXW71 board.                                                       | [Getting Started with FRDM-MCXW71](https://www.nxp.com/document/guide/getting-started-with-frdm-mcxw71:GS-FRDM-MCXW71)                                         |
+| Getting Started with the MCX-W72-EVK                  | It provides detailed instructions for installing the MCUXpresso SDK for the MCX-W72-EVK board.                                                       | Getting Started with the MCX-W72 Development Platform                    |
+| Getting Started with the FRDM-RW612 board                  | It provides detailed instructions for installing the MCUXpresso SDK for the FRDM-RW612 board.                                                       | Getting Started with the FRDM-RW612 Development Platform                    |
+| ZigBee 3.0 Stack User Guide (JNUG 3130)             | It provides information relating to the ZigBee 3.0 wireless networking protocol and its associated stack for implementation on NXP microcontrollers. | Contact an NXP field applications engineer (FAE) or sales representative |
+| ZigBee 3.0 Stack User Guide (JNUG 3130)             | It provides information relating to the ZigBee 3.0 wireless networking protocol and its associated stack for implementation on NXP microcontrollers. | Contact an NXP field applications engineer (FAE) or sales representative |
+| ZigBee 3.0 Devices User Guide (JNUG3131)           | It introduces and provides details of the ZigBee Base Devices.                                                                                       | Contact an NXP field applications engineer (FAE) or sales representative |
+| ZigBee 3.0 Cluster Library User Guide (JNUG3132)    | It describes the NXP implementation of the ZigBee Cluster Library (ZCL) for the ZigBee 3.0 standard.                                                 | Contact an NXP field applications engineer (FAE) or sales representative |
+| Core Utilities User Guide [JNUG3133]                | It describes the device Core Utilities (JCU) that is used in wireless network applications for the NXP device-based microcontrollers.                | Contact an NXP field applications engineer (FAE) or sales representative |
+| ZigBee 3.0 Green Power User Guide [JNUG3134]        | It describes the use of the NXP implementation of the Green Power feature for ZigBee 3.0 applications.                                               | Contact an NXP field applications engineer (FAE) or sales representative |
+
+**Parent topic:**[Overview](../topics/overview.md)
+
