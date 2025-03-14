@@ -8,19 +8,5 @@ Type of Content: object code, source code, header files
 Description and comments: ZigBee 3.0 protocol stack
 Release Location: https://github.com/nxp-mcuxpresso/mcux-sdk-middleware-zigbee
 URL: None
-Origin: 
+Origin:
       NXP
-
-NXP Software Content Register
-
-Package: zephyr_tools
-Version: 1.0.17b
-Outgoing License: Apache-2.0
-License File: cmake/zephyr/LICENSE
-Type of Content: source code & header files
-Description and comments: Zigbee scripts and tools imported from Zephyr
-Release Location: https://github.com/nxp-mcuxpresso/mcux-sdk-middleware-zigbee
-URL: None
-Origin: 
-      NXP and Zephyr Apache-2.0
-
