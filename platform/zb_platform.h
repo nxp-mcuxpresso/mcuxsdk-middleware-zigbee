@@ -1,5 +1,5 @@
 /*
-* Copyright 2023-2024 NXP
+* Copyright 2023-2025 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -76,11 +76,12 @@
 /* Select the Elliptic curve: P-256 or Curve25519 */
 //#define CRYPTO_ECDH_P256
 //#define  CRYPTO_ECDH_CURVE25519
-#define  CRYPTO_ECDH_CURVE25519_MBED
+//#define  CRYPTO_ECDH_CURVE25519_MBED
+#define  CRYPTO_ECDH_CURVE25519_DJB
 
 /* Crypto related macro & type defines */
 #define CRYPTO_AES_BLK_SIZE 16u             /* [bytes] */
-#if defined(CRYPTO_ECDH_P256) || defined(CRYPTO_ECDH_CURVE25519_MBED)
+#if defined(CRYPTO_ECDH_P256) || defined(CRYPTO_ECDH_CURVE25519_MBED) || defined(CRYPTO_ECDH_CURVE25519_DJB)
 #define SEC_ECP256_COORDINATE_BITLEN 256u
 #define SEC_ECP256_COORDINATE_LEN    (SEC_ECP256_COORDINATE_BITLEN / 8u)
 #define SEC_ECP256_COORDINATE_WLEN   (SEC_ECP256_COORDINATE_LEN / 4u)
@@ -122,7 +123,7 @@ typedef union
         uint8_t X[SEC_ECP256_SCALAR_LEN];
         uint8_t Y[SEC_ECP256_SCALAR_LEN];
     } coord;
-#elif defined(CRYPTO_ECDH_CURVE25519_MBED)
+#elif defined(CRYPTO_ECDH_CURVE25519_MBED) || defined(CRYPTO_ECDH_CURVE25519_DJB)
 typedef union
 {
     uint8_t raw[SEC_ECP256_COORDINATE_LEN];
@@ -140,7 +141,7 @@ typedef union
 
 typedef CRYPTO_ecdhPublicKey_t CRYPTO_ecdhDhKey_t;
 
-#if defined(CRYPTO_ECDH_P256) || defined(CRYPTO_ECDH_CURVE25519_MBED)
+#if defined(CRYPTO_ECDH_P256) || defined(CRYPTO_ECDH_CURVE25519_MBED) || defined(CRYPTO_ECDH_CURVE25519_DJB)
 typedef union
 {
     uint8_t  raw_8bit[SEC_ECP256_SCALAR_LEN];
