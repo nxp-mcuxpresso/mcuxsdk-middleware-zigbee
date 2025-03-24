@@ -1,6 +1,6 @@
 # ZigbeeCommon configuration
 
-# Copyright 2024 NXP
+# Copyright 2024-2025 NXP
 # SPDX-License-Identifier: BSD-3-Clause
 
 config MCUX_COMPONENT_middleware.wireless.zigbee.core_common
@@ -9,6 +9,7 @@ config MCUX_COMPONENT_middleware.wireless.zigbee.core_common
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
         || MCUX_COMPONENT_middleware.wireless.zigbee.router \
-        || MCUX_COMPONENT_middleware.wireless.zigbee.coprocessor
+        || MCUX_COMPONENT_middleware.wireless.zigbee.coprocessor \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
 
 

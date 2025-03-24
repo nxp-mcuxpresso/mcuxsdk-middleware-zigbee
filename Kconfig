@@ -1,4 +1,4 @@
-# Copyright 2024 NXP
+# Copyright 2024-2025 NXP
 # SPDX-License-Identifier: BSD-3-Clause
 
 menuconfig MCUX_COMPONENT_middleware.wireless.zigbee
@@ -258,6 +258,43 @@ menuconfig MCUX_COMPONENT_middleware.wireless.zigbee
                     default y
                     help
                         Zigbee Coprocessor enable/disable application tracing
+            endif
+
+        config MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
+            bool "MCUX Zigbee Custom Application"
+
+            help
+              The Zigbee custom application category provides a scope in the Zigbee properties class
+              to define distinct settings that can be retrieved by a custom (user-defined)
+              Zigbee application.
+
+            if MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
+                choice Feature
+                bool "Feature selection"
+                default ZB_CUSTOM_APP_R22_REVISION
+                    config ZB_CUSTOM_APP_R22_REVISION
+                        bool "Zigbee PRO 2017 (R22) selected"
+                        select MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs
+                    config ZB_CUSTOM_APP_R23_REVISION
+                        bool "Zigbee PRO 2023 (R23) selected"
+                        select MCUX_COMPONENT_middleware.wireless.zigbee.platform.core_libs_r23
+                endchoice
+
+                config ZB_CUSTOM_APP_SINGLE_CHANNEL
+                    int "ZB_CUSTOM_APP_SINGLE_CHANNEL"
+                    default 12
+                    help
+                        Zigbee custom application channel selection
+                config ZB_CUSTOM_APP_TRACE_APP
+                    bool "Enable application tracing"
+                    default y
+                    help
+                        Zigbee custom application enable/disable application tracing
+                config ZB_CUSTOM_APP_TRACE_ZCL
+                    bool "Enable ZCL tracing"
+                    default y
+                    help
+                        Zigbee custom application enable/disable ZCL tracing
             endif
         endchoice
     endif

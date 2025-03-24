@@ -8,42 +8,54 @@ config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_common
     depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
-        || MCUX_COMPONENT_middleware.wireless.zigbee.router
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
 
 config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_nwksteering
     bool "Base Device network steering support"
     depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
-        || MCUX_COMPONENT_middleware.wireless.zigbee.router
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
 
 config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_nwkformation
     bool "Base Device network formation support"
-    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
 
 config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_findbind_initiator
     bool "Base Device find and bind initiator support"
-    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
 
 config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_findbind_target
     bool "Base Device find and bind target support"
     depends on MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
-        || MCUX_COMPONENT_middleware.wireless.zigbee.router
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
 
 config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_outofband
     bool "Base Device Out-Of-Band commissioning support"
     depends on MCUX_COMPONENT_middleware.wireless.zigbee.router \
-        || MCUX_COMPONENT_middleware.wireless.zigbee.coordinator
+        || MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
 
 config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_touchlink_initiator_ed
     bool
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
+
 config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_touchlink_initiator_router
     bool
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
+
 config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_touchlink_initiator_target
     bool
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
 
 config MCUX_COMPONENT_middleware.wireless.zigbee.bdb_transport_keydecider
     bool "Base Device transport key decider support"
-    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
+        ||  MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
 

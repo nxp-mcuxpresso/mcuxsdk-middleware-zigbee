@@ -1,6 +1,6 @@
 # ZCL configuration
 
-# Copyright 2024 NXP
+# Copyright 2024-2025 NXP
 # SPDX-License-Identifier: BSD-3-Clause
 
 config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_hf
@@ -31,7 +31,8 @@ config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_general
     depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
-        || MCUX_COMPONENT_middleware.wireless.zigbee.router
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
     help
       Zigbee module providing APIs to handle General Cluster support
 
@@ -67,7 +68,8 @@ config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_measurement_sensing
     
 config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_ota_server
     bool "Over-the-Air Server Cluster support"
-    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator
+    depends on MCUX_COMPONENT_middleware.wireless.zigbee.coordinator \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
     help
       Zigbee module providing APIs to handle Over-the-Air Server Cluster support
 
@@ -75,7 +77,8 @@ config MCUX_COMPONENT_middleware.wireless.zigbee.zcl_ota_client
     bool "Over-the-Air Client Cluster support"
     depends on MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
-        || MCUX_COMPONENT_middleware.wireless.zigbee.router
+        || MCUX_COMPONENT_middleware.wireless.zigbee.router \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
     help
       Zigbee module providing APIs to handle Over-the-Air Client Cluster support
 
@@ -115,7 +118,8 @@ config MCUX_COMPONENT_middleware.wireless.zigbee.device_zha_generic
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_off \
         || MCUX_COMPONENT_middleware.wireless.zigbee.enddevice_rx_on \
         || MCUX_COMPONENT_middleware.wireless.zigbee.router \
-        || MCUX_COMPONENT_middleware.wireless.zigbee.coprocessor
+        || MCUX_COMPONENT_middleware.wireless.zigbee.coprocessor \
+        || MCUX_COMPONENT_middleware.wireless.zigbee.custom_app
     help
       Zigbee module providing APIs to handle Home Automation Basic Device support
 
