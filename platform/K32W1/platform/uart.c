@@ -37,6 +37,7 @@
 static LPUART_Type *const lpuart_base[] = LPUART_BASE_PTRS;
 static const IRQn_Type lpuart_irqs[] = LPUART_RX_TX_IRQS;
 static const IRQn_Type edma_irqs[][FSL_FEATURE_EDMA_MODULE_CHANNEL] = DMA_IRQS;
+static const clock_ip_name_t lpuart_clocks[] = LPUART_CLOCKS;
 
 static edma_handle_t rx_dma_handle;
 
@@ -186,7 +187,7 @@ bool zbPlatUartSetBaudRate(uint32_t baud)
     bool result = true;
 
     if (kStatus_Success !=
-        LPUART_SetBaudRate(lpuart_base[BOARD_UART_INSTANCE], baud, CLOCK_GetFreq(kCLOCK_ScgSircClk)))
+        LPUART_SetBaudRate(lpuart_base[BOARD_UART_INSTANCE], baud, CLOCK_GetIpFreq(lpuart_clocks[BOARD_UART_INSTANCE])))
     {
         result = false;
     }
