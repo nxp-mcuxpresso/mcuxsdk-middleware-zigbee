@@ -1,4 +1,4 @@
-# Copyright 2024 NXP
+# Copyright 2024-2025 NXP
 # SPDX-License-Identifier: BSD-3-Clause
 
 if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.zcl_hf)
@@ -13,6 +13,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.zcl_hf)
                  Clusters/SecurityAndSafety/Include
                  Clusters/SmartEnergy/Include
                  Clusters/Commissioning/Include
+                 Clusters/OTA/Include
     )
     mcux_add_source(
         SOURCES Clusters/Commissioning/Include/zll_commission.h
