@@ -56,7 +56,25 @@ PRIVATE BDB_teStatus eFbStartFbTarget(uint8 u8EndPoint);
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
-PRIVATE teFB_State aeFBState[ZCL_NUMBER_OF_ENDPOINTS];
+PRIVATE struct {
+    teFB_State eState;
+    uint8 u8EndpointId;
+} asFBState[ZCL_NUMBER_OF_ENDPOINTS];
+
+PRIVATE teFB_State *u8GetEndpointState(uint8 u8EndpointId)
+{
+    int i;
+
+    for (i = 0; i < ZCL_NUMBER_OF_ENDPOINTS; i++)
+    {
+        if (asFBState[i].u8EndpointId == u8EndpointId)
+        {
+            return &asFBState[i].eState;
+        }
+    }
+
+    return NULL;
+}
 
 /****************************************************************************/
 /***        Exported Functions                                            ***/
@@ -117,15 +135,16 @@ PUBLIC BDB_teStatus BDB_eFbTriggerAsTarget(uint8 u8EndPoint)
 PUBLIC void BDB_vFbHandleStopIdentification(tsZCL_CallBackEvent *pCallBackEvent)
 {
     BDB_tsBdbEvent sBdbEvent = {0};
+    teFB_State *peState = u8GetEndpointState(pCallBackEvent->u8EndPoint);
 
     DBG_vPrintf(TRACE_FB_TARGET, "BDB_vFbHandleStopIdentification \r\n");
     
-    if(E_FB_IN_PROGRESS_STATE == aeFBState[pCallBackEvent->u8EndPoint - 1])
+    if (peState && E_FB_IN_PROGRESS_STATE == *peState)
     {
         /*Step 4: Change BDB status into Success */
         sBDB.sAttrib.ebdbCommissioningStatus = E_BDB_COMMISSIONING_STATUS_SUCCESS;  
         /* clear state variables */
-        aeFBState[pCallBackEvent->u8EndPoint - 1] =  E_FB_IDLE_STATE;
+        *peState =  E_FB_IDLE_STATE;
 
         /* callback to app */
         sBdbEvent.eEventType = BDB_EVENT_FB_OVER_AT_TARGET;
@@ -155,6 +174,7 @@ PUBLIC void BDB_vFbExitAsTarget(uint8 u8SourceEndpoint)
     /* clear state variables */
     uint16 u16IdentifyTime = 0;
     DBG_vPrintf(TRACE_FB_TARGET, "vEZ_Exit  \n");
+    teFB_State *peState = u8GetEndpointState(u8SourceEndpoint);
 
     eZCL_WriteLocalAttributeValue(
                         u8SourceEndpoint,
@@ -166,7 +186,10 @@ PUBLIC void BDB_vFbExitAsTarget(uint8 u8SourceEndpoint)
                         &u16IdentifyTime);
 
     /* clear state variables */
-    aeFBState[u8SourceEndpoint - 1] = E_FB_IDLE_STATE;
+    if (peState)
+    {
+        *peState = E_FB_IDLE_STATE;
+    }
         
     /*Step 4: Change BDB status into Success */
     sBDB.sAttrib.ebdbCommissioningStatus = E_BDB_COMMISSIONING_STATUS_SUCCESS;  
@@ -194,8 +217,12 @@ PUBLIC void BDB_vFbExitAsTarget(uint8 u8SourceEndpoint)
 PRIVATE BDB_teStatus eFbStartFbTarget(uint8 u8EndPoint)
 {
     uint16 u16FBCommissioningTime = BDBC_MIN_COMMISSIONING_TIME;
+    teFB_State *peState = u8GetEndpointState(u8EndPoint);
     /* clear state variables */
-    aeFBState[u8EndPoint - 1] = E_FB_IDLE_STATE;
+    if (peState)
+    {
+        *peState = E_FB_IDLE_STATE;
+    }
     
     /* Step 1 of 8.5: Change BDB status into progress */
     sBDB.sAttrib.ebdbCommissioningStatus = E_BDB_COMMISSIONING_STATUS_IN_PROGRESS;  
@@ -218,7 +245,10 @@ PRIVATE BDB_teStatus eFbStartFbTarget(uint8 u8EndPoint)
 
     eCLD_GroupsSetIdentifying(u8EndPoint, TRUE);
     
-    aeFBState[u8EndPoint - 1] = E_FB_IN_PROGRESS_STATE;
+    if (peState)
+    {
+        *peState = E_FB_IN_PROGRESS_STATE;
+    }
     
     return BDB_E_SUCCESS;
 }
