@@ -1,0 +1,164 @@
+{
+    "Application": {
+        "patterns": [
+            "^.*examples.zigbee_coordinator.*$"
+        ],
+        "color": "ff4effef"
+    },
+    "Application (Common)": {
+        "patterns": [
+            "^.*app_crypto.*$",
+            "^.*app_signals.*$",
+            "^.*app_zps_link_keys.*$",
+            "^.*examples.zb_common.*$",
+            "^.*app_aes_ccm_star\\.o$",
+            "^.*app_coprocessor_node\\.o$",
+            "^.*app_event_handler\\.o$",
+            "^.*app_exceptions\\.o$",
+            "^.*app_pdm_convert\\.o$",
+            "^.*app_restorepoint\\.o$",
+            "^.*app_serial_cmds\\.o$",
+            "^.*app_sleep_functions\\.o$",
+            "^.*app_sub_gig\\.o$",
+            "^.*app_zbp_utilities\\.o$",
+            "^.*EzJoin\\.o$",
+            "^.*irq\\.o$",
+            "^.*MDI_Programmer\\.o$",
+            "^.*MDI_ReadFirmVer\\.o$",
+            "^.*ModuleTest\\.o$",
+            "^.*SerialLink\\.o$",
+            "^.*StackMeasure\\.o$",
+            "^.*SubGHz_Radio_Firmware_bin\\.o$",
+            "^.*uart\\.o$",
+            "^.*examples._boards.*$",
+            "^.*examples._common.project_segments.*$"
+        ],
+        "color": "ff7d83ff"
+    },
+
+    "RTOS": {
+        "patterns": [
+            "^.*rtos/freertos/freertos-kernel.*$"
+         ],
+         "color": "ffcecece"
+     },
+         
+    "ZPSAPL": {
+        "patterns": [
+             "^.*libZPSAPL.*\\.a$",
+             "^.*zps_.*$"
+        ],
+        "color": "ff007fff"
+    },
+
+    "ZCL": {
+        "patterns": [
+            "^.*zigbee.*ZCL.*$",
+            "^.*zigbee.*ZCIF.*$"
+        ],
+        "color": "ffffe74c"
+    },
+
+    "BDB": {
+        "patterns": [
+            "^.*zigbee.*BDB.*$"
+        ],
+        "color": "ffff5964"
+    },
+
+    "ZPSAPL": {
+        "patterns": [
+             "^.*libZPSAPL\\.a$",
+             "^.*libZPSIPAN\\.a$",
+             "^.*zps_.*$"
+        ],
+        "color": "ff8D3B72"
+    },
+
+    "ZPSNWK": {
+        "patterns": [
+            "^.*libZPSNWK.*\\.a$"
+        ],
+        "color": "ff89A7A7"
+    },
+
+    "ZPSMAC": {
+        "patterns": [
+                "^.*libZPSMAC.*\\.a$"
+         ],
+        "color": "ff72E1D1"
+    },
+
+    "SDK (components)": {
+        "patterns": [
+            "^.*components.*$"
+        ],
+        "color": "ffB5D8CC"
+    },
+    "SDK (drivers & device)": {
+        "patterns": [
+            "^.*drivers.*$",
+            "^.*devices.*$"
+        ],
+        "color": "ff7FB069"
+    },
+    "SDK (Multicore & Secure Subsystem)": {
+        "patterns": [
+            "^.*middleware.multicore.*$",
+            "^.*middleware.secure-subsystem.*$"
+        ],
+        "color": "ffFFFBBD"
+    },
+    "PDUM": {
+        "patterns": [
+            "^.*pdum_.*$",
+            "^.*libPDUM.*\\.a$"
+        ],
+        "color": "FFE6AA68"
+    },
+
+    "ZigBee Common": {
+        "patterns": [
+            "^.*middleware.wireless.zigbee.platform.*\\.c.*$",
+            "^.*appZdpExtraction.*$",
+            "^.*appZpsBeaconHandler.*$",
+            "^.*appZpsExtendedDebug.*$",
+            "^.*port_JN51.*\\..*$",
+            "^.*portasm_JN516x\\.o.*$",
+            "^.*ZQueue.*$",
+            "^.*ZTimer.*$",
+            "^.*libZPSTSV.a$"
+        ],
+        "color": "ffdee1f9"
+    },
+    "ZigBee Utilities": {
+        "patterns": [
+            "^.*memcmp\\.o$",
+            "^.*memcpy\\.o$",
+            "^.*memset\\.o$",
+            "^.*NumToString\\.o$",
+            "^.*Printf\\.o$",
+            "^.*UartPrint\\.o$"
+        ],
+        "color": "fff0dcf9"
+    },
+    "IEEE": {
+        "patterns": [
+            "^.*libieee.*\\.a$"
+        ],
+        "color": "ff00FF00"
+    },
+
+    "Libraries": {
+        "patterns": [
+            "^.*\\.a$"
+        ],
+        "color": "ff6ef7f6"
+    },
+    "Framework" : {
+            "patterns": [
+            "^.*middleware.wireless.framework.*$"
+        ],
+        "color": "ff77BA99"
+    }
+}
