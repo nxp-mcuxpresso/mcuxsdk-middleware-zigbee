@@ -220,6 +220,7 @@ typedef struct
     uint8 u8LinkQuality;
     uint8 u8APduOffset;
     bool_t bFramePending;
+    uint8  u8ApsSeqNum;
 #ifdef R23_UPDATES
     uint8  u8KeyIndex;
     bool_t bByRelay;
