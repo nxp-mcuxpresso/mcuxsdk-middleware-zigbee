@@ -194,6 +194,7 @@ typedef enum {
     ZPS_EVENT_NWK_DISCOVERY_ACTIVE_COMPLETE,            /* 30, 0x1E */
 #ifdef R23_UPDATES
     ZPS_EVENT_NWK_CMD_TLV_INDICATION,                   /* 31, 0x1F */
+    ZPS_EVENT_TC_DEVICE_INTERVIEW_STARTED,              /* 32, 0X20 */
 #endif
     ZPS_ZCP_EVENT_FAILURE,
     ZPS_EVENT_TLV_FOUND = 128,                          /* 128, 0x80, ORed over the above */
@@ -223,7 +224,12 @@ typedef struct
     uint8  u8ApsSeqNum;
 #ifdef R23_UPDATES
     uint8  u8KeyIndex;
-    bool_t bByRelay;
+    bool_t bByRelay;          /**< TRUE if APSDE was included
+                                   in a relay. If the receiver
+                                   is TC, that relay is upstream.
+                                   Else it is downstream. */
+    uint64 u64RelayIeeeAddr;  /**< The relay IEEE address with
+                                   a meaning depending on relay type */
 #endif
 } ZPS_tsAfDataIndEvent;
 

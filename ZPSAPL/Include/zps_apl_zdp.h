@@ -261,6 +261,10 @@ typedef struct {
     uint64 u64IeeeAddr;
     uint8  u8RequestType;
     uint8  u8StartIndex;
+#ifdef R23_UPDATES
+    uint64 u64JoinerAddr; /* Relay if addr != 0 */
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpNwkAddrReq;
 
 /* [I SP001377_sfr 16]  */
@@ -268,27 +272,47 @@ typedef struct {
     uint16 u16NwkAddrOfInterest;
     uint8  u8RequestType;
     uint8  u8StartIndex;
+#ifdef R23_UPDATES
+    uint64 u64JoinerAddr; /* Relay if addr != 0 */
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpIeeeAddrReq;
 
 /* [I SP001377_sfr 17]  */
 typedef struct {
     uint16 u16NwkAddrOfInterest;
+#ifdef R23_UPDATES
+    uint64 u64JoinerAddr; /* Relay if addr != 0 */
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpNodeDescReq;
 
 /* [I SP001377_sfr 18]  */
 typedef struct {
     uint16 u16NwkAddrOfInterest;
+#ifdef R23_UPDATES
+    uint64 u64JoinerAddr; /* Relay if addr != 0 */
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpPowerDescReq;
 
 /* [I SP001377_sfr 19]  */
 typedef struct {
     uint16 u16NwkAddrOfInterest;
     uint8  u8EndPoint;
+#ifdef R23_UPDATES
+    uint64 u64JoinerAddr; /* Relay if addr != 0 */
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpSimpleDescReq;
 
 /* [I SP001377_sfr 20]  */
 typedef struct {
     uint16 u16NwkAddrOfInterest;
+#ifdef R23_UPDATES
+    uint64 u64JoinerAddr; /* Relay if addr != 0 */
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpActiveEpReq;
 
 /* [I SP001377_sfr 21]  */
@@ -300,6 +324,10 @@ typedef struct {
     uint16* pu16InClusterList;
     uint8  u8NumOutClusters;
     uint16* pu16OutClusterList;
+#ifdef R23_UPDATES
+    uint64 u64JoinerAddr; /* Relay if addr != 0 */
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpMatchDescReq;
 
 #ifndef R23_UPDATES
@@ -806,6 +834,10 @@ typedef struct {
     uint8  u8StartIndex;
     /* rest of the message is variable Length */
     uint16* pu16NwkAddrAssocDevList;
+#ifdef R23_UPDATES
+    uint64 u64RelayAddr;
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpNwkAddrRsp;
 
 /* [I SP001377_sfr 58]  */
@@ -818,6 +850,10 @@ typedef struct {
 
     /* rest of the message is variable Length */
     uint16* pu16NwkAddrAssocDevList;
+#ifdef R23_UPDATES
+    uint64 u64RelayAddr;
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpIeeeAddrRsp;
 
 /* [I SP001377_sfr 59]  */
@@ -829,6 +865,8 @@ typedef struct {
 #ifdef R23_UPDATES
     uint8  u8SelectedKeyNegotiationMethod;
     uint8  u8SelectedPresharedSecret;
+    bool_t bNoNwkKey;
+    uint64 u64RelayAddr;
 #endif
 } ZPS_tsAplZdpNodeDescRsp;
 
@@ -838,6 +876,10 @@ typedef struct {
     uint16 u16NwkAddrOfInterest;
     /* rest of the message is variable length */
     ZPS_tsAplZdpNodePowerDescriptor sPowerDescriptor;
+#ifdef R23_UPDATES
+    uint64 u64RelayAddr;
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpPowerDescRsp;
 
 /* [I SP001377_sfr 61]  */
@@ -847,6 +889,10 @@ typedef struct {
     uint8  u8Length;
     /* rest of the message is variable length */
     ZPS_tsAplZdpSimpleDescType sSimpleDescriptor;
+#ifdef R23_UPDATES
+    uint64 u64RelayAddr;
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpSimpleDescRsp;
 
 /* [I SP001377_sfr 62]  */
@@ -856,6 +902,10 @@ typedef struct {
     uint8  u8ActiveEpCount;
     /* rest of the message is variable */
     uint8* pu8ActiveEpList;
+#ifdef R23_UPDATES
+    uint64 u64RelayAddr;
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpActiveEpRsp;
 
 /* [I SP001377_sfr 63]  */
@@ -865,6 +915,10 @@ typedef struct {
     uint8  u8MatchLength;
     /* rest of message is variable length */
     uint8* pu8MatchList;
+#ifdef R23_UPDATES
+    uint64 u64RelayAddr;
+    bool_t bNoNwkKey;
+#endif
 } ZPS_tsAplZdpMatchDescRsp;
 
 #ifndef R23_UPDATES
