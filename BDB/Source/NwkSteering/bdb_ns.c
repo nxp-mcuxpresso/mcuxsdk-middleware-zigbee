@@ -526,6 +526,7 @@ PRIVATE void vNsDiscoverNwk()
         if(bDoPrimaryScan == FALSE)
         {
             DBG_vPrintf(TRACE_BDB, "bDoPrimaryScan FALSE\r\n");
+            vNsTerminateNwkSteering();
             return;
         }
         else
