@@ -912,6 +912,12 @@ PUBLIC void BDB_vSetAssociationFilter()
             break;
     }
 
+#if defined(JOIN_PARENT_NODE_EUI64) && (JOIN_PARENT_NODE_EUI64 != 0ULL)
+    au64ExtPanListForBeaconFilter[0] = JOIN_PARENT_NODE_EUI64;
+    sBeaconFilter.pu64ExtendPanIdList = &au64ExtPanListForBeaconFilter[0];
+    sBeaconFilter.u8ListSize = 1;
+    sBeaconFilter.u16FilterMap |= BF_BITMAP_WHITELIST;
+#endif
     ZPS_bAppAddBeaconFilter(&sBeaconFilter);
 #ifdef ENABLE_SUBG_IF
 	void *pvNwk = ZPS_pvAplZdoGetNwkHandle();
