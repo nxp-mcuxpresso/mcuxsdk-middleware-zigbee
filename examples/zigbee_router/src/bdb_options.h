@@ -26,6 +26,14 @@ extern "C" {
 #define BDB_SUPPORT_FIND_AND_BIND_TARGET       (1)
 #endif
 
+#if !defined(SINGLE_CHANNEL) && !defined(BDB_PRIMARY_CHANNEL_SET)
+#define BDB_PRIMARY_CHANNEL_SET                 (0x02108800)                 /* bdbPrimaryChannelSet e.g. (0x02108800) */
+#endif
+
+#ifndef BDB_SECONDARY_CHANNEL_SET
+#define BDB_SECONDARY_CHANNEL_SET               (0)                     /* bdbSecondaryChannelSet e.g. (0x07FFF800 ^ BDB_PRIMARY_CHANNEL_SET) */
+#endif
+
 #define BDBC_TL_PRIMARY_CHANNEL_SET             (0x02108800)    /* bdbcTLPrimaryChannelSet */
 #define BDBC_TL_SECONDARY_CHANNEL_SET           (0x07fff800 ^ BDBC_TL_PRIMARY_CHANNEL_SET) /* bdbcTLSecondaryChannelSet */
 
