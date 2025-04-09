@@ -525,6 +525,7 @@ PRIVATE void vNsDiscoverNwk()
                   and continue from step 2.*/
         if(bDoPrimaryScan == FALSE)
         {
+            DBG_vPrintf(TRACE_BDB, "bDoPrimaryScan FALSE\r\n");
             return;
         }
         else
@@ -532,6 +533,8 @@ PRIVATE void vNsDiscoverNwk()
             bDoPrimaryScan = FALSE;
             u32ScanChannels = sBDB.sAttrib.u32bdbSecondaryChannelSet;
             u8ScanChannel = BDB_CHANNEL_MIN;
+            DBG_vPrintf(TRACE_BDB, "vNsDiscoverNwk bDoPrimaryScan FALSE u32ScanChannels x%08x u8ScanChannel %d\r\n",
+                        u32ScanChannels, u8ScanChannel);
             vNsDiscoverNwk();
             return;
         }
@@ -565,6 +568,7 @@ PRIVATE void vNsDiscoverNwk()
         u8ScanChannel++;
    }
 
+    DBG_vPrintf(TRACE_BDB, "call vNsDiscoverNwk() recursive");
     vNsDiscoverNwk();
     return;
 }
