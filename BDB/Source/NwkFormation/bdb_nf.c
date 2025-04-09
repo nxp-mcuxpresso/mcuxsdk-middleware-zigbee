@@ -322,6 +322,10 @@ PUBLIC void BDB_vNfFormCentralizedNwk(void)
 #endif
 
     ZPS_eAplZdoStartStack();
+
+#if defined(BDB_EXT_PANID) && (BDB_EXT_PANID != 0)
+    ZPS_vNwkNibSetExtPanId(ZPS_pvAplZdoGetNwkHandle(), BDB_EXT_PANID);
+#endif
 }
 
 /****************************************************************************
