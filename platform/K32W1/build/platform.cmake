@@ -21,7 +21,7 @@ if (NOT DEFINED CONFIG_ZB_SPLIT_MODE)
 endif()
 
 # Various FWK related defines
-mcux_add_configuration(CC "-DgHwParamsProdDataPlacement_c=gHwParamsProdDataPlacementLegacyMode_c")
+mcux_add_configuration(CC "-DgHwParamsProdDataPlacement_c=gHwParamsProdDataMainFlash2IfrMode_c")
 
 # K32W1 LDFLAGS
 mcux_add_armgcc_configuration(LD "-Xlinker --defsym=gUseNVMLink_d=1")
