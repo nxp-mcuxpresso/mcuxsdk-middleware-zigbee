@@ -6,3 +6,4 @@ cryptography>=2.6
 intelhex
 click
 cbor2
+openpyxl
