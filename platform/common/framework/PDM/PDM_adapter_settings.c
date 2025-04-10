@@ -180,7 +180,7 @@ PDM_teStatus PDM_eReadDataFromRecord(uint16_t id, void *data, uint16_t len, uint
         request.destination = data;
         request.destinationSize = len;
         request.readSize = 0;
-        request.result = PDM_E_STATUS_OK;
+        request.result = PDM_E_STATUS_NOT_SAVED;
 
         make_full_key(key_name, id);
         settings_load_subtree_direct(key_name, load_entry_callback, &request);
