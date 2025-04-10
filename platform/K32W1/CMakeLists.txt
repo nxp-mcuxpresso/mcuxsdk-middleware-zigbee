@@ -11,6 +11,8 @@ mcux_set_list(MCXW72_FAMILY "MCXW727CxxxA")
 if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.kw45_k32w1_mcxw71)
     mcux_add_source(
         SOURCES ../zb_platform.h
+                ../../../framework/services/SecLib_RNG/SecLib_aes_mmo.c
+                ../../../framework/services/SecLib_RNG/SecLib.h
                 framework/Common/dbg.h
                 framework/Common/glue.h
                 framework/Common/Heap.h
@@ -21,7 +23,6 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.kw45_k32w1_mcxw71)
                 framework/PDM/PDM_adapter.c
                 framework/PWRM/PWRM_adapter.c
                 framework/PWRM/Include/pwrm.h
-                framework/SecLib/aes_mmo.c
                 framework/SecLib/aessw_ccm.h
                 framework/SecLib/SecLib_.c
                 platform/buttons.c
@@ -36,6 +37,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.platform.kw45_k32w1_mcxw71)
     )
     mcux_add_include(
         INCLUDES ../
+                 ../../../framework/services/SecLib_RNG
                  framework/Common
                  framework/PWRM/Include
                  framework/SecLib

@@ -67,17 +67,18 @@ int16_t zbPlatRngGetPseudoRandom(uint8_t* pOut, uint8_t outBytes, uint8_t* pSeed
 
 void zbPlatCryptoAesHmacMmo(uint8_t *pu8Data, int iDataLen, void *key, void *hash)
 {
-    return AESSW_vHMAC_MMO(pu8Data, iDataLen, (AESSW_Block_u *)key, (AESSW_Block_u *)hash);
+    return HMAC_AES_MMO((const uint8_t *)key, AES_BLOCK_SIZE, (const uint8_t *)pu8Data, (uint32_t)iDataLen, (uint8_t *)hash);
 }
 
 void zbPlatCryptoAesMmoBlockUpdate(void *hash, void *block)
 {
-    return AESSW_vMMOBlockUpdate((AESSW_Block_u *)hash, (AESSW_Block_u *)block);
+    return AES_MMO_BlockUpdate((tuAES_Block *)hash, (tuAES_Block *)block);
 }
 
 void zbPlatCryptoAesMmoFinalUpdate(void *hash, uint8_t *pu8Data, int iDataLen, int iFinalLen)
-{
-    return AESSW_vMMOFinalUpdate((AESSW_Block_u *)hash, pu8Data, iDataLen, iFinalLen);
+{   
+    NOT_USED(iFinalLen);
+    return AES_MMO_Hash((const uint8_t *)pu8Data, (uint32_t)iDataLen, (uint8_t *)hash);
 }
 
 bool_t zbPlatCryptoAesSetKey(CRYPTO_tsReg128 *psKeyData)

@@ -53,19 +53,6 @@ void vACI_OptimisedCcmStar(bool_t         bEncrypt,
                            uint8_t       *pau8checksumData,
                            bool_t        *pbChecksumVerify);
 
-void AESSW_vMMOBlockUpdate(AESSW_Block_u *puHash,
-                           AESSW_Block_u *puBlock);
-
-void AESSW_vMMOFinalUpdate(AESSW_Block_u *puHash,
-                           uint8_t *pu8Data,
-                           int iDataLen,
-                           int iFinalLen);
-
-void AESSW_vHMAC_MMO(uint8_t *pu8Data,
-                     int iDataLen,
-                     AESSW_Block_u *puKeyData,
-                     AESSW_Block_u *puHash);
-
 #endif  /* AESSW_CCM__H_INCLUDED */
 
 /****************************************************************************/
