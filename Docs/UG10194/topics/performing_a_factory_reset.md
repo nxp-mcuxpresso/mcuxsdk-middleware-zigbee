@@ -2,7 +2,7 @@
 
 The End Device can be returned to its factory-new state \(erasing all persistent data except the outgoing network frame counter\) as follows:
 
--   Hold down the **USER** button and press the **RESET** button on the K32W148-EVK board or FRDM-MCXW71 board, or MCX-W72-EVK board.
+-   Hold down the **USER** button and press the **RESET** button on the FRDM-MCXW71 board or MCX-W71-EVK board, or MCX-W72-EVK board.
 
 The End Device then unicasts a Leave Indication to its parent. The parent then broadcasts this message again to the old network. The End Device deletes all persistent data \(other than the outgoing network frame counter\) and performs a software reset.
 

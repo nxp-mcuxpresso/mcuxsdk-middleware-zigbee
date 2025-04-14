@@ -1,4 +1,4 @@
-# K32W1/MCXW71/MCXW72/RW612 ZigBee Demo Applications User Guide
+# MCXW71/MCXW72/RW612 ZigBee Demo Applications User Guide
 
 
 ```{tocTree}

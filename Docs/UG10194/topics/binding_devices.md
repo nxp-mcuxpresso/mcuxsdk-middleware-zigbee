@@ -4,7 +4,7 @@ The Router and End Device support the On/Off cluster as a server and implement t
 
 To trigger "Finding and Binding" as a target, perform the following steps:
 
-1.  Press the **USER** button on the K32W148-EVK board (or the K32W148-EVK / FRDM-MCXW71 / MCX-W72-EVK / FRDM-RW612 / RD-RW612-BGA board) of the target device. The same button is used to start Network Steering, described in [Allowing Other Devices to Join the Network](joining_an_existing_network_using_network_steering.md).
+1.  Press the **USER** button on the FRDM-MCXW71 board (or the MCX-W71-EVK / MCX-W72-EVK / FRDM-RW612 / RD-RW612-BGA board) of the target device. The same button is used to start Network Steering, described in [Allowing Other Devices to Join the Network](joining_an_existing_network_using_network_steering.md).
 2.  Start "*Finding and Binding*" on the initiator device.
 
 This step causes the End Device or Router to self-identify for 180 seconds. In this duration, the initiator tries to find the identifying devices, queries their capabilities, and creates bindings on the devices with matching operational clusters. As part of this process, the Route or End Device can receive an `Add Group` command and/or a `Binding Request` command.

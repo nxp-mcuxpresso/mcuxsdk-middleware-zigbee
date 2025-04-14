@@ -1,6 +1,6 @@
 # Introduction
 
-A ZigBee 3.x wireless network comprises various ZigBee software devices that are implemented on hardware platforms to form nodes. These ZigBee examples are concerned with implementing the ZigBee Base device on the NXP ZigBee device \(K32W1/MCXW71/MCXW72/RW612\).
+A ZigBee 3.x wireless network comprises various ZigBee software devices that are implemented on hardware platforms to form nodes. These ZigBee examples are concerned with implementing the ZigBee Base device on the NXP ZigBee device \(MCXW71/MCXW72/RW612\).
 
 This document provides example implementations of the following ZigBee logical device types:
 

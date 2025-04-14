@@ -3,7 +3,7 @@
 To use the ZigBee examples, install the following software:
 
 -   MCUXpresso Integrated Design Environment \(IDE\)
--   K32W1/MCXW71/MCXW72 ZigBee 3.0 Software Development Kit \(SDK\)
+-   MCXW71/MCXW72 ZigBee 3.0 Software Development Kit \(SDK\)
 -   Python 3
 -   Required python modules: lxml, openpyxl, SPSDK version 1.11.0 and crccheck
 -   Install all required Python modules from ${SDK_ROOT}/middleware/wireles/zigbee:  
@@ -12,7 +12,7 @@ To use the ZigBee examples, install the following software:
     **Note:** Both SPSDK version 1.11.0 and crccheck modules are required to generate OTA images using the NXP ZB OTA tool \(`nxpzbota.py`\).
 
 
-The MCUXpresso software and installation instructions are described in [Getting Started with the K32W148 Development Platform](https://www.nxp.com/document/guide/getting-started-with-the-k32w148-development-platform:GS-K32W148EVK).
+The MCUXpresso software and installation instructions are described in [Getting Started with the FRDM-MCXW71 Development Platform](https://www.nxp.com/document/guide/getting-started-with-frdm-mcxw71:GS-FRDM-MCXW71).
 
 Support for Zigbee packet sniffing is provided by using the `Sniffer_1000000baud_8N1_NoFlowControl` sniffer binary available in the `tools/sniffer` K32W061 SDK. The binary must be flashed on a K32W0 board using either of the following two methods:
 
