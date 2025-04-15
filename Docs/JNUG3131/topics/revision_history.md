@@ -7,6 +7,7 @@ The table below lists the revisions to this document.<br>
 |  |                  |                                             |
 | ------------------------------------ | ---------------- | ------------------------------------------- |
 |**Document ID**                          | **Release date**    | **Description**                                 |
+| JNUG3131 v.2.5                       | 15 April 2025  | Removed support for K32W0 and K32W1 devices |
 | JNUG3131 v.2.4                       | 25 March 2025  | Added support for RW612 devices |
 | JNUG3131 v.2.3                       | 24 January 2025  | Added support for MCXW71 and MCXW72 devices |
 | JNUG3131 v.2.2                       | 28 February 2023 | Added support for K32W1 devices             |
