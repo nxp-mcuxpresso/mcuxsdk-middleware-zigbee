@@ -4,8 +4,10 @@ To use the ZigBee examples, install the following software:
 
 -   MCUXpresso Integrated Design Environment \(IDE\)
 -   K32W1/MCXW71/MCXW72 ZigBee 3.0 Software Development Kit \(SDK\)
--   Python 3 and lxml module
--   SPSDK version 1.11.0 and crccheck module
+-   Python 3
+-   Required python modules: lxml, openpyxl, SPSDK version 1.11.0 and crccheck
+-   Install all required Python modules from ${SDK_ROOT}/middleware/wireles/zigbee:  
+    `$ pip install -r requirements.txt`
 
     **Note:** Both SPSDK version 1.11.0 and crccheck modules are required to generate OTA images using the NXP ZB OTA tool \(`nxpzbota.py`\).
 
