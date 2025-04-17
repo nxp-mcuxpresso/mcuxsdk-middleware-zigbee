@@ -19,6 +19,7 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.examples_common)
                 zb_common/app_common.h
                 zb_common/app_signals.c
                 zb_common/app_signals.h
+                zb_common/mcux_sdk_adapter.h
     )
     mcux_add_include(
         INCLUDES zb_common

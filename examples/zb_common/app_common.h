@@ -12,7 +12,7 @@
 #include "zll_commission.h"
 #include "zll_utility.h"
 #include "ZTimer.h"
-
+#include "mcux_sdk_adapter.h"
 /****************************************************************************/
 /***        Macro Definitions                                             ***/
 /****************************************************************************/
