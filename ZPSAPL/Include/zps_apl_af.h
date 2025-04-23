@@ -1,5 +1,5 @@
 /*
- * Copyright 2020,2022-2025 NXP
+ * Copyright 2020, 2022-2025 NXP
  * NXP Proprietary.
  * This software is owned or controlled by NXP and may only be used strictly
  * in accordance with the applicable license terms. By expressly accepting
@@ -747,14 +747,50 @@ PUBLIC ZPS_teStatus zps_eAplAfGetEndpointDiscovery(void *pvApl, uint8 u8Endpoint
 PUBLIC ZPS_teStatus zps_eAplAfGetNodeDescriptor(void *pvApl, ZPS_tsAplAfNodeDescriptor *psDesc);
 PUBLIC ZPS_teStatus zps_eAplAfGetNodePowerDescriptor(void *pvApl, ZPS_tsAplAfNodePowerDescriptor *psDesc);
 PUBLIC ZPS_teStatus zps_eAplAfGetSimpleDescriptor(void *pvApl, uint8 u8Endpoint, ZPS_tsAplAfSimpleDescriptor *psDesc);
-PUBLIC ZPS_teStatus zps_eAplAfUnicastDataReq(void *pvApl, PDUM_thAPduInstance hAPduInst, uint32 u32ClId_DstEp_SrcEp, uint16 u16DestAddr,
-                                             uint16 u16SecMd_Radius, uint8 *pu8SeqNum);
-PUBLIC ZPS_teStatus zps_eAplAfUnicastIeeeDataReq(void *pvApl, PDUM_thAPduInstance hAPduInst, uint32 u32ClId_DstEp_SrcEp, uint64 *pu64DestAddr,
-                                                 uint16 u16SecMd_Radius, uint8 *pu8SeqNum);
-PUBLIC ZPS_teStatus zps_eAplAfUnicastAckDataReq(void *pvApl, PDUM_thAPduInstance hAPduInst, uint32 u32ClId_DstEp_SrcEp, uint16 u16DestAddr,
-                                                uint16 u16SecMd_Radius, uint8 *pu8SeqNum);
-PUBLIC ZPS_teStatus zps_eAplAfUnicastIeeeAckDataReq(void *pvApl, PDUM_thAPduInstance hAPduInst, uint32 u32ClId_DstEp_SrcEp, uint64 *pu64DestAddr,
-                                                    uint16 u16SecMd_Radius, uint8 *pu8SeqNum);
+#ifdef R23_UPDATES
+PUBLIC ZPS_teStatus zps_eAplAfUnicastDataRelayReq(
+#else
+PUBLIC ZPS_teStatus zps_eAplAfUnicastDataReq(
+#endif
+                                             void *pvApl, PDUM_thAPduInstance hAPduInst, uint32 u32ClId_DstEp_SrcEp, uint16 u16DestAddr,
+                                             uint16 u16SecMd_Radius, uint8 *pu8SeqNum
+#ifdef R23_UPDATES
+                                             , uint64 u64RelayTlvAddr
+#endif
+                                             );
+#ifdef R23_UPDATES
+PUBLIC ZPS_teStatus zps_eAplAfUnicastIeeeDataRelayReq(
+#else
+PUBLIC ZPS_teStatus zps_eAplAfUnicastIeeeDataReq(
+#endif
+                                                 void *pvApl, PDUM_thAPduInstance hAPduInst, uint32 u32ClId_DstEp_SrcEp, uint64 *pu64DestAddr,
+                                                 uint16 u16SecMd_Radius, uint8 *pu8SeqNum
+#ifdef R23_UPDATES
+                                                 , uint64 u64RelayTlvAddr
+#endif
+                                                 );
+#ifdef R23_UPDATES
+PUBLIC ZPS_teStatus zps_eAplAfUnicastAckDataRelayReq(
+#else
+PUBLIC ZPS_teStatus zps_eAplAfUnicastAckDataReq(
+#endif
+                                                void *pvApl, PDUM_thAPduInstance hAPduInst, uint32 u32ClId_DstEp_SrcEp, uint16 u16DestAddr,
+                                                uint16 u16SecMd_Radius, uint8 *pu8SeqNum
+#ifdef R23_UPDATES
+                                                , uint64 u64RelayTlvAddr
+#endif
+                                                );
+#ifdef R23_UPDATES
+PUBLIC ZPS_teStatus zps_eAplAfUnicastIeeeAckDataRelayReq(
+#else
+PUBLIC ZPS_teStatus zps_eAplAfUnicastIeeeAckDataReq(
+#endif
+                                                    void *pvApl, PDUM_thAPduInstance hAPduInst, uint32 u32ClId_DstEp_SrcEp, uint64 *pu64DestAddr,
+                                                    uint16 u16SecMd_Radius, uint8 *pu8SeqNum
+#ifdef R23_UPDATES
+                                                    , uint64 u64RelayTlvAddr
+#endif
+                                                   );
 PUBLIC ZPS_teStatus zps_eAplAfGroupDataReq(void *pvApl, PDUM_thAPduInstance hAPduInst, uint32 u32ClId_SrcEp, uint16 u16DstGroupAddr,
                                            uint16 u16SecMd_Radius, uint8 *pu8SeqNum);
 PUBLIC ZPS_teStatus zps_eAplAfBroadcastDataReq(void *pvApl, PDUM_thAPduInstance hAPduInst, uint32 u32ClId_DstEp_SrcEp,
@@ -965,30 +1001,78 @@ ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfGetSimpleDescriptor(uint8 u8Endpoint, ZPS_
     return zps_eAplAfGetSimpleDescriptor(ZPS_pvAplZdoGetAplHandle(), u8Endpoint, psDesc);
 }
 
+#ifdef R23_UPDATES
+#define ZPS_eAplAfUnicastDataReq(hAPduInst, u16ClusterId, u8SrcEndpoint, u8DstEndpoint, u16DestAddr, eSecurityMode, u8Radius, pu8SeqNum) \
+        ZPS_eAplAfUnicastDataRelayReq(hAPduInst, u16ClusterId, u8SrcEndpoint, u8DstEndpoint, u16DestAddr, eSecurityMode, u8Radius, pu8SeqNum, ZPS_NWK_NULL_EXT_ADDR)
+
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastDataRelayReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint16 u16DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum, uint64 u64RelayTlvAddr) ZPS_APL_ALWAYS_INLINE;
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastDataRelayReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint16 u16DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum, uint64 u64RelayTlvAddr)
+{
+    return zps_eAplAfUnicastDataRelayReq(ZPS_pvAplZdoGetAplHandle(), hAPduInst, (u16ClusterId << 16) | (u8DstEndpoint << 8) | u8SrcEndpoint, u16DestAddr, (eSecurityMode << 8) | u8Radius, pu8SeqNum,
+                                         u64RelayTlvAddr);
+}
+#else
 ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastDataReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint16 u16DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum) ZPS_APL_ALWAYS_INLINE;
 ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastDataReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint16 u16DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum)
 {
     return zps_eAplAfUnicastDataReq(ZPS_pvAplZdoGetAplHandle(), hAPduInst, (u16ClusterId << 16) | (u8DstEndpoint << 8) | u8SrcEndpoint, u16DestAddr, (eSecurityMode << 8) | u8Radius, pu8SeqNum);
 }
+#endif
 
+#ifdef R23_UPDATES
+#define ZPS_eAplAfUnicastIeeeDataReq(hAPduInst, u16ClusterId, u8SrcEndpoint, u8DstEndpoint, u64DestAddr, eSecurityMode, u8Radius, pu8SeqNum) \
+        ZPS_eAplAfUnicastIeeeDataRelayReq(hAPduInst, u16ClusterId, u8SrcEndpoint, u8DstEndpoint, u64DestAddr, eSecurityMode, u8Radius, pu8SeqNum, ZPS_NWK_NULL_EXT_ADDR)
+
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastIeeeDataRelayReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint64 u64DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum, uint64 u64RelayTlvAddr) ZPS_APL_ALWAYS_INLINE;
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastIeeeDataRelayReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint64 u64DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum, uint64 u64RelayTlvAddr)
+{
+    return zps_eAplAfUnicastIeeeDataRelayReq(ZPS_pvAplZdoGetAplHandle(), hAPduInst, (u16ClusterId << 16) | (u8DstEndpoint << 8) | u8SrcEndpoint, &u64DestAddr,  (eSecurityMode << 8) | u8Radius, pu8SeqNum,
+                                             u64RelayTlvAddr);
+}
+#else
 ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastIeeeDataReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint64 u64DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum) ZPS_APL_ALWAYS_INLINE;
 ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastIeeeDataReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint64 u64DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum)
 {
     return zps_eAplAfUnicastIeeeDataReq(ZPS_pvAplZdoGetAplHandle(), hAPduInst, (u16ClusterId << 16) | (u8DstEndpoint << 8) | u8SrcEndpoint, &u64DestAddr,  (eSecurityMode << 8) | u8Radius, pu8SeqNum);
 }
+#endif
 
+#ifdef R23_UPDATES
+#define ZPS_eAplAfUnicastAckDataReq(hAPduInst, u16ClusterId, u8SrcEndpoint, u8DstEndpoint, u16DestAddr, eSecurityMode, u8Radius, pu8SeqNum) \
+        ZPS_eAplAfUnicastAckDataRelayReq(hAPduInst, u16ClusterId, u8SrcEndpoint, u8DstEndpoint, u16DestAddr, eSecurityMode, u8Radius, pu8SeqNum, ZPS_NWK_NULL_EXT_ADDR)
+
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastAckDataRelayReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint16 u16DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum, uint64 u64RelayTlvAddr) ZPS_APL_ALWAYS_INLINE;
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastAckDataRelayReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint16 u16DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum, uint64 u64RelayTlvAddr)
+{
+    return zps_eAplAfUnicastAckDataRelayReq(ZPS_pvAplZdoGetAplHandle(), hAPduInst, (u16ClusterId << 16) | (u8DstEndpoint << 8) | u8SrcEndpoint, u16DestAddr, (eSecurityMode << 8) | u8Radius, pu8SeqNum,
+                                            u64RelayTlvAddr);
+}
+#else
 /* PR #236 http://trac/Zigbee-PRO/ticket/236 - corrected parameter order */
 ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastAckDataReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint16 u16DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum) ZPS_APL_ALWAYS_INLINE;
 ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastAckDataReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint16 u16DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum)
 {
     return zps_eAplAfUnicastAckDataReq(ZPS_pvAplZdoGetAplHandle(), hAPduInst, (u16ClusterId << 16) | (u8DstEndpoint << 8) | u8SrcEndpoint, u16DestAddr, (eSecurityMode << 8) | u8Radius, pu8SeqNum);
 }
+#endif
 
+#ifdef R23_UPDATES
+#define ZPS_eAplAfUnicastIeeeAckDataReq(hAPduInst, u16ClusterId, u8SrcEndpoint, u8DstEndpoint, u64DestAddr, eSecurityMode, u8Radius, pu8SeqNum) \
+        ZPS_eAplAfUnicastIeeeAckDataRelayReq(hAPduInst, u16ClusterId, u8SrcEndpoint, u8DstEndpoint, u64DestAddr, eSecurityMode, u8Radius, pu8SeqNum, ZPS_NWK_NULL_EXT_ADDR)
+
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastIeeeAckDataRelayReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint64 u64DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum, uint64 u64RelayTlvAddr) ZPS_APL_ALWAYS_INLINE;
+ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastIeeeAckDataRelayReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint64 u64DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum, uint64 u64RelayTlvAddr)
+{
+    return zps_eAplAfUnicastIeeeAckDataRelayReq(ZPS_pvAplZdoGetAplHandle(), hAPduInst, (u16ClusterId << 16) | (u8DstEndpoint << 8) | u8SrcEndpoint, &u64DestAddr, (eSecurityMode << 8) | u8Radius, pu8SeqNum,
+                                                u64RelayTlvAddr);
+}
+#else
 ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastIeeeAckDataReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint64 u64DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum) ZPS_APL_ALWAYS_INLINE;
 ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfUnicastIeeeAckDataReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint8 u8DstEndpoint, uint64 u64DestAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum)
 {
     return zps_eAplAfUnicastIeeeAckDataReq(ZPS_pvAplZdoGetAplHandle(), hAPduInst, (u16ClusterId << 16) | (u8DstEndpoint << 8) | u8SrcEndpoint, &u64DestAddr, (eSecurityMode << 8) | u8Radius, pu8SeqNum);
 }
+#endif
 
 ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfGroupDataReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint16 u16DstGroupAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum) ZPS_APL_ALWAYS_INLINE;
 ZPS_APL_INLINE ZPS_teStatus ZPS_eAplAfGroupDataReq(PDUM_thAPduInstance hAPduInst, uint16 u16ClusterId, uint8 u8SrcEndpoint, uint16 u16DstGroupAddr, ZPS_teAplAfSecurityMode eSecurityMode, uint8 u8Radius, uint8 *pu8SeqNum)
