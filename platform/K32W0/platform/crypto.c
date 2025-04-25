@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 NXP
+ * Copyright 2023-2025 NXP
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -131,4 +131,14 @@ fpZbRngPrng_t zbPlatRngGetPrngFunc(void)
 void* zbPlatRngGetPrngContext(void)
 {
     return RNG_GetPrngContext();
+}
+
+void zbPlatCryptoAesSha256Hash(const uint8_t *pData, const uint32_t numBytes, uint8_t *pOutput)
+{
+    SHA256_Hash(pData, numBytes, pOutput);
+}
+
+void zbPlatCryptoAesHmacSha256(uint8_t *pu8Data, int iDataLen, void *key, void *hash)
+{
+    HMAC_SHA256(key, SHA256_HASH_SIZE, pu8Data, iDataLen, hash);
 }
