@@ -80,6 +80,9 @@
 #define  CRYPTO_ECDH_CURVE25519_DJB
 
 /* Crypto related macro & type defines */
+#ifndef SHA256_HASH_SIZE
+#define SHA256_HASH_SIZE   32 /* [bytes] */
+#endif
 #define CRYPTO_AES_BLK_SIZE 16u             /* [bytes] */
 #if defined(CRYPTO_ECDH_P256) || defined(CRYPTO_ECDH_CURVE25519_MBED) || defined(CRYPTO_ECDH_CURVE25519_DJB)
 #define SEC_ECP256_COORDINATE_BITLEN 256u
@@ -200,8 +203,10 @@ void zbPlatWdogDeInit(void);
 /* Crypto related functions */
 void zbPlatCryptoInit(void);
 void zbPlatCryptoAesHmacMmo(uint8_t *pu8Data, int iDataLen, void *key, void *hash);
+void zbPlatCryptoAesHmacSha256(uint8_t *pu8Data, int iDataLen, void *key, void *hash);
 void zbPlatCryptoAesMmoBlockUpdate(void *hash, void *block);
 void zbPlatCryptoAesMmoFinalUpdate(void *hash, uint8_t *pu8Data, int iDataLen, int iFinalLen);
+void zbPlatCryptoAesSha256Hash(const uint8_t *pData, const uint32_t numBytes, uint8_t *pOutput);
 bool_t zbPlatCryptoAesSetKey(CRYPTO_tsReg128 *psKeyData);
 void zbPlatCryptoAes128EcbEncrypt(const uint8_t* pu8Input, uint32_t u32InputLen, const uint8_t* pu8Key, uint8_t* pu8Output);
 void zbPlatCryptoAes128EcbDecrypt(const uint8_t* pu8Input, const uint8_t* pu8Key, uint8_t* pu8Output);
