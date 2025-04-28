@@ -1,0 +1,12 @@
+# Fragmented data transmission to sleeping End Device
+
+The [Section 6.5.1](sending_data.md) and [Fragmented data transfers](fragmented_data_transfers.md) explain how the send ‘with acknowledgment’ functions can be used to send large data packets that require to be fragmented into multiple NPDUs during transmission. Therefore, when sending a fragmented data packet to a sleeping End Device, the issues described in [Acknowledged data transmission to sleeping end device](acknowledged_data_transmission_to_sleeping_end_dev.md) apply.
+
+In such a data transfer, the End Device should aim to collect all buffered data fragments from its parent before the transfer has completely timed out on the sender. Once the sender has abandoned the transaction, it does not respond to any acknowledgments requesting missing fragments \(see [Appendix B](acknowledged_data_transmission_to_sleeping_end_dev.md)[.1](fragmented_data_transfers.md)\).
+
+Once the End Device starts to receive fragmented data, it stays awake until the transaction is complete and runs its own poll timer to automatically collect each fragment - the polling period for this timer is set through the ZigBee advanced device parameter *APS Poll Period*. This poll timer runs for the duration of the fragmented transaction and then stops. The responsibility for polling then returns to the application.
+
+Sending fragmented data to a sleeping End Device is likely to result in duplicate fragments of the message being sent. A list of the last few fragments received, called the APS Duplicate table, is maintained in the End Device. This table allows new fragments to be compared with previous fragments and duplicates identified. The maximum number of entries \(fragments\) in this table can be configured through the network parameter *APS Duplicate Table Size*. This table size should not be made too small, as a short table prevents duplicate fragments from being caught \(4 may be a suitable value\). This value should be considered in conjunction with the value of the network parameter *APS Persistence Time*. This parameter represents the time for which resources associated with a message are retained after the complete message has been received. Once the resources have been released, they may be used for a new transaction\) - during this period, any duplicate fragments that are received are ignored.
+
+**Parent topic:**[Sending data to sleeping end devices](../topics/sending_data_to_sleeping_end_devices.md)
+

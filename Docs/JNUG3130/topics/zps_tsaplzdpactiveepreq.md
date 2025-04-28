@@ -1,0 +1,16 @@
+# ZPS\_tsAplZdpActiveEpReq
+
+This structure is used by the function **ZPS\_eAplZdpActiveEpRequest\(\)**. It represents a request for a list of the active endpoints on the node with a given network address.
+
+The `ZPS_tsAplZdpActiveEpReq`structure is detailed below.
+
+`typedef struct {`
+
+`uint16 u16NwkAddrOfInterest;`
+
+`} ZPS_tsAplZdpActiveEpReq;`
+
+where `u16NwkAddrOfInterest`is the network address of the node of interest.
+
+**Parent topic:**[ZDP Request structures](../topics/zdp_request_structures.md)
+
