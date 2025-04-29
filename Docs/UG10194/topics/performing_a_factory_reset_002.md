@@ -2,7 +2,7 @@
 
 The Router can be returned to its factory-new state \(erasing all persistent data except the outgoing network frame counter\) as follows:
 
--   Hold down the **USER** button and press the **RESET** button on the board (FRDM-MCXW71 / MCX-W71-EVK / MCX-W72-EVK / FRDM-RW612 / RD-RW612-BGA).
+-   Hold down the **USER** button and press the **RESET** button on the board (FRDM-MCXW71 / FRDM-MCXW72 / MCX-W71-EVK / MCX-W72-EVK / FRDM-RW612 / RD-RW612-BGA).
 
 The Router then broadcasts a Leave Indication on the old network. It also deletes all persistent data \(except the outgoing network frame counter\) and performs a software reset.
 

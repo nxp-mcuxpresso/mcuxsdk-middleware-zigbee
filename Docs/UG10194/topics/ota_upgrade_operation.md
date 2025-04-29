@@ -1,12 +1,12 @@
 # OTA upgrade operation
-This section describes the OTA upgrade operation for FRDM-MCXW71, MCX-W71-EVK or MCX-W72-EVK boards.
+This section describes the OTA upgrade operation for FRDM-MCXW71, FRDM-MCXW72, MCX-W71-EVK or MCX-W72-EVK boards.
 For information about the over-the-air upgrade process for RW612 platforms, refer to the section, [Zigbee Over The Air Upgrade (OTA) for RW612 platforms](https://bitbucket.sw.nxp.com/projects/CONNINT/repos/zigbee_public/browse/platform/RW612/docs/README.md#over-the-air-upgrade-ota).<br>
 
 To add an image to the coordinator, the OTA images must be programmed. To program the OTA images, perform the following steps:
 
 1.  Use the J-Link utility.
 2.  Download `J-Link` from [J-Link / J-Trace Downloads](https://www.segger.com/downloads/jlink).
-3.  Plug the FRDM-MCXW71 or the MCX-W71-EVK board, or the MCX-W72-EVK board to the USB port \(no need to keep the **SW4** button pressed while doing this step\).
+3.  Plug the FRDM-MCXW71 or the FRDM-MCXW72 board, or the MCX-W71-EVK board, or the MCX-W72-EVK board to the USB port \(no need to keep the **SW4** button pressed while doing this step\).
 4.  Create a `commands_script` file with the following content \(change the application name as necessary\):
 
     ```
@@ -21,7 +21,8 @@ To add an image to the coordinator, the OTA images must be programmed. To progra
     Where `OTA_ADDRESS` value:
 
     -   for MCX-W71-EVK/FRDM-MCXW71 OTA\_ADDRESS = 0x7A000
-    -   for MCX-W72-EVK OTA\_ADDRESS = 0xFA000
+    -   for MCX-W72-EVK/FRDM-MCXW72 OTA\_ADDRESS = 0xFA000
+    
     **Note:** If J-Link fails to recognize the `.ota` file, rename it to `.bin` and retry.
 
 5.  Copy the application and `commands_script` in the same folder where the J-Link executable is placed.
