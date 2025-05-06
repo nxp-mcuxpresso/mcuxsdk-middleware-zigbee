@@ -64,7 +64,13 @@ PRIVATE struct {
 PRIVATE teFB_State *u8GetEndpointState(uint8 u8EndpointId)
 {
     int i;
-
+ 
+    /* EP 0 is not valid for find&bind */
+    if (u8EndpointId == 0)
+    {
+        return NULL;
+    }
+ 
     for (i = 0; i < ZCL_NUMBER_OF_ENDPOINTS; i++)
     {
         if (asFBState[i].u8EndpointId == u8EndpointId)
@@ -72,7 +78,17 @@ PRIVATE teFB_State *u8GetEndpointState(uint8 u8EndpointId)
             return &asFBState[i].eState;
         }
     }
-
+ 
+    /* No endpoint found, register it for the first time */
+    for (i = 0; i < ZCL_NUMBER_OF_ENDPOINTS; i++)
+    {
+        if (asFBState[i].u8EndpointId == 0)
+        {
+            asFBState[i].u8EndpointId = u8EndpointId;
+            return &asFBState[i].eState;
+        }
+    }
+ 
     return NULL;
 }
 
