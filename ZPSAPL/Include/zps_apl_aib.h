@@ -72,7 +72,7 @@
 /* TODO - needs to be a table to support fragmentation */
 #define apsMaxWindowSize            u8ApsMaxWindowSize
 #ifdef R23_UPDATES
-#define apsMaxSizeAsdu              u8ApsMaxSizeAsdu
+#define apsMaxSizeAsdu              u16ApsMaxSizeAsdu
 #endif
 
 #define apscMaxDescriptorSize       (64UL)
@@ -300,7 +300,7 @@ typedef struct
     uint8   u8ApsChannelTimer;
     uint8   u8ApsMaxWindowSize;
 #ifdef R23_UPDATES
-    uint8   u8ApsMaxSizeAsdu; /* TODO: clarify overlap w/ ApsContext.u8MaxFragBlockSize */
+    uint16  u16ApsMaxSizeAsdu;
 #endif
     ZPS_tsAplApsmeBindingTableType *psAplApsmeAibBindingTable;
     ZPS_tsAplApsmeAIBGroupTable    *psAplApsmeGroupTable;
