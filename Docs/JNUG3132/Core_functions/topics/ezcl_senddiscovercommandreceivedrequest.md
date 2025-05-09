@@ -1,0 +1,64 @@
+# eZCL\_SendDiscoverCommandReceivedRequest
+
+```
+teZCL_Status eZCL_SendDiscoverCommandReceivedRequest(
+    uint8 u8SourceEndPointId,
+    uint8 u8DestinationEndPointId,
+    uint16 u16ClusterId,
+    bool_t bDirectionIsServerToClient,
+    tsZCL_Address *psDestinationAddress,
+    uint8 *pu8TransactionSequenceNumber,
+    uint8 u8CommandId,
+    bool_t bIsManufacturerSpecific,
+    uint16 u16ManufacturerCode,
+    uint8 u8MaximumNumberOfCommands);
+
+```
+
+## Description 
+
+This function sends a request to initiate a command discovery on a remote cluster instance to obtain a list of commands that can be received by the cluster instance.
+
+Commands are represented by their Command IDs and the first Command ID from which the discovery is to start must be specified. The maximum number of commands to be reported must also be specified. This allows the function can be called multiple times to discover the commands in stages \(see below\).
+
+The function also allows commands to be searched for that are associated with a particular manufacturer code. Alternatively, the manufacturer code can be searched for, along with the commands.
+
+The target cluster returns a response containing the requested information. On receiving this response, the following events are generated on the local device:
+
+-   E\_ZCL\_CBET\_DISCOVER\_INDIVIDUAL\_COMMAND\_RECEIVED\_RESPONSE: This event is generated for each individual command reported in the response. The reported information is contained in a structure of the type `tsZCL_CommandDiscoveryIndividualResponse` \(see [Section 6.1.17](../../ZCL_structures/topics/tszcl_commanddiscoveryindividualresponse.md#id_774223ee-162c-4f02-a046-ffba16728d4f)\).
+
+-   E\_ZCL\_CBET\_DISCOVER\_COMMAND\_RECEIVED\_RESPONSE: This event is generated after all the above individual events, in order to indicate the end of these events. The reported information is contained in a structure of the type `tsZCL_CommandDiscoveryResponse` \(see [Section 6.1.18](../../ZCL_structures/topics/tszcl_commanddiscoveryresponse.md#id_bc505fda-3cfb-436a-a3a1-10216504afca)\).
+
+
+The `tsZCL_CommandDiscoveryResponse` structure in the last event contains a flag which indicates whether there are still commands to be discovered. If this is the case, the function can be called again with a new starting point \(first Command ID\).
+
+You are required to provide a pointer to a location to receive a Transaction Sequence Number \(TSN\) for the request. The TSN in the response is set to match the TSN in the request, allowing an incoming response to be paired with a request. This is useful when sending more than one request to the same destination endpoint.
+
+Command discovery is described in [Section 2.9](../../ZCL_fundamentals/topics/command_discovery.md#id_49f32120-da2a-4a82-87b4-9f9f8cb1b193).
+
+## Parameters 
+
+-   *u8SourceEndPointId*Number of the local endpoint through which the request is sent
+-   *u8DestinationEndPointId*: Number of the remote endpoint \(hosting the target cluster instance\) to which the request is sent
+-   *u16ClusterId*: Identifier of the cluster for which a command discovery is requested
+-   *bDirectionIsServerToClient*: Boolean indicating the type of request in terms of source and target clusters:
+-   TRUE - server sending request to client
+-   FALSE - client sending request to server
+-   *psDestinationAddress*: Pointer to a structure \(see [Section 6.1.4](../../ZCL_structures/topics/tszcl_address.md#id_5358d9e4-dd01-4dd1-8f62-8358c0150c98)\) containing the address of the remote node to which the request is sent
+-   *pu8TransactionSequenceNumber*: Pointer to a location to store the Transaction Sequence Number \(TSN\) of the request
+-   *u8CommandId*: Command ID which is the starting point for the command discovery
+-   *bIsManufacturerSpecific*: Boolean indicating whether a manufacturer code is specified in the parameter *u16ManufacturerCode* below:
+    -   TRUE - *u16ManufacturerCode* is used
+    -   FALSE - *u16ManufacturerCode* is not used
+-   *u16ManufacturerCode*: A manufacturer-specific code \(depends on the setting of *bIsManufacturerSpecific* above\). 0xFFFF is a wildcard value indicating that the manufacturer code should be discovered along with the commands
+-   *u8MaximumNumberOfCommands*: Maximum number of commands to be discovered
+
+## Returns 
+
+-   E\_ZCL\_SUCCESS
+-   E\_ZCL\_ERR\_CLUSTER\_NOT\_FOUND
+-   E\_ZCL\_ERR\_EP\_RANGE
+-   E\_ZCL\_ERR\_PARAMETER\_NULL
+
+**Parent topic:**[Command Discovery Functions](../../Core_functions/topics/command_discovery_functions.md)
+
