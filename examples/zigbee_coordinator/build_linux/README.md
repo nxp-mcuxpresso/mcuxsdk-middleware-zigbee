@@ -51,6 +51,12 @@ DK6-UG-3127-Production-Flash-Programmer.pdf document.</p>
 
 <p>For the detailed board configuration see the “Getting Started with MCUXpresso SDK for K32W061.pdf” guide, part of the K32W061 SDK</p>
 
+## 2.4. Setup Example
+
+<p>Please see below an example of how to connect the Zigbee NCP Host(e.g. iMX8MMINI-EVK) to the Zigbee Coprocessor(e.g. MCXW71-EVK).
+
+![IMX8MM - MCXW71EVK](./images/IMX8MM_MCXW71.png)
+
 # 3. Building
 
 <p>The building process has small differences depending on the host (iMX8 or x86) on which the Zigbee Coordinator application is running on. The user has also the option to cross-compile the Coordinator application under x86 Linux distribution</p>
