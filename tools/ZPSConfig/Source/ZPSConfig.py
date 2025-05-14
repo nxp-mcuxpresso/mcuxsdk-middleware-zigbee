@@ -31,7 +31,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE. 
 # 
-# Copyright 2015-2024 NXP
+# Copyright 2015-2025 NXP
 #
 ###############################################################################
 
@@ -1063,7 +1063,7 @@ typedef struct
     void (*prvTrustCenterInit)(void*);
 """)
     if R23_UPDATES:
-        Cfile.write("    void (*prvTrustCenterUpdateDevice)(void*, uint64, uint64, uint8, uint16, uint16);")
+        Cfile.write("    void (*prvTrustCenterUpdateDevice)(void*, uint64, uint64, uint8, uint16, uint16, uint16);")
     else:
         Cfile.write("    void (*prvTrustCenterUpdateDevice)(void*, uint64, uint64, uint8, uint16);")
     Cfile.write("""
@@ -1694,7 +1694,7 @@ PUBLIC void vZdoServersInit(void);
         Cfile.write("\n/* Trust Center */\n")
         Cfile.write("PUBLIC void zps_vAplTrustCenterInit(void *);")
         if R23_UPDATES:
-            Cfile.write("PUBLIC void zps_vAplTrustCenterUpdateDevice(void *, uint64 , uint64 , uint8 , uint16, uint16);")
+            Cfile.write("PUBLIC void zps_vAplTrustCenterUpdateDevice(void *, uint64 , uint64 , uint8 , uint16, uint16, uint16);")
         else:
             Cfile.write("PUBLIC void zps_vAplTrustCenterUpdateDevice(void *, uint64 , uint64 , uint8 , uint16);")
         Cfile.write("PUBLIC void zps_vAplTrustCenterRequestKey(void *, uint64 , uint8 , uint64 );")
