@@ -1,5 +1,6 @@
+# ZigBee NCP Host Coordinator Example
 
-# 1. General description
+## 1. General description
 
 <p>The purpose of this demo is to demonstrate the capabilities of the NXP Wireless SoC when used as a Zigbee NCP together with a Zigbee Coordinator application running on the iMX8 (or x86) platform under Linux. </p>
 
@@ -15,7 +16,7 @@ List of supported NXP Wireless SoC to act as coprocessor:
 
 * K32W061
 
-# 2. Required Hardware
+## 2. Required Hardware
 
 * 1 x iMX8M-EVK board running Linux - Host 
 
@@ -23,45 +24,45 @@ List of supported NXP Wireless SoC to act as coprocessor:
 
 * 1 x K32W061 DK6 board - Zigbee End Device 
 
-## 2.1. iMX8 board configuration 
+### 2.1. iMX8 board configuration 
 
 <p>Ensure that SW801 on the IMX8 EVK board is configured for SD card boot.
 For more information see the following starting guide for iMX8M EVK board: https://www.nxp.com/document/guide/getting-started-with-the-i-mx-8m-plus-evk:GS-iMX-8M-Plus-EVK. </p>
 
-## 2.2. Zigbee NCP coprocessor board configuration
+### 2.2. Zigbee NCP coprocessor board configuration
 
 <p>The Zigbee NCP coprocessor can be either of the SoCs listed in the supported platforms. After the board is properly configured it should be connected to the iMX8M board using a 
 standard micro USB cable that will be also used for power delivery to the board.</p>
 
-### 2.2.1 K32W148 EVK/FRDM-MCXW71 board configuration
+#### 2.2.1 K32W148 EVK/FRDM-MCXW71 board configuration
 
 <p>For the detailed K32W148 EVK board configuration, see the “Getting Started with MCUXpresso SDK for K32W148-EVK.pdf” guide, part of the K32W148 SDK. </p>
 <p>For the detailed FRDM-MCXW71 board configuration, see the “Getting Started with MCUXpresso SDK for FRDM-MCXW71.pdf” guide, part of the FRDMMCXW71 SDK. </p>
 <p>Ensure that the debug firmware on the board is J-Link. If this is not the case, follow the steps in chapter 7 of the aforementioned document to update the firmware accordingly.</p>
 <p>The board should be updated with the binary image `k32w148evk_zigbee_coprocessor_bm.axf`/`frdmmcxw71_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the K32W148/FRDMMCXW71 SDK.</p>
 
-### 2.2.2 K32W061 DK6 board configuration
+#### 2.2.2 K32W061 DK6 board configuration
 
 <p>For the detailed board configuration, see the “Getting Started with MCUXpresso SDK for K32W061.pdf” guide, part of the K32W061 SDK. </p>
 <p>Ensure that the debug firmware on the board is DK6 Flash Programmer. For additional information, please you the aforementioned document together with the 
 DK6-UG-3127-Production-Flash-Programmer.pdf document.</p>
 <p>The board should be updated with the binary image `k32w061dk6_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the K32W061 SDK.</p>
 
-## 2.3. K32W061 DK6 board configuration (ZED RX ON)
+### 2.3. K32W061 DK6 board configuration (ZED RX ON)
 
 <p>For the detailed board configuration see the “Getting Started with MCUXpresso SDK for K32W061.pdf” guide, part of the K32W061 SDK</p>
 
-## 2.4. Setup Example
+### 2.4. Setup Example
 
 <p>Please see below an example of how to connect the Zigbee NCP Host(e.g. iMX8MMINI-EVK) to the Zigbee Coprocessor(e.g. MCXW71-EVK).
 
 ![IMX8MM - MCXW71EVK](./images/IMX8MM_MCXW71.png)
 
-# 3. Building
+## 3. Building
 
 <p>The building process has small differences depending on the host (iMX8 or x86) on which the Zigbee Coordinator application is running on. The user has also the option to cross-compile the Coordinator application under x86 Linux distribution</p>
 
-### Environment Setup
+#### Environment Setup
 
 The NCP Host offers toolchain files that can be used to compile and cross compile the applications. They are available at ZIGBEE_BASE/platform/NCP_HOST/cmake/toolchains and should be provided to cmake `-DCMAKE_TOOLCHAIN_FILE` command line argument:
 -   `x86_64-linux-gnu.cmake` - toolchain file for x86 compile
@@ -82,7 +83,7 @@ Examples for cross-compile:
 -   `cmake .. -DCMAKE_TOOLCHAIN_FILE=$PWD/../../../../platform/NCP_HOST/cmake/toolchains/arm-linux.cmake -DTOOLCHAIN_NAME=aarch64-linux-gnu` - Cross-compile for imx8 with toolchain available for Ubuntu 22.04
 
 
-## 3.1. iMX8 platform 
+### 3.1. iMX8 platform 
 
 <p>Create a directory `out` under the `build_linux` directory and issue the cmake command with the `MACHINE_TYPE=imx8` option. The mbedtls package is preinstalled in the provided 
 Board Support Package (BSP).</p>
@@ -126,12 +127,12 @@ Issue the command `make` to execute the newly generated Makefile.
 [100%] Built target zb_coord_linux
 ```
 
-## 3.2. x86 platform 
+### 3.2. x86 platform 
 
 <p>The Zigbee Coordinator demo application was compiled and verified on a x86 Linux distribution (Ubuntu 22.04.2 LTS). The CMakeFile of the application determines as a prebuild step
 if the application was provided as part of a MCUXPRESSO SDK package or as standalone Zigbee module. Depending on the SDK package existence, the Mbedtls can be used either from within the SDK package, as a preinstalled package or it can be obtained from official git repository (version 2.28.0). </p>
 
-### MCUXPRESSO SDK package
+#### MCUXPRESSO SDK package
 
 <p>Create a directory `out` under the `build_linux` directory and issue the cmake command. The output will showcase the MCUXPRESSO SDK location and the mbedtls usage from within the SDK package.</p>
 
@@ -225,7 +226,7 @@ HEAD is now at 8b3f26a5ac Merge pull request #868 from ARMmbed/mbedtls-2.28.0rc0
 Then issue the command `make` as usual to execute the newly generated Makefile.
 
 
-### Standalone Zigbee module
+#### Standalone Zigbee module
 
 <p>The Zigbee coordinator application can be obtained and compiled as a standalone application, without the presence of a MCUXPRESSO SDK. The mbedtls package is required as a
 preinstalled package or can be configured through user environment variables `export MBEDTLS_ORIGIN=GIT` to be obtained from official repository.</p>
@@ -285,9 +286,9 @@ Issue the command `make` to execute the newly generated Makefile.
 [100%] Built target zb_coord_linux
 ```
 
-# 4. Running the application
+## 4. Running the application
 
-## 4.1. Starting the coordinator
+### 4.1. Starting the coordinator
 
 <p>Make sure that the iMX8 board is connected to the Zigbee NCP coprocessor board as in the picture below. The two boards are connected through a USB cable (micro-USB for K32W148 EVK board and mini-USB for K32W061 DK6 board), between the MCU-Link connected on the K32W148/K32W061 board (marked as such on the silk screen), and the OTG connector on the iMX8 board.</p>
 
@@ -319,7 +320,7 @@ Example to start the Zigbee NCP Coordinator:
 >
 ```
 
-## 4.2. Forming the network
+### 4.2. Forming the network
 
 ```
 [3259] Form
@@ -334,7 +335,7 @@ ZPS_vSetTCLockDownOverride
 [3805] APP-ZDO: Network started Channel = 12
 ```
 
-## 4.3. Steer the network
+### 4.3. Steer the network
 
 ```
 [5879] Steer
@@ -351,7 +352,7 @@ ZPS_vSetTCLockDownOverride
 
 The APP-ZDO Data Indication message signals that an Zigbee End Device has successfully joined the network and is ready to be controlled. 
 
-## 4.4. Find and Bind
+### 4.4. Find and Bind
 
 <p>Since the Zigbee End Device in this demo is behaving as a light bulb, we need to bind its On/Off cluster (server) to the Zigbee Coordinator On/Off cluster (client) in order to receive reports and be able to toggle it. This is done based on the BDB Find & Bind procedure, where the Zigbee Coordinator is the initiator and the Zigbee End Device is the target. For the first step we’ll use the `find` command, while the `bind` is going to be automatically done by the Zigbee Coordinator, since the On/Off cluster is the cluster of interest.</p>
 
@@ -379,7 +380,7 @@ The APP-ZDO Data Indication message signals that an Zigbee End Device has succes
 >
 ```
 
-## 4.5. Toggle commands
+### 4.5. Toggle commands
 
 <p>The Zigbee End Device is sending periodic reports regarding the state of the light (on/off), as well as reports when there’s a change request state from the initiator. In order to change the state of the light, the user needs to enter the command `toggle` (case insensitive) in the Zigbee Coordinator console, as per the example below: </p>
  
@@ -390,7 +391,7 @@ The APP-ZDO Data Indication message signals that an Zigbee End Device has succes
 >[239792] ZCL Attribute Report: Cluster 0006 Attribute 0000 Value 1
 ```
 
-## 4.6. ZigBee Over-The-Air (OTA) upgrade
+### 4.6. ZigBee Over-The-Air (OTA) upgrade
 
 <p>Over-The-Air (OTA) Upgrade is the method by which a new firmware image is transferred to a device that is already installed and
 running as part of a ZigBee network. Support for the OTA Upgrade cluster as a Server has been included for the Coordinator device.</p>
