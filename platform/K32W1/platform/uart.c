@@ -19,6 +19,8 @@
 #include "app_signals.h"
 #endif
 
+#if defined(DebugConsole_c)
+
 /* Use Debug port */
 #define BOARD_UART_INSTANCE (BOARD_DEBUG_UART_INSTANCE)
 
@@ -264,3 +266,4 @@ void zbPlatUartFree(void)
 
     return;
 }
+#endif
