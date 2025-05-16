@@ -10,36 +10,35 @@
 
 List of supported NXP Wireless SoC to act as coprocessor:
 
-* K32W148
+* MCXW71-EVK
 
-* MCXW71
+* FRDM-MCXW71
 
 * K32W061
 
 ## 2. Required Hardware
 
-* 1 x iMX8M-EVK board running Linux - Host 
+* 1 x iMX8MMINI-EVK board or 1 x iMX8ULP-EVK board running Linux - Host 
 
-* 1 x K32W148-EVK board or 1 x K32W061 DK6 board or 1 x FRDM-MCXW71 board – Zigbee NCP coprocessor
+* 1 x MCXW71-EVK board or 1 x K32W061 DK6 board or 1 x FRDM-MCXW71 board – Zigbee NCP coprocessor
 
 * 1 x K32W061 DK6 board - Zigbee End Device 
 
 ### 2.1. iMX8 board configuration 
 
-<p>Ensure that SW801 on the IMX8 EVK board is configured for SD card boot.
-For more information see the following starting guide for iMX8M EVK board: https://www.nxp.com/document/guide/getting-started-with-the-i-mx-8m-plus-evk:GS-iMX-8M-Plus-EVK. </p>
+<p>Ensure that SW801 on the iMX8MMINI-EVK board is configured for SD card boot.
+For more information see the following starting guide for iMX8MMINI-EVK board: https://www.nxp.com/document/guide/getting-started-with-the-i-mx-8m-mini-evkb:GS-iMX-8M-Mini-EVK. </p>
 
 ### 2.2. Zigbee NCP coprocessor board configuration
 
-<p>The Zigbee NCP coprocessor can be either of the SoCs listed in the supported platforms. After the board is properly configured it should be connected to the iMX8M board using a 
-standard micro USB cable that will be also used for power delivery to the board.</p>
+<p>The Zigbee NCP coprocessor can be either of the SoCs listed in the supported platforms. After the board is properly configured it should be connected to the iMX8MMINI-EVK board using a standard micro USB cable that will be also used for power delivery to the board.</p>
 
-#### 2.2.1 K32W148 EVK/FRDM-MCXW71 board configuration
+#### 2.2.1 MCXW71-EVK/FRDM-MCXW71 board configuration
 
-<p>For the detailed K32W148 EVK board configuration, see the “Getting Started with MCUXpresso SDK for K32W148-EVK.pdf” guide, part of the K32W148 SDK. </p>
+<p>For the detailed MCXW71-EVK board configuration, see the “Getting Started with MCUXpresso SDK for MCXW71-EVK.pdf” guide, part of the MCXW71 SDK. </p>
 <p>For the detailed FRDM-MCXW71 board configuration, see the “Getting Started with MCUXpresso SDK for FRDM-MCXW71.pdf” guide, part of the FRDMMCXW71 SDK. </p>
 <p>Ensure that the debug firmware on the board is J-Link. If this is not the case, follow the steps in chapter 7 of the aforementioned document to update the firmware accordingly.</p>
-<p>The board should be updated with the binary image `k32w148evk_zigbee_coprocessor_bm.axf`/`frdmmcxw71_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the K32W148/FRDMMCXW71 SDK.</p>
+<p>The board should be updated with the binary image `mcxw71evk_zigbee_coprocessor_bm.axf`/`frdmmcxw71_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the MCXW71/FRDMMCXW71 SDK.</p>
 
 #### 2.2.2 K32W061 DK6 board configuration
 
@@ -290,9 +289,9 @@ Issue the command `make` to execute the newly generated Makefile.
 
 ### 4.1. Starting the coordinator
 
-<p>Make sure that the iMX8 board is connected to the Zigbee NCP coprocessor board as in the picture below. The two boards are connected through a USB cable (micro-USB for K32W148 EVK board and mini-USB for K32W061 DK6 board), between the MCU-Link connected on the K32W148/K32W061 board (marked as such on the silk screen), and the OTG connector on the iMX8 board.</p>
+<p>Make sure that the iMX8MMINI-EVK board is connected to the Zigbee NCP coprocessor board as in the picture above. The two boards are connected through a USB cable (USB-C for MCXW71-EVK board and mini-USB for K32W061 DK6 board), between the MCU-Link connected on the MCXW71/K32W061 board (marked as such on the silk screen), and the OTG connector on the iMX8MMINI-EVK board.</p>
 
-<p>The Linux Zigbee Coordinator allows the user to specify the serial port on which the NCP coprocessor board is connected. Usually on the iMX8 board, this is /dev/ttyACM0 for K32W148 and /dev/ttyUSB0 for K32W061. For the K32W061 based NCP coprocessor, the user should pay attention and modify the default latency timer (255msec) to a smaller value (it should be below 16msec). </p>
+<p>The Linux Zigbee Coordinator allows the user to specify the serial port on which the NCP coprocessor board is connected. Usually on the iMX8MMINI-EVK board, this is /dev/ttyACM0 for MCXW71 and /dev/ttyUSB0 for K32W061. For the K32W061 based NCP coprocessor, the user should pay attention and modify the default latency timer (255msec) to a smaller value (it should be below 16msec). </p>
 
 Command to display default latency timer for ttyUSB interface: `cat /sys/bus/usb-serial/devices/ttyUSB0/latency_timer`
 

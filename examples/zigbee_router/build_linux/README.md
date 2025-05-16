@@ -10,47 +10,47 @@
 
 List of supported NXP Wireless SoC to act as coprocessor:
 
-* K32W148
+* MCXW71-EVK
 
-* MCXW71
+* FRDM-MCXW71
 
 * K32W061
 
 ## 2. Required Hardware
 
-* 1 x iMX8M-EVK board running Linux - Host 
+* 1 x iMX8MMINI-EVK board or 1 x iMX8ULP-EVK board running Linux - Host
 
-* 1 x K32W148-EVK board or 1 x K32W061 DK6 board or 1 x FRDM-MCXW71 board – Zigbee NCP coprocessor
+* 1 x MCXW71-EVK board or 1 x K32W061 DK6 board or 1 x FRDM-MCXW71 board – Zigbee NCP coprocessor
 
-* 1 x K32W148-EVK board or 1 x K32W061 DK6 board - Zigbee Coordinator
+* 1 x MCXW71-EVK board or 1 x K32W061 DK6 board or 1 x FRDM-MCXW71 board - Zigbee Coordinator
 
-### 2.1. iMX8 board configuration 
+### 2.1. iMX8 board configuration
 
-<p>Ensure that SW801 on the IMX8 EVK board is configured for SD card boot.
-For more information see the following starting guide for iMX8M EVK board: https://www.nxp.com/document/guide/getting-started-with-the-i-mx-8m-plus-evk:GS-iMX-8M-Plus-EVK. </p>
+<p>Ensure that SW801 on the iMX8MMINI-EVK board is configured for SD card boot.
+For more information see the following starting guide for iMX8MMINI-EVK board: https://www.nxp.com/document/guide/getting-started-with-the-i-mx-8m-mini-evkb:GS-iMX-8M-Mini-EVK. </p>
 
 ### 2.2. Zigbee NCP coprocessor board configuration
 
-<p>The Zigbee NCP coprocessor can be either of the SoCs listed in the supported platforms. After the board is properly configured it should be connected to the iMX8M board using a 
-standard micro USB cable that will be also used for power delivery to the board.</p>
+<p>The Zigbee NCP coprocessor can be either of the SoCs listed in the supported platforms. After the board is properly configured it should be connected to the iMX8MMINI-EVK board using a standard micro USB cable that will be also used for power delivery to the board.</p>
 
-#### 2.2.1 K32W148 EVK/FRDM-MCXW71 board configuration
+#### 2.2.1 MCXW71-EVK/FRDM-MCXW71 board configuration
 
-<p>For the detailed board configuration, see the “Getting Started with MCUXpresso SDK for K32W148-EVK.pdf” guide, part of the K32W148 SDK. </p>
+<p>For the detailed MCXW71-EVK board configuration, see the “Getting Started with MCUXpresso SDK for MCXW71-EVK.pdf” guide, part of the MCXW71 SDK. </p>
+<p>For the detailed FRDM-MCXW71 board configuration, see the “Getting Started with MCUXpresso SDK for FRDM-MCXW71.pdf” guide, part of the FRDMMCXW71 SDK. </p>
 <p>Ensure that the debug firmware on the board is J-Link. If this is not the case, follow the steps in chapter 7 of the aforementioned document to update the firmware accordingly.</p>
-<p>The board should be updated with the binary image `k32w148evk_zigbee_coprocessor_bm.axf`/`frdmmcxw71_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the K32W148/FRDMMCXW71 SDK.</p>
+<p>The board should be updated with the binary image `mcxw71evk_zigbee_coprocessor_bm.axf`/`frdmmcxw71_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the MCXW71/FRDMMCXW71 SDK.</p>
 
 #### 2.2.2 K32W061 DK6 board configuration
 
 <p>For the detailed board configuration, see the “Getting Started with MCUXpresso SDK for K32W061.pdf” guide, part of the K32W061 SDK. </p>
-<p>Ensure that the debug firmware on the board is DK6 Flash Programmer. For additional information, please you the aforementioned document together with the 
+<p>Ensure that the debug firmware on the board is DK6 Flash Programmer. For additional information, please you the aforementioned document together with the
 DK6-UG-3127-Production-Flash-Programmer.pdf document.</p>
 <p>The board should be updated with the binary image `k32w061dk6_zigbee_coprocessor_bm.axf`, image which contains the Zigbee NCP. This image can be obtained from the Zigbee application wireless_examples/zigbee/zigbee_coprocessor, application that is part of the K32W061 SDK.</p>
 
-### 2.3. K32W061 DK6/ K32W148 EVK/ FRDM-MCXW71 board configuration (Coordinator)
+### 2.3. K32W061 DK6/ MCXW71-EVK/ FRDM-MCXW71 board configuration (Coordinator)
 
 <p>For the detailed K32W061 DK6 board configuration see the “Getting Started with MCUXpresso SDK for K32W061.pdf” guide, part of the K32W061 SDK.</p>
-<p>For the detailed K32W148 EVK board configuration, see the “Getting Started with MCUXpresso SDK for K32W148-EVK.pdf” guide, part of the K32W148 SDK. </p>
+<p>For the detailed MCXW71-EVK board configuration, see the “Getting Started with MCUXpresso SDK for MCXW71-EVK.pdf” guide, part of the MCXW71 SDK. </p>
 <p>For the detailed FRDM-MCXW71 board configuration, see the “Getting Started with MCUXpresso SDK for FRDM-MCXW71.pdf” guide, part of the FRDMMCXW71 SDK. </p>
 
 ### 2.4. Setup Example
@@ -69,12 +69,12 @@ The NCP Host offers toolchain files that can be used to compile and cross compil
 -   `x86_64-linux-gnu.cmake` - toolchain file for x86 compile
 -   `arm-linux` - toolchain file for imx8 cross-compile
 
-The armgcc toolchain was obtained from official Arm GNU Toolchain website and by default the toolchain file relies on this particular configuration. User can change through environment variables and cmake arguments the default behavior. 
+The armgcc toolchain was obtained from official Arm GNU Toolchain website and by default the toolchain file relies on this particular configuration. User can change through environment variables and cmake arguments the default behavior.
 -   `ARMGCC_DIR` - path to installed toolchain
 -   `TOOLCHAIN_NAME` - toolchain name
 
 The Mbedtls package is required for the encryption/decryption capabilities needed to obtain a secured Serial Link. There are three options to obtain the mbedlts library, options configurable through cmake command line arguments:
--   `CONFIG_MBEDTLS_SOURCE=SDK` - Mbedtls package is obtained from MCUXPRESSO SDK 
+-   `CONFIG_MBEDTLS_SOURCE=SDK` - Mbedtls package is obtained from MCUXPRESSO SDK
 -   `CONFIG_MBEDTLS_SOURCE=GIT` - Mbedtls package is retrieved from git official repository
 -   `CONFIG_MBEDTLS_SOURCE=SYSTEM` - Mbedtls package is used as a preinstalled package
 
@@ -84,14 +84,14 @@ Examples for cross-compile:
 -   `cmake .. -DCMAKE_TOOLCHAIN_FILE=$PWD/../../../../platform/NCP_HOST/cmake/toolchains/arm-linux.cmake -DTOOLCHAIN_NAME=aarch64-linux-gnu` - Cross-compile for imx8 with toolchain available for Ubuntu 22.04
 
 
-### 3.1. iMX8 platform 
+### 3.1. iMX8 platform
 
-<p>Create a directory `out` under the `build_linux` directory and issue the cmake command with the `MACHINE_TYPE=imx8` option. The mbedtls package is preinstalled in the provided 
+<p>Create a directory `out` under the `build_linux` directory and issue the cmake command with the `MACHINE_TYPE=imx8` option. The mbedtls package is preinstalled in the provided
 Board Support Package (BSP).</p>
 
 
 ```
->$ cd out ; cmake .. -DMACHINE_TYPE=imx8 
+>$ cd out ; cmake .. -DMACHINE_TYPE=imx8
 -- The C compiler identification is GNU 13.2.1
 -- The CXX compiler identification is GNU GNU 13.2.1
 -- Detecting C compiler ABI info
@@ -107,12 +107,12 @@ Board Support Package (BSP).</p>
 -- Using preinstalled MbedTLS package /usr/local/mbedtls/cmake
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/zb-linux-router/zigbee/examples/zigbee_router/build_linux/out 
+-- Build files have been written to: /home/zb-linux-router/zigbee/examples/zigbee_router/build_linux/out
 ```
 Issue the command `make` to execute the newly generated Makefile.
 
 ```
->[b06830_local@fsr-ub1864-125 out]$ make 
+>[b06830_local@fsr-ub1864-125 out]$ make
 
 [  0%] Building C object CMakeFiles/pdum_static.dir/home/zb-linux-router/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum.c.o
 [  1%] Building C object CCMakeFiles/pdum_static.dir/home/zb-linux-router/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_apl.c.o
@@ -128,7 +128,7 @@ Issue the command `make` to execute the newly generated Makefile.
 [100%] Built target zb_router_linux
 ```
 
-### 3.2. x86 platform 
+### 3.2. x86 platform
 
 <p>The Zigbee Router demo application was compiled and verified on a x86 Linux distribution (Ubuntu 22.04.2 LTS). The CMakeFile of the application determines as a prebuild step
 if the application was provided as part of a MCUXPRESSO SDK package or as standalone Zigbee module. Depending on the SDK package existence, the Mbedtls can be used either from within the SDK package, as a preinstalled package or it can be obtained from official git repository (version 2.28.0). </p>
@@ -156,13 +156,13 @@ if the application was provided as part of a MCUXPRESSO SDK package or as standa
 -- Build mbedtls from SDK source code
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/mcu-sdk/middleware/wireless/zigbee/examples/zigbee_router/build_linux/out 
+-- Build files have been written to: /home/mcu-sdk/middleware/wireless/zigbee/examples/zigbee_router/build_linux/out
 ```
 
 Issue the command `make` to execute the newly generated Makefile.
 
 ```
->[b06830_local@fsr-ub1864-125 out]$ make 
+>[b06830_local@fsr-ub1864-125 out]$ make
 
 [  1%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum.c.o
 [  1%] Building C object CMakeFiles/pdum_static.dir/home/mcu-sdk/middleware/wireless/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_apl.c.o
@@ -177,7 +177,7 @@ Issue the command `make` to execute the newly generated Makefile.
 [100%] Built target zb_router_linux
 ```
 
-The following error might appear, which indicates that the SDK Mbedtls version is too old: 
+The following error might appear, which indicates that the SDK Mbedtls version is too old:
 
 ```
 -- SDK MBEDTLS version is below 2.28, use CONFIG_MBEDTLS_SOURCE as GIT or SYSTEM instead
@@ -221,7 +221,7 @@ HEAD is now at 8b3f26a5ac Merge pull request #868 from ARMmbed/mbedtls-2.28.0rc0
 
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/zb-linux-router/zigbee/examples/zigbee_router/build_linux/out 
+-- Build files have been written to: /home/zb-linux-router/zigbee/examples/zigbee_router/build_linux/out
 ```
 
 Then issue the command `make` as usual to execute the newly generated Makefile.
@@ -231,7 +231,7 @@ Then issue the command `make` as usual to execute the newly generated Makefile.
 <p>The Zigbee Router application can be obtained and compiled as a standalone application, without the presence of a MCUXPRESSO SDK. The mbedtls package is required as a
 preinstalled package or can be configured through user environment variables `export MBEDTLS_ORIGIN=GIT` to be obtained from official repository.</p>
 
-Create a directory `out` under the `build_linux` directory and issue the cmake command. 
+Create a directory `out` under the `build_linux` directory and issue the cmake command.
 
 ```
 >$ cd out ; cmake ..
@@ -265,13 +265,13 @@ HEAD is now at 8b3f26a5ac Merge pull request #868 from ARMmbed/mbedtls-2.28.0rc0
 
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/zb-linux-router/zigbee/examples/zigbee_router/build_linux/out 
+-- Build files have been written to: /home/zb-linux-router/zigbee/examples/zigbee_router/build_linux/out
 ```
 
 Issue the command `make` to execute the newly generated Makefile.
 
 ```
->[b06830_local@fsr-ub1864-125 out]$ make 
+>[b06830_local@fsr-ub1864-125 out]$ make
 
 [  0%] Building C object CMakeFiles/pdum_static.dir/home/zb-linux-router/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum.c.o
 [  1%] Building C object CCMakeFiles/pdum_static.dir/home/zb-linux-router/zigbee/platform/NCP_HOST/framework/PDUM/Source/pdum_apl.c.o
@@ -298,7 +298,7 @@ eOTA_NewImageLoaded status = 1Recovered Application State 0 On Network 0
 form
 APP-EVT: Event 8, NodeState=0
 APP-EVT: Request Nwk Formation 00
-APP-BDB: NwkFormation Success 
+APP-BDB: NwkFormation Success
 APP-ZDO: Network started Channel = 12
 ```
 ### 4.2. Steering the network
@@ -314,9 +314,9 @@ APP-EVT: Request Nwk Steering 00
 
 ### 4.3. Starting the Router
 
-<p>Make sure that the iMX8 board is connected to the Zigbee NCP coprocessor board as in the picture below. The two boards are connected through a USB cable (micro-USB for K32W148 EVK board and mini-USB for K32W061 DK6 board), between the MCU-Link connected on the K32W148/K32W061 board (marked as such on the silk screen), and the OTG connector on the iMX8 board.</p>
+<p>Make sure that the iMX8MMINI-EVK board is connected to the Zigbee NCP coprocessor board as in the picture above. The two boards are connected through a USB cable (USB-C for MCXW71-EVK board and mini-USB for K32W061 DK6 board), between the MCU-Link connected on the MCXW71/K32W061 board (marked as such on the silk screen), and the OTG connector on the iMX8MMINI-EVK board.</p>
 
-<p>The Linux Zigbee Router allows the user to specify the serial port on which the NCP coprocessor board is connected. Usually on the iMX8 board, this is /dev/ttyACM0 for K32W148 and /dev/ttyUSB0 for K32W061. For the K32W061 based NCP coprocessor, the user should pay attention and modify the default latency timer (255msec) to a smaller value (it should be below 16msec). </p>
+<p>The Linux Zigbee Router allows the user to specify the serial port on which the NCP coprocessor board is connected. Usually on the  iMX8MMINI-EVK board, this is /dev/ttyACM0 for MCXW71 and /dev/ttyUSB0 for K32W061. For the K32W061 based NCP coprocessor, the user should pay attention and modify the default latency timer (255msec) to a smaller value (it should be below 16msec). </p>
 
 Command to display default latency timer for ttyUSB interface: `cat /sys/bus/usb-serial/devices/ttyUSB0/latency_timer`
 
@@ -325,7 +325,7 @@ Command to modify default latency timer for ttyUSB interface: `echo 1 | sudo tee
 Example to start the Zigbee NCP Router:
 
 ```
->root@ubuntu:~ ./zb_router_linux /dev/ttyACM0 
+>root@ubuntu:~ ./zb_router_linux /dev/ttyACM0
 [0] Created NCP Host Task with pid 451116
 [0] MAIN
 [0] ZQ: Initialised a queue: Handle=ad045b60 Length=30 ItemSize=104
@@ -351,14 +351,14 @@ Example to start the Zigbee NCP Router:
 Once the network is created by the Zigbee Coordinator, the Zigbee NCP Router should join without any additional commands.
 
 ```
-[5777] BDB: vNsTryNwkJoin - try 0 index 0 of 1 Nwks 
+[5777] BDB: vNsTryNwkJoin - try 0 index 0 of 1 Nwks
 [5792] BDB: Try To join 0060377791d75e0f on Ch 21
 [5825] APP-ZDO: Discovery Complete 00
 [6463] Nwk formation/joining took 6463 MS
 ...
 [7104] Nwk Join Success
-[7135] APP: NwkSteering Success 
-[7135] APP: BDB_EVENT_REJOIN_SUCCESS 
+[7135] APP: NwkSteering Success
+[7135] APP: BDB_EVENT_REJOIN_SUCCESS
 [7135] APP-ZDO: Trust Center Status 00
 ```
 
@@ -369,7 +369,7 @@ Once the network is created by the Zigbee Coordinator, the Zigbee NCP Router sho
 <p>To kick off the F&B procedure, the user needs to enter the `find` command (case insensitive) into the Zigbee Coordinator serial port and the corresponding output:</p>
 
 ```
-find 
+find
 APP-EVT: Event 7, NodeState=10
 APP-EVT: Find and Bind initiate 00
 ```
@@ -379,8 +379,8 @@ APP-EVT: Find and Bind initiate 00
 ```
 [43121] Find
 [43121] ZPR: App event 7, NodeState=10
-[43129] APP: NwkSteering Success 
-[43129] APP: BDB_EVENT_REJOIN_SUCCESS 
+[43129] APP: NwkSteering Success
+[43129] APP: BDB_EVENT_REJOIN_SUCCESS
 [43593] Update Id 0003
 [44617] Update Id 0003
 [44617] Update Id 0003
@@ -401,7 +401,7 @@ APP-BDB: Bind Created for target EndPt 1
 <p> In turn, the Router will output the following, which indicates that the bind took place. </p>
 
 ```
-[45472] BDB: APP_vGenCallback [0 17] 
+[45472] BDB: APP_vGenCallback [0 17]
 [45472] APP-ZDO: Zdo Bind event
 ```
 ### 4.6. Toggle commands
