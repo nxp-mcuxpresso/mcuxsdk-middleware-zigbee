@@ -135,7 +135,7 @@ void APP_vInitZigbeeResources(void)
 static struct dev_info app_dev_info;
 static bool_t valid_dev_info;
 
-static BDB_tsOobWriteDataToCommission bdb_oob;
+BDB_tsOobWriteDataToCommission bdb_oob;
 static uint8_t nwk_key[ZB_OOB_KEY_SIZE];
 static bool_t valid_oob_info;
 
