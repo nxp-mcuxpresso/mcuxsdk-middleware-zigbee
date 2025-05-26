@@ -1,23 +1,15 @@
-# Table of Content
-
-- [Table of Content](#table-of-content)
-- [Zigbee Router demo example](#zigbee-router-demo-example)
-  - [Joining a network](#joining-a-network)
-  - [Allowing other devices to join the network](#allowing-other-devices-to-join-the-network)
-  - [Operating the device](#operating-the-device)
-  - [Rejoining a network](#rejoining-a-network)
-  - [Performing a factory reset](#performing-a-factory-reset)
-  - [Binding devices](#binding-devices)
-  - [LED Indicator table](#led-indicator-table)
-  - [Available CLI commands](#available-cli-commands)
-  - [OTA](#ota)
-
 # Zigbee Router BLE wireless UART demo example
 
-This application along with `zigbee_coordinator_ble_wu` app are provided in the context of demonstrating the Zigbee commissioning over Bluetooth LE.
+This application is provided in the context of demonstrating the Zigbee commissioning over Bluetooth LE
+and is part of the wireless examples for Zigbee. 
 
-The application is based on the Zigbee Router example and the Bluetooth LE application part is based
-on the EdgeFast Wireless UART demo.
+Depending on the underlying board, the application is available in two flavours:
+
+- `zigbee_router_ble_uart`: the zigbee application part is based on the Zigbee Router example and the
+Bluetooth LE application part is based on the Wireless UART peripheral demo. Targeted boards: MCX-W71-EVK, FRDM-MCXW71.
+
+- `zigbee_router_ble_wu`: the zigbee application is based on the Zigbee Router example and the 
+Bluetooth LE application part is based on the EdgeFast Wireless UART demo. Targeted boards: RD-RW612-BGA, FRDM-RW612.
 
 After reboot, the device running the application is ready to receive commands over Bluetooth LE through the Wireless UART profile. The communication over Bluetooth LE between the application can be intermediated by a mobile application. 
 
@@ -33,7 +25,7 @@ Refer to the [Available CLI commands](#available-cli-commands) chapter for more 
 ## Joining a network
 
 The commissioning procedure to join a network is described in:
-[commissioning.md](../common/commissioning.md)
+[commissioning.md](commissioning.md)
 
 ## Operating the device
 
@@ -87,8 +79,3 @@ operational clusters. As part of this process, the Router can receive an `Add Gr
 | `zigbee_get_device_info` | Returns the device info (extended address, installation code, CRC), that would be serialized in the TLV format |
 | `zigbee_set_network_info` | Set the network information, the device will automatically try to join the network at the end of the download |
 
-## OTA
-
-The Router example supports the OTA Client cluster. As many factors depend on the platform used, please check the
-platform specific documentation:
-- [RW612](../../../platform/RW612/docs/README.md)

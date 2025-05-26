@@ -1,22 +1,15 @@
-# Table of Content
-
-- [Table of Content](#table-of-content)
-- [Zigbee coordinator BLE wireless UART demo](#zigbee-coordinator-ble-wireless-uart-demo-example)
-  - [Forming a network](#forming-a-network)
-  - [Allowing other devices to join the network](#allowing-other-devices-to-join-the-network)
-  - [Operating the device](#operating-the-device)
-  - [Rejoining a network](#rejoining-a-network)
-  - [Performing a factory reset](#performing-a-factory-reset)
-  - [LED indication table](#led-indication-table)
-  - [Available CLI commands](#available-cli-commands)
-  - [OTA](#ota)
-
 # Zigbee coordinator BLE wireless UART demo example
 
-This application along with `zigbee_router_ble_wu` app are provided in the context of demonstrating the Zigbee commissioning over Bluetooth LE.
+This application is provided in the context of demonstrating the Zigbee commissioning over Bluetooth LE
+and is part of the wireless examples for Zigbee. 
 
-The application is based on the Zigbee Coordinator example and the Bluetooth LE application part is based
-on the EdgeFast Wireless UART demo.
+Depending on the underlying board, the application is available in two flavours:
+
+- `zigbee_coordinator_ble_uart`: the zigbee application part is based on the Zigbee Coordinator example and the
+Bluetooth LE application part is based on the Wireless UART peripheral demo. Targeted boards: MCX-W71-EVK, FRDM-MCXW71.
+
+- `zigbee_coordinator_ble_wu`: the zigbee application is based on the Zigbee Coordinator example and the 
+Bluetooth LE application part is based on the EdgeFast Wireless UART demo. Targeted boards: RD-RW612-BGA, FRDM-RW612.
 
 After reboot, the device running the application is ready to receive commands over Bluetooth LE through the Wireless UART profile. The communication over Bluetooth LE between the application can be intermediated by a mobile application. 
 
@@ -43,7 +36,7 @@ The periodic "link status" messages must be present on the operational channel.
 ## Allowing other devices to join the network
 
 Commissioning description and step by step procedure are provided in:
-[commissioning.md](../common/commissioning.md)
+[commissioning.md](commissioning.md)
 
 ## Operating the device
 
