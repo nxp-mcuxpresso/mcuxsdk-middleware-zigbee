@@ -25,11 +25,14 @@
 #include "board_comp.h"
 #endif
 
-/************************************************************************************
-*************************************************************************************
-* Public functions
-*************************************************************************************
-************************************************************************************/
+/****************************************************************************/
+/***        Local Function Prototypes                                     ***/
+/****************************************************************************/
+void APP_InitZigbee(void);
+
+/****************************************************************************/
+/***        Public Functions                                              ***/
+/****************************************************************************/
 int main(void)
 {
     OSA_Init();
@@ -103,6 +106,41 @@ int main(void)
     /* Won't run here */
     assert(0);
     return 0;
+}
+
+/****************************************************************************
+ *
+ * NAME: APP_InitZigbee
+ *
+ * DESCRIPTION:
+ * Init Zigbee
+ *
+ * RETURNS:
+ * 0 if success, negative values in case of failure
+ *
+ ****************************************************************************/
+void APP_InitZigbee(void)
+{
+
+#if IS_MCXW_SERIES
+    PLATFORM_SwitchToOsc32k();
+#endif
+
+    CRYPTO_Init();
+    CRYPTO_u8RandomInit();
+    MEM_Init();
+
+#if IS_MCXW_SERIES
+#if defined(USE_NBU) && (USE_NBU == 1)
+    PLATFORM_InitNbu();
+    PLATFORM_InitMulticore();
+    PLATFORM_FwkSrvInit();
+    PLATFORM_SendChipRevision();
+    PLATFORM_LoadHwParams();
+#endif
+#endif
+
+    vAppMain();
 }
 
 /*! *********************************************************************************

@@ -148,7 +148,9 @@ static void SHELL_ZigbeeGetNetworkInfo(int32_t argc, char *argv)
 
     if (valid)
     {
+        APP_ZigbeeMutexLock();
         valid = APP_GetOOBInfo(enc ? &dev_info : NULL, &oob_info);
+        APP_ZigbeeMutexUnlock();
     }
     if (valid)
     {
@@ -179,10 +181,12 @@ static void SHELL_ZigbeeCreateNetwork(void)
     if (FALSE == sBDB.sAttrib.bbdbNodeIsOnANetwork)
     {
         sButtonEvent.eType = APP_E_EVENT_SERIAL_FORM_NETWORK;
+        APP_ZigbeeMutexLock();
         if(!ZQ_bQueueSend(&APP_msgAppEvents, &sButtonEvent))
         {
             SHELL_PRINTF("NETWORK_CREATION_FAILURE\n");
         }
+        APP_ZigbeeMutexUnlock();
     }
     else
     {
@@ -197,10 +201,12 @@ static void SHELL_ZigbeeFindInitiator(void)
     if (sBDB.sAttrib.bbdbNodeIsOnANetwork)
     {
         sButtonEvent.eType = APP_E_EVENT_SERIAL_FIND_BIND_START;
+        APP_ZigbeeMutexLock();
         if(!ZQ_bQueueSend(&APP_msgAppEvents, &sButtonEvent))
         {
             SHELL_PRINTF("FIND_&_BIND_FAILURE\n");
         }
+        APP_ZigbeeMutexUnlock();
     }
     else
     {
@@ -215,10 +221,12 @@ static void SHELL_ZigbeeToggle(void)
     if (sBDB.sAttrib.bbdbNodeIsOnANetwork)
     {
         sButtonEvent.eType = APP_E_EVENT_SERIAL_TOGGLE;
+        APP_ZigbeeMutexLock();
         if(!ZQ_bQueueSend(&APP_msgAppEvents, &sButtonEvent))
         {
             SHELL_PRINTF("TOGGLE_FAILURE\n");
         }
+        APP_ZigbeeMutexUnlock();
     }
     else
     {
