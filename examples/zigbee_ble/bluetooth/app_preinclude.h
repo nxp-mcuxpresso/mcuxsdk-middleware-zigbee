@@ -75,12 +75,7 @@
 
 #define SERIAL_MANAGER_TASK_STACK_SIZE  360
 
-#define gMainThreadStackSize_c          1876
-
 #define TM_TASK_STACK_SIZE              440
-
-/* The size used for the Idle task, in dwords. */
-#define configMINIMAL_STACK_SIZE        140
 
 #endif
 
