@@ -149,9 +149,9 @@ static void SHELL_ZigbeeSetNetworkInfo(int32_t argc, char *argv)
     }
     if (valid)
     {
-       // APP_ZigbeeMutexLock();
+        APP_ZigbeeMutexLock();
         valid = APP_SetOOBInfo(&oob_info, enc);
-       // APP_ZigbeeMutexUnlock();
+        APP_ZigbeeMutexUnlock();
     }
     if (valid)
     {

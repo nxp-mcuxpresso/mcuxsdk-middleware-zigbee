@@ -30,13 +30,14 @@ typedef enum {
 /****************************************************************************/
 /***        Public Functions                                              ***/
 /****************************************************************************/
-void APP_InitZigbee(void);
 void APP_vInitResources(void);
 void APP_cbTimerId(void *pvParam);
 void APP_cbTimerLed(void *pvParam);
 void APP_ZigbeeShellCommand(uint8_t *buffer, uint32_t length);
 void APP_ZigbeeProcessBleEvent(void *pParam);
 void APP_PrintZigbeeNwkKey(void);
+void APP_ZigbeeMutexLock(void);
+void APP_ZigbeeMutexUnlock(void);
 
 /****************************************************************************/
 /***        External Variables                                            ***/

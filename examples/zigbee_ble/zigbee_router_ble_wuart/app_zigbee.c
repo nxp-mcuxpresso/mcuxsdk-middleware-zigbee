@@ -81,6 +81,8 @@ uint32_t u32Togglems;
 
 extern BDB_tsOobWriteDataToCommission bdb_oob;
 
+OSA_MUTEX_HANDLE_DEFINE(app_zigbee_mutex);
+
 /****************************************************************************/
 /***        Local Variables                                               ***/
 /****************************************************************************/
@@ -91,46 +93,45 @@ static tsCommand sCommand;
 static bool_t bleDoStackStop = FALSE;
 static bool_t zbDoFactoryReset = FALSE;
 
+/****************************************************************************
+ *
+ * NAME: APP_ZigbeeMutexLock
+ *
+ * DESCRIPTION:
+ * Locks a mutex used by the Zigbee loop to avoid concurrent access
+ * with other tasks.
+ *
+ * RETURNS:
+ * void
+ *
+ ****************************************************************************/
+void APP_ZigbeeMutexLock(void)
+{
+    osa_status_t status;
 
-/****************************************************************************/
-/***        Exported Functions                                            ***/
-/****************************************************************************/
-extern void vAppMain(void);
-
+    status = OSA_MutexLock(app_zigbee_mutex, osaWaitForever_c);
+    assert(status == KOSA_StatusSuccess);
+    (void)status;
+}
 
 /****************************************************************************
  *
- * NAME: APP_InitZigbee
+ * NAME: APP_ZigbeeMutexUnlock
  *
  * DESCRIPTION:
- * Init Zigbee
+ * Unlocks the mutex locked by APP_ZigbeeMutexLock.
  *
  * RETURNS:
- * 0 if success, negative values in case of failure
+ * void
  *
  ****************************************************************************/
-void APP_InitZigbee(void)
+void APP_ZigbeeMutexUnlock(void)
 {
+    osa_status_t status;
 
-#if IS_MCXW_SERIES
-    PLATFORM_SwitchToOsc32k();
-#endif
-
-    CRYPTO_Init();
-    CRYPTO_u8RandomInit();
-    MEM_Init();
-
-#if IS_MCXW_SERIES
-#if defined(USE_NBU) && (USE_NBU == 1)
-    PLATFORM_InitNbu();
-    PLATFORM_InitMulticore();
-    PLATFORM_FwkSrvInit();
-    PLATFORM_SendChipRevision();
-    PLATFORM_LoadHwParams();
-#endif
-#endif
-
-    vAppMain();
+    status = OSA_MutexUnlock(app_zigbee_mutex);
+    assert(status == KOSA_StatusSuccess);
+    (void)status;
 }
 
 /****************************************************************************
@@ -285,10 +286,12 @@ void APP_ZigbeeProcessBleEvent(void *pParam)
                 APP_tsEvent sButtonEvent;
 
                 sButtonEvent.eType = APP_E_EVENT_POR_FACTORY_RESET;
+                APP_ZigbeeMutexLock();
                 if(!ZQ_bQueueSend(&APP_msgAppEvents, &sButtonEvent))
                 {
                     APP_Serial_Print("FACTORY_RESET_FAILURE");
                 }
+                APP_ZigbeeMutexUnlock();
                 zbDoFactoryReset = FALSE;
             }
             bleDoStackStop = FALSE;
