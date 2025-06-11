@@ -1,5 +1,5 @@
 /*
-* Copyright 2019, 2023-2024 NXP
+* Copyright 2019, 2023-2025 NXP
 * All rights reserved.
 *
 * SPDX-License-Identifier: BSD-3-Clause
@@ -970,7 +970,7 @@ static void vGetIEEEAddress( void)
         bool_t bExtAddr;
         uint8_t u8SeqNumber;
         ZPS_teStatus eStatus;
-        ZPS_tsAplZdpIeeeAddrReq sZdpIeeeAddrReq;
+        ZPS_tsAplZdpIeeeAddrReq sZdpIeeeAddrReq = {0};
 
         uDstAddr.u16Addr = sPdmOtaApp.u16NwkAddrOfServer;
         bExtAddr = FALSE;
@@ -1086,7 +1086,7 @@ static ZPS_teStatus eSendOTAMatchDescriptor(uint16_t u16ProfileId)
     uint16_t au16InClusters[]={OTA_CLUSTER_ID};
     uint8_t u8TransactionSequenceNumber;
     ZPS_tuAddress uDestinationAddress;
-    ZPS_tsAplZdpMatchDescReq sMatch;
+    ZPS_tsAplZdpMatchDescReq sMatch = {0};
 
     sMatch.u16ProfileId = u16ProfileId;
     sMatch.u8NumInClusters=sizeof(au16InClusters)/sizeof(uint16_t);

@@ -1957,7 +1957,7 @@ PUBLIC void vProcessIncomingSerialCommands(void)
         uint16 u16Index = 0;
         ZPS_tuAddress uDstAddr;
         bool_t bIsExtAddress;
-        ZPS_tsAplZdpSimpleDescReq sZdpSimpleDescReq;
+        ZPS_tsAplZdpSimpleDescReq sZdpSimpleDescReq = {0};
 
         /* copy bIsExtAddress */
         bIsExtAddress = ZNC_RTN_U8_OFFSET(au8LinkRxBuffer, u16Index, u16Index);
@@ -4513,7 +4513,7 @@ PRIVATE ZPS_teStatus eZdpNodeDescReq(uint16 u16Addr, uint8* pu8SeqNum) {
 
     if (PDUM_INVALID_HANDLE != hAPduInst)
     {
-        ZPS_tsAplZdpNodeDescReq sNodeDescReq;
+        ZPS_tsAplZdpNodeDescReq sNodeDescReq = {0};
         ZPS_tuAddress uDstAddr;
 
         /* always send to node of interest rather than a cache */
@@ -4550,7 +4550,7 @@ PRIVATE ZPS_teStatus eZdpPowerDescReq(uint16 u16Addr, uint8* pu8SeqNum) {
 
     if (PDUM_INVALID_HANDLE != hAPduInst)
     {
-        ZPS_tsAplZdpPowerDescReq sPowerDescReq;
+        ZPS_tsAplZdpPowerDescReq sPowerDescReq = {0};
         ZPS_tuAddress uDstAddr;
 
         /* always send to node of interest rather than a cache */
@@ -4618,7 +4618,7 @@ PRIVATE ZPS_teStatus eZdpActiveEndpointReq(ZPS_tuAddress uDstAddr, uint16 u16Tar
     u32StatusFlags &= ~APDU_0_STATUS_MASK;
     if (PDUM_INVALID_HANDLE != hAPduInst)
     {
-        ZPS_tsAplZdpActiveEpReq sActiveEpReq;
+        ZPS_tsAplZdpActiveEpReq sActiveEpReq = {0};
         sActiveEpReq.u16NwkAddrOfInterest = u16TargetAddr;
         return ZPS_eAplZdpActiveEpRequest(hAPduInst, uDstAddr, FALSE,
                 pu8SeqNum, &sActiveEpReq);
@@ -4656,7 +4656,7 @@ PRIVATE ZPS_teStatus eZdpMatchDescReq(uint16 u16Addr, uint16 u16NwkAoI,
     u32StatusFlags &= ~APDU_0_STATUS_MASK;
     if (PDUM_INVALID_HANDLE != hAPduInst)
     {
-        ZPS_tsAplZdpMatchDescReq sMatchDescReq;
+        ZPS_tsAplZdpMatchDescReq sMatchDescReq = {0};
         ZPS_tuAddress uDstAddr;
         uDstAddr.u16Addr = u16Addr;
         sMatchDescReq.u16NwkAddrOfInterest = u16NwkAoI;
@@ -4700,7 +4700,7 @@ PRIVATE ZPS_teStatus eZdpIeeeAddrReq(uint16 u16Dst, uint16 u16Addr,
 
     if (PDUM_INVALID_HANDLE != hAPduInst)
     {
-        ZPS_tsAplZdpIeeeAddrReq sAplZdpIeeeAddrReq;
+        ZPS_tsAplZdpIeeeAddrReq sAplZdpIeeeAddrReq = {0};
         ZPS_tuAddress uDstAddr;
 
         /* always send to node of interest rather than a cache */
@@ -4742,7 +4742,7 @@ PRIVATE ZPS_teStatus eZdpNwkAddrReq(uint16 u16Dst, uint64 u64Addr,
 
     if (PDUM_INVALID_HANDLE != hAPduInst)
     {
-        ZPS_tsAplZdpNwkAddrReq sAplZdpNwkAddrReq;
+        ZPS_tsAplZdpNwkAddrReq sAplZdpNwkAddrReq = {0};
         ZPS_tuAddress uDstAddr;
 
         /* always send to node of interest rather than a cache */
@@ -4836,7 +4836,7 @@ PRIVATE ZPS_teStatus eBindUnbindEntry(bool_t bBind, uint64 u64SrcAddr,
 {
     ZPS_teStatus eReturnCode = E_SL_MSG_STATUS_INVALID_PARAMETER;
     ZPS_tuAddress uAddr;
-    ZPS_tsAplZdpBindUnbindReq sAplZdpBindReq;
+    ZPS_tsAplZdpBindUnbindReq sAplZdpBindReq = {0};
 
     if (u8DstAddrMode == 0x1) {
         sAplZdpBindReq.uAddressField.sShort.u16DstAddress = uAddr.u16Addr

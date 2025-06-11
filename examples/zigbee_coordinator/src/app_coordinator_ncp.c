@@ -1,5 +1,5 @@
 /*
-* Copyright 2024 NXP
+* Copyright 2024-2025 NXP
 *
 * SPDX-License-Identifier: BSD-3-Clause
 */
@@ -538,7 +538,7 @@ static void vAppSendRemoteBindRequest(uint16_t u16DstAddr, uint16_t u16ClusterId
 {
     PDUM_thAPduInstance hAPduInst;
     ZPS_tuAddress uDstAddr;
-    ZPS_tsAplZdpBindUnbindReq sAplZdpBindUnbindReq;
+    ZPS_tsAplZdpBindUnbindReq sAplZdpBindUnbindReq = {0};
     ZPS_teStatus eStatus;
 
     uDstAddr.u16Addr = u16DstAddr;
