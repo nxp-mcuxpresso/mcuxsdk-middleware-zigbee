@@ -845,7 +845,7 @@ PRIVATE void vNsTclkSendNodeDescReq(void)
 
     if (NULL != hAPduInst)
     {
-        ZPS_tsAplZdpNodeDescReq sNodeDescReq;
+        ZPS_tsAplZdpNodeDescReq sNodeDescReq = {0};
         uint8 u8SeqNumber;
         ZPS_tuAddress uDstAddr;
         uDstAddr.u16Addr = ZPS_u16AplZdoLookupAddr(ZPS_eAplAibGetApsTrustCenterAddress());

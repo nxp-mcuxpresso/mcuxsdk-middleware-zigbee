@@ -487,7 +487,7 @@ PRIVATE void vFbSendIeeeAddrReq( ZPS_tuAddress         uSrcAddress,
                                       uint16                u16DstAddr)
 {
     uint8 u8TransactionSequenceNumber;
-    ZPS_tsAplZdpIeeeAddrReq sZdpIeeeAddrReq;
+    ZPS_tsAplZdpIeeeAddrReq sZdpIeeeAddrReq = {0};
     PDUM_thAPduInstance hAPduInst;
 
     /* IEEE address of target unknown, issue IEEE address request */
@@ -538,7 +538,7 @@ PRIVATE void vFbSendSimpleDescReq(uint8           u8DstEndpoint,
 {
     uint8 u8TransactionSequenceNumber;
     PDUM_thAPduInstance hAPduInst;
-    ZPS_tsAplZdpSimpleDescReq sZdpSimpleDescReq;
+    ZPS_tsAplZdpSimpleDescReq sZdpSimpleDescReq = {0};
     ZPS_tuAddress uDstAddr;
     uDstAddr.u16Addr = u16DstAddr;
 
