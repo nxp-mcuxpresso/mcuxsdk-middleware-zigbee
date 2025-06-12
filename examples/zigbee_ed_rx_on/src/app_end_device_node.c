@@ -139,10 +139,10 @@ tuRouterInfo g_Tlv4 = {
         0xAABB
 };
 
-uint8 au8TestTlvs[sizeof(au8Storage_Tlv1) + sizeof(au8Storage_Tlv2) +
-                  sizeof(au8Storage_Tlv3) + sizeof(g_Tlv4)];
-uint8 au8JoinTlvs[sizeof(au8Storage_Tlv1) + sizeof(au8Storage_Tlv2) +
-                  sizeof(au8Storage_Tlv3) + sizeof(g_sJoinerTlvs)];
+uint8 au8TestTlvs[sizeof(au8Storage_Tlv1) + sizeof(au8Storage_Tlv3) +
+                  sizeof(g_Tlv4)];
+uint8 au8JoinTlvs[sizeof(au8Storage_Tlv1) + sizeof(au8Storage_Tlv3) +
+                  sizeof(g_sJoinerTlvs)];
 
 
 #endif
@@ -205,10 +205,10 @@ void APP_vInitialiseEndDevice(void)
    ZPS_psAplAibGetAib()->bUseInstallCode = BDB_JOIN_USES_INSTALL_CODE_KEY;
 
 #ifdef R23_UPDATES
-   ZPS_vTlvBuildSequence(4, sizeof(au8JoinTlvs), au8JoinTlvs,
-               g_pTlv1, g_pTlv2, g_pTlv3, &g_sJoinerTlvs);
-   ZPS_vTlvBuildSequence(4, sizeof(au8TestTlvs), au8TestTlvs,
-          g_pTlv1, g_pTlv2, g_pTlv3, &g_Tlv4);
+   ZPS_vTlvBuildSequence(3, sizeof(au8JoinTlvs), au8JoinTlvs,
+               g_pTlv1, g_pTlv3, &g_sJoinerTlvs);
+   ZPS_vTlvBuildSequence(3, sizeof(au8TestTlvs), au8TestTlvs,
+          g_pTlv1, g_pTlv3, &g_Tlv4);
    ZPS_vAplAfSetAdditionalTlvs(au8TestTlvs, sizeof(au8TestTlvs));
 #endif
 
