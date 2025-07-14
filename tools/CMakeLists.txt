@@ -3,11 +3,9 @@
 
 if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.tools)
     mcux_add_source(
-        SOURCES Eclipse_plugins/*.*
-                JET/win/*.*
+        SOURCES JET/win/*.*
                 PDUMConfig/Source/PDUMConfig
                 PDUMConfig/Source/PDUMConfig.py
-                Zigbee3ConfigEditor/*.*
                 ZPSConfig/Source/ZPSConfig
                 ZPSConfig/Source/ZPSConfig.py
                 OTA/*.*
