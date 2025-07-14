@@ -2,7 +2,7 @@
   "SPDXID": "SPDXRef-DOCUMENT",
   "spdxVersion": "SPDX-2.3",
   "creationInfo": {
-    "created": "2025-05-21T01:59:10Z",
+    "created": "2025-07-14T05:48:18Z",
     "creators": [
       "Organization: NXP"
     ],
@@ -32,19 +32,68 @@
       "filesAnalyzed": false
     },
     {
-      "SPDXID": "SPDXRef-package-f99c19cc-b78d-4195-a89b-845e6abe9701",
-      "name": "FreeRTOS Real Time Kernel",
-      "versionInfo": "V10.5.1",
-      "licenseConcluded": "MIT",
-      "licenseDeclared": "MIT",
-      "homepage": "https://github.com/FreeRTOS/FreeRTOS",
+      "SPDXID": "SPDXRef-package-8f72fd63-d5b2-4430-bc3c-bd4f355c3fbd",
+      "name": "Batik XML utility library",
+      "versionInfo": "1.6.1",
+      "licenseConcluded": "Apache-2.0",
+      "licenseDeclared": "Apache-2.0",
+      "homepage": "http://xmlgraphics.apache.org/batik/",
       "downloadLocation": "NOASSERTION",
-      "originator": "Organization: freertos",
+      "originator": "Organization: apache",
       "supplier": "NOASSERTION",
       "externalRefs": [
         {
           "referenceCategory": "SECURITY",
-          "referenceLocator": "cpe:2.3:o:amazon:freertos:10.5.1:*:*:*:*:*:*:*",
+          "referenceLocator": "cpe:2.3:a:gav_batik:batik-awt-util:1.6:1:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:gav_batik:batik-awt-util:1.6.1:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:gav_batik:batik-gvt:1.6:1:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:apache:batik:1.6.1:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:gav_batik:batik-gvt:1.6.1:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:github/apache/xmlgraphics-batik@batik-1_6_1",
+          "referenceType": "purl"
+        },
+        {
+          "referenceCategory": "OTHER",
+          "referenceLocator": "c91d5370-24ab-4e07-9982-6b6fd3d0f7ff",
+          "referenceType": "BlackDuck-ComponentOrigin"
+        }
+      ],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-e0b961ec-f75d-4c41-a324-ce5125d4cb86",
+      "name": "FreeRTOS Real Time Kernel",
+      "versionInfo": "V10.5.1",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "homepage": "https://sourceforge.net/projects/freertos",
+      "downloadLocation": "NOASSERTION",
+      "originator": "Organization: FreeRTOS Real Time Kernel",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:amazon:freertos:10.5.1:*:*:*:*:*:*:*",
           "referenceType": "cpe23Type"
         },
         {
@@ -54,18 +103,8 @@
         },
         {
           "referenceCategory": "SECURITY",
-          "referenceLocator": "cpe:2.3:a:amazon:freertos:10.5.1:*:*:*:*:*:*:*",
+          "referenceLocator": "cpe:2.3:o:amazon:freertos:10.5.1:*:*:*:*:*:*:*",
           "referenceType": "cpe23Type"
-        },
-        {
-          "referenceCategory": "PACKAGE-MANAGER",
-          "referenceLocator": "pkg:github/FreeRTOS/FreeRTOS-Kernel@V10.5.1",
-          "referenceType": "purl"
-        },
-        {
-          "referenceCategory": "OTHER",
-          "referenceLocator": "00b86f7c-fcf7-4b80-b5e8-6b8e6b10e933",
-          "referenceType": "BlackDuck-ComponentOrigin"
         }
       ],
       "filesAnalyzed": false
@@ -79,8 +118,13 @@
     },
     {
       "spdxElementId": "SPDXRef-package-fac26ddf-4614-43fd-92ba-1f4c8bbb7c7b",
+      "relationshipType": "DYNAMIC_LINK",
+      "relatedSpdxElement": "SPDXRef-package-8f72fd63-d5b2-4430-bc3c-bd4f355c3fbd"
+    },
+    {
+      "spdxElementId": "SPDXRef-package-fac26ddf-4614-43fd-92ba-1f4c8bbb7c7b",
       "relationshipType": "CONTAINS",
-      "relatedSpdxElement": "SPDXRef-package-f99c19cc-b78d-4195-a89b-845e6abe9701"
+      "relatedSpdxElement": "SPDXRef-package-e0b961ec-f75d-4c41-a324-ce5125d4cb86"
     }
   ]
 }
