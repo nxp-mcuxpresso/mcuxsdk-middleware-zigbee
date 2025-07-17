@@ -11,9 +11,8 @@ Bluetooth LE application part is based on the Wireless UART peripheral demo. Tar
 - `zigbee_router_ble_wu`: the zigbee application is based on the Zigbee Router example and the 
 Bluetooth LE application part is based on the EdgeFast Wireless UART demo. Targeted boards: RD-RW612-BGA, FRDM-RW612.
 
-The Narrow Band Unit (NBU) firmware for this application is included in the SDK folder and should be updated based on targeted board:
-- MCX-W71-EVK and FRDM-MCXW71 boards require `k32w1_mcxw71_nbu_ble_15_4_dyn_sp.sb3`
-- MCX-W72-EVK and FRDM-MCXW72 boards require `mcxw72_nbu_ble_full_15_4_dyn.bin`
+The Narrow Band Unit (NBU) firmware for this application is included in the SDK folder and should be updated based on targeted board. The NBU firmware
+to be written for Bluetooth LE - Zigbee dynamic mode applications is the same image used for Zigbee example applications.
 
 After reboot, the device running the application is ready to receive commands over Bluetooth LE through the Wireless UART profile. The communication over Bluetooth LE between the application can be intermediated by a mobile application. 
 
