@@ -7,6 +7,8 @@ Two types of End Device are as follows:
 -   "RX On" End Devices, which are always ready to communicate in the network
 -   Sleepy "RX Off when Idle" End Devices, which can sleep for periods of time during which it cannot communicate
 
+**Note:** To disable sleep on "RX Off" End Device for continuous data polling, user must define **DISABLE_SLEEP** in the corresponding ed_rx_off.cmake (by default, it is undefined).
+
 The End Device supports the mandatory clusters and features of the Base Device as defined in [ZigBee Base Device Behavior Specification](https://zigbeealliance.org/wp-content/uploads/2019/12/docs-13-0402-13-00zi-Base-Device-Behavior-Specification-2-1.pdf).
 
 For demonstrating the "Finding and Binding" functionality, the End Device also supports the On/Off cluster as a client.

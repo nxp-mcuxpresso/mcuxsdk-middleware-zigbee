@@ -75,7 +75,11 @@ extern PWR_tsWakeTimerEvent sZTimer;
 uint32_t u32OldFrameCtr;
 PWR_tsWakeTimerEvent sWake;
 uint32 u32PollTime = 0;
+#ifdef DISABLE_SLEEP
+bool_t bDisallowSleep = TRUE;
+#else
 bool_t bDisallowSleep = FALSE;
+#endif
 #ifdef OT_ZB_SUPPORT
 extern uint8 u8TimerScan;
 extern uint8 u8TimerFb;
@@ -384,7 +388,9 @@ void APP_vBdbCallback(BDB_tsBdbEvent *psBdbEvent)
             break;
 
         case BDB_EVENT_FB_OVER_AT_TARGET:
+#ifndef DISABLE_SLEEP
             bDisallowSleep = FALSE;
+#endif
             break;
         default:
             break;
