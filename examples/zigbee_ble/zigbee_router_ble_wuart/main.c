@@ -15,6 +15,11 @@
 #include "app_router_node.h"
 #include "fwk_platform.h"
 #include "app_zigbee.h"
+#include "app_crypto.h"
+
+#include "fsl_component_mem_manager.h"
+#include "fwk_platform.h"
+#include "fwk_platform_ics.h"
 
 #if defined(gAppUseSensors_d) && (gAppUseSensors_d > 0)
 #include "sensors.h"
@@ -127,23 +132,17 @@ int main(void)
 void APP_InitZigbee(void)
 {
 
-#if IS_MCXW_SERIES
     PLATFORM_SwitchToOsc32k();
-#endif
 
     CRYPTO_Init();
     CRYPTO_u8RandomInit();
     MEM_Init();
 
-#if IS_MCXW_SERIES
-#if defined(USE_NBU) && (USE_NBU == 1)
     PLATFORM_InitNbu();
     PLATFORM_InitMulticore();
     PLATFORM_FwkSrvInit();
     PLATFORM_SendChipRevision();
     PLATFORM_LoadHwParams();
-#endif
-#endif
 
     vAppMain();
 }
