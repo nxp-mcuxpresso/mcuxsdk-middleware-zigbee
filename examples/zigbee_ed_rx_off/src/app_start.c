@@ -68,6 +68,7 @@ extern void *_stack_low_water_mark;
 #if IS_MCXW7x_SERIES
 static uint8_t led_states;
 #endif
+#ifndef DISABLE_SLEEP
 /**
  * Power manager Callback.
  * Called just before the device is put to sleep
@@ -78,6 +79,7 @@ static void vAppPreSleep(void);
  * Called just after the device wakes up from sleep
  */
 static void vAppWakeup(void);
+#endif
 /****************************************************************************/
 /***        Exported Functions                                            ***/
 /****************************************************************************/
@@ -132,13 +134,16 @@ void vAppMain(bool_t bColdStart)
  ****************************************************************************/
 void vAppRegisterPWRCallbacks(void)
 {
+#ifndef DISABLE_SLEEP
     PWR_RegisterLowPowerEnterCallback(vAppPreSleep);
     PWR_RegisterLowPowerExitCallback(vAppWakeup);
+#endif
 }
 
 /****************************************************************************/
 /***        Local Functions                                               ***/
 /****************************************************************************/
+#ifndef DISABLE_SLEEP
 /****************************************************************************
  *
  * NAME: vAppPreSleep
@@ -219,6 +224,7 @@ void vAppWakeup(void)
 #endif
     DBG_vPrintf(TRACE_APP, "woken up\n");
 }
+#endif
 
 /****************************************************************************
  *
