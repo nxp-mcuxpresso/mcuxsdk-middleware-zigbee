@@ -281,7 +281,7 @@
       <InputClusters Cluster="Identify" RxAPDU="Coordinator->apduZCL" Discoverable="true"/>
       <InputClusters Cluster="Groups" RxAPDU="Coordinator->apduZCL" Discoverable="false"/>
       <InputClusters Cluster="OnOff" RxAPDU="Coordinator->apduZCL" Discoverable="false"/>
-      <InputClusters Cluster="Default" RxAPDU="Coordinator->apduZCL" Discoverable="false"/>
+      <OutputClusters Cluster="Default" TxAPDUs="coordinator->apduZCL" Discoverable="false"/>
       <OutputClusters Cluster="Basic" TxAPDUs="Coordinator->apduZCL" Discoverable="true"/>
       <OutputClusters Cluster="Identify" TxAPDUs="Coordinator->apduZCL" Discoverable="true"/>
       <OutputClusters Cluster="Groups" TxAPDUs="Coordinator->apduZCL" Discoverable="true"/>
@@ -508,6 +508,7 @@
       <OutputClusters Cluster="Groups" TxAPDUs="router->apduZCL" Discoverable="false"/>
       <OutputClusters Cluster="Identify" TxAPDUs="router->apduZCL" Discoverable="false"/>
       <OutputClusters Cluster="OnOff" TxAPDUs="router->apduZCL" Discoverable="false"/>
+      <OutputClusters Cluster="Default" TxAPDUs="router->apduZCL" Discoverable="false"/>
       <OutputClusters Cluster="OTA" TxAPDUs="router->apduZCL" Discoverable="true"/>
     </Endpoints>
     <PDUConfiguration NumNPDUs="25" PDUMMutexName="mutexPDUM">

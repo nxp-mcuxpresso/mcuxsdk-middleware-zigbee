@@ -279,7 +279,7 @@
       <InputClusters Cluster="Identify" RxAPDU="Coordinator->apduZCL" Discoverable="true"/>
       <InputClusters Cluster="Groups" RxAPDU="Coordinator->apduZCL" Discoverable="false"/>
       <InputClusters Cluster="OnOff" RxAPDU="Coordinator->apduZCL" Discoverable="false"/>
-      <InputClusters Cluster="Default" RxAPDU="Coordinator->apduZCL" Discoverable="false"/>
+      <OutputClusters Cluster="Default" TxAPDUs="coordinator->apduZCL" Discoverable="false"/>
       <OutputClusters Cluster="Basic" TxAPDUs="Coordinator->apduZCL" Discoverable="true"/>
       <OutputClusters Cluster="Identify" TxAPDUs="Coordinator->apduZCL" Discoverable="true"/>
       <OutputClusters Cluster="Groups" TxAPDUs="Coordinator->apduZCL" Discoverable="true"/>
@@ -502,6 +502,7 @@
       <OutputClusters Cluster="Groups" TxAPDUs="enddevice_rxon->apduZCL" Discoverable="true"/>
       <OutputClusters Cluster="Identify" TxAPDUs="enddevice_rxon->apduZCL" Discoverable="true"/>
       <OutputClusters Cluster="OnOff" TxAPDUs="enddevice_rxon->apduZCL" Discoverable="true"/>
+      <OutputClusters Cluster="Default" TxAPDUs="enddevice_rxon->apduZCL" Discoverable="false"/>
       <OutputClusters Cluster="OTA" TxAPDUs="enddevice_rxon->apduZCL" Discoverable="true"/>
     </Endpoints>
     <PDUConfiguration NumNPDUs="9" PDUMMutexName="">

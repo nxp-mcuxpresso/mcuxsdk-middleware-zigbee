@@ -296,8 +296,8 @@
       <InputClusters Cluster="Identify" RxAPDU="coordinator->apduZCL" Discoverable="true"/>
       <InputClusters Cluster="Groups" RxAPDU="coordinator->apduZCL" Discoverable="false"/>
       <InputClusters Cluster="OnOff" RxAPDU="coordinator->apduZCL" Discoverable="false"/>
-      <InputClusters Cluster="Default" RxAPDU="coordinator->apduZCL" Discoverable="false"/>
       <InputClusters Cluster="OTA" RxAPDU="coordinator->apduZCL" Discoverable="true"/>
+      <OutputClusters Cluster="Default" TxAPDUs="coordinator->apduZCL" Discoverable="false"/>
       <OutputClusters Cluster="Basic" TxAPDUs="coordinator->apduZCL" Discoverable="true"/>
       <OutputClusters Cluster="Identify" TxAPDUs="coordinator->apduZCL" Discoverable="true"/>
       <OutputClusters Cluster="Groups" TxAPDUs="coordinator->apduZCL" Discoverable="true"/>
