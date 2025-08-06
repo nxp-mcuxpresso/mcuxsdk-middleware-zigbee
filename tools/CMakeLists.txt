@@ -11,5 +11,6 @@ if(CONFIG_MCUX_COMPONENT_middleware.wireless.zigbee.tools)
                 OTA/*.*
                 OTA/SB3/*.*
                 OTA/keys_and_certs/*.*
+                memsize2/*.*
     )
 endif()
