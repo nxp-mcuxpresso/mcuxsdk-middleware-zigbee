@@ -158,12 +158,19 @@ To perform an OTA upgrade procedure, we'll use the Coordinator example as an OTA
 OTA client. The client will boot from a V1 image, and the server will hold a V2 or V3 image.
 
 1. Build the Coordinator example and flash it to one board
-2. Build the mcuboot example from `<sdk_root>/examples/ota_examples/mcuboot_opensource`
-3. Flash the mcuboot binary to board that will be the OTA client
-4. Build the Router example and flash the `zigbee_router_freertos_v1.signed.confirmed.bin` binary at the address `0x18020000`
-5. Refer to the [OTA Server](#ota-server) section to flash the `zigbee_router_freertos_v2.ota.bin` at the correct address on the Coordinator
-6. Reset both boards and make sure to factory reset both boards to start from a clean state
-7. The Router should show something similar to the following output:
+2. Flash the mcuboot binary to board that will be the OTA client
+   >Note: When using the default router build command (using the --sysbuild parameter), the mcuboot binary will be placed in `<build dir>/mcuboot/mcuboot_opensource.bin`
+   >Note: If a manual build for mcuboot is required, build it from `<sdk_root>/examples/ota_examples/mcuboot_opensource`. Also make sure that the following configuration settings are included in the build. Without these mcuboot settings, the router image will not boot.
+```
+CONFIG_BOOT_CUSTOM_DEVICE_SETUP=y)
+CONFIG_BOOT_FLASH_ACT_APP_ADDRESS=0x08020000
+CONFIG_BOOT_FLASH_CAND_APP_ADDRESS=0x08460000
+CONFIG_MCUBOOT_MAX_IMG_SECTORS=1088
+```
+3. Build the Router example and flash the `zigbee_router_freertos_v1.signed.confirmed.bin` binary at the address `0x18020000`
+4. Refer to the [OTA Server](#ota-server) section to flash the `zigbee_router_freertos_v2.ota.bin` at the correct address on the Coordinator
+5. Reset both boards and make sure to factory reset both boards to start from a clean state
+6. The Router should show something similar to the following output:
 ```
 hello sbl.
 Disabling flash remapping function

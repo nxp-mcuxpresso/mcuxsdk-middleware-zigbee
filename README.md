@@ -73,6 +73,13 @@ As an example, to build the coordinator application of frdmrw612 board:
 west build -b frdmrw612 -p auto <sdk root>/examples/wireless_examples/zigbee/coordinator/freertos
 ```
 
+For building the router example, the following command is used:
+```bash
+west build --sysbuild -b frdmrw612 -p auto <sdk root>/examples/wireless_examples/zigbee/router/freertos
+```
+
+>Note: This will also build the mcuboot SSBL that's required for the router example to function properly. More information related to this can be found in the [README](./platform/RW612/docs/README.md)
+
 ## Current examples supported
 
 You'll find below the list of NXP Zigbee examples supported with CMake.
