@@ -234,8 +234,8 @@ PRIVATE void vReportSchedulerUpdate(uint32 u32UTCTime)
 
                                     bSentReportRequestEvent = TRUE;
                                 }
-                                // store last time
-                                psHeadReportRecord->u32LastFiredUTCTime = u32UTCTime;
+                                // store last time and adjust if Report Update was missed due to sleep
+                                psHeadReportRecord->u32LastFiredUTCTime = u32UTCTime - psHeadReportRecord->u32ReportingDelta;
 
                                 // Store last sent value - this was being stored in eZCL_LogAttributeChangeAndIndicateReportableChange - renamed to eZCL_IndicateReportableChange()
                                 // but this is called before the E_ZCL_CBET_REPORT_REQUEST and the app may update the att value in the callback.
@@ -376,10 +376,10 @@ PRIVATE bool_t bPeriodicTimerFired(
 
     u16ReportingInterval = psHeadReportRecord->sAttributeReportingConfigurationRecord.u16MaximumReportingInterval;
 
-    if((((u32UTCTime - psHeadReportRecord->u32LastFiredUTCTime)/u16ReportingInterval)!=0) &&
-       (((u32UTCTime - psHeadReportRecord->u32LastFiredUTCTime)%u16ReportingInterval)==0)
-    )
+    if(((u32UTCTime - psHeadReportRecord->u32LastFiredUTCTime)/u16ReportingInterval)!=0)
     {
+        /* Adjust Report Update time in case it was missed due to sleep */
+        psHeadReportRecord->u32ReportingDelta = ((u32UTCTime - psHeadReportRecord->u32LastFiredUTCTime)%u16ReportingInterval);
         return(TRUE);
     }
 

@@ -68,6 +68,7 @@ typedef struct
     tsZCL_AttributeDefinition   *psAttributeDefinition;
     tuZCL_AttributeStorage       uAttributeStorage;
     uint32                       u32LastFiredUTCTime;
+    uint32                       u32ReportingDelta;
     tsZCL_AttributeReportingConfigurationRecord sAttributeReportingConfigurationRecord;
 } tsZCL_ReportRecord;
 
