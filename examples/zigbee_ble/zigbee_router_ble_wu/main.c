@@ -60,6 +60,12 @@ static void shell_init_task(void *argument)
     /* SHELL init performs blocking prints and this will hang the task
      * until a BLE peer device connects and receives the print.
      */
+
+#if (((defined(CONFIG_BT_SMP)) && (CONFIG_BT_SMP)))
+    extern void bt_psa_crypto_init(void);
+    bt_psa_crypto_init();
+#endif /* CONFIG_BT_SMP */
+
     if (APP_ShellInit() < 0)
     {
         DBG_vPrintf(TRUE, "SHELL init error \n");
