@@ -18,16 +18,15 @@ from packaging.version import Version
 import spsdk
 
 # Inform User that specific SPSDK packages version is required
-assert Version(spsdk.__version__) < Version('2.0.0') and Version(spsdk.__version__) >= Version('1.0.0'), 'SPSDK Version should be < "2.0.0" and > "1.0.0"'
+assert Version(spsdk.__version__) > Version('3.0.0'), 'SPSDK Version should be > "3.0.0"'
 
 from Crypto.Cipher import AES
 
-from spsdk.image.mbimg import get_mbi_class
-from spsdk.sbfile.sb31.images import SB3_SCH_FILE, SecureBinary31
-from spsdk.utils.schema_validator import (
-    ValidationSchemas,
-    check_config,
-)
+from spsdk.utils.schema_validator import check_config
+from spsdk.sbfile.sb31.images import SecureBinary31
+from spsdk.image.mbi.mbi import MasterBootImage
+from spsdk.utils.family import FamilyRevision
+from spsdk.utils.config import Config
 
 import spsdk.utils.misc
 
@@ -69,8 +68,8 @@ else:
     SCRIPT_VERSION = 'versionless'
 
 # SPSDK SB3 Generation files
-MBI_SIGN_JSON = os.path.join(SCRIPT_DIRECTORY, 'SB3', 'sign_mcu_file_json_example.json')
-SB3_WIHTOUT_NBU = os.path.join(SCRIPT_DIRECTORY, 'SB3', 'sb3_json_example_without_nbu.json')
+MBI_SIGN_JSON = os.path.join(SCRIPT_DIRECTORY, 'SB3', 'mbi_kw45.yaml')
+SB3_WIHTOUT_NBU = os.path.join(SCRIPT_DIRECTORY, 'SB3', 'sb31_kw45.yaml')
 
 # Constants
 # NONCE, LINKKEY and OTA HDR sections with their hardocded names and min sizes
@@ -499,30 +498,23 @@ def sb3_export(input, output, config):
     # Assuming that 0x0 address load command is input binary
     config_data['containerOutputFile'] = output
     for comm in config_data['commands']:
-        if 'load' in comm and comm['load']['address'] == '0x0':
-            comm['load']['file'] = input
+        if 'load' in comm and comm['load']['address'] == 0:
+            comm['load']['data'] = input
             break
 
     def patch_config_rel_dir(config, key):
         return os.path.join(SCRIPT_DIRECTORY, config[key])
 
     config_data['containerKeyBlobEncryptionKey'] = patch_config_rel_dir(config_data, 'containerKeyBlobEncryptionKey')
-    config_data['rootCertificate0File'] = patch_config_rel_dir(config_data, 'rootCertificate0File')
-    config_data['rootCertificate1File'] = patch_config_rel_dir(config_data, 'rootCertificate1File')
-    config_data['rootCertificate2File'] = patch_config_rel_dir(config_data, 'rootCertificate2File')
-    config_data['rootCertificate3File'] = patch_config_rel_dir(config_data, 'rootCertificate3File')
-    config_data['mainRootCertPrivateKeyFile'] = patch_config_rel_dir(config_data, 'mainRootCertPrivateKeyFile')
-    config_data['signingCertificateFile'] = patch_config_rel_dir(config_data, 'signingCertificateFile')
-    config_data['signingCertificatePrivateKeyFile'] = patch_config_rel_dir(config_data, 'signingCertificatePrivateKeyFile')
+    config_data['certBlock'] = patch_config_rel_dir(config_data, 'certBlock')
+    config_data['signer'] = patch_config_rel_dir(config_data, 'signer')
+    config_family = FamilyRevision(config_data['family'])
+    config_sb3 = Config(config_data)
 
     config_dir = os.path.dirname(config)
-    check_config(config_data, SecureBinary31.get_validation_schemas_family())
-    schemas = SecureBinary31.get_validation_schemas(
-        config_data["family"], include_test_configuration=True
-    )
-    schemas.append(ValidationSchemas.get_schema_file(SB3_SCH_FILE)["sb3_output"])
+    schemas = SecureBinary31.get_validation_schemas(config_family)
     check_config(config_data, schemas, search_paths=[config_dir])
-    sb3 = SecureBinary31.load_from_config(config_data, search_paths=[config_dir])
+    sb3 = SecureBinary31.load_from_config(config_sb3)
 
     sb3_data = sb3.export()
     sb3_output_file_path = get_abs_path(config_data["containerOutputFile"], config_dir)
@@ -536,20 +528,17 @@ def mbi_export(input, output, config):
 
     config_data['inputImageFile'] = input
     config_data['masterBootOutputFile'] = output
-    config_data['rootCertificate0File'] = patch_config_rel_dir(config_data, 'rootCertificate0File')
-    config_data['rootCertificate1File'] = patch_config_rel_dir(config_data, 'rootCertificate1File')
-    config_data['rootCertificate2File'] = patch_config_rel_dir(config_data, 'rootCertificate2File')
-    config_data['rootCertificate3File'] = patch_config_rel_dir(config_data, 'rootCertificate3File')
-    config_data['mainRootCertPrivateKeyFile'] = patch_config_rel_dir(config_data, 'mainRootCertPrivateKeyFile')
-    config_data['signingCertificateFile'] = patch_config_rel_dir(config_data, 'signingCertificateFile')
-    config_data['signingCertificatePrivateKeyFile'] = patch_config_rel_dir(config_data, 'signingCertificatePrivateKeyFile')
+    config_data['certBlock'] = patch_config_rel_dir(config_data, 'certBlock')
+    config_data['signer'] = patch_config_rel_dir(config_data, 'signer')
+    config_family = FamilyRevision(config_data['family'])
+    config_mbi = Config(config_data)
 
     config_dir = os.path.dirname(config)
 
-    mbi_cls = get_mbi_class(config_data)
-    check_config(config_data, mbi_cls.get_validation_schemas(), search_paths=[config_dir])
-    mbi_obj = mbi_cls()
-    mbi_obj.load_from_config(config_data, search_paths=[config_dir])
+    mbi_cls = MasterBootImage.get_mbi_class(config_data)
+    schemas = mbi_cls.get_validation_schemas(config_family)
+    check_config(config_data, schemas, search_paths=[config_dir])
+    mbi_obj = mbi_cls.load_from_config(config_mbi)
     mbi_data = mbi_obj.export()
 
     mbi_output_file_path = get_abs_path(config_data["masterBootOutputFile"], config_dir)

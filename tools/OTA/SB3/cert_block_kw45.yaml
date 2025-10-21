@@ -1,0 +1,56 @@
+# ========================  cert_block Configuration template for kw45b41z5, Revision: latest.  ========================
+
+# ======================================================================================================================
+#                                                 == General Options ==                                                 
+# ======================================================================================================================
+# -------------------------------------===== The chip family name [Required] =====--------------------------------------
+# Description: NXP chip family identifier.
+family: kw45b41z5
+# -----------------------------------------===== MCU revision [Optional] =====------------------------------------------
+# Description: Revision of silicon. The 'latest' name, means most current revision.
+# Possible options: <a0, a1, a2, latest>
+revision: latest
+# ======================================================================================================================
+#                                   == ISK (Image signing key) Certificate Settings ==                                  
+# ======================================================================================================================
+# ------------------------------===== Use ISK for signature certification [Required] =====------------------------------
+# Description: Enable ISK type of signature certification.
+useIsk: true
+# ---------------------------------===== ISK public key [Conditionally required] =====----------------------------------
+# Description: Path to ISK public key.
+iskPublicKey: ../keys_and_certs/ec_secp384r1_sign_cert.pem
+# ----------------------------------===== ISK certificate constraint [Optional] =====-----------------------------------
+# Description: Constraint is certificate version, compared with monotonic counter in fuses.
+iskCertificateConstraint: 0
+# -----------------------------------===== ISK certificate user data [Optional] =====-----------------------------------
+# Description: Path to user data.
+iskCertData: ""
+# ------------------------------===== Signer configuration [Conditionally required] =====-------------------------------
+# Description: Signature provider configuration in format 'type=<sp_type>;<key1>=<value1>;<key2>=<value2>' or path to a
+# private key.
+signer: ../keys_and_certs/ec_pk_secp384r1_cert0.pem
+# ======================================================================================================================
+#                                                == Root Keys Settings ==                                               
+# ======================================================================================================================
+# -----------------------------===== Root Certificate File 0 [Conditionally required] =====-----------------------------
+# Description: Root certificate file index 0.
+rootCertificate0File: ../keys_and_certs/ec_secp384r1_cert0.pem
+# ------------------------------------===== Root Certificate File 1 [Optional] =====------------------------------------
+# Description: Root certificate file index 1.
+rootCertificate1File: ../keys_and_certs/ec_secp384r1_cert1.pem
+# ------------------------------------===== Root Certificate File 2 [Optional] =====------------------------------------
+# Description: Root certificate file index 2.
+rootCertificate2File: ../keys_and_certs/ec_secp384r1_cert2.pem
+# ------------------------------------===== Root Certificate File 3 [Optional] =====------------------------------------
+# Description: Root certificate file index 3.
+rootCertificate3File: ../keys_and_certs/ec_secp384r1_cert3.pem
+# -----------------------------===== Main Certificate Index [Conditionally required] =====------------------------------
+# Description: Index of certificate that is used as a main. If not defined, the certificate matching private key will be
+# selected.
+mainRootCertId: 0
+# ======================================================================================================================
+#                                                  == Basic Settings ==                                                 
+# ======================================================================================================================
+# --------------------------------------===== cert block filename [Required] =====--------------------------------------
+# Description: Generated cert block filename.
+containerOutputFile: cert_block.bin

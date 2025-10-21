@@ -1,0 +1,55 @@
+# ===========================  mbi Configuration template for kw45b41z5, Revision: latest.  ============================
+
+# ======================================================================================================================
+#                                                 == General Options ==                                                 
+# ======================================================================================================================
+# -------------------------------------===== The chip family name [Required] =====--------------------------------------
+# Description: NXP chip family identifier.
+family: kw45b41z5
+# -----------------------------------------===== MCU revision [Optional] =====------------------------------------------
+# Description: Revision of silicon. The 'latest' name, means most current revision.
+# Possible options: <a0, a1, a2, latest>
+revision: latest
+# ======================================================================================================================
+#                                                  == Basic Settings ==                                                 
+# ======================================================================================================================
+# --------------------------------------===== Application target [Required] =====---------------------------------------
+# Description: Definition if application is Execute in Place(XiP) or loaded to RAM during reset sequence.
+# Possible options: <xip>
+outputImageExecutionTarget: xip
+# -------------------------------===== Type of boot image authentication [Required] =====-------------------------------
+# Description: Specification of final master boot image authentication.
+# Possible options: <crc, signed, signed-nxp, plain>
+outputImageAuthenticationType: signed
+# ---------------------------------------===== Output Image name [Required] =====---------------------------------------
+# Description: The path for result binary file.
+masterBootOutputFile: placeholder_output.bin
+# ------------------------------------===== Plain application image [Required] =====------------------------------------
+# Description: The input application image to by modified to Master Boot Image.
+inputImageFile: placeholder_input.bin
+# --------------------------------===== Loading address of application [Optional] =====---------------------------------
+# Description: Application loading address in RAM if not XiP, otherwise address of load in XiP.
+outputImageExecutionAddress: 0x0
+# ---------------------------------------===== Firmware version. [Optional] =====---------------------------------------
+# Description: Value compared with Secure_FW_Version monotonic counter value stored in protected memory (MCU specific).
+# If value is lower than value in protected memory, then is image rejected (rollback protection).
+firmwareVersion: 0x1
+# ======================================================================================================================
+#                                              == Certificate Block V2.1 ==                                             
+# ======================================================================================================================
+# -----------------------------===== Certificate Block binary/config file [Required] =====------------------------------
+# Description: Path to certificate block binary or config file.
+certBlock: ./SB3/cert_block_kw45.yaml
+# ======================================================================================================================
+#                                              == Image Signing Settings ==                                             
+# ======================================================================================================================
+# -------------------------------------===== Signer configuration [Required] =====--------------------------------------
+# Description: Signature provider configuration in format 'type=<sp_type>;<key1>=<value1>;<key2>=<value2>' or path to a
+# private key.
+signer: ./keys_and_certs/ec_pk_secp384r1_sign_cert.pem
+# ======================================================================================================================
+#                                               == Trust Zone Settings ==                                               
+# ======================================================================================================================
+# ---------------------------------===== TrustZone Customization file [Optional] =====----------------------------------
+# Description: If not specified the default values are used.
+#trustZonePresetFile: my_tz_custom.yaml
