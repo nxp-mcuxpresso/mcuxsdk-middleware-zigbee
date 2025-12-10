@@ -75,13 +75,10 @@ extern bool APP_IsZigbeeReady(void);
 /****************************************************************************/
 static void connected(struct bt_conn *conn, uint8_t err);
 static void disconnected(struct bt_conn *conn, uint8_t reason);
-static void wireless_uart_rx_callback(void *callbackParam,
-                                               serial_manager_callback_message_t *message,
-                                               serial_manager_status_t status);
 #if CONFIG_BT_SMP
 static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_security_err err);
 
-static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey);
+/* static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey); */
 static void auth_cancel(struct bt_conn *conn);
 #endif
 
@@ -234,14 +231,14 @@ static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_
     PRINTF("Security changed: %s level %u (error %d)\n", addr, level, err);
 }
 
-static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
+/* static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
     char addr[BT_ADDR_LE_STR_LEN];
 
     bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
     PRINTF("Passkey for %s: %06u\n", addr, passkey);
-}
+} */
 
 static void auth_cancel(struct bt_conn *conn)
 {
